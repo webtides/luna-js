@@ -51,7 +51,7 @@ function postHtmlSSRCustomElements(options) {
             })
             .then((tree, components) => {
                 tree.match({ tag: 'element-scripts' }, node => {
-                    node.content = `<script type="module" src="/elements/previous.js"></script>`;
+                    node.content = `<script type="module" src="/assets/elements/previous.js"></script>`;
                     node.content += `
                         <script type="module">
                             ${Object.keys(componentsToInject)
@@ -59,7 +59,7 @@ function postHtmlSSRCustomElements(options) {
                                     const component = componentsToInject[key];
                                     const path = component.relativePath.split("/").pop();
                                     return `
-                                        import ${component.name} from "/elements/${path}";
+                                        import ${component.name} from "/assets/elements/${path}";
                                         customElements.define("${paramCase(component.name)}", ${component.name});
                                     `;
                                 })

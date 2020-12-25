@@ -8,7 +8,6 @@
   },
   "scripts": {
     "start": "SSR=true NODE_PATH=. babel-node --harmony ./packages/framework/entry.js",
-    "start-ts": "SSR=true NODE_PATH=. ts-node ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eddy Löwen, Lukas Schardt",

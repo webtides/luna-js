@@ -3,38 +3,33 @@ import nodemon from 'gulp-nodemon';
 import pkg from 'gulp';
 const { task, parallel, series } = pkg;
 
+const settings = {
+	buildDirectory: '.build',
+	assetsDirectory: '.build/public/assets'
+}
+
 options({
 	projectTitle: 'Express-PostHTML-SSR',
 	versionManifest: {
-		name: 'public/hash-manifest.json',
+		name: settings.assetsDirectory + '/hash-manifest.json',
 		formatter: (name) => {
 			return name.replace('public/', '');
 		},
 	},
 });
 
-task('clean', tasks.clean({ paths: ['public/css/*', 'public/elements/*'] }));
-
-task('css', tasks.css({ src: 'src/css/**/*.css', dest: 'public/css/' }));
+task('clean', tasks.clean({ paths: [settings.assetsDirectory + '**/*' ] }));
+task('css', tasks.css({ src: 'src/css/**/*.css', dest: settings.assetsDirectory + '/css/' }));
 
 task(
 	'elements',
 	tasks.js({
 		src: ['packages/client/**/*.js', 'app/views/components/**/*.js'],
-		dest: 'public/elements/',
+		dest: settings.assetsDirectory + '/elements',
 		outputOptions: { entryFileNames: '[name].js', sourcemap: true },
 		preferBuiltins: false
 	}),
 );
-
-task(
-	'base-elements',
-	tasks.js({
-		src: ['packages/client/elements/template-element.js'],
-		dest: '.build/public/elements/',
-		outputOptions: { entryFileNames: 'BaseTemplateElement.js', sourcemap: true },
-	}),
-)
 
 task('serve', (cb) => {
 	let started = false;
