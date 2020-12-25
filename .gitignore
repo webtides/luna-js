@@ -1,0 +1,9 @@
+.build/
+node_modules/
+src/
+views/
+
+
+.idea
+
+*.iml
