@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "SSR=true NODE_PATH=. babel-node --harmony ./packages/framework/entry.js",
+    "compile": "npx babel packages --out-dir .build/packages",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eddy Löwen, Lukas Schardt",
@@ -51,6 +52,7 @@
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-replace": "^2.3.4",
     "babel-plugin-module-resolver": "^4.1.0",
+    "gulp-run": "^1.7.1",
     "rollup": "^2.35.1",
     "rollup-plugin-cleaner": "^1.0.0",
     "rollup-plugin-copy": "^3.3.0",

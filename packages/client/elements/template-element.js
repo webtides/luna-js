@@ -1,4 +1,4 @@
-import {StyledElement } from '@webtides/element-js/src/StyledElement';
+import { StyledElement } from '@webtides/element-js/src/StyledElement';
 
 export default class TemplateElement extends StyledElement {
     // 1. we need to skip initial render when we already have rendered server side

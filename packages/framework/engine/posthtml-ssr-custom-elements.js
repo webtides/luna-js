@@ -7,8 +7,7 @@ import {paramCase} from "param-case";
 
 const componentsToInject = {};
 
-function postHtmlSSRCustomElements(options) {
-    options = options || {};
+export default function postHtmlSSRCustomElements(upgradedComponents = { }) {
 
     return function (tree) {
         return loadComponents()
@@ -28,11 +27,11 @@ function postHtmlSSRCustomElements(options) {
                                 ...node.attrs,
                             });
 
-                            componentsToInject[node.tag] = (components[node.tag]);
+                            upgradedComponents[node.tag] = (components[node.tag]);
 
                             renderToString(element.template({ html })).then(markup => {
                                 posthtml()
-                                    .use(postHtmlSSRCustomElements())
+                                    .use(postHtmlSSRCustomElements(upgradedComponents))
                                     .process(markup, {}).then(result => {
                                         node.content = result.tree;
                                         tasks -= 1;
@@ -50,13 +49,15 @@ function postHtmlSSRCustomElements(options) {
                 })
             })
             .then((tree, components) => {
+                console.log(upgradedComponents);
+
                 tree.match({ tag: 'element-scripts' }, node => {
                     node.content = `<script type="module" src="/assets/elements/previous.js"></script>`;
                     node.content += `
                         <script type="module">
-                            ${Object.keys(componentsToInject)
+                            ${Object.keys(upgradedComponents)
                                 .map(key => {
-                                    const component = componentsToInject[key];
+                                    const component = upgradedComponents[key];
                                     const path = component.relativePath.split("/").pop();
                                     return `
                                         import ${component.name} from "/assets/elements/${path}";
@@ -73,5 +74,3 @@ function postHtmlSSRCustomElements(options) {
             })
     }
 };
-
-export default postHtmlSSRCustomElements;
