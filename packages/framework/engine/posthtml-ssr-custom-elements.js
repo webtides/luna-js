@@ -45,5 +45,22 @@ export default function postHtmlSSRCustomElements(upgradedElements = { }) {
 
             return node;
         });
+
+        tree.match({ tag: 'head' }, node => {
+            Object.keys(upgradedElements).forEach(key => {
+                const component = upgradedElements[key];
+                if (component.styles) {
+                    component.styles.forEach((style, index) => {
+                        node.content.push({
+                            tag: 'style',
+                            attrs: { id: `${paramCase(component.name)}${index}` },
+                            content: component.styles
+                        });
+                    });
+                }
+            });
+
+            return node;
+        });
     }
 };

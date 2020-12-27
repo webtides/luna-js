@@ -82,8 +82,8 @@ task(
                 changeMessage: 'CSS changed',
             },
             {
-                src: ['app/**/*.js'],
-                tasks: series('elements'),
+                src: ['app/**/*'],
+                tasks: series('compile', 'elements'),
                 changeMessage: 'Elements changed',
             },
             {

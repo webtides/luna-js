@@ -1,4 +1,5 @@
-import { StyledElement } from '@webtides/element-js/src/StyledElement';
+import {StyledElement} from '@webtides/element-js/src/StyledElement';
+import {getShadowParentOrBody} from "@webtides/element-js/src/util/DOMHelper";
 
 const isOnServer = () => {
     return (typeof process !== "undefined" && process.env.SSR);
@@ -20,7 +21,7 @@ export default class TemplateElement extends StyledElement {
         this._template = this._options.template;
 
         if (!isOnServer() && this._options.shadowRender) {
-            this.attachShadow({ mode: 'open' });
+            this.attachShadow({mode: 'open'});
         }
     }
 
@@ -47,7 +48,7 @@ export default class TemplateElement extends StyledElement {
             this.setAttribute('hydrate', 'true');
 
             if (!isOnServer() && this._options.shadowRender) {
-                this.requestUpdate({ notify: false }).then(() => {
+                this.requestUpdate({notify: false}).then(() => {
                     this.triggerHook('connected');
                 });
             }
@@ -58,7 +59,7 @@ export default class TemplateElement extends StyledElement {
 
             this.triggerHook('connected');
         } else {
-            this.requestUpdate({ notify: false }).then(() => {
+            this.requestUpdate({notify: false}).then(() => {
                 this.triggerHook('connected');
             });
         }
@@ -84,7 +85,7 @@ export default class TemplateElement extends StyledElement {
 
     // 3. we need to inject a different context for the template method to be able to switch from lit-html to something that runs in node
     renderTemplate() {
-        const template = this._template || this.template({ html });
+        const template = this._template || this.template({html});
         if (typeof template === 'string') {
             // just a plain string literal. no lit-html required
             this.getRoot().innerHTML = `${template}`;
@@ -97,8 +98,18 @@ export default class TemplateElement extends StyledElement {
         }
     }
 
-    template({ html }) {
+    template({html}) {
         return html``;
+    }
+
+    // custom polyfill for constructable stylesheets by appending styles to the end of an element
+    appendStyleSheets(styles) {
+        if (this.hasAttribute('ssr')) {
+            // Don't append stylesheets if the element was rendered on the server.
+            return;
+        }
+
+        super.appendStyleSheets(styles);
     }
 
     getRoot() {

@@ -13,8 +13,6 @@ const routes = ({ router }) => {
                 .use(ssr())
                 .process(page);
 
-            console.log(result.html);
-
             return response.send(result.html);
         });
 
