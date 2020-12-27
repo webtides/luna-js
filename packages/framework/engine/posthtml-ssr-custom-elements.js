@@ -2,89 +2,67 @@ import posthtml from 'posthtml';
 
 import {html, renderToString} from '@popeindustries/lit-html-server';
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
-import {loadComponents} from "./component-loader.js";
+import {loadCustomElements} from "./component-loader.js";
 import {paramCase} from "param-case";
+import {renderNodeAsCustomElement} from "./element-renderer";
 
 const componentsToInject = {};
 
-export default function postHtmlSSRCustomElements(upgradedComponents = { }) {
+export default function postHtmlSSRCustomElements(upgradedElements = { }) {
 
-    return function (tree) {
-        return loadComponents()
-            .then(components => {
+    const walkTree = (tree, customElements) => {
+        return new Promise((resolve) => {
+            let tasks = 0;
 
-                return new Promise((resolve) => {
-                    let tasks = 0;
+            tree.walk((node) => {
+                if (node.tag && node.tag.includes('-') && customElements[node.tag]) {
+                    tasks += 1;
 
-                    tree.walk((node) => {
-                        if (node.tag && node.tag.includes('-') && components[node.tag]) {
-                            tasks += 1;
+                    // instantiate the element class with the properties and attributes for rendering the template
+                    const component = customElements[node.tag];
+                    renderNodeAsCustomElement(node, component, upgradedElements)
+                        .then(node => {
+                            tasks -= 1;
+                            done();
+                        });
+                }
 
-                            // instantiate the element class with the properties and attributes for rendering the template
-                            const element = new (components[node.tag].element)();
-                            element.defineProperties({
-                                ...element.properties(),
-                                ...node.attrs,
-                            });
+                return node;
+            });
 
-                            const attributes = node.attrs ?? { };
-                            attributes["ssr"] = true;
+            done();
 
-                            node.attrs = attributes;
+            function done() {
+                if (tasks === 0) {
+                    resolve({tree, componentsToInject});
+                }
+            }
+        })
+    };
 
-                            upgradedComponents[node.tag] = (components[node.tag]);
+    return async function (originalTree) {
+        const customElements = await loadCustomElements();
+        const { tree, components } = await walkTree(originalTree, customElements);
 
-                            if (element._options.shadowRender) {
-                                // We cannot render the element in shadow root on the server.
+        tree.match({ tag: 'element-scripts' }, node => {
+            node.content = `<script type="module" src="/assets/elements/previous.js"></script>`;
+            node.content += `
+                <script type="module">
+                    ${Object.keys(upgradedElements)
+                        .map(key => {
+                            const component = upgradedElements[key];
+                            const path = component.relativePath.split("/").pop();
+                            return `
+                                import ${component.name} from "/assets/elements/${path}";
+                                customElements.define("${paramCase(component.name)}", ${component.name});
+                            `;
+                        })
+                        .join("\n")
+                    } 
+                </script>
+            `;
 
-                                tasks -= 1;
-                                done();
-
-                                return node;
-                            }
-
-                            renderToString(element.template({ html })).then(markup => {
-                                posthtml()
-                                    .use(postHtmlSSRCustomElements(upgradedComponents))
-                                    .process(markup, {}).then(result => {
-                                        node.content = result.tree;
-                                        tasks -= 1;
-                                        done();
-                                    });
-                            });
-                        }
-                        return node;
-                    })
-                    done();
-
-                    function done() {
-                        if (tasks === 0) resolve(tree, componentsToInject);
-                    }
-                })
-            })
-            .then((tree, components) => {
-                console.log(upgradedComponents);
-
-                tree.match({ tag: 'element-scripts' }, node => {
-                    node.content = `<script type="module" src="/assets/elements/previous.js"></script>`;
-                    node.content += `
-                        <script type="module">
-                            ${Object.keys(upgradedComponents)
-                                .map(key => {
-                                    const component = upgradedComponents[key];
-                                    const path = component.relativePath.split("/").pop();
-                                    return `
-                                        import ${component.name} from "/assets/elements/${path}";
-                                        customElements.define("${paramCase(component.name)}", ${component.name});
-                                    `;
-                                })
-                                .join("\n")
-                            } 
-                        </script>
-                    `;
-
-                    return node;
-                });
-            })
+            return node;
+        });
     }
 };

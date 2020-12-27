@@ -5,7 +5,7 @@ import {paramCase} from "param-case";
 
 let cachedComponents = false;
 
-const loadComponents = async () => {
+const loadCustomElements = async () => {
     if (!cachedComponents) {
         const components = { };
 
@@ -31,5 +31,5 @@ const loadComponents = async () => {
 };
 
 export {
-    loadComponents
+    loadCustomElements
 }
