@@ -2,7 +2,7 @@
   "name": "moon.js",
   "version": "0.1.0",
   "description": "",
-  "main": ".build/index.js",
+  "main": ".build/packages/index.js",
   "module": "index.js",
   "engines": {
     "node": ">=14.13.0"

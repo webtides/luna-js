@@ -7,7 +7,7 @@ import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 
 const settings = {
-    buildDirectory: '.build',
+    buildDirectory: '.build/packages',
     assetsDirectory: '.build/packages'
 };
 
