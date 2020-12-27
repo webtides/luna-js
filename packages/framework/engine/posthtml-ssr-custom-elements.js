@@ -27,7 +27,21 @@ export default function postHtmlSSRCustomElements(upgradedComponents = { }) {
                                 ...node.attrs,
                             });
 
+                            const attributes = node.attrs ?? { };
+                            attributes["ssr"] = true;
+
+                            node.attrs = attributes;
+
                             upgradedComponents[node.tag] = (components[node.tag]);
+
+                            if (element._options.shadowRender) {
+                                // We cannot render the element in shadow root on the server.
+
+                                tasks -= 1;
+                                done();
+
+                                return node;
+                            }
 
                             renderToString(element.template({ html })).then(markup => {
                                 posthtml()

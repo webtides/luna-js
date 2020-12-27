@@ -56,6 +56,9 @@ task('serve', (cb) => {
         script: './.build/packages/framework/entry.js',
         watch: ['./.build/**/*'],
         nodeArgs: ['--inspect=3003'],
+        env: {
+            SSR: true
+        }
     }).on('start', function () {
         if (!started) {
             cb();

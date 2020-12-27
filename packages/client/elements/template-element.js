@@ -1,6 +1,29 @@
 import { StyledElement } from '@webtides/element-js/src/StyledElement';
 
+const isOnServer = () => {
+    return (typeof process !== "undefined" && process.env.SSR);
+}
+
 export default class TemplateElement extends StyledElement {
+
+    constructor(options) {
+        super({
+            deferUpdate: false,
+            shadowRender: false,
+            styles: [],
+            adoptGlobalStyles: true,
+            mutationObserverOptions: {
+                childList: false,
+            },
+            ...options,
+        });
+        this._template = this._options.template;
+
+        if (!isOnServer() && this._options.shadowRender) {
+            this.attachShadow({ mode: 'open' });
+        }
+    }
+
     // 1. we need to skip initial render when we already have rendered server side
     connectedCallback() {
         // define all attributes to "this" as properties
@@ -16,15 +39,28 @@ export default class TemplateElement extends StyledElement {
         this.defineObserver();
 
         if (this.hasAttribute('ssr')) {
+
+            this.registerEventsAndRefs();
+
+            this.triggerHook('connected');
+
+            this.setAttribute('hydrate', 'true');
+
+            if (!isOnServer() && this._options.shadowRender) {
+                this.requestUpdate({ notify: false }).then(() => {
+                    this.triggerHook('connected');
+                });
+            }
+
         } else if (this.hasAttribute('defer-update') || this._options.deferUpdate) {
             // don't updates/render, but register refs and events
             this.registerEventsAndRefs();
 
             this.triggerHook('connected');
         } else {
-            this.registerEventsAndRefs();
-            this.triggerHook('connected');
-            this.setAttribute('hydrated', 'true');
+            this.requestUpdate({ notify: false }).then(() => {
+                this.triggerHook('connected');
+            });
         }
     }
 
@@ -63,5 +99,9 @@ export default class TemplateElement extends StyledElement {
 
     template({ html }) {
         return html``;
+    }
+
+    getRoot() {
+        return this.shadowRoot !== null ? this.shadowRoot : this;
     }
 }
