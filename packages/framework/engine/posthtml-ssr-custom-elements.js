@@ -1,43 +1,24 @@
-import posthtml from 'posthtml';
-
-import {html, renderToString} from '@popeindustries/lit-html-server';
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {loadCustomElements} from "./component-loader.js";
 import {paramCase} from "param-case";
 import {renderNodeAsCustomElement} from "./element-renderer";
 
-const componentsToInject = {};
-
 export default function postHtmlSSRCustomElements(upgradedElements = { }) {
 
-    const walkTree = (tree, customElements) => {
-        return new Promise((resolve) => {
-            let tasks = 0;
+    const walkTree = async (tree, customElements) => {
+        const renderingPromises = [];
 
-            tree.walk((node) => {
-                if (node.tag && node.tag.includes('-') && customElements[node.tag]) {
-                    tasks += 1;
-
-                    // instantiate the element class with the properties and attributes for rendering the template
-                    const component = customElements[node.tag];
-                    renderNodeAsCustomElement(node, component, upgradedElements)
-                        .then(node => {
-                            tasks -= 1;
-                            done();
-                        });
-                }
-
-                return node;
-            });
-
-            done();
-
-            function done() {
-                if (tasks === 0) {
-                    resolve({tree, componentsToInject});
-                }
+        tree.walk((node) => {
+            if (node.tag && node.tag.includes('-') && customElements[node.tag]) {
+                // instantiate the element class with the properties and attributes for rendering the template
+                const component = customElements[node.tag];
+                renderingPromises.push(renderNodeAsCustomElement(node, component, upgradedElements));
             }
-        })
+            return node;
+        });
+
+        await Promise.all(renderingPromises);
+
+        return { tree };
     };
 
     return async function (originalTree) {
