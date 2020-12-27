@@ -2,13 +2,14 @@
   "name": "previous.js",
   "version": "0.1.0",
   "description": "",
-  "main": "packages/framework/index.js",
+  "main": ".build/index.js",
+  "module": "index.js",
   "engines": {
     "node": ">=14.13.0"
   },
   "scripts": {
-    "start": "SSR=true NODE_PATH=. babel-node --harmony ./packages/framework/entry.js",
-    "compile": "npx babel packages --out-dir .build/packages",
+    "preinstall": "npm run compile",
+    "compile": "rollup --config rollup.config.server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eddy Löwen, Lukas Schardt",
@@ -60,6 +61,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-postcss": "^3.1.8",
+    "rollup-plugin-rename": "^1.0.1",
     "rollup-plugin-styles": "^3.11.0",
     "rollup-plugin-uglify": "^6.0.4",
     "rollup-stream": "^1.24.1"

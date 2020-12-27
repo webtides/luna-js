@@ -5,9 +5,10 @@ import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html.js";
 
+import baseLayoutFactory from "../layouts/base.js";
+
 const getLayout = async ({context}) => {
-    const layoutFactory = (await import(path.resolve(`${config.frameworkDirectory}/layouts/base.js`))).default;
-    return renderToString(layoutFactory({html, context}));
+    return renderToString(baseLayoutFactory({html, context}));
 };
 
 const loadSinglePage = async ({file}) => {

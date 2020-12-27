@@ -71,14 +71,16 @@ export default async (htmlDocument) => {
     await parseHtmlDocument($, upgradedElements);
 
     $("body")
-        .append(`<script type="module" src="/assets/packages/client/previous.js"></script>`)
+        .append(`<script type="module" src="/assets/previous.js"></script>`)
         .append(`
         <script type="module">
             ${Object.keys(upgradedElements)
             .map(key => {
                 const component = upgradedElements[key];
+                const componentPath = component.relativePath.split("/").pop();
+                
                 return `
-                        import ${component.name} from "/assets/app/views/components${component.relativePath}";
+                        import ${component.name} from "/assets/${componentPath}";
                         customElements.define("${paramCase(component.name)}", ${component.name});
                     `;
             })

@@ -5,18 +5,14 @@ import postcss from 'rollup-plugin-postcss';
 import babel from '@rollup/plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 
-const settings = {
-    buildDirectory: '.build',
-    assetsDirectory: '.build/public/assets'
-};
+const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 export default {
-    input: glob.sync(['packages/client/previous.js', 'app/views/components/**/*.js']),
+    input: glob.sync([`${__dirname}/packages/client/previous.js`, settings.pagesDirectory, settings.componentsDirectory ]),
     output: {
         dir: settings.assetsDirectory,
         entryFileNames: '[name].js',
         sourcemap: true,
-        preserveModules: true,
         format: 'es'
     },
     plugins: [

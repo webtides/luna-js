@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 
 import glob from "glob-all";
 import postcss from 'rollup-plugin-postcss';
@@ -6,13 +7,10 @@ import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 
-const settings = {
-    buildDirectory: '.build',
-    assetsDirectory: '.build/packages'
-};
+const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 export default {
-    input: glob.sync(['index.js', 'packages/**/*.js']),
+    input: glob.sync([ settings.pagesDirectory, settings.componentsDirectory ]),
     output: {
         dir: settings.buildDirectory,
         entryFileNames: '[name].js',
