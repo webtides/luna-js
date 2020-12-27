@@ -17,7 +17,6 @@ export default {
         dir: settings.buildDirectory,
         entryFileNames: '[name].js',
         sourcemap: true,
-        preserveModules: true,
         format: 'cjs'
     },
     external: [

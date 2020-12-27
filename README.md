@@ -1,29 +1,35 @@
-# element-js-ssr-example
+# moon.js 
+> SSR framework for custom elements.
 
-## Requirements
 
-* Node >="v14.13.0"
+## Installation
 
-Because we need to use and load the same ES modules in the browser and in Node.
+moon.js should be installed as a npm dependency. To install the module
+just run `npm install --save moon.js`
 
-## Stack
-* express
-* posthtml
-* lit-html-server
-* @webtides/element-js
-* @webtides/tasks
+## Usage
 
-## Getting started
+The framework can be used without much configuration needed. To get started
+you have to follow these steps:
+
+
+  -  Create a `moon.config.js` file next to your `package.json` with the following
+contents.
+```
+module.exports = {
+    buildDirectory: ".build",
+    assetsDirectory: ".build/public/assets",
+
+    pagesDirectory: "app/pages/**/*.js",
+    componentsDirectory: "app/components/**/*.js"
+}
+```
+
+  - To build your server and client bundles, moon.js ships with two different
+rollup configurations. `rollup.config.components.js` and `rollup.config.client.js`.  
+You could add the build steps to your `package.json`
 
 ```
-npm install
-npm start
+    "server-components": "rollup --config node_modules/moon.js/rollup.config.components.js",
+    "client-components": "rollup --config node_modules/moon.js/rollup.config.client.js"
 ```
-
-It will start a node server on http://localhost:3001 and watch for changes in the /src directory and re-compile everything and update the server.
-
-## TODOs
-
-- [x] Render element-js light DOM templates server side
-- [ ] Add style blocks when rendering server side
-- [ ] Try rendering shadow DOM server side: https://web.dev/declarative-shadow-dom/ 

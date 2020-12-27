@@ -71,7 +71,7 @@ export default async (htmlDocument) => {
     await parseHtmlDocument($, upgradedElements);
 
     $("body")
-        .append(`<script type="module" src="/assets/previous.js"></script>`)
+        .append(`<script type="module" src="/assets/moon.js"></script>`)
         .append(`
         <script type="module">
             ${Object.keys(upgradedElements)

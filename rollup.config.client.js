@@ -8,7 +8,7 @@ import resolve from 'rollup-plugin-node-resolve';
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 export default {
-    input: glob.sync([`${__dirname}/packages/client/previous.js`, settings.pagesDirectory, settings.componentsDirectory ]),
+    input: glob.sync([`${__dirname}/packages/client/moon.js`, settings.pagesDirectory, settings.componentsDirectory ]),
     output: {
         dir: settings.assetsDirectory,
         entryFileNames: '[name].js',
