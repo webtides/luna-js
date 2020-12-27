@@ -1,6 +1,5 @@
 import {loadPages, loadSinglePage} from "./pages-loader.js";
-import posthtml from 'posthtml'
-import ssr from '../engine/posthtml-ssr-custom-elements.js';
+import ssr from "../engine/element-renderer.js";
 
 const routes = ({ router }) => {
     const pages = loadPages();
@@ -8,12 +7,7 @@ const routes = ({ router }) => {
     pages.forEach(({ file, name, relativePath }) => {
         router.get(name, async (request, response) => {
             const page = await loadSinglePage({file});
-
-            const result = await posthtml()
-                .use(ssr())
-                .process(page);
-
-            return response.send(result.html);
+            return response.send(await ssr(page));
         });
 
         console.log(`Registered route ${name}.`);

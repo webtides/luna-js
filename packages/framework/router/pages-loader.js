@@ -3,7 +3,7 @@ import config from '../config.js';
 
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
+import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html.js";
 
 const getLayout = async ({context}) => {
     const layoutFactory = (await import(path.resolve(`${config.frameworkDirectory}/layouts/base.js`))).default;
