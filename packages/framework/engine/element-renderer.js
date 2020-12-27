@@ -10,7 +10,7 @@ const extractStyles = (element) => {
     return false;
 };
 
-const renderNodeAsCustomElement = async (node) => {
+const renderNodeAsCustomElement = async (node, upgradedElements) => {
     const tag = node.tagName;
     const component = await loadCustomElement(tag);
 
@@ -30,7 +30,7 @@ const renderNodeAsCustomElement = async (node) => {
     component.styles = extractStyles(element);
 
     const markup = await renderToString(element.template({html}));
-    const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false));
+    const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false), upgradedElements);
 
     return {
         attributes,
@@ -71,15 +71,14 @@ export default async (htmlDocument) => {
     await parseHtmlDocument($, upgradedElements);
 
     $("body")
-        .append(`<script type="module" src="/assets/elements/previous.js"></script>`)
+        .append(`<script type="module" src="/assets/packages/client/previous.js"></script>`)
         .append(`
         <script type="module">
             ${Object.keys(upgradedElements)
             .map(key => {
                 const component = upgradedElements[key];
-                const path = component.relativePath.split("/").pop();
                 return `
-                        import ${component.name} from "/assets/elements/${path}";
+                        import ${component.name} from "/assets/app/views/components${component.relativePath}";
                         customElements.define("${paramCase(component.name)}", ${component.name});
                     `;
             })

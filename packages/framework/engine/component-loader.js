@@ -7,11 +7,13 @@ import {existsSync} from "fs";
 let cachedComponents = false;
 
 const loadCustomElement = async (tagName) => {
-    const file = `${config.componentsDirectory}/${tagName}/${tagName}.js`;
+    const files = glob.sync(`${config.componentsDirectory}/**/${tagName}.js`);
 
-    if (!existsSync(file)) {
+    if (files.length === 0) {
         return false;
     }
+
+    const file = files[0];
 
     const module = await import(path.resolve(file));
     const relativePath = file.substring(config.componentsDirectory.length);

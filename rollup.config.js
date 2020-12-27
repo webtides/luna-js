@@ -11,11 +11,12 @@ const settings = {
 };
 
 export default {
-    input: glob.sync(['packages/client/**/*.js', 'app/views/components/**/*.js']),
+    input: glob.sync(['packages/client/previous.js', 'app/views/components/**/*.js']),
     output: {
-        dir: settings.assetsDirectory + '/elements',
+        dir: settings.assetsDirectory,
         entryFileNames: '[name].js',
         sourcemap: true,
+        preserveModules: true,
         format: 'es'
     },
     plugins: [
