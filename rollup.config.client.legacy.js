@@ -21,7 +21,7 @@ export default {
         postcss({ inject: false }),
         resolve(),
         babel({
-            configFile: path.resolve(__dirname, 'babel.config.client.js')
+            configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
         })
     ]
 }

@@ -1,4 +1,9 @@
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html.js";
+const scripts = ({ html }) => {
+    return html`
+        <script src="/libraries/webcomponents-bundle.js" nomodule></script>
+        <script src="/assets/bundle.legacy.js" nomodule></script>
+    `;
+}
 
 const template = ({ html, context }) => {
     return html`
@@ -9,15 +14,18 @@ const template = ({ html, context }) => {
                 ${context.head ?? ""}
             </head>
             <body>
-                ${unsafeHTML(context.page ?? "")}
+                ${context.page ?? ""}
+
+                ${context.footer ?? ""}
                 
-                <script src="/libraries/webcomponents-bundle.js" nomodule></script>
-                <script src="/assets/bundle.legacy.js" nomodule></script>
-                
-                ${unsafeHTML(context.footer ?? "")}
+                ${scripts({ html })}
             </body>
         </html>
     `;
 };
+
+export {
+    scripts
+}
 
 export default template;

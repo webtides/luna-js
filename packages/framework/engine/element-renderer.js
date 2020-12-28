@@ -10,13 +10,35 @@ const extractStyles = (element) => {
     return false;
 };
 
+/**
+ * Takes a single component object and renders the element.
+ * Fetches all dynamic properties for the component & loads
+ * the static properties.
+ *
+ * @param component ({ element: * })
+ * @param attributes
+ *
+ * @returns {Promise<{markup: string, element: *}>}
+ */
 const renderComponent = async (component, attributes = {}) => {
     attributes["ssr"] = true;
 
     const element = new (component.element)();
-    element.defineProperties({
+
+    const dynamicProperties = await element.loadDynamicProperties();
+
+    const properties = {
         ...element.properties(),
         ...attributes,
+        ...(component.element.staticProperties ?? { }),
+        ...dynamicProperties,
+    };
+
+    element.defineProperties(properties);
+
+    // Define the attributes so that they can accessed on the client.
+    Object.keys(properties).forEach(key => {
+        attributes[paramCase(key)] = JSON.stringify(properties[key]);
     });
 
     component.styles = extractStyles(element);
@@ -25,6 +47,14 @@ const renderComponent = async (component, attributes = {}) => {
     return { markup, element };
 };
 
+/**
+ * Takes a cheerio-node and tries to match it with a custom element.
+ * Recursively renders & upgrades all child elements.
+ *
+ * @param node Node
+ * @param upgradedElements *
+ * @returns {Promise<boolean|{component: ({file: string, relativePath: string, name: *, element: *}|boolean), innerHTML: (jQuery|string), attributes: (*|{})}>}
+ */
 const renderNodeAsCustomElement = async (node, upgradedElements) => {
     const tag = node.tagName;
     const component = await loadSingleComponentByTagName(tag);
@@ -46,7 +76,13 @@ const renderNodeAsCustomElement = async (node, upgradedElements) => {
     };
 };
 
-
+/**
+ * Takes a cheerio object and tries to renders all available custom elements.
+ *
+ * @param $
+ * @param upgradedElements
+ * @returns {Promise<jQuery|HTMLElement>}
+ */
 const parseHtmlDocument = async ($, upgradedElements) => {
     await Promise.all($("*").map(async (index, node) => {
         if (node.tagName.includes("-")) {
@@ -71,14 +107,7 @@ const parseHtmlDocument = async ($, upgradedElements) => {
     return $;
 };
 
-export {renderComponent};
-
-export default async (htmlDocument) => {
-    const $ = cheerio.load(htmlDocument, null, true);
-
-    const upgradedElements = {};
-    await parseHtmlDocument($, upgradedElements);
-
+const appendUpgradedElementsToDocument = ($, upgradedElements) => {
     $("body")
         .append(`<script type="module" src="/assets/moon.js"></script>`)
         .append(`
@@ -89,14 +118,17 @@ export default async (htmlDocument) => {
                 const componentPath = component.relativePath.split("/").pop();
 
                 return `
-                        import ${component.name} from "/assets/${componentPath}";
-                        customElements.define("${paramCase(component.name)}", ${component.name});
-                    `;
+                    import ${component.name} from "/assets/${componentPath}";
+                    customElements.define("${paramCase(component.name)}", ${component.name});
+                `;
             })
             .join("\n")
         }
         </script>
     `);
+};
+
+const appendStylesOfUpgradedElementsToHead = ($, upgradedElements) => {
 
     const $head = $("head");
 
@@ -108,6 +140,19 @@ export default async (htmlDocument) => {
             });
         }
     });
+
+};
+
+export {renderComponent};
+
+export default async (htmlDocument) => {
+    const $ = cheerio.load(htmlDocument, null, true);
+
+    const upgradedElements = {};
+    await parseHtmlDocument($, upgradedElements);
+
+    appendUpgradedElementsToDocument($, upgradedElements);
+    appendStylesOfUpgradedElementsToHead($, upgradedElements);
 
     return $.html();
 };

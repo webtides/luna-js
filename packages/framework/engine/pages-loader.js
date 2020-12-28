@@ -6,6 +6,7 @@ import glob from "glob";
 
 import baseLayoutFactory from "../../client/layouts/base.js";
 import {renderComponent} from "./element-renderer";
+import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 
 const getLayout = async (factory, {context}) => {
     return renderToString(factory({html, context}));
@@ -21,7 +22,9 @@ const loadSinglePage = async ({file}) => {
         markup = await renderToString(page.default({ html }));
 
         if (page.layout) {
-            layoutFactory = page.layout;
+            // TODO: we really need to find a better way.
+            const layoutModule = await import(path.resolve(`.build/layouts/${page.layout}.js`));
+            layoutFactory = layoutModule.default;
         }
     } else {
         // We are possibly dealing with a custom element here.
@@ -33,13 +36,14 @@ const loadSinglePage = async ({file}) => {
         markup = result.markup;
 
         if (result.element.layout) {
-            layoutFactory = result.element.layout;
+            const layoutModule = await import(path.resolve(`.build/layouts/${result.element.layout}.js`));
+            layoutFactory = layoutModule.default;
         }
     }
 
     return getLayout(layoutFactory, {
         context: {
-            page: markup
+            page: html`${unsafeHTML(markup)}`
         }
     });
 };

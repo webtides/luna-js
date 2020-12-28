@@ -1,5 +1,4 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
-import {getShadowParentOrBody} from "@webtides/element-js/src/util/DOMHelper";
 
 const isOnServer = () => {
     return (typeof process !== "undefined" && process.env.SSR);
@@ -114,5 +113,35 @@ export default class TemplateElement extends StyledElement {
 
     getRoot() {
         return this.shadowRoot !== null ? this.shadowRoot : this;
+    }
+
+    /**
+     * This will be loaded each time the custom element is found on the page.
+     * Make sure to really only load data which is unique for every element on the page.
+     *
+     * Here we can make calls to the database or any other service with data we require on each page load.
+     *
+     * If we are statically exporting the site, these properties won't ever be loaded.
+     *
+     * @returns {Promise<{}>}   An object which holds the dynamically loaded data.
+     *                          Make sure that each key returned by this method is also present
+     *                          inside your {@link properties() } method. If a key is not
+     *                          present, it won't be passed to the client.
+     */
+    async loadDynamicProperties() {
+        return {};
+    }
+
+    /**
+     * These properties will be loaded once as the server starts up, or if
+     * we want to statically export our site.
+     *
+     * @returns {Promise<{}>}   An object which holds the statically loaded data.
+     *                          Make sure that each key returned by this method is also present
+     *                          inside your {@link properties() } method. If a key is not
+     *                          present, it won't be passed to the client.
+     */
+    static async loadStaticProperties() {
+        return {};
     }
 }

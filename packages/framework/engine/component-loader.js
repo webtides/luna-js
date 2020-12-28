@@ -1,29 +1,48 @@
 import glob from "glob";
 import config from "../config.js";
 import path from "path";
+import {paramCase} from "param-case";
+
+const allAvailableComponents = { };
+
+const registerAvailableComponents = async () => {
+    const files = glob.sync(`${config.componentsDirectory}/**/*.js`);
+
+    await Promise.all(files.map(async (file) => {
+        const module = await import(path.resolve(file));
+
+        const relativePath = file.substring(config.componentsDirectory.length);
+        const element = module.default;
+
+        element.staticProperties = await element.loadStaticProperties();
+
+        const tagName = paramCase(element.name);
+
+        allAvailableComponents[tagName] = {
+            element,
+            tagName,
+            name: element.name,
+            file,
+            relativePath
+        }
+    }));
+};
+
+const getAvailableComponents = () => allAvailableComponents;
 
 const loadSingleComponentByTagName = async (tagName) => {
-    const files = glob.sync(`${config.componentsDirectory}/**/${tagName}.js`);
+    const components = getAvailableComponents();
 
-    if (files.length === 0) {
-        return false;
+    if (components[tagName]) {
+        return components[tagName];
     }
 
-    const file = files[0];
-
-    const module = await import(path.resolve(file));
-    const relativePath = file.substring(config.componentsDirectory.length);
-
-    const element = module.default;
-    return {
-        element,
-        name: element.name,
-        file,
-        relativePath
-    };
+    return false;
 };
 
 
 export {
-    loadSingleComponentByTagName
+    loadSingleComponentByTagName,
+    registerAvailableComponents,
+    getAvailableComponents
 }
