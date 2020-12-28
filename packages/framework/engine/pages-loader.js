@@ -7,24 +7,40 @@ import glob from "glob";
 import baseLayoutFactory from "../layouts/base.js";
 import {renderComponent} from "./element-renderer";
 
-const getLayout = async ({context}) => {
-    return renderToString(baseLayoutFactory({html, context}));
+const getLayout = async (factory, {context}) => {
+    return renderToString(factory({html, context}));
 };
 
 const loadSinglePage = async ({file}) => {
-    let page = (await import(path.resolve(file))).default;
+    const page = (await import(path.resolve(file)));
 
-    if (typeof page !== "string") {
+    let markup = "";
+    let layoutFactory = baseLayoutFactory;
+
+    if (typeof page.default.prototype?.connectedCallback === "undefined") {
+        markup = await renderToString(page.default({ html }));
+
+        if (page.layout) {
+            layoutFactory = page.layout;
+        }
+    } else {
         // We are possibly dealing with a custom element here.
         const component = {
-            element: page
+            element: page.default
         };
 
-        page = (await renderComponent(component, {})).markup;
+        const result = (await renderComponent(component, {}));
+        markup = result.markup;
+
+        if (result.element.layout) {
+            layoutFactory = result.element.layout;
+        }
     }
 
-    return getLayout({
-        context: {page}
+    return getLayout(layoutFactory, {
+        context: {
+            page: markup
+        }
     });
 };
 

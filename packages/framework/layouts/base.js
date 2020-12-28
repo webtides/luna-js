@@ -6,12 +6,15 @@ const template = ({ html, context }) => {
         <html lang="">
             <head>
                 <title>${context.title ?? ""}</title>
+                ${context.head ?? ""}
             </head>
             <body>
                 ${unsafeHTML(context.page ?? "")}
                 
                 <script src="/libraries/webcomponents-bundle.js" nomodule></script>
                 <script src="/assets/bundle.legacy.js" nomodule></script>
+                
+                ${unsafeHTML(context.footer ?? "")}
             </body>
         </html>
     `;
