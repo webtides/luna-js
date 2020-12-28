@@ -8,7 +8,7 @@
     "node": ">=14.13.0"
   },
   "scripts": {
-    "preinstall": "npm run babel && npm run compile",
+    "preinstall": "gulp prepare",
     "babel": "npx babel packages --out-dir .build/packages",
     "compile": "rollup --config rollup.config.server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
