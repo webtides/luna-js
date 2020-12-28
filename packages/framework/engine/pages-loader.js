@@ -4,7 +4,7 @@ import config from '../config.js';
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
 
-import baseLayoutFactory from "../layouts/base.js";
+import baseLayoutFactory from "../../client/layouts/base.js";
 import {renderComponent} from "./element-renderer";
 
 const getLayout = async (factory, {context}) => {
