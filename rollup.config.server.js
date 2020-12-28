@@ -7,12 +7,11 @@ import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 
 const settings = {
-    buildDirectory: '.build/packages',
-    assetsDirectory: '.build/packages'
+    buildDirectory: '.build',
 };
 
 export default {
-    input: glob.sync(['index.js', 'packages/**/*.js']),
+    input: "index.js",
     output: {
         dir: settings.buildDirectory,
         entryFileNames: '[name].js',
