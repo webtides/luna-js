@@ -2,7 +2,6 @@ import glob from "glob";
 import config from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
-import {existsSync} from "fs";
 
 let cachedComponents = false;
 
@@ -33,9 +32,7 @@ const loadCustomElements = async () => {
 
         await Promise.all(
             glob.sync(`${config.componentsDirectory}/**/*.js`).map(async (file) => {
-                console.log(file);
                 const module = await import(path.resolve(file));
-                console.log(module);
                 const relativePath = file.substring(config.componentsDirectory.length);
 
                 const element = module.default;

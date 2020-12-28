@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs";
-
 import glob from "glob-all";
 import postcss from 'rollup-plugin-postcss';
 import resolve from '@rollup/plugin-node-resolve';
@@ -30,6 +29,6 @@ export default {
         babel({
             configFile: path.resolve(__dirname, 'babel.config.js')
         }),
-        json(),
+        json()
     ]
 }

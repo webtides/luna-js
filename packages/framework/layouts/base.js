@@ -1,5 +1,7 @@
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html.js";
 
+
+
 const template = ({ html, context }) => {
     return html`
         <!doctype html>
@@ -11,6 +13,7 @@ const template = ({ html, context }) => {
                 ${unsafeHTML(context.page ?? "")}
                 
                 <element-scripts></element-scripts>
+                <script src="/libraries/es6-module-loader.js" nomodule></script>
             </body>
         </html>
     `;

@@ -31,6 +31,6 @@ export default {
         babel({
             configFile: path.resolve(__dirname, 'babel.config.js')
         }),
-        json(),
+        json()
     ]
 }
