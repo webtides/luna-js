@@ -19,4 +19,4 @@ const libraries = () => {
         .pipe(gulpCopy(path.join(settings.publicDirectory, "libraries"), {prefix: 5}))
 };
 
-gulp.task("build", gulp.parallel(buildServerComponents, buildClientComponents, librariesA));
+gulp.task("build", gulp.parallel(buildServerComponents, buildClientComponents, libraries));
