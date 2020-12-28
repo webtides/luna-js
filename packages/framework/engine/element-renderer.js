@@ -1,6 +1,6 @@
 import {paramCase} from "param-case";
 import cheerio from "cheerio";
-import {loadCustomElement} from "./component-loader";
+import {loadSingleComponentByTagName} from "./component-loader";
 import {html, renderToString} from "@popeindustries/lit-html-server";
 
 const extractStyles = (element) => {
@@ -10,26 +10,33 @@ const extractStyles = (element) => {
     return false;
 };
 
-const renderNodeAsCustomElement = async (node, upgradedElements) => {
-    const tag = node.tagName;
-    const component = await loadCustomElement(tag);
-
-    if (!component) {
-        return false;
-    }
-
-    const attributes = node.attributes || { };
+const renderComponent = async (component, attributes = {}) => {
     attributes["ssr"] = true;
 
     const element = new (component.element)();
     element.defineProperties({
         ...element.properties(),
-        ...node.attributes,
+        ...attributes,
     });
 
     component.styles = extractStyles(element);
 
     const markup = await renderToString(element.template({html}));
+    return { markup, element };
+};
+
+const renderNodeAsCustomElement = async (node, upgradedElements) => {
+    const tag = node.tagName;
+    const component = await loadSingleComponentByTagName(tag);
+
+    if (!component) {
+        return false;
+    }
+
+    const attributes = node.attributes || {};
+
+    const { markup, element } = await renderComponent(component, attributes);
+
     const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false), upgradedElements);
 
     return {
@@ -50,7 +57,7 @@ const parseHtmlDocument = async ($, upgradedElements) => {
                 return;
             }
 
-            const { component, attributes, innerHTML } = result;
+            const {component, attributes, innerHTML} = result;
 
             const $node = $(node);
             $node.html(innerHTML);
@@ -64,10 +71,12 @@ const parseHtmlDocument = async ($, upgradedElements) => {
     return $;
 };
 
+export {renderComponent};
+
 export default async (htmlDocument) => {
     const $ = cheerio.load(htmlDocument, null, true);
 
-    const upgradedElements = { };
+    const upgradedElements = {};
     await parseHtmlDocument($, upgradedElements);
 
     $("body")
@@ -78,7 +87,7 @@ export default async (htmlDocument) => {
             .map(key => {
                 const component = upgradedElements[key];
                 const componentPath = component.relativePath.split("/").pop();
-                
+
                 return `
                         import ${component.name} from "/assets/${componentPath}";
                         customElements.define("${paramCase(component.name)}", ${component.name});

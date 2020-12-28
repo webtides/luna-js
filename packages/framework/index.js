@@ -10,5 +10,6 @@ app.use(express.static('.build/public'));
 routes({router: app});
 
 app.listen(port, () => {
-    console.log(`element-js server listening at: http://localhost:${port}`)
-})
+    console.log(`moon.js listening at: http://localhost:${port}`)
+});
+

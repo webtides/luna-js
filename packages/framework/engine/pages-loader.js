@@ -3,9 +3,9 @@ import config from '../config.js';
 
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html.js";
 
 import baseLayoutFactory from "../layouts/base.js";
+import {renderComponent} from "./element-renderer";
 
 const getLayout = async ({context}) => {
     return renderToString(baseLayoutFactory({html, context}));
@@ -16,8 +16,11 @@ const loadSinglePage = async ({file}) => {
 
     if (typeof page !== "string") {
         // We are possibly dealing with a custom element here.
-        const pageElement = new page();
-        page = await renderToString(unsafeHTML(pageElement.template({html})));
+        const component = {
+            element: page
+        };
+
+        page = (await renderComponent(component, {})).markup;
     }
 
     return getLayout({
