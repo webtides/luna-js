@@ -54,6 +54,7 @@
     "core-js": "^3.8.1",
     "gulp": "^4.0.2",
     "gulp-copy": "^4.0.1",
+    "gulp-nodemon": "^2.5.0",
     "gulp-run": "^1.7.1",
     "postcss": "^8.2.1",
     "rollup": "^2.35.1",
