@@ -23,7 +23,7 @@ const loadSinglePage = async ({file}) => {
 
         if (page.layout) {
             // TODO: we really need to find a better way.
-            const layoutModule = await import(path.resolve(`.build/layouts/${page.layout}.js`));
+            const layoutModule = await import(path.resolve(`${config.layoutsDirectory}/${page.layout}.js`));
             layoutFactory = layoutModule.default;
         }
     } else {
@@ -36,7 +36,7 @@ const loadSinglePage = async ({file}) => {
         markup = result.markup;
 
         if (result.element.layout) {
-            const layoutModule = await import(path.resolve(`.build/layouts/${result.element.layout}.js`));
+            const layoutModule = await import(path.resolve(`${config.layoutsDirectory}/${result.element.layout}.js`));
             layoutFactory = layoutModule.default;
         }
     }

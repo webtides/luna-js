@@ -1,6 +1,6 @@
 import {paramCase} from "param-case";
 import cheerio from "cheerio";
-import {loadSingleComponentByTagName} from "./component-loader";
+import {getAvailableComponents, loadSingleComponentByTagName} from "./component-loader";
 import {html, renderToString} from "@popeindustries/lit-html-server";
 
 const extractStyles = (element) => {
@@ -63,6 +63,13 @@ const renderNodeAsCustomElement = async (node, upgradedElements) => {
         return false;
     }
 
+    if (component.element.disableSSR) {
+        return {
+            component,
+            noSSR: true
+        }
+    }
+
     const attributes = node.attributes || {};
 
     const { markup, element } = await renderComponent(component, attributes);
@@ -90,6 +97,11 @@ const parseHtmlDocument = async ($, upgradedElements) => {
             const result = await renderNodeAsCustomElement(node, upgradedElements);
 
             if (!result) {
+                return;
+            }
+
+            if (result.noSSR) {
+                upgradedElements[node.tagName] = result.component;
                 return;
             }
 
