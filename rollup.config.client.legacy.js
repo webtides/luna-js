@@ -13,7 +13,7 @@ const componentsDirectory = path.join(process.cwd(), settings.componentsDirector
 export default {
     input: path.join(__dirname, ".build/entry.legacy.js"),
     output: {
-        dir: settings.assetsDirectory,
+        dir: settings.assets.buildDirectory,
         sourcemap: true,
         format: 'iife'
     },

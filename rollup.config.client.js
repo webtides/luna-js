@@ -1,24 +1,34 @@
 import path from "path";
 import glob from "glob-all";
-import postcss from 'rollup-plugin-postcss';
 import babel from '@rollup/plugin-babel';
-import resolve from 'rollup-plugin-node-resolve';
-import {plugins} from "./rollup.config.base";
+import {pluginPostcss, plugins} from "./rollup.config.base";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
-export default {
-    input: glob.sync([`${__dirname}/packages/client/moon.js`, settings.pagesDirectory, settings.componentsDirectory ]),
-    output: {
-        dir: settings.assetsDirectory,
-        entryFileNames: '[name].js',
-        sourcemap: true,
-        format: 'es'
+export default [
+    {
+        input: `${__dirname}/packages/client/styles/base.css`,
+        output: {
+            dir: settings.assets.buildDirectory,
+            entryFileNames: 'empty.js'
+        },
+        plugins: [
+            pluginPostcss({ extract: settings.assets.baseCss })
+        ]
     },
-    plugins: [
-        ...plugins(),
-        babel({
-            configFile: path.resolve(__dirname, 'babel.config.client.js')
-        })
-    ]
-}
+    {
+        input: glob.sync([`${__dirname}/packages/client/moon.js`, `${__dirname}/packages/client/styles/components.css`, settings.pagesDirectory, settings.componentsDirectory]),
+        output: {
+            dir: settings.assets.buildDirectory,
+            entryFileNames: '[name].js',
+            sourcemap: true,
+            format: 'es'
+        },
+        plugins: [
+            ...plugins(),
+            babel({
+                configFile: path.resolve(__dirname, 'babel.config.client.js')
+            })
+        ]
+    }
+]

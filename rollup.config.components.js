@@ -5,6 +5,7 @@ import postcss from 'rollup-plugin-postcss';
 import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
+import {pluginPostcss} from "./rollup.config.base";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -21,7 +22,7 @@ export default {
         'glob', 'fs'
     ],
     plugins: [
-        postcss({ inject: false, extract: false }),
+        pluginPostcss(),
         resolve({
             preferBuiltins: true,
             only: [ '@webtides/element-js' ]

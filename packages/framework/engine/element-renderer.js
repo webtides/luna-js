@@ -123,21 +123,21 @@ const appendUpgradedElementsToDocument = ($, upgradedElements) => {
     $("body")
         .append(`<script type="module" src="/assets/moon.js"></script>`)
         .append(`
-        <script type="module">
-            ${Object.keys(upgradedElements)
-            .map(key => {
-                const component = upgradedElements[key];
-                const componentPath = component.relativePath.split("/").pop();
-
-                return `
-                    import ${component.name} from "/assets/${componentPath}";
-                    customElements.define("${paramCase(component.name)}", ${component.name});
-                `;
-            })
-            .join("\n")
-        }
-        </script>
-    `);
+            <script type="module">
+                ${Object.keys(upgradedElements)
+                .map(key => {
+                    const component = upgradedElements[key];
+                    const componentPath = component.relativePath.split("/").pop();
+    
+                    return `
+                        import ${component.name} from "/assets/${componentPath}";
+                        customElements.define("${paramCase(component.name)}", ${component.name});
+                    `;
+                })
+                .join("\n")
+            }
+            </script>
+        `);
 };
 
 const appendStylesOfUpgradedElementsToHead = ($, upgradedElements) => {
@@ -146,6 +146,7 @@ const appendStylesOfUpgradedElementsToHead = ($, upgradedElements) => {
 
     Object.keys(upgradedElements).forEach(key => {
         const component = upgradedElements[key];
+        console.log(component.styles);
         if (component.styles) {
             component.styles.forEach((style, index) => {
                 $head.append(`<style id="${paramCase(component.name)}${index}">${style}</style>`);
