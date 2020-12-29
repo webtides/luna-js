@@ -3,6 +3,7 @@ import glob from "glob-all";
 import postcss from 'rollup-plugin-postcss';
 import babel from '@rollup/plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
+import {plugins} from "./rollup.config.base";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -15,8 +16,7 @@ export default {
         format: 'es'
     },
     plugins: [
-        postcss({ inject: false }),
-        resolve(),
+        ...plugins(),
         babel({
             configFile: path.resolve(__dirname, 'babel.config.client.js')
         })

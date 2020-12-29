@@ -4,6 +4,7 @@ import postcss from 'rollup-plugin-postcss';
 import babel from '@rollup/plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import multi from '@rollup/plugin-multi-entry';
+import {plugins} from "./rollup.config.base";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -18,8 +19,7 @@ export default {
     },
     plugins: [
         multi({ entryFileName: "bundle.legacy.js" }),
-        postcss({ inject: false }),
-        resolve(),
+        ...plugins(),
         babel({
             configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
         })

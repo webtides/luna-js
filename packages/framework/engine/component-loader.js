@@ -14,11 +14,13 @@ const registerAvailableComponents = async () => {
         const relativePath = file.substring(config.componentsDirectory.length);
         const element = module.default;
 
-        if (element.disableSSR) {
+        if (!element || typeof element.connectedCallback === "undefined" || element.disableSSR) {
             return;
         }
 
-        element.staticProperties = await element.loadStaticProperties();
+        if (typeof element.loadStaticProperties === "function") {
+            element.staticProperties = await element.loadStaticProperties();
+        }
 
         const tagName = paramCase(element.name);
 
