@@ -144,4 +144,6 @@ export default class TemplateElement extends StyledElement {
     static async loadStaticProperties() {
         return {};
     }
+
+    static get disableSSR() { return false; }
 }

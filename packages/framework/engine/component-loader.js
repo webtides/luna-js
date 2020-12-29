@@ -14,6 +14,10 @@ const registerAvailableComponents = async () => {
         const relativePath = file.substring(config.componentsDirectory.length);
         const element = module.default;
 
+        if (element.disableSSR) {
+            return;
+        }
+
         element.staticProperties = await element.loadStaticProperties();
 
         const tagName = paramCase(element.name);
