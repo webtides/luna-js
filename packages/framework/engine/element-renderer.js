@@ -1,6 +1,6 @@
 import {paramCase} from "param-case";
 import cheerio from "cheerio";
-import {getAvailableComponents, loadSingleComponentByTagName} from "./component-loader";
+import {getAvailableComponents, loadSingleComponentByTagName} from "../loaders/component-loader";
 import {html, renderToString} from "@popeindustries/lit-html-server";
 
 const extractStyles = (element) => {

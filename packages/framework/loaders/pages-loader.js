@@ -5,7 +5,7 @@ import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
 
 import baseLayoutFactory from "../../client/layouts/base.js";
-import {renderComponent} from "./element-renderer";
+import {renderComponent} from "../engine/element-renderer";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 
 const getLayout = async (factory, {context}) => {

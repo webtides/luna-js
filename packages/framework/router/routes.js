@@ -1,6 +1,6 @@
-import {loadPages, loadSinglePage} from "../engine/pages-loader.js";
+import {loadPages, loadSinglePage} from "../loaders/pages-loader.js";
 import ssr from "../engine/element-renderer.js";
-import {loadApis} from "../engine/api-loader";
+import {loadApis} from "../loaders/api-loader";
 import path from "path";
 
 const routes = async ({ router }) => {

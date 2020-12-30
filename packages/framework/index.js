@@ -2,7 +2,7 @@ import './bootstrap.js';
 
 import express from 'express';
 import {routes} from "./router/routes.js";
-import {getAvailableComponents, registerAvailableComponents} from "./engine/component-loader";
+import {getAvailableComponents, registerAvailableComponents} from "./loaders/component-loader";
 const app = express();
 const port = 3005;
 
