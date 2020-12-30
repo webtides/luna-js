@@ -1,13 +1,13 @@
 import path from "path";
 import fs from "fs";
 import glob from "glob-all";
-import postcss from 'rollup-plugin-postcss';
 import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
-import {pluginPostcss} from "./rollup.config.base";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
+
+const scriptSettings = settings.assets.scripts.build;
 
 export default {
     input: glob.sync([ settings.pagesDirectory, settings.componentsDirectory, settings.layoutsDirectory ]),
@@ -22,7 +22,7 @@ export default {
         'glob', 'fs'
     ],
     plugins: [
-        pluginPostcss(),
+        ...scriptSettings.plugins,
         resolve({
             preferBuiltins: true,
             only: [ '@webtides/element-js' ]

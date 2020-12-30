@@ -146,7 +146,7 @@ const appendStylesOfUpgradedElementsToHead = ($, upgradedElements) => {
 
     Object.keys(upgradedElements).forEach(key => {
         const component = upgradedElements[key];
-        console.log(component.styles);
+
         if (component.styles) {
             component.styles.forEach((style, index) => {
                 $head.append(`<style id="${paramCase(component.name)}${index}">${style}</style>`);

@@ -1,23 +1,30 @@
 import path from "path";
 import glob from "glob-all";
 import babel from '@rollup/plugin-babel';
-import {pluginPostcss, plugins} from "./rollup.config.base";
+import resolve from "rollup-plugin-node-resolve";
+import multi from "@rollup/plugin-multi-entry";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
-export default [
+const styleSettings = settings.assets.styles.build;
+const scriptSettings = settings.assets.scripts.build;
+
+const scriptInputs = [ scriptSettings.input ].flat();
+
+const bundles = [
     {
-        input: `${__dirname}/packages/client/styles/base.css`,
+        input: styleSettings.input,
         output: {
             dir: settings.assets.buildDirectory,
             entryFileNames: 'empty.js'
         },
         plugins: [
-            pluginPostcss({ extract: settings.assets.baseCss })
+            ...styleSettings.plugins
         ]
     },
+
     {
-        input: glob.sync([`${__dirname}/packages/client/moon.js`, `${__dirname}/packages/client/styles/components.css`, settings.pagesDirectory, settings.componentsDirectory]),
+        input: glob.sync([`${__dirname}/packages/client/moon.js`, settings.pagesDirectory, settings.componentsDirectory, ...scriptInputs ]),
         output: {
             dir: settings.assets.buildDirectory,
             entryFileNames: '[name].js',
@@ -25,10 +32,33 @@ export default [
             format: 'es'
         },
         plugins: [
-            ...plugins(),
+            resolve(),
+            ...scriptSettings.plugins,
             babel({
                 configFile: path.resolve(__dirname, 'babel.config.client.js')
             })
         ]
     }
-]
+];
+
+if (settings.legacyBuild) {
+    bundles.push({
+        input: path.join(__dirname, "lib/entry.legacy.js"),
+        output: {
+            dir: settings.assets.buildDirectory,
+            sourcemap: true,
+            format: 'iife'
+        },
+        plugins: [
+            multi({ entryFileName: "bundle.legacy.js" }),
+            resolve(),
+            ...scriptSettings.plugins,
+            babel({
+                configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
+            })
+        ]
+    });
+}
+
+
+export default bundles;

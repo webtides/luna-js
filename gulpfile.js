@@ -2,7 +2,6 @@ const path = require("path");
 const fs = require('fs');
 const gulp = require('gulp');
 const run = require("gulp-run");
-const gulpCopy = require("gulp-copy");
 const nodemon = require("gulp-nodemon");
 
 const hasMoonConfigFile = fs.existsSync(path.join(process.cwd(), "moon.config.js"));
@@ -48,10 +47,6 @@ const buildClientComponents = (config = { }) => function buildClientComponents()
     return runCommand(`rollup --config ${path.join(currentDirectory, "rollup.config.client.js")} ${config.watch ? "-w" : ""}`);
 };
 
-const buildLegacyClientComponents = (config = {}) => function buildLegacyClientComponents() {
-    return runCommand(`rollup --config ${path.join(currentDirectory, "rollup.config.client.legacy.js")} ${config.watch ? "-w" : ""}`);
-};
-
 const libraries = () => {
     return gulp
         .src(path.resolve(__dirname, "packages/client/libraries/**/*"))
@@ -64,13 +59,12 @@ const compileServerCode = () => {
 
 
 gulp.task("prepare", gulp.series(compileServerCode));
-gulp.task("build", gulp.series(runPrepareScript, gulp.series(buildServerComponents(), buildClientComponents(), buildLegacyClientComponents(), libraries)));
+gulp.task("build", gulp.series(runPrepareScript, gulp.series(buildServerComponents(), buildClientComponents(), libraries)));
 
 gulp.task("watch", gulp.parallel(
     buildServerComponents({ watch: true }),
     buildClientComponents({ watch: true }),
-    buildLegacyClientComponents({ watch: true })),
-);
+));
 
 gulp.task("dev-server", (cb) => gulp.watch([ "packages/**/*" ], { ignoreInitial: false }, gulp.series(compileServerCode)));
 gulp.task("dev", gulp.series(runPrepareScript, libraries, "serve", "watch"));
