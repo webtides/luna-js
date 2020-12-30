@@ -9,7 +9,9 @@ const routes = async ({ router }) => {
     pages.forEach(({ file, name, relativePath }) => {
         console.log(`Trying to register route ${name}.`);
 
-        router.get(name, async (request, response) => {
+        const route = name.endsWith("/index") ? name.substring(0, name.length - "/index".length) : name;
+
+        router.get(route, async (request, response) => {
             console.log(`Fetching page ${name}`);
 
             const page = await loadSinglePage({file});
