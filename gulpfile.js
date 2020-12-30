@@ -60,7 +60,8 @@ const libraries = () => {
 
 const compileServerCode = () => {
     return run(`npm run babel && npm run compile`).exec();
-}
+};
+
 
 gulp.task("prepare", gulp.series(compileServerCode));
 gulp.task("build", gulp.series(runPrepareScript, gulp.series(buildServerComponents(), buildClientComponents(), buildLegacyClientComponents(), libraries)));
@@ -68,7 +69,8 @@ gulp.task("build", gulp.series(runPrepareScript, gulp.series(buildServerComponen
 gulp.task("watch", gulp.parallel(
     buildServerComponents({ watch: true }),
     buildClientComponents({ watch: true }),
-    buildLegacyClientComponents({ watch: true }))
+    buildLegacyClientComponents({ watch: true })),
 );
 
+gulp.task("dev-server", (cb) => gulp.watch([ "packages/**/*" ], { ignoreInitial: false }, gulp.series(compileServerCode)));
 gulp.task("dev", gulp.series(runPrepareScript, libraries, "serve", "watch"));
