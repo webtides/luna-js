@@ -45,6 +45,7 @@
     "@rollup/plugin-multi-entry": "^4.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-replace": "^2.3.4",
+    "babel-plugin-module-resolver": "^4.1.0",
     "gulp": "^4.0.2",
     "gulp-copy": "^4.0.1",
     "gulp-nodemon": "^2.5.0",

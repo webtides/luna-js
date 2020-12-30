@@ -10,7 +10,7 @@ const settings = require(path.join(process.cwd(), "moon.config.js"));
 const scriptSettings = settings.assets.scripts.build;
 
 export default {
-    input: glob.sync([ settings.pagesDirectory, settings.componentsDirectory, settings.layoutsDirectory ]),
+    input: glob.sync([ settings.pagesDirectory, settings.componentsDirectory, settings.layoutsDirectory, settings.apiDirectory ]),
     output: {
         dir: settings.buildDirectory,
         entryFileNames: '[name].js',
