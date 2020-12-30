@@ -50,6 +50,7 @@
     "gulp-nodemon": "^2.5.0",
     "gulp-run": "^1.7.1",
     "rollup": "^2.35.1",
+    "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-rename": "^1.0.1"

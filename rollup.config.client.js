@@ -1,13 +1,15 @@
 import path from "path";
 import glob from "glob-all";
 import babel from '@rollup/plugin-babel';
-import resolve from "rollup-plugin-node-resolve";
 import multi from "@rollup/plugin-multi-entry";
+import resolve from "rollup-plugin-node-resolve";
+import copy from "rollup-plugin-copy";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 const styleSettings = settings.assets.styles.build;
 const scriptSettings = settings.assets.scripts.build;
+const staticSettings = settings.assets.static;
 
 const scriptInputs = [ scriptSettings.input ].flat();
 
@@ -36,6 +38,15 @@ const bundles = [
             ...scriptSettings.plugins,
             babel({
                 configFile: path.resolve(__dirname, 'babel.config.client.js')
+            }),
+            copy({
+                flatten: staticSettings.flatten || false,
+                targets: staticSettings.sources.map(source => {
+                    return {
+                        src: source.input,
+                        dest: path.join(settings.publicDirectory, source.output)
+                    }
+                })
             })
         ]
     }
