@@ -19,7 +19,11 @@ const registerAvailableComponents = async () => {
         }
 
         if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
-            element.staticProperties = await element.loadStaticProperties();
+            const staticProperties = await element.loadStaticProperties();
+
+            if (staticProperties) {
+                element.staticProperties = staticProperties;
+            }
         }
 
         const tagName = paramCase(element.name);

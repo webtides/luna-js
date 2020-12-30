@@ -1,7 +1,8 @@
 import {paramCase} from "param-case";
 import cheerio from "cheerio";
-import {getAvailableComponents, loadSingleComponentByTagName} from "../loaders/component-loader";
+import {loadSingleComponentByTagName} from "../loaders/component-loader";
 import {html, renderToString} from "@popeindustries/lit-html-server";
+import {loadFromCache, writeToCache} from "../cache/cache";
 
 const extractStyles = (element) => {
     if (element._styles.length > 0) {
@@ -21,6 +22,11 @@ const extractStyles = (element) => {
  * @returns {Promise<{markup: string, element: *}>}
  */
 const renderComponent = async (component, attributes = {}) => {
+    const cachedValue = await loadFromCache(component.element.name, "components");
+    if (cachedValue) {
+        return cachedValue;
+    }
+
     attributes["ssr"] = true;
 
     const element = new (component.element)();
@@ -31,7 +37,7 @@ const renderComponent = async (component, attributes = {}) => {
         ...element.properties(),
         ...attributes,
         ...(component.element.staticProperties ?? { }),
-        ...dynamicProperties,
+        ...(dynamicProperties ? dynamicProperties : { })
     };
 
     element.defineProperties(properties);
@@ -44,6 +50,11 @@ const renderComponent = async (component, attributes = {}) => {
     component.styles = extractStyles(element);
 
     const markup = await renderToString(element.template({html}));
+
+    if (!dynamicProperties) {
+        await writeToCache(component.element.name, { markup, element }, "components");
+    }
+
     return { markup, element };
 };
 

@@ -129,8 +129,9 @@ export default class TemplateElement extends StyledElement {
      *                          present, it won't be passed to the client.
      */
     async loadDynamicProperties() {
-        return {};
+        return false;
     }
+
 
     /**
      * These properties will be loaded once as the server starts up, or if
@@ -142,7 +143,7 @@ export default class TemplateElement extends StyledElement {
      *                          present, it won't be passed to the client.
      */
     static async loadStaticProperties() {
-        return {};
+        return false;
     }
 
     static get disableSSR() { return false; }
