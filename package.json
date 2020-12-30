@@ -2,14 +2,14 @@
   "name": "moon.js",
   "version": "0.1.0",
   "description": "",
-  "main": ".build/index.js",
-  "module": ".build/packages/index.js",
+  "main": "lib/index.js",
+  "module": "index.js",
   "engines": {
     "node": ">=14.13.0"
   },
   "scripts": {
     "preinstall": "gulp prepare",
-    "babel": "npx babel packages --out-dir .build/packages",
+    "babel": "npx babel packages --out-dir lib/packages",
     "compile": "rollup --config rollup.config.server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

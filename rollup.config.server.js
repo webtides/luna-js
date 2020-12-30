@@ -7,7 +7,7 @@ import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 
 const settings = {
-    buildDirectory: '.build',
+    buildDirectory: 'lib',
 };
 
 export default {
@@ -19,10 +19,9 @@ export default {
         format: 'cjs'
     },
     external: [
-        'glob', 'fs'
+        'glob', 'fs', 'path'
     ],
     plugins: [
-        postcss({ inject: false, extract: false }),
         resolve({
             preferBuiltins: true,
             only: [ '@webtides/element-js' ]

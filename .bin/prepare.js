@@ -36,7 +36,7 @@ const glob = require("glob-all");
             }).join("\n\r")}
         `;
 
-        const buildDirectory = path.join(__dirname, "..", ".build");
+        const buildDirectory = path.join(__dirname, "..", "lib");
 
         if (!fs.existsSync(buildDirectory)) {
             fs.mkdirSync(buildDirectory)
