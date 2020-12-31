@@ -13,6 +13,9 @@ app.use(express.static('.build/public'));
 
 (async () => {
     await loadHooks();
+
+    await callHook(HOOKS.HOOKS_LOADED);
+
     await registerAvailableComponents();
 
     await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {
@@ -25,8 +28,12 @@ app.use(express.static('.build/public'));
         router: app
     });
 
-    app.listen(port, () => {
+    app.listen(port, async () => {
         console.log(`moon.js listening at: http://localhost:${port}`)
+
+        await callHook(HOOKS.SERVER_STARTED, {
+            app
+        });
     });
 })();
 
