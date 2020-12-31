@@ -1,7 +1,7 @@
 import './bootstrap.js';
 
 import express from 'express';
-import {routes} from "./router/routes.js";
+import {routes} from "./http/router/routes.js";
 import {registerAvailableComponents} from "./loaders/component-loader.js";
 import {callHook} from "./hooks";
 import {loadHooks} from "./loaders/hooks-loader";

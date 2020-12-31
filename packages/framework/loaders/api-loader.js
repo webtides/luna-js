@@ -1,10 +1,13 @@
-import config from "../config";
+import config, {loadSettings} from "../config";
 import glob from "glob";
+import path from "path";
 
 const loadApis = async () => {
+    const settings = await loadSettings();
+    const basePath = path.join(settings.buildDirectory, settings.apiDirectory);
 
-    return glob.sync(`${config.apiDirectory}/**/*.js`).map((file) => {
-        const relativePath = file.substring(config.apiDirectory.length + 1);
+    return glob.sync(`${basePath}/**/*.js`).map((file) => {
+        const relativePath = file.substring(basePath.length);
         const name = relativePath.split(".js")[0];
 
         return {
