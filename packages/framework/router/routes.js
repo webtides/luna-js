@@ -4,7 +4,7 @@ import {loadApis} from "../loaders/api-loader";
 import path from "path";
 
 const routes = async ({ router }) => {
-    const pages = loadPages();
+    const pages = await loadPages();
 
     pages.forEach(({ file, name, relativePath }) => {
         console.log(`Trying to register route ${name}.`);

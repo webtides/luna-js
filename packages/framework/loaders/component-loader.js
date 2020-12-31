@@ -1,17 +1,21 @@
 import glob from "glob";
-import config from "../config.js";
+import config, {loadSettings} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
 
 const allAvailableComponents = { };
 
 const registerAvailableComponents = async () => {
-    const files = glob.sync(`${config.componentsDirectory}/**/*.js`);
+    const settings = await loadSettings();
+
+    const basePath = path.join(settings.buildDirectory, settings.componentsDirectory);
+
+    const files = glob.sync(`${basePath}/**/*.js`);
 
     await Promise.all(files.map(async (file) => {
         const module = await import(path.resolve(file));
 
-        const relativePath = file.substring(config.componentsDirectory.length);
+        const relativePath = file.substring(basePath.length);
         const element = module.default;
 
         if (typeof element?.prototype?.connectedCallback === "undefined") {

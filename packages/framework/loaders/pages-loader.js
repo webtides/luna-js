@@ -1,5 +1,5 @@
 import path from "path";
-import config from '../config.js';
+import config, {loadSettings} from '../config.js';
 
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
@@ -13,6 +13,8 @@ const getLayout = async (factory, {context}) => {
 };
 
 const loadSinglePage = async ({file}) => {
+    const settings = await loadSettings();
+
     const page = (await import(path.resolve(file)));
 
     let markup = "";
@@ -23,7 +25,7 @@ const loadSinglePage = async ({file}) => {
 
         if (page.layout) {
             // TODO: we really need to find a better way.
-            const layoutModule = await import(path.resolve(`${config.layoutsDirectory}/${page.layout}.js`));
+            const layoutModule = await import(path.resolve(settings.buildDirectory, `${settings.layoutsDirectory}/${page.layout}.js`));
             layoutFactory = layoutModule.default;
         }
     } else {
@@ -36,7 +38,7 @@ const loadSinglePage = async ({file}) => {
         markup = result.markup;
 
         if (result.element.layout) {
-            const layoutModule = await import(path.resolve(`${config.layoutsDirectory}/${result.element.layout}.js`));
+            const layoutModule = await import(path.resolve(settings.buildDirectory, `${settings.layoutsDirectory}/${result.element.layout}.js`));
             layoutFactory = layoutModule.default;
         }
     }
@@ -49,9 +51,14 @@ const loadSinglePage = async ({file}) => {
 };
 
 
-const loadPages = () => {
-    return glob.sync(`${config.pagesDirectory}/**/*.js`).map((file) => {
-        const relativePath = file.substring(config.pagesDirectory.length);
+const loadPages = async () => {
+    const settings = await loadSettings();
+    const basePath = path.resolve(settings.buildDirectory, settings.pagesDirectory);
+
+    console.log("Load pages in", basePath);
+
+    return glob.sync(`${basePath}/**/*.js`).map((file) => {
+        const relativePath = file.substring(basePath.length);
         const name = relativePath.split(".page")[0];
 
         return {

@@ -26,7 +26,12 @@ const bundles = [
     },
 
     {
-        input: glob.sync([`${__dirname}/packages/client/moon.js`, settings.pagesDirectory, settings.componentsDirectory, ...scriptInputs ]),
+        input: glob.sync([
+            `${__dirname}/packages/client/moon.js`,
+            path.join(settings.pagesDirectory, "**/*.js"),
+            path.join(settings.componentsDirectory, "**/*.js")
+            , ...scriptInputs
+        ]),
         output: {
             dir: settings.assets.buildDirectory,
             entryFileNames: '[name].js',
