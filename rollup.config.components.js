@@ -13,7 +13,8 @@ const bundles = [
     settings.pagesDirectory,
     settings.componentsDirectory,
     settings.layoutsDirectory,
-    settings.apiDirectory
+    settings.apiDirectory,
+    settings.hooksDirectory
 ];
 
 export default bundles.map(relativePath => {
