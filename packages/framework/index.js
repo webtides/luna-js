@@ -3,9 +3,10 @@ import './bootstrap.js';
 import express from 'express';
 import {routes} from "./router/routes.js";
 import {registerAvailableComponents} from "./loaders/component-loader.js";
-import {callHook} from "./hooks.js";
+import {callHook} from "./hooks";
 import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
+import {registerMiddleware} from "./http/middleware";
 const app = express();
 const port = 3005;
 
@@ -22,6 +23,7 @@ app.use(express.static('.build/public'));
         router: app
     });
 
+    await registerMiddleware({ app });
     await routes({router: app});
 
     await callHook(HOOKS.ROUTES_AFTER_REGISTER, {

@@ -1,7 +1,7 @@
-const hooks = { };
+const index = { };
 
 const registerHook = (name, hook, index = 0) => {
-    const registeredHooks = hooks[name] ?? [];
+    const registeredHooks = index[name] ?? [];
 
     let indexToInsert = 0;
     for (let i = 0; i < registeredHooks.length; i++) {
@@ -11,14 +11,14 @@ const registerHook = (name, hook, index = 0) => {
     }
 
     registeredHooks.splice(indexToInsert, 0, hook);
-    hooks[name] = registeredHooks;
+    index[name] = registeredHooks;
 
     console.log("Registered hook", name);
 };
 
 const callHook = async (name, params = false) => {
-    if (hooks[name]) {
-        await Promise.all(hooks[name].map(hook => {
+    if (index[name]) {
+        await Promise.all(index[name].map(hook => {
             return hook(params);
         }));
     }
