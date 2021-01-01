@@ -95,7 +95,7 @@ export default class TemplateElement extends StyledElement {
 
     // 3. we need to inject a different context for the template method to be able to switch from lit-html to something that runs in node
     renderTemplate() {
-        const template = this._template || this.template({html});
+        const template = this._template || this.template({html, unsafeHTML});
         if (typeof template === 'string') {
             // just a plain string literal. no lit-html required
             this.getRoot().innerHTML = `${template}`;
@@ -108,7 +108,7 @@ export default class TemplateElement extends StyledElement {
         }
     }
 
-    template({html}) {
+    template({html, unsafeHTML}) {
         return html``;
     }
 

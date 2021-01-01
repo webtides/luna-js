@@ -3,7 +3,7 @@ import './bootstrap.js';
 import express from 'express';
 import bodyParser from "body-parser";
 import {routes} from "./http/router/routes.js";
-import {registerAvailableComponents} from "./loaders/component-loader.js";
+import {getAvailableComponents, registerAvailableComponents} from "./loaders/component-loader.js";
 import {callHook} from "./hooks";
 import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
@@ -22,7 +22,9 @@ app.use(express.static('.build/public'));
 
     await registerAvailableComponents();
 
-    await callHook(HOOKS.COMPONENTS_LOADED);
+    await callHook(HOOKS.COMPONENTS_LOADED, {
+        components: getAvailableComponents()
+    });
 
     await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {
         router: app

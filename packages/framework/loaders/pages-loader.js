@@ -82,7 +82,6 @@ const loadSinglePage = async ({ page, request, response }) => {
     }
 };
 
-
 const loadPages = async () => {
     const settings = await loadSettings();
     const basePath = path.resolve(settings.pagesDirectory);
