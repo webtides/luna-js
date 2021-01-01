@@ -18,10 +18,11 @@ const extractStyles = (element) => {
  *
  * @param component ({ element: * })
  * @param attributes
+ * @param onElementLoaded
  *
  * @returns {Promise<{markup: string, element: *}>}
  */
-const renderComponent = async (component, attributes = {}) => {
+const renderComponent = async ({component, attributes = {}, request, response }) => {
     const cachedValue = await loadFromCache(component.element.name, "components");
     if (cachedValue) {
         return cachedValue;
@@ -31,19 +32,22 @@ const renderComponent = async (component, attributes = {}) => {
 
     const element = new (component.element)();
 
-    const dynamicProperties = await element.loadDynamicProperties();
+    // Here we are defining the standard properties.
+    element.defineProperties();
+
+    const dynamicProperties = await element.loadDynamicProperties({ request, response });
 
     const properties = {
-        ...element.properties(),
         ...attributes,
         ...(component.element.staticProperties ?? { }),
         ...(dynamicProperties ? dynamicProperties : { })
     };
 
-    element.defineProperties(properties);
+    // Define external properties.
+    Object.keys(properties).forEach(key => element[key] = properties[key]);
 
     // Define the attributes so that they can accessed on the client.
-    Object.keys(properties).forEach(key => {
+    Object.keys(element.properties()).forEach(key => {
         attributes[paramCase(key)] = JSON.stringify(properties[key]);
     });
 
@@ -64,9 +68,11 @@ const renderComponent = async (component, attributes = {}) => {
  *
  * @param node Node
  * @param upgradedElements *
+ * @param {*}
+ *
  * @returns {Promise<boolean|{component: ({file: string, relativePath: string, name: *, element: *}|boolean), innerHTML: (jQuery|string), attributes: (*|{})}>}
  */
-const renderNodeAsCustomElement = async (node, upgradedElements) => {
+const renderNodeAsCustomElement = async (node, upgradedElements, { request, response }) => {
     const tag = node.tagName;
     const component = await loadSingleComponentByTagName(tag);
 
@@ -83,9 +89,9 @@ const renderNodeAsCustomElement = async (node, upgradedElements) => {
 
     const attributes = node.attributes || {};
 
-    const { markup, element } = await renderComponent(component, attributes);
+    const { markup, element } = await renderComponent({ component, attributes, request, response });
 
-    const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false), upgradedElements);
+    const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false), upgradedElements, { request, response });
 
     return {
         attributes,
@@ -99,13 +105,15 @@ const renderNodeAsCustomElement = async (node, upgradedElements) => {
  *
  * @param $
  * @param upgradedElements
+ * @param {*}
+ *
  * @returns {Promise<jQuery|HTMLElement>}
  */
-const parseHtmlDocument = async ($, upgradedElements) => {
+const parseHtmlDocument = async ($, upgradedElements, { request, response }) => {
     await Promise.all($("*").map(async (index, node) => {
         if (node.tagName.includes("-")) {
             // This is potentially a custom element.
-            const result = await renderNodeAsCustomElement(node, upgradedElements);
+            const result = await renderNodeAsCustomElement(node, upgradedElements, { request, response });
 
             if (!result) {
                 return;
@@ -169,11 +177,11 @@ const appendStylesOfUpgradedElementsToHead = ($, upgradedElements) => {
 
 export {renderComponent};
 
-export default async (htmlDocument) => {
+export default async (htmlDocument, { request, response }) => {
     const $ = cheerio.load(htmlDocument, null, true);
 
     const upgradedElements = {};
-    await parseHtmlDocument($, upgradedElements);
+    await parseHtmlDocument($, upgradedElements, { request, response });
 
     appendUpgradedElementsToDocument($, upgradedElements);
     appendStylesOfUpgradedElementsToHead($, upgradedElements);

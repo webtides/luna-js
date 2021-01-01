@@ -11,7 +11,7 @@ const generateStaticSite = async () => {
     const pages = loadPages();
     await Promise.all(pages.map(async ({ file, name, relativePath }) => {
         const page = await loadSinglePage({file});
-        const renderedPage = await ssr(page);
+        const renderedPage = await ssr(page, { request: false, response: false });
 
         const pageDirectory = path.join(outputDirectory, name);
 

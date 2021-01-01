@@ -16,8 +16,11 @@ gulp.task('serve', (cb) => {
     let started = false;
     nodemon({
         script: path.join(currentDirectory, 'lib/packages/framework/entry.js'),
-        watch: [ path.join(currentDirectory, "lib/**/*"), path.join(workingDirectory, ".build/**/*") ],
+        watch: [ path.join(currentDirectory, "lib/**/*"), path.join(workingDirectory, "views/**/*") ],
         nodeArgs: ['--inspect=3003'],
+        env: {
+            SSR: true
+        }
     }).on('start', function () {
         if (!started) {
             cb();

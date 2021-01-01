@@ -12,13 +12,35 @@ const getLayout = async (factory, {context}) => {
     return renderToString(factory({html, context}));
 };
 
-const loadSinglePage = async ({file}) => {
-    const settings = await loadSettings();
-
+const loadPageMetaData = async ({ file }) => {
     const page = (await import(path.resolve(file)));
+
+    const availableMethods = [];
+    if (typeof page.default.prototype?.connectedCallback === "undefined") {
+        if (typeof page.post === "function") {
+            availableMethods.push("post");
+        }
+    } else {
+        const element = new (page.default)();
+
+        if (typeof element.post === "function") {
+            availableMethods.push("post");
+        }
+    }
+
+    return {
+        availableMethods,
+        page
+    }
+};
+
+const loadSinglePage = async ({ page, request, response }) => {
+    const settings = await loadSettings();
 
     let markup = "";
     let layoutFactory = baseLayoutFactory;
+
+    let element;
 
     if (typeof page.default.prototype?.connectedCallback === "undefined") {
         markup = await renderToString(page.default({ html }));
@@ -28,14 +50,19 @@ const loadSinglePage = async ({file}) => {
             const layoutModule = await import(path.resolve(`${settings.layoutsDirectory}/${page.layout}.js`));
             layoutFactory = layoutModule.default;
         }
+
+        element = page;
+
     } else {
-        // We are possibly dealing with a custom element here.
+        // We are dealing with a custom element here.
         const component = {
-            element: page.default
+            element: page.default,
         };
 
-        const result = (await renderComponent(component, {}));
+        const result = (await renderComponent({component, attributes: {}, request, response }));
+
         markup = result.markup;
+        element = result.element;
 
         if (result.element.layout) {
             const layoutModule = await import(path.resolve(`${settings.layoutsDirectory}/${result.element.layout}.js`));
@@ -43,11 +70,16 @@ const loadSinglePage = async ({file}) => {
         }
     }
 
-    return getLayout(layoutFactory, {
+    const pageHTML = await getLayout(layoutFactory, {
         context: {
             page: html`${unsafeHTML(markup)}`
         }
     });
+
+    return {
+        html: pageHTML,
+        element
+    }
 };
 
 
@@ -70,4 +102,4 @@ const loadPages = async () => {
 };
 
 
-export {loadPages, loadSinglePage};
+export {loadPages, loadSinglePage, loadPageMetaData};

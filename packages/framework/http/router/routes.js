@@ -1,4 +1,4 @@
-import {loadPages, loadSinglePage} from "../../loaders/pages-loader.js";
+import {loadPageMetaData, loadPages, loadSinglePage} from "../../loaders/pages-loader.js";
 import ssr from "../../engine/element-renderer.js";
 import {loadApis} from "../../loaders/api-loader";
 import path from "path";
@@ -6,17 +6,22 @@ import path from "path";
 const routes = async ({ router }) => {
     const pages = await loadPages();
 
-    pages.forEach(({ file, name, relativePath }) => {
-        console.log(`Trying to register route ${name}.`);
-
+    pages.map(async ({ file, name, relativePath }) => {
         const route = name.endsWith("/index") ? name.substring(0, name.length - "/index".length) : name;
 
-        router.get(route, async (request, response) => {
-            console.log(`Fetching page ${name}`);
+        const { availableMethods, page } = await loadPageMetaData({ file });
 
-            const page = await loadSinglePage({file});
-            return response.send(await ssr(page));
+        router.get(route, async (request, response) => {
+            const { html } = await loadSinglePage({ page, request, response });
+            return response.send(await ssr(html, { request, response }));
         });
+
+        if (availableMethods.includes("post")) {
+            router.post(route, async (request, response) => {
+                const { html } = await loadSinglePage({  page, method: "post", request, response });
+                return response.send(await ssr(html, { request, response }));
+            })
+        }
 
         console.log(`Registered route ${name}.`);
     });

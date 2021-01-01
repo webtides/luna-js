@@ -77,9 +77,20 @@ export default class TemplateElement extends StyledElement {
         });
     }
 
+    defineProperty(property, value, reflectAttribute = false) {
+        if (!isOnServer()) {
+            return super.defineProperty(property, value, reflectAttribute);
+        } else {
+            this[property] = value;
+        }
+    }
+
     update(options) {
         this.renderTemplate();
-        super.update(options);
+
+        if (!isOnServer()) {
+            super.update(options);
+        }
     }
 
     // 3. we need to inject a different context for the template method to be able to switch from lit-html to something that runs in node
@@ -123,12 +134,14 @@ export default class TemplateElement extends StyledElement {
      *
      * If we are statically exporting the site, these properties won't ever be loaded.
      *
+     * @param {*}
+     *
      * @returns {Promise<{}>}   An object which holds the dynamically loaded data.
      *                          Make sure that each key returned by this method is also present
      *                          inside your {@link properties() } method. If a key is not
      *                          present, it won't be passed to the client.
      */
-    async loadDynamicProperties() {
+    async loadDynamicProperties({ request, response }) {
         return false;
     }
 
