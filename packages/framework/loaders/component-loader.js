@@ -8,7 +8,7 @@ const allAvailableComponents = { };
 const registerAvailableComponents = async () => {
     const settings = await loadSettings();
 
-    const basePath = path.join(settings.buildDirectory, settings.componentsDirectory);
+    const basePath = path.join(settings.componentsDirectory);
 
     const files = glob.sync(`${basePath}/**/*.js`);
 

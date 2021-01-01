@@ -1,5 +1,8 @@
 const HOOKS = {
     HOOKS_LOADED: "hooks-loaded",
+
+    COMPONENTS_LOADED: "components-loaded",
+
     SERVER_STARTED: "server-started",
 
     ROUTES_BEFORE_REGISTER: "routes-before-register",
@@ -7,7 +10,9 @@ const HOOKS = {
 
     REQUEST_RECEIVED: "request-received",
 
-    MIDDLEWARE_REGISTER: "middleware-register"
+    MIDDLEWARE_REGISTER: "middleware-register",
+
+    CSS_LOAD: "css-load"
 };
 
 export { HOOKS };

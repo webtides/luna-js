@@ -15,7 +15,7 @@ const settings = hasMoonConfigFile
 gulp.task('serve', (cb) => {
     let started = false;
     nodemon({
-        script: path.join(currentDirectory, 'lib/packages/framework'),
+        script: path.join(currentDirectory, 'lib/packages/framework/entry.js'),
         watch: [ path.join(currentDirectory, "lib/**/*"), path.join(workingDirectory, ".build/**/*") ],
         nodeArgs: ['--inspect=3003'],
     }).on('start', function () {
@@ -62,7 +62,6 @@ gulp.task("prepare", gulp.series(compileServerCode));
 gulp.task("build", gulp.series(runPrepareScript, gulp.series(buildServerComponents(), buildClientComponents(), libraries)));
 
 gulp.task("watch", gulp.parallel(
-    buildServerComponents({ watch: true }),
     buildClientComponents({ watch: true }),
 ));
 

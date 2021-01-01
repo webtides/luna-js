@@ -5,7 +5,7 @@ import {registerHook} from "../hooks";
 
 const loadHooks = async () => {
     const settings = await loadSettings();
-    const basePath = path.join(settings.buildDirectory, settings.hooksDirectory);
+    const basePath = path.join(settings.hooksDirectory);
 
     await Promise.all(glob.sync(`${basePath}/**/*.js`)
         .map(async (file) => {

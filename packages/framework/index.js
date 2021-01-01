@@ -1,6 +1,7 @@
 import './bootstrap.js';
 
 import express from 'express';
+import bodyParser from "body-parser";
 import {routes} from "./http/router/routes.js";
 import {registerAvailableComponents} from "./loaders/component-loader.js";
 import {callHook} from "./hooks";
@@ -10,6 +11,8 @@ import {registerMiddleware} from "./http/middleware";
 const app = express();
 const port = 3005;
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use(express.static('.build/public'));
 
 (async () => {
@@ -18,6 +21,8 @@ app.use(express.static('.build/public'));
     await callHook(HOOKS.HOOKS_LOADED);
 
     await registerAvailableComponents();
+
+    await callHook(HOOKS.COMPONENTS_LOADED);
 
     await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {
         router: app

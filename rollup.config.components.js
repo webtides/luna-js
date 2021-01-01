@@ -1,20 +1,18 @@
 import path from "path";
 import fs from "fs";
 import glob from "glob";
+import globAll from "glob-all";
 import resolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
+import rename from 'rollup-plugin-rename';
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 const scriptSettings = settings.assets.scripts.build;
 
 const bundles = [
-    settings.pagesDirectory,
-    settings.componentsDirectory,
-    settings.layoutsDirectory,
     settings.apiDirectory,
-    settings.hooksDirectory
 ];
 
 export default bundles.map(relativePath => {
@@ -26,7 +24,7 @@ export default bundles.map(relativePath => {
     }
 
     return {
-        input: glob.sync(input),
+        input: globAll.sync([ input ]),
         output: {
             dir: path.join(settings.buildDirectory, relativePath),
             entryFileNames: '[name].js',

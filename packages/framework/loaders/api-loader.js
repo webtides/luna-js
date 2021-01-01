@@ -4,7 +4,7 @@ import path from "path";
 
 const loadApis = async () => {
     const settings = await loadSettings();
-    const basePath = path.join(settings.buildDirectory, settings.apiDirectory);
+    const basePath = path.join(settings.apiDirectory);
 
     return glob.sync(`${basePath}/**/*.js`).map((file) => {
         const relativePath = file.substring(basePath.length);
