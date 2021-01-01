@@ -17,7 +17,10 @@ const routes = async ({router}) => {
     const settings = await loadSettings();
 
     const fallbackRoute = settings.fallbackRoute ?? false;
-    let fallbackPage = false;
+    const fallbackApiRoute = settings.fallbackApiRoute ?? false;
+
+    let fallbackPage = false,
+        fallbackApi = false;
 
     const registerPageRoute = async ({file, name}) => {
         const route = getRouteName(name);
@@ -39,17 +42,8 @@ const routes = async ({router}) => {
         console.log(`Registered route ${route}.`);
     }
 
-    pages.map(async ({file, name, relativePath}) => {
-        if (name === fallbackRoute) {
-            fallbackPage = {file, name};
-            return;
-        }
-
-        await registerPageRoute({file, name});
-    });
-
-    const apis = await loadApis();
-    apis.map(async ({file, name, relativePath}) => {
+    const registerApiRoute = async ({ file, name }) => {
+        console.log({ file, name });
         const module = (await import(path.resolve(file)));
 
         const get = module.get || module.default;
@@ -64,7 +58,33 @@ const routes = async ({router}) => {
         });
 
         console.log("Registered api routes for", name);
+    };
+
+    pages.map(async ({file, name, relativePath}) => {
+        if (name === fallbackRoute) {
+            fallbackPage = {file, name};
+            return;
+        }
+
+        await registerPageRoute({file, name});
     });
+
+    const apis = await loadApis();
+    apis.map(async ({file, name, relativePath}) => {
+        if (name === fallbackApiRoute) {
+            fallbackApi = { file, name };
+            return;
+        }
+
+        await registerApiRoute({ file, name });
+    });
+
+    if (fallbackApi) {
+        await registerApiRoute({
+            file: fallbackApi.file,
+            name: "/*"
+        });
+    }
 
     if (fallbackPage) {
         await registerPageRoute({
