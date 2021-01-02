@@ -17,7 +17,7 @@ gulp.task('serve', (cb) => {
     nodemon({
         script: path.join(currentDirectory, 'lib/packages/framework/entry.js'),
         watch: [ path.join(currentDirectory, "lib/**/*"), path.join(workingDirectory, "views/**/*") ],
-        nodeArgs: ['--inspect=3003'],
+        nodeArgs: ['--inspect=3003', '--harmony'],
         env: {
             SSR: true
         }

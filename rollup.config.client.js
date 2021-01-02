@@ -4,6 +4,7 @@ import babel from '@rollup/plugin-babel';
 import multi from "@rollup/plugin-multi-entry";
 import resolve from "rollup-plugin-node-resolve";
 import copy from "rollup-plugin-copy";
+import commonjs from "@rollup/plugin-commonjs";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -39,6 +40,7 @@ const bundles = [
         },
         plugins: [
             resolve(),
+            commonjs(),
             ...scriptSettings.plugins,
             babel({
                 configFile: path.resolve(__dirname, 'babel.config.client.js')
@@ -67,6 +69,7 @@ if (settings.legacyBuild) {
         plugins: [
             multi({ entryFileName: "bundle.legacy.js" }),
             resolve(),
+            commonjs(),
             ...scriptSettings.plugins,
             babel({
                 configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')

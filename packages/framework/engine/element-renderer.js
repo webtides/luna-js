@@ -41,7 +41,12 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
 
     // Then we are defining the attributes from the element as properties.
     Object.keys(attributes).forEach(key => {
-        element.defineProperty(camelcase(key), JSON.parse(attributes[key]));
+        let attributeToDefine = attributes[key];
+        try {
+            attributeToDefine = JSON.parse(attributes[key]);
+        } catch { }
+
+        element.defineProperty(camelcase(key), attributeToDefine);
     });
 
     const dynamicProperties = await element.loadDynamicProperties({request, response});
