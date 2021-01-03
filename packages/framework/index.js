@@ -8,14 +8,17 @@ import {callHook} from "./hooks";
 import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
+import {loadSettings} from "./config";
 const app = express();
-const port = 3005;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(express.static('.build/public'));
 
 (async () => {
+    const settings = await loadSettings();
+
+    const port = settings.port ?? 3005;
     await loadHooks();
 
     await callHook(HOOKS.HOOKS_LOADED);

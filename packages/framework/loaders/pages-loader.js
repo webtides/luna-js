@@ -12,7 +12,7 @@ const getLayout = async (factory, {context}) => {
     return renderToString(factory({html, context}));
 };
 
-const loadPageMetaData = async ({ file }) => {
+const loadPageMetaData = async ({file}) => {
     const page = (await import(path.resolve(file)));
 
     const availableMethods = [];
@@ -34,7 +34,7 @@ const loadPageMetaData = async ({ file }) => {
     }
 };
 
-const loadSinglePage = async ({ page, request, response }) => {
+const loadSinglePage = async ({page, request, response}) => {
     const settings = await loadSettings();
 
     let markup = "";
@@ -43,12 +43,11 @@ const loadSinglePage = async ({ page, request, response }) => {
     let element;
 
     if (typeof page.default.prototype?.connectedCallback === "undefined") {
-        markup = await renderToString(page.default({ html, request, response }));
+        markup = await renderToString(page.default({html, request, response}));
 
         if (page.layout) {
-            // TODO: we really need to find a better way.
-            const layoutModule = await import(path.resolve(`${settings.layoutsDirectory}/${page.layout}.js`));
-            layoutFactory = layoutModule.default;
+            const layoutModule = page.layout;
+            layoutFactory = typeof layoutModule === "function" ? layoutModule : layoutModule.default;
         }
 
         element = page;
@@ -59,16 +58,18 @@ const loadSinglePage = async ({ page, request, response }) => {
             element: page.default,
         };
 
-        const result = (await renderComponent({component, attributes: {}, request, response }));
+        const result = (await renderComponent({component, attributes: {}, request, response}));
 
         markup = result.markup;
         element = result.element;
 
         if (result.element.layout) {
-            const layoutModule = await import(path.resolve(`${settings.layoutsDirectory}/${result.element.layout}.js`));
+            const layoutModule = result.element.layout;
             layoutFactory = layoutModule.default;
         }
     }
+
+    console.log(layoutFactory);
 
     const pageHTML = await getLayout(layoutFactory, {
         context: {
@@ -84,19 +85,27 @@ const loadSinglePage = async ({ page, request, response }) => {
 
 const loadPages = async () => {
     const settings = await loadSettings();
-    const basePath = path.resolve(settings.pagesDirectory);
 
-    console.log("Load pages in", basePath);
+    return settings.pagesDirectory.flatMap(basePath => {
+        console.log("Load pages in", basePath);
 
-    return glob.sync(`${basePath}/**/*.js`).map((file) => {
-        const relativePath = file.substring(basePath.length);
-        const name = relativePath.split(".page")[0];
+        const files = glob.sync(path.join(basePath, `**/*.js`));
+        const pages = [];
 
-        return {
-            file,
-            name,
-            relativePath
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            const relativePath = file.substring(basePath.length);
+            const name = relativePath.split(".page")[0];
+
+            pages.push({
+                file,
+                name,
+                relativePath
+            });
         }
+
+        return pages;
     });
 };
 

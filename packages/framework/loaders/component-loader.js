@@ -3,41 +3,47 @@ import config, {loadSettings} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
 
-const allAvailableComponents = { };
+const allAvailableComponents = {};
 
 const registerAvailableComponents = async () => {
     const settings = await loadSettings();
 
-    const basePath = path.join(settings.componentsDirectory);
-
-    const files = glob.sync(`${basePath}/**/*.js`);
-
-    await Promise.all(files.map(async (file) => {
-        const module = await import(path.resolve(file));
-
-        const relativePath = file.substring(basePath.length);
-        const element = module.default;
-
-        if (typeof element?.prototype?.connectedCallback === "undefined") {
-            return;
+    const fileGroups = settings.componentsDirectory.map(componentDirectory => {
+        return {
+            files: glob.sync(`${componentDirectory}/**/*.js`),
+            basePath: componentDirectory
         }
+    });
 
-        if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
-            const staticProperties = await element.loadStaticProperties();
+    await Promise.all(fileGroups.map(async ({files, basePath}) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const module = await import(path.resolve(file));
 
-            if (staticProperties) {
-                element.staticProperties = staticProperties;
+            const relativePath = file.substring(basePath.length);
+            const element = module.default;
+
+            if (typeof element?.prototype?.connectedCallback === "undefined") {
+                return;
             }
-        }
 
-        const tagName = paramCase(element.name);
+            if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
+                const staticProperties = await element.loadStaticProperties();
 
-        allAvailableComponents[tagName] = {
-            element,
-            tagName,
-            name: element.name,
-            file,
-            relativePath
+                if (staticProperties) {
+                    element.staticProperties = staticProperties;
+                }
+            }
+
+            const tagName = paramCase(element.name);
+
+            allAvailableComponents[tagName] = {
+                element,
+                tagName,
+                name: element.name,
+                file,
+                relativePath
+            }
         }
     }));
 };

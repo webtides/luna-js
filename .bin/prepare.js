@@ -12,10 +12,10 @@ const glob = require("glob-all");
     const workingDirectory = process.cwd();
     const settings = require(path.join(workingDirectory, variables.configName));
 
-    const componentsDirectory = path.join(workingDirectory, settings.componentsDirectory);
+    const componentsDirectory = settings.componentsDirectory.map(directory => path.join(workingDirectory, directory, "**/*.js"));
 
     const generateEntryFile = () => {
-        const elements = glob.sync([ componentsDirectory ])
+        const elements = glob.sync(componentsDirectory)
 
         const contents = `
             // TODO: use core-js in near future

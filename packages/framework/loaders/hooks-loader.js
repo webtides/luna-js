@@ -5,14 +5,21 @@ import {registerHook} from "../hooks";
 
 const loadHooks = async () => {
     const settings = await loadSettings();
-    const basePath = path.join(settings.hooksDirectory);
 
-    await Promise.all(glob.sync(`${basePath}/**/*.js`)
-        .map(async (file) => {
+    const fileGroups = settings.componentsDirectory.map(hooksDirectory => {
+        return {
+            files: glob.sync(`${hooksDirectory}/**/*.js`),
+            basePath: hooksDirectory
+        }
+    });
+
+    await Promise.all(fileGroups.map(async ({ files, basePath }) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
             const module = await import(path.resolve(file));
-
             registerHook(module.name, module.default);
-        }));
+        }
+    }));
 };
 
 export {

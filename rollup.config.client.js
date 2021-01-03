@@ -3,33 +3,39 @@ import glob from "glob-all";
 import babel from '@rollup/plugin-babel';
 import multi from "@rollup/plugin-multi-entry";
 import resolve from "rollup-plugin-node-resolve";
-import copy from "rollup-plugin-copy";
 import commonjs from "@rollup/plugin-commonjs";
+import copy from "./build/plugins/rollup-plugin-copy";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
-const styleSettings = settings.assets.styles.build;
+const styleSettings = settings.assets.styles;
 const scriptSettings = settings.assets.scripts.build;
 const staticSettings = settings.assets.static;
 
-const scriptInputs = [ scriptSettings.input ].flat();
+const scriptInputs = [scriptSettings.input].flat();
 
-const bundles = [
-    {
-        input: styleSettings.input,
+const components = settings.componentsDirectory.map(directory => path.join(directory, "**/*.js"));
+
+const styleBundles = styleSettings.bundles.map(bundle => {
+    return {
+        input: glob.sync(bundle.input),
         output: {
-            dir: settings.assets.buildDirectory,
+            dir: bundle.output,
             entryFileNames: 'empty.js'
         },
         plugins: [
-            ...styleSettings.plugins
+            ...bundle.plugins
         ]
-    },
+    }
+});
+
+const bundles = [
+    ...styleBundles,
 
     {
         input: glob.sync([
             `${__dirname}/packages/client/moon.js`,
-            path.join(settings.componentsDirectory, "**/*.js"),
+            ...components,
             ...scriptInputs
         ]),
         output: {
@@ -46,13 +52,7 @@ const bundles = [
                 configFile: path.resolve(__dirname, 'babel.config.client.js')
             }),
             copy({
-                flatten: staticSettings.flatten || false,
-                targets: staticSettings.sources.map(source => {
-                    return {
-                        src: source.input,
-                        dest: path.join(settings.publicDirectory, source.output)
-                    }
-                })
+                sources: staticSettings.sources
             })
         ]
     }
@@ -67,7 +67,7 @@ if (settings.legacyBuild) {
             format: 'iife'
         },
         plugins: [
-            multi({ entryFileName: "bundle.legacy.js" }),
+            multi({entryFileName: "bundle.legacy.js"}),
             resolve(),
             commonjs(),
             ...scriptSettings.plugins,

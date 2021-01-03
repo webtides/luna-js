@@ -86,6 +86,7 @@ const routes = async ({router}) => {
     }
 
     const apis = await loadApis();
+    console.log({ apis });
     apis.map(async ({file, name, relativePath}) => {
         if (name === fallbackApiRoute) {
             fallbackApi = {file, name};
