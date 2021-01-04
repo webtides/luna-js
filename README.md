@@ -5,7 +5,8 @@
 ## Installation
 
 moon.js should be installed as a npm dependency. To install the module
-just run `npm install --save moon.js`
+add the following line to your dependencies and run `npm install`  
+`"moon.js": "git@github.com:webtides/moon.js.git"` 
 
 ## Features
 
