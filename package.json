@@ -8,9 +8,8 @@
     "node": "*"
   },
   "scripts": {
-    "postinstall": "npm run babel",
+    "postinstall": "gulp prepare",
     "babel": "npx babel packages --out-dir lib/packages",
-    "compile": "rollup --config rollup.config.server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eddy Löwen, Lukas Schardt",
