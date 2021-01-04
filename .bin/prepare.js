@@ -12,7 +12,9 @@ const glob = require("glob-all");
     const workingDirectory = process.cwd();
     const settings = require(path.join(workingDirectory, variables.configName));
 
-    const componentsDirectory = settings.componentsDirectory.map(directory => path.join(workingDirectory, directory, "**/*.js"));
+    const componentsDirectory = settings.componentsDirectory.map(bundle => {
+        return path.join(workingDirectory, bundle.basePath, "**/*.js")
+    });
 
     const generateEntryFile = () => {
         const elements = glob.sync(componentsDirectory)

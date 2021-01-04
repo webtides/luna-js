@@ -6,7 +6,7 @@ import {registerHook} from "../hooks";
 const loadHooks = async () => {
     const settings = await loadSettings();
 
-    const fileGroups = settings.componentsDirectory.map(hooksDirectory => {
+    const fileGroups = settings.hooksDirectory.map(hooksDirectory => {
         return {
             files: glob.sync(`${hooksDirectory}/**/*.js`),
             basePath: hooksDirectory
