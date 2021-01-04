@@ -9,7 +9,9 @@ import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {loadSettings} from "./config";
-const app = express();
+import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./dev/watcher";
+
+let app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -46,6 +48,8 @@ app.use(express.static('.build/public'));
         await callHook(HOOKS.SERVER_STARTED, {
             app
         });
+
+        startWatchingComponentDirectories();
+        startWatchingPagesDirectories();
     });
 })();
-

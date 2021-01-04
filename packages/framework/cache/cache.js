@@ -1,4 +1,6 @@
-const cache = { };
+let cache = { };
+
+const clearCache = () => cache = { };
 
 const loadFromCache = async (key, group = "default", defaultValue = false) => {
     if (cache[group] && cache[group][key]) {
@@ -18,6 +20,7 @@ const writeToCache = async (key, value, group = "default") => {
 };
 
 export {
+    clearCache,
     writeToCache,
     loadFromCache
 }

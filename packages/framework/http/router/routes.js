@@ -4,6 +4,8 @@ import {loadApis} from "../../loaders/api-loader";
 import path from "path";
 import {loadSettings} from "../../config";
 
+let currentRouter;
+
 const getRouteName = (name) => {
     name = name.replace(/\[(.*)]/, ":$1");
 
@@ -20,6 +22,8 @@ const isRouteWithParam = name => {
 }
 
 const routes = async ({router}) => {
+    currentRouter = router;
+
     const pages = await loadPages();
     const settings = await loadSettings();
 
@@ -110,4 +114,4 @@ const routes = async ({router}) => {
     }
 };
 
-export {routes};
+export {routes, currentRouter};
