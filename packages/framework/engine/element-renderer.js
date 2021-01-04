@@ -7,13 +7,6 @@ import {loadFromCache, writeToCache} from "../cache/cache";
 import camelcase from "camelcase";
 import { loadSettings } from "../config";
 
-const extractStyles = (element) => {
-    if (element._styles.length > 0) {
-        return element._styles;
-    }
-    return false;
-};
-
 /**
  * Takes a single component object and renders the element.
  * Fetches all dynamic properties for the component & loads
@@ -66,8 +59,6 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
     Object.keys(element.properties()).forEach(key => {
         attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
     });
-
-    component.styles = extractStyles(element);
 
     const markup = await renderToString(element.template({html, unsafeHTML}));
 
@@ -181,21 +172,6 @@ const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
         `);
 };
 
-const appendStylesOfUpgradedElementsToHead = ($, upgradedElements) => {
-
-    const $head = $("head");
-
-    Object.keys(upgradedElements).forEach(key => {
-        const component = upgradedElements[key];
-
-        if (component.styles) {
-            component.styles.forEach((style, index) => {
-                $head.append(`<style id="${paramCase(component.name)}${index}">${style}</style>`);
-            });
-        }
-    });
-
-};
 
 export {renderComponent};
 
@@ -206,7 +182,6 @@ export default async (htmlDocument, {request, response}) => {
     await parseHtmlDocument($, upgradedElements, {request, response});
 
     await appendUpgradedElementsToDocument($, upgradedElements);
-    appendStylesOfUpgradedElementsToHead($, upgradedElements);
 
     return $.html();
 };
