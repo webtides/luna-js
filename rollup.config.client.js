@@ -7,6 +7,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import copy from "./build/plugins/rollup-plugin-copy";
 import {postcssPlugins} from "./packages/client/styles/postcss-loader";
 import postcss from 'rollup-plugin-postcss'
+import strip from "./build/plugins/rollup-plugin-strip-server-code";
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -56,6 +57,7 @@ const componentBundles = settings.componentsDirectory.flatMap(bundle => {
             format: 'es'
         },
         plugins: [
+            strip(),
             resolve(),
             commonjs(),
             pluginPostcss,
@@ -77,6 +79,7 @@ const componentBundles = settings.componentsDirectory.flatMap(bundle => {
                 format: 'iife'
             },
             plugins: [
+                strip(),
                 multi({entryFileName: "bundle.legacy.js"}),
                 resolve(),
                 commonjs(),
