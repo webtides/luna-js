@@ -5,6 +5,7 @@ import {html, renderToString} from "@popeindustries/lit-html-server";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {loadFromCache, writeToCache} from "../cache/cache";
 import camelcase from "camelcase";
+import { loadSettings } from "../config";
 
 const extractStyles = (element) => {
     if (element._styles.length > 0) {
@@ -156,23 +157,26 @@ const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
     return $;
 };
 
-const appendUpgradedElementsToDocument = ($, upgradedElements) => {
+const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
+    const settings = await loadSettings();
+
     $("body")
         .append(`<script type="module" src="/assets/moon.js"></script>`)
         .append(`
             <script type="module">
                 ${Object.keys(upgradedElements)
-            .map(key => {
-                const component = upgradedElements[key];
-                const componentPath = component.relativePath.split("/").pop();
-
-                return `
-                        import ${component.name} from "/assets/${componentPath}";
-                        customElements.define("${paramCase(component.name)}", ${component.name});
-                    `;
-            })
-            .join("\n")
-        }
+                    .map(key => {
+                        const component = upgradedElements[key];
+                        const relativePath = component.outputDirectory.substring(settings.publicDirectory.length);
+                        const componentPath = component.relativePath.split("/").pop();
+        
+                        return `
+                            import ${component.name} from "${relativePath}/${componentPath}";
+                            customElements.define("${paramCase(component.name)}", ${component.name});
+                        `;
+                    })
+                    .join("\n")
+                }
             </script>
         `);
 };
@@ -201,7 +205,7 @@ export default async (htmlDocument, {request, response}) => {
     const upgradedElements = {};
     await parseHtmlDocument($, upgradedElements, {request, response});
 
-    appendUpgradedElementsToDocument($, upgradedElements);
+    await appendUpgradedElementsToDocument($, upgradedElements);
     appendStylesOfUpgradedElementsToHead($, upgradedElements);
 
     return $.html();

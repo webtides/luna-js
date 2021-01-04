@@ -9,16 +9,17 @@ const allAvailableComponents = {};
 const registerAvailableComponents = async () => {
     const settings = await loadSettings();
 
-    const fileGroups = settings.componentsDirectory.map(({ basePath, styles }) => {
+    const bundles = settings.componentsDirectory.map(({ basePath, styles, outputDirectory }) => {
         return {
             files: glob.sync(`${basePath}/**/*.js`),
             basePath,
-            styles
+            styles,
+            outputDirectory
         }
     });
 
-    for (const group of fileGroups) {
-        const { files, basePath, styles } = group;
+    for (const bundle of bundles) {
+        const { files, basePath, styles, outputDirectory } = bundle;
 
         // Set the current module to let the css parser know which postcss settings to apply.
         setPostcssModule(basePath, styles);
@@ -51,7 +52,8 @@ const registerAvailableComponents = async () => {
                 tagName,
                 name: element.name,
                 file,
-                relativePath
+                relativePath,
+                outputDirectory
             }
         }
     }

@@ -10,7 +10,7 @@ const currentDirectory = __dirname;
 
 const settings = hasMoonConfigFile
     ? require(path.join(process.cwd(), "moon.config.js"))
-    : require(path.join(currentDirectory, "moon.config.default.js"));
+    : require(path.join(currentDirectory, "moon.config.empty.js"));
 
 gulp.task('serve', (cb) => {
     let started = false;
