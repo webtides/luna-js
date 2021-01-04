@@ -57,11 +57,10 @@ const libraries = () => {
 };
 
 const compileServerCode = () => {
-    return run(`npm run babel && npm run compile`).exec();
+    return run(`npm run compile`).exec();
 };
 
 
-gulp.task("prepare", gulp.series(compileServerCode));
 gulp.task("build", gulp.series(runPrepareScript, gulp.series(buildServerComponents(), buildClientComponents(), libraries)));
 
 gulp.task("watch", gulp.parallel(
