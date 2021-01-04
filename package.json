@@ -8,6 +8,7 @@
     "node": "*"
   },
   "scripts": {
+    "postinstall": "npm run babel",
     "babel": "npx babel packages --out-dir lib/packages",
     "compile": "rollup --config rollup.config.server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
