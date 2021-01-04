@@ -69,8 +69,6 @@ const loadSinglePage = async ({page, request, response}) => {
         }
     }
 
-    console.log(layoutFactory);
-
     const pageHTML = await getLayout(layoutFactory, {
         context: {
             page: html`${unsafeHTML(markup)}`
@@ -96,7 +94,7 @@ const loadPages = async () => {
             const file = files[i];
 
             const relativePath = file.substring(basePath.length);
-            const name = relativePath.split(".page")[0];
+            const name = relativePath.split(".js")[0];
 
             pages.push({
                 file,
