@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "module": "index.js",
   "engines": {
-    "node": ">=14.13.0"
+    "node": "*"
   },
   "scripts": {
     "postinstall": "gulp prepare",
