@@ -42,7 +42,7 @@ const loadSinglePage = async ({page, request, response}) => {
 
     let element;
 
-    if (typeof page.default.prototype?.connectedCallback === "undefined") {
+    if (typeof page?.default?.prototype?.connectedCallback === "undefined") {
         markup = await renderToString(page.default({html, request, response}));
 
         if (page.layout) {

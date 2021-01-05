@@ -35,7 +35,7 @@ const routes = async ({router}) => {
 
     const registerPageRoute = async ({file, name}) => {
         const route = getRouteName(name);
-        const {availableMethods, page} = await loadPageMetaData({file});
+        const {page} = await loadPageMetaData({file});
 
         router.get(route, async (request, response) => {
             console.log("Calling", route, request.path);

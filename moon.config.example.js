@@ -53,5 +53,9 @@ module.exports = {
                 { input: __dirname + "/admin/assets/js/**/*", output: ".build/public/admin/assets/js" },
             ]
         }
+    },
+
+    export: {
+        outputDirectory: ".build/generated/export",
     }
 }

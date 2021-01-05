@@ -12,10 +12,9 @@ require.extensions['.css'] = function (module, filename) {
     module.exports = result.css;
 };
 
+global.SSR = true;
 global.HTMLElement = class {};
-global.customElements = {
-    define(name, element) {},
-};
+
 global.window = {};
 global.document = {
     getElementById() {},

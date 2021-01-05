@@ -1,7 +1,7 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
 
 const isOnServer = () => {
-    return (typeof process !== "undefined" && process.env.SSR);
+    return (typeof global !== "undefined" && global.SSR);
 }
 
 export default class TemplateElement extends StyledElement {
