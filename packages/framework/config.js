@@ -5,14 +5,3 @@ const loadSettings = async () => {
 };
 
 export { loadSettings };
-
-export default (() => {
-    return {
-        baseDirectory: ".",
-        frameworkDirectory: "./.build/packages/framework",
-        pagesDirectory: "./.build/pages",
-        apiDirectory: "./.build/api",
-        componentsDirectory: "./.build/components",
-        layoutsDirectory: "./.build/layouts"
-    }
-})();

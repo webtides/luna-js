@@ -7,6 +7,11 @@ import {loadFromCache, writeToCache} from "../cache/cache";
 import camelcase from "camelcase";
 import { loadSettings } from "../config";
 
+
+const getComponentCacheKey = (component, attributes = {}) => {
+    return `${component.element.name}.${JSON.stringify(attributes)};`
+};
+
 /**
  * Takes a single component object and renders the element.
  * Fetches all dynamic properties for the component & loads
@@ -19,9 +24,7 @@ import { loadSettings } from "../config";
  * @returns {Promise<{markup: string, element: *}>}
  */
 const renderComponent = async ({component, attributes = {}, request, response}) => {
-    console.log("Rendering", component.element.name, {attributes});
-
-    const cachedValue = await loadFromCache(component.element.name, "components");
+    const cachedValue = await loadFromCache(getComponentCacheKey(component, attributes), "components");
     if (cachedValue) {
         return cachedValue;
     }
@@ -63,7 +66,7 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
     const markup = await renderToString(element.template({html, unsafeHTML}));
 
     if (!dynamicProperties) {
-        await writeToCache(component.element.name, {markup, element}, "components");
+        await writeToCache(getComponentCacheKey(component, attributes), {markup, element}, "components");
     }
 
     return {markup, element};
