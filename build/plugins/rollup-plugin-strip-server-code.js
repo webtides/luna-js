@@ -5,10 +5,6 @@ export default function () {
     return {
         name: 'moon-strip-server-code',
         transform(code, id) {
-            // Only strip server code of actual elements.
-            if (code.indexOf("TemplateElement") === -1) {
-                return;
-            }
 
             const toRemove = [ ];
 
