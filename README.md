@@ -39,5 +39,4 @@ you have to follow these steps:
   -  Create a `moon.config.js` file next to your `package.json`. Exemplary conents
   can be found inside `moon.config.example.js`.
   
-  - To start your server in development mode and build all assets, run:
-  `gulp dev --gulpfile node_modules/moon.js/gulpfile.js --cwd .`
+  - To start your server, run `moon`. To start your server in development mode, run `moon --dev`
