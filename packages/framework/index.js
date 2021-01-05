@@ -9,15 +9,17 @@ import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {loadSettings} from "./config";
-import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./dev/watcher";
 
-let app = express();
+let app;
+let server;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
-app.use(express.static('.build/public'));
+const startServer = async () => {
+    app = express();
 
-(async () => {
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded());
+    app.use(express.static('.build/public'));
+
     const settings = await loadSettings();
 
     const port = settings.port ?? 3005;
@@ -42,14 +44,30 @@ app.use(express.static('.build/public'));
         router: app
     });
 
-    app.listen(port, async () => {
+    server = app.listen(port, async () => {
         console.log(`moon.js listening at: http://localhost:${port}`)
 
         await callHook(HOOKS.SERVER_STARTED, {
             app
         });
-
-        startWatchingComponentDirectories();
-        startWatchingPagesDirectories();
     });
+};
+
+const stopServer = async () => {
+    return new Promise((resolve, reject) => {
+        if (server) {
+            server.close(() => resolve());
+        }
+    })
+}
+
+const restartServer = async () => {
+    await stopServer();
+    startServer();
+}
+
+(async () => {
+    await startServer();
 })();
+
+export { stopServer, startServer, restartServer };

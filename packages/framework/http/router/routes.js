@@ -52,7 +52,6 @@ const routes = async ({router}) => {
     }
 
     const registerApiRoute = async ({file, name}) => {
-        console.log({file, name});
         const module = (await import(path.resolve(file)));
 
         const get = module.get || module.default;

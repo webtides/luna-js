@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { execute } = require("../lib/packages/cli");
+const { execute } = require("../lib/packages/cli/entry");
 const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");

@@ -1,8 +1,9 @@
-import {loadSettings} from "../config";
+import {loadSettings} from "../../framework/config";
 import chokidar from "chokidar";
-import {registerAvailableComponents} from "../loaders/component-loader";
-import {clearCache} from "../cache/cache";
-import {currentRouter, routes} from "../http/router/routes";
+import {registerAvailableComponents} from "../../framework/loaders/component-loader";
+import {clearCache} from "../../framework/cache/cache";
+import {currentRouter, routes} from "../../framework/http/router/routes";
+import {restartServer} from "../../framework";
 
 const watchers = { };
 
@@ -26,8 +27,7 @@ const startWatchingPagesDirectories = async () => {
 
     startWatchingDirectories("pages", directoriesToWatch, (path) => {
         clearCache();
-        registerAvailableComponents();
-        routes({ router: currentRouter });
+        restartServer();
     });
 };
 

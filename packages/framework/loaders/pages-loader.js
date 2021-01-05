@@ -13,7 +13,7 @@ const getLayout = async (factory, {context}) => {
 };
 
 const loadPageMetaData = async ({file}) => {
-    const page = (await import(path.resolve(file)));
+    const page = await import(path.resolve(file));
 
     const availableMethods = [];
     if (typeof page.default.prototype?.connectedCallback === "undefined") {
@@ -41,7 +41,6 @@ const loadSinglePage = async ({page, request, response}) => {
     let layoutFactory = baseLayoutFactory;
 
     let element;
-
     if (typeof page?.default?.prototype?.connectedCallback === "undefined") {
         markup = await renderToString(page.default({html, request, response}));
 

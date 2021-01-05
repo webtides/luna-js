@@ -1,6 +1,9 @@
 let cache = { };
 
-const clearCache = () => cache = { };
+const clearCache = () => {
+    Object.keys(require.cache).forEach(key => delete require.cache[require.resolve(key)]);
+    cache = { };
+}
 
 const loadFromCache = async (key, group = "default", defaultValue = false) => {
     if (cache[group] && cache[group][key]) {

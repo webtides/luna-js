@@ -1,11 +1,21 @@
 import {build, startDevelopmentBuilds} from "./functions/build";
+import {startWatchingPagesDirectories} from "./dev/watcher";
+
+const startMoonJS = async () => {
+    require("../framework");
+};
 
 const execute = async (argv) => {
     if (argv.dev) {
         console.log("Starting moon in development mode.");
+
         startDevelopmentBuilds();
 
-        require("../framework/entry.js");
+        startMoonJS();
+
+        startWatchingPagesDirectories();
+        startWatchingPagesDirectories();
+
         return;
     }
 
@@ -15,14 +25,14 @@ const execute = async (argv) => {
     }
 
     if (argv.start) {
-        require("../framework/entry.js");
+        startMoonJS();
         return;
     }
 
     // Default
     await build();
 
-    require("../framework/entry.js");
+    startMoonJS();
 };
 
 export { execute };

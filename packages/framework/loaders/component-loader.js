@@ -4,9 +4,11 @@ import path from "path";
 import {paramCase} from "param-case";
 import {setPostcssModule, transformCssModules} from "../../client/styles/postcss-loader";
 
-const allAvailableComponents = {};
+let allAvailableComponents = {};
 
 const registerAvailableComponents = async () => {
+    allAvailableComponents = { };
+
     const settings = await loadSettings();
 
     const bundles = settings.componentsDirectory.map(({ basePath, styles, outputDirectory }) => {
