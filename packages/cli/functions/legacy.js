@@ -3,8 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const glob = require("glob");
 
-(() => {
-
+const prepareLegacyBuild = () => {
     const variables = {
         configName: "moon.config.js"
     };
@@ -48,9 +47,6 @@ const glob = require("glob");
     };
 
     generateEntryFile();
+};
 
-    // child_process.execSync(`cd node_modules/previous.js && npm run start -- --pagesDir ${workingDirectory}/app/pages`, {stdio: [0, 1, 2]}, (error, stdout, stderr) => {
-    //     console.log(stdout);
-    // });
-
-})();
+export { prepareLegacyBuild };
