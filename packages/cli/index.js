@@ -1,5 +1,5 @@
 import {build, startDevelopmentBuilds} from "./functions/build";
-import {startWatchingPagesDirectories} from "./dev/watcher";
+import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./dev/watcher";
 
 const startMoonJS = async () => {
     require("../framework");
@@ -14,7 +14,7 @@ const execute = async (argv) => {
         startMoonJS();
 
         startWatchingPagesDirectories();
-        startWatchingPagesDirectories();
+        startWatchingComponentDirectories();
 
         return;
     }
