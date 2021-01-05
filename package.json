@@ -15,6 +15,7 @@
   "author": "Eddy Löwen, Lukas Schardt",
   "license": "MIT",
   "dependencies": {
+    "acorn": "^8.0.4",
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -63,7 +64,5 @@
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-rename": "^1.0.1"
   },
-  "devDependencies": {
-    "acorn": "^8.0.4"
-  }
+  "devDependencies": {}
 }
