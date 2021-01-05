@@ -151,6 +151,7 @@ const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
 const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
     const settings = await loadSettings();
 
+    // TODO: dynamically load the moon.js asset
     $("body")
         .append(`<script type="module" src="/assets/moon.js"></script>`)
         .append(`
