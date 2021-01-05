@@ -12,8 +12,8 @@ add the following line to your dependencies and run `npm install`
 
 ### Pages & Routes
 
-To register a route, just create a file in your `Pages Directory` ending with `.page.js`. Moon.js 
-will auomatically register the page as a route.
+To register a route, just create a file in your `Pages Directory`. Moon.js 
+will automatically register the page as a route.
 
 ### Layouts
 
@@ -36,7 +36,7 @@ The framework can be used without much configuration needed. To get started
 you have to follow these steps:
 
 
-  -  Create a `moon.config.js` file next to your `package.json`. Exemplary conents
+  -  Create a `moon.config.js` file next to your `package.json`. Exemplary contents
   can be found inside `moon.config.example.js`.
   
   - To start your server, run `moon`. To start your server in development mode, run `moon --dev`
