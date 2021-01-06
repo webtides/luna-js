@@ -1,12 +1,20 @@
 import glob from "glob";
-import config, {loadSettings} from "../config.js";
+import config, {loadSettings, hasManifest} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
 import {setPostcssModule, transformCssModules} from "../../client/styles/postcss-loader";
 
 let allAvailableComponents = {};
 
-const registerAvailableComponents = async () => {
+const isDynamicElement = element => {
+    const instance = new element();
+    const availableProperties = Object.getOwnPropertyNames(Object.getPrototypeOf(instance));
+
+    return availableProperties.includes("loadDynamicProperties");
+};
+
+const registerAvailableComponents = async ({ generateCssBundles = true } = {}) => {
+    console.log({ generateCssBundles });
     allAvailableComponents = { };
 
     const settings = await loadSettings();
@@ -23,8 +31,10 @@ const registerAvailableComponents = async () => {
     for (const bundle of bundles) {
         const { files, basePath, styles, outputDirectory } = bundle;
 
-        // Set the current module to let the css parser know which postcss settings to apply.
-        setPostcssModule(basePath, styles);
+        if (generateCssBundles) {
+            // Set the current module to let the css parser know which postcss settings to apply.
+            setPostcssModule(basePath, styles);
+        }
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -39,19 +49,25 @@ const registerAvailableComponents = async () => {
                 continue;
             }
 
+            let hasStaticProperties = false;
+
             if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
                 const staticProperties = await element.loadStaticProperties();
 
                 if (staticProperties) {
+                    hasStaticProperties = true;
                     element.staticProperties = staticProperties;
                 }
             }
 
+            const hasDynamicProperties = isDynamicElement(element);
             const tagName = paramCase(element.name);
 
             allAvailableComponents[tagName] = {
                 element,
                 tagName,
+                hasStaticProperties,
+                hasDynamicProperties,
                 name: element.name,
                 file,
                 relativePath,
@@ -60,7 +76,11 @@ const registerAvailableComponents = async () => {
         }
     }
 
-    await transformCssModules();
+    if (generateCssBundles) {
+        await transformCssModules();
+    }
+
+    return allAvailableComponents;
 };
 
 const getAvailableComponents = () => allAvailableComponents;
