@@ -9,6 +9,10 @@ const fs = require("fs");
 const loadedStyles = { };
 const postcssSettings = { };
 
+require.extensions['.css'] = (module, filename) => {
+    module.exports = "";
+};
+
 const requireExtension = (currentModulePath) => {
     return (module, filename) => {
         const css = fs.readFileSync(filename, 'utf8');

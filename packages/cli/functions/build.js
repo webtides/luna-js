@@ -1,17 +1,20 @@
 import {loadSettings} from "../../framework/config";
 import {prepareLegacyBuild} from "./legacy";
+import {registerAvailableComponents} from "../../framework/loaders/component-loader";
 
 const rollup = require("rollup");
 const loadConfigFile = require('rollup/dist/loadConfigFile');
 const path = require("path");
+const fs = require("fs");
 
 
-const startRollupWatch = async (configFile, callback = () => {}) => {
-    const { options, warnings } = await loadConfigFile(configFile);
+const startRollupWatch = async (configFile, callback = () => {
+}) => {
+    const {options, warnings} = await loadConfigFile(configFile);
     warnings.flush();
 
     const watcher = rollup.watch(options);
-    watcher.on("event", ({ code, result }) => {
+    watcher.on("event", ({code, result}) => {
         switch (code) {
             case "BUNDLE_END":
                 result.close();
@@ -30,7 +33,7 @@ const startRollupWatch = async (configFile, callback = () => {}) => {
 }
 
 const startRollup = async (configFile) => {
-    const { options, warnings } = await loadConfigFile(configFile);
+    const {options, warnings} = await loadConfigFile(configFile);
     warnings.flush();
 
     for (const option of options) {
