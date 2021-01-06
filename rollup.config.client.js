@@ -35,6 +35,20 @@ const styleBundles = styleSettings.bundles.map(bundle => {
     }
 });
 
+const moonBundle = {
+    input: `${__dirname}/packages/client/moon.js`,
+    output: {
+        dir: settings.publicDirectory,
+        entryFileNames: '[name].js',
+        sourcemap: true,
+        format: 'iife'
+    },
+    plugins: [
+        resolve(),
+        commonjs()
+    ]
+};
+
 const componentBundles = settings.componentsDirectory.flatMap(bundle => {
     const pluginPostcss = postcss({
         inject: false,
@@ -47,7 +61,6 @@ const componentBundles = settings.componentsDirectory.flatMap(bundle => {
 
     const bundles = [{
         input: glob.sync([
-            `${__dirname}/packages/client/moon.js`,
             path.join(bundle.basePath, "**/*.js")
         ]),
         output: {
@@ -95,6 +108,7 @@ const componentBundles = settings.componentsDirectory.flatMap(bundle => {
 });
 
 const bundles = [
+    moonBundle,
     ...styleBundles,
     ...componentBundles,
 ];
