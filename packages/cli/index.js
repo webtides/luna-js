@@ -1,7 +1,7 @@
 import {build, startDevelopmentBuilds} from "./functions/build";
 import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./functions/watcher";
 import {checkRequirements} from "./functions/prepare";
-import {prepareForDocker} from "./functions/docker";
+import {publishDockerFile} from "./functions/docker";
 
 const startMoonJS = async () => {
     require("../framework").startServer();
@@ -37,9 +37,8 @@ const execute = async (argv) => {
         return;
     }
 
-    if (argv.docker) {
-        await build();
-        await prepareForDocker();
+    if (argv.dockerfile) {
+        publishDockerFile();
         return;
     }
 
