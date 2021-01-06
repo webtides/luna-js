@@ -1,15 +1,11 @@
-const {pascalCase} = require("pascal-case");
-const path = require("path");
-const fs = require("fs");
-const glob = require("glob");
+import { pascalCase } from "pascal-case";
+import path from "path";
+import fs from "fs";
+import glob from "glob";
+import {loadSettings} from "../../framework/config";
 
-const prepareLegacyBuild = () => {
-    const variables = {
-        configName: "moon.config.js"
-    };
-
-    const workingDirectory = process.cwd();
-    const settings = require(path.join(workingDirectory, variables.configName));
+const prepareLegacyBuild = async () => {
+    const settings = await loadSettings();
 
     const generateEntryFile = () => {
         let contents = `

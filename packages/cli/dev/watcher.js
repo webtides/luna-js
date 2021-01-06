@@ -2,7 +2,6 @@ import {loadSettings} from "../../framework/config";
 import chokidar from "chokidar";
 import {registerAvailableComponents} from "../../framework/loaders/component-loader";
 import {clearCache} from "../../framework/cache/cache";
-import {currentRouter, routes} from "../../framework/http/router/routes";
 import {restartServer} from "../../framework";
 
 const watchers = { };

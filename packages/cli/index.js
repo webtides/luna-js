@@ -1,11 +1,18 @@
 import {build, startDevelopmentBuilds} from "./functions/build";
 import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./dev/watcher";
+import {checkRequirements} from "./functions/prepare";
 
 const startMoonJS = async () => {
-    require("../framework");
+    require("../framework").startServer();
 };
 
 const execute = async (argv) => {
+    const meetsRequirements = await checkRequirements();
+
+    if (!meetsRequirements) {
+        return;
+    }
+
     if (argv.dev) {
         console.log("Starting moon in development mode.");
 

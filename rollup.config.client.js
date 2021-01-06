@@ -49,63 +49,71 @@ const moonBundle = {
     ]
 };
 
-const componentBundles = settings.componentsDirectory.flatMap(bundle => {
-    const pluginPostcss = postcss({
-        inject: false,
-        extract: false,
-        plugins: [
-            ...postcssPlugins
-        ],
-        extension: [".css"]
-    });
-
-    const bundles = [{
-        input: glob.sync([
+const componentBundles = settings.componentsDirectory
+    .flatMap(bundle => {
+        const inputFiles = glob.sync([
             path.join(bundle.basePath, "**/*.js")
-        ]),
-        output: {
-            dir: bundle.outputDirectory,
-            entryFileNames: '[name].js',
-            sourcemap: true,
-            format: 'es'
-        },
-        plugins: [
-            strip(),
-            resolve(),
-            commonjs(),
-            pluginPostcss,
-            babel({
-                configFile: path.resolve(__dirname, 'babel.config.client.js')
-            }),
-            copy({
-                sources: staticSettings.sources
-            })
-        ]
-    }];
+        ]);
 
-    if (settings.legacyBuild) {
-        bundles.push({
-            input: path.join(__dirname, "lib/entry.legacy.js"),
+        if (inputFiles.length === 0) {
+            return false;
+        }
+
+        const pluginPostcss = postcss({
+            inject: false,
+            extract: false,
+            plugins: [
+                ...postcssPlugins
+            ],
+            extension: [".css"]
+        });
+
+        const bundles = [{
+            input: inputFiles,
             output: {
                 dir: bundle.outputDirectory,
+                entryFileNames: '[name].js',
                 sourcemap: true,
-                format: 'iife'
+                format: 'es'
             },
             plugins: [
                 strip(),
-                multi({entryFileName: "bundle.legacy.js"}),
                 resolve(),
                 commonjs(),
                 pluginPostcss,
                 babel({
-                    configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
+                    configFile: path.resolve(__dirname, 'babel.config.client.js')
+                }),
+                copy({
+                    sources: staticSettings.sources
                 })
             ]
-        });
-    }
+        }];
 
-    return bundles;
-});
+        if (settings.legacyBuild) {
+            bundles.push({
+                input: path.join(__dirname, "lib/entry.legacy.js"),
+                output: {
+                    dir: bundle.outputDirectory,
+                    sourcemap: true,
+                    format: 'iife'
+                },
+                plugins: [
+                    strip(),
+                    multi({entryFileName: "bundle.legacy.js"}),
+                    resolve(),
+                    commonjs(),
+                    pluginPostcss,
+                    babel({
+                        configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
+                    })
+                ]
+            });
+        }
+
+        return bundles;
+    })
+    .filter(bundle => bundle !== false);
 
 const bundles = [
     moonBundle,

@@ -1,35 +1,30 @@
-const tailwindcss = require("tailwindcss");
 const path = require("path");
 
 module.exports = {
     buildDirectory: ".build",
     publicDirectory: ".build/public",
 
-    pagesDirectory: [ path.join(__dirname, "admin/views/pages"), path.join(__dirname, "cms/pages") ],
+    pagesDirectory: [ path.join(__dirname, "pages") ],
 
     componentsDirectory: [
         {
-            basePath: path.join(__dirname, "admin/views/components"),
-            outputDirectory: ".build/public/admin/assets",
+            basePath: path.join(__dirname, "components"),
+            outputDirectory: ".build/public/assets",
 
             styles: {
-                outputDirectory: ".build/public/admin/assets/css",
-                filename: "admin.css",
-                postcssPlugins: [
-                    tailwindcss(path.join(__dirname, 'tailwind.config.js')),
-                ]
+                outputDirectory: ".build/public/assets/css",
+                filename: "base.css",
+                postcssPlugins: [ ]
             }
         }
     ],
 
-    layoutsDirectory: path.join(__dirname, "admin/views/layouts"),
-
-    hooksDirectory: [ path.join(__dirname, "admin/hooks") ],
-    apiDirectory: [ path.join(__dirname, "admin/api") ],
+    hooksDirectory: [ path.join(__dirname, "hooks") ],
+    apiDirectory: [ path.join(__dirname, "api") ],
 
     legacyBuild: false,
 
-    fallbackRoute: "/cms",
+    fallbackRoute: "/fallback",
     fallbackApiRoute: "/fallback",
 
     assets: {
@@ -37,25 +32,17 @@ module.exports = {
 
         styles: {
             bundles: [ {
-                input: [ path.join(__dirname, "admin/assets/css/base.css") ],
+                input: [ path.join(__dirname, "assets/css/base.css") ],
 
-                outputDirectory: ".build/public/admin/assets/css",
+                outputDirectory: ".build/public/assets/css",
                 filename: "base.css",
 
-                postcssPlugins: [
-                    tailwindcss(path.join(__dirname, 'tailwind.config.js')),
-                ]
+                postcssPlugins: [ ]
             } ]
         },
 
         static: {
-            sources: [
-                { input: __dirname + "/admin/assets/js/**/*", output: ".build/public/admin/assets/js" },
-            ]
+            sources: []
         }
-    },
-
-    export: {
-        outputDirectory: ".build/generated/export",
     }
 }

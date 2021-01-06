@@ -1,3 +1,3 @@
 require = require("esm")(module/*, options*/)
 
-module.exports = require("./index.js")
+require("./index.js").startServer();

@@ -14,13 +14,18 @@ let app;
 let server;
 
 const startServer = async () => {
+    const settings = await loadSettings();
+
+    if (!settings) {
+        console.log("Could not start moon.js. Have you created your moon.config.js?");
+        return;
+    }
+
     app = express();
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded());
     app.use(express.static('.build/public'));
-
-    const settings = await loadSettings();
 
     const port = settings.port ?? 3005;
     await loadHooks();
@@ -65,9 +70,5 @@ const restartServer = async () => {
     await stopServer();
     startServer();
 }
-
-(async () => {
-    await startServer();
-})();
 
 export { stopServer, startServer, restartServer };

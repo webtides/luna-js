@@ -46,16 +46,14 @@ const startRollup = async (configFile) => {
 }
 
 const startDevelopmentBuilds = async () => {
-    startRollupWatch(path.join(global.moon.currentDirectory, "rollup.config.client.js"), () => {
-
-    });
+    startRollupWatch(path.join(global.moon.currentDirectory, "rollup.config.client.js"));
 };
 
 const build = async () => {
     const settings = await loadSettings();
 
     if (settings.legacyBuild) {
-        prepareLegacyBuild();
+        await prepareLegacyBuild();
     }
 
     await startRollup(path.join(global.moon.currentDirectory, "rollup.config.client.js"));
