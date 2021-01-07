@@ -1,5 +1,5 @@
 import path from "path";
-import config, {loadSettings} from '../config.js';
+import {loadSettings} from '../config.js';
 
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";

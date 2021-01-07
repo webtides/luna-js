@@ -4,7 +4,7 @@ const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
 }
 
-export default class TemplateElement extends StyledElement {
+export default class MoonElement extends StyledElement {
 
     constructor(options) {
         super({

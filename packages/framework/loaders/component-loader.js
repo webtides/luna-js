@@ -1,8 +1,8 @@
 import glob from "glob";
 import config, {loadSettings, hasManifest} from "../config.js";
 import path from "path";
-import {paramCase} from "param-case";
 import {setPostcssModule, transformCssModules} from "../../client/styles/postcss-loader";
+import {paramCase} from "param-case";
 
 let allAvailableComponents = {};
 
@@ -14,7 +14,6 @@ const isDynamicElement = element => {
 };
 
 const registerAvailableComponents = async ({ generateCssBundles = true } = {}) => {
-    console.log({ generateCssBundles });
     allAvailableComponents = { };
 
     const settings = await loadSettings();
@@ -62,6 +61,8 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
 
             const hasDynamicProperties = isDynamicElement(element);
             const tagName = paramCase(element.name);
+
+            console.log(tagName);
 
             allAvailableComponents[tagName] = {
                 element,

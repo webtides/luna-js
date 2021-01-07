@@ -1,4 +1,4 @@
-import TemplateElement from "./packages/client/elements/template-element.js";
+import MoonElement from "./packages/client/elements/moon-element.js";
 import baseLayout from "./packages/client/layouts/base.js";
 import { HOOKS } from "./packages/framework/hooks/definitions";
 
@@ -7,7 +7,7 @@ const layouts = {
 }
 
 export {
-    TemplateElement,
+    MoonElement,
     layouts,
     HOOKS
 }

@@ -2,7 +2,7 @@ import path from "path";
 import glob from "glob-all";
 import babel from '@rollup/plugin-babel';
 import multi from "@rollup/plugin-multi-entry";
-import resolve from "rollup-plugin-node-resolve";
+import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import copy from "./build/plugins/rollup-plugin-copy";
 import {postcssPlugins} from "./packages/client/styles/postcss-loader";

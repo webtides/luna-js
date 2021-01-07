@@ -11,41 +11,31 @@
     "moon": ".bin/moon.js"
   },
   "scripts": {
-    "postinstall": "npm run compile",
+    "prepublish": "npm run compile",
     "compile": "npx babel packages --out-dir lib/packages && rollup --config rollup.config.server.js"
   },
   "author": "webtides",
   "license": "MIT",
   "dependencies": {
-    "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-export-default-from": "^7.10.4",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
-    "@babel/plugin-transform-classes": "^7.12.1",
-    "@babel/plugin-transform-modules-commonjs": "^7.12.1",
-    "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
-    "@babel/register": "^7.12.10",
-    "@babel/runtime": "^7.11.2",
     "@popeindustries/lit-html-server": "^3.1.0",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-commonjs": "^15.1.0",
-    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@webtides/element-js": "^0.3.0",
     "acorn": "^8.0.4",
     "acorn-walk": "^8.0.0",
-    "babel-plugin-module-resolver": "^4.1.0",
     "body-parser": "^1.19.0",
-    "camelcase": "^6.2.0",
     "cheerio": "^1.0.0-rc.5",
     "chokidar": "^3.4.3",
     "esm": "^3.2.25",
     "express": "^4.17.1",
-    "glob": "^7.1.6",
     "glob-all": "^3.2.1",
     "inquirer": "^7.3.3",
     "lit-html": "^1.3.0",
@@ -55,8 +45,12 @@
     "postcss-import": "^14.0.0",
     "postcss-preset-env": "^6.7.0",
     "rollup": "^2.35.1",
-    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-postcss": "^4.0.0",
     "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "@babel/cli": "^7.12.10",
+    "babel-plugin-module-resolver": "^4.1.0"
   }
 }

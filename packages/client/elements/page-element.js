@@ -1,5 +1,5 @@
-import  TemplateElement from "./template-element";
+import  MoonElement from "./moon-element";
 
-class PageElement extends TemplateElement {
+class PageElement extends MoonElement {
 
 }

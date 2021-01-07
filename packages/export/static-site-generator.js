@@ -1,5 +1,5 @@
 import {loadPageMetaData, loadPages, loadSinglePage} from "../framework/loaders/pages-loader.js";
-import ssr from "../framework/engine/element-renderer.js";
+import ssr from "../framework/engine/document-renderer.js";
 import fs from "fs";
 import path from "path";
 import glob from "glob";

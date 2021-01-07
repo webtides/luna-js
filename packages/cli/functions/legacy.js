@@ -1,8 +1,8 @@
-import { pascalCase } from "pascal-case";
 import path from "path";
 import fs from "fs";
 import glob from "glob";
 import {loadSettings} from "../../framework/config";
+import {pascalCase} from "pascal-case";
 
 const prepareLegacyBuild = async () => {
     const settings = await loadSettings();
