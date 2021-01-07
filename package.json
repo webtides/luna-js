@@ -46,6 +46,7 @@
     "postcss-preset-env": "^6.7.0",
     "rollup": "^2.35.1",
     "rollup-plugin-postcss": "^4.0.0",
+    "serverless-http": "^2.6.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

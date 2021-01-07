@@ -12,8 +12,9 @@ import {hasManifest, loadSettings} from "./config";
 
 let app;
 let server;
+let port;
 
-const startServer = async () => {
+const prepareServer = async () => {
     const settings = await loadSettings();
 
     if (!settings) {
@@ -27,7 +28,7 @@ const startServer = async () => {
     app.use(bodyParser.urlencoded());
     app.use(express.static('.build/public'));
 
-    const port = settings.port ?? 3005;
+    port = settings.port ?? 3005;
     await loadHooks();
 
     await callHook(HOOKS.HOOKS_LOADED);
@@ -51,6 +52,12 @@ const startServer = async () => {
         router: app
     });
 
+    return app;
+}
+
+const startServer = async () => {
+    await prepareServer();
+
     server = app.listen(port, async () => {
         console.log(`moon.js listening at: http://localhost:${port}`)
 
@@ -73,4 +80,4 @@ const restartServer = async () => {
     startServer();
 }
 
-export { stopServer, startServer, restartServer };
+export { stopServer, startServer, restartServer, prepareServer };
