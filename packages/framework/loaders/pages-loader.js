@@ -13,7 +13,7 @@ const getLayout = async (factory, {context}) => {
 };
 
 const loadPageMetaData = async ({file}) => {
-    const page = await import(path.resolve(file));
+    const page = require(path.resolve(file));
 
     const availableMethods = [];
     if (typeof page.default.prototype?.connectedCallback === "undefined") {

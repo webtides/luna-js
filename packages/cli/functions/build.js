@@ -1,6 +1,6 @@
 import {loadSettings} from "../../framework/config";
 import {prepareLegacyBuild} from "./legacy";
-import rollup from "rollup";
+import * as rollup from "rollup";
 import loadConfigFile from "rollup/dist/loadConfigFile";
 import path from "path";
 import {registerAvailableComponents} from "../../framework/loaders/component-loader";

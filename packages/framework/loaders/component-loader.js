@@ -39,7 +39,7 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
             const file = files[i];
 
             // By importing the module here, we are also loading the css for the module.
-            const module = await import(path.resolve(file));
+            const module = require(path.resolve(file));
 
             const relativePath = file.substring(basePath.length);
             const element = module.default;
