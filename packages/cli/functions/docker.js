@@ -1,8 +1,7 @@
 import {registerAvailableComponents} from "../../framework/loaders/component-loader";
 import {loadSettings} from "../../framework/config";
-const exec = require('child_process').exec;
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
 
 const prepareForDocker = async () => {
     const settings = await loadSettings();

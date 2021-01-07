@@ -1,11 +1,9 @@
 import {loadSettings} from "../../framework/config";
 import {prepareLegacyBuild} from "./legacy";
-import {registerAvailableComponents} from "../../framework/loaders/component-loader";
 
-const rollup = require("rollup");
-const loadConfigFile = require('rollup/dist/loadConfigFile');
-const path = require("path");
-const fs = require("fs");
+import rollup from "rollup";
+import loadConfigFile from "rollup/dist/loadConfigFile";
+import path from "path";
 
 
 const startRollupWatch = async (configFile, callback = () => {
