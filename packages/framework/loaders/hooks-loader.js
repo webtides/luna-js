@@ -16,7 +16,7 @@ const loadHooks = async () => {
     await Promise.all(fileGroups.map(async ({ files, basePath }) => {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const module = await import(path.resolve(file));
+            const module = require(path.resolve(file));
             registerHook(module.name, module.default);
         }
     }));

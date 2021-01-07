@@ -5,6 +5,8 @@ import {loadSettings} from "../../framework/config";
 import {pascalCase} from "pascal-case";
 
 const prepareLegacyBuild = async () => {
+    console.log("Generate entry file");
+
     const settings = await loadSettings();
 
     const generateEntryFile = () => {
@@ -33,7 +35,7 @@ const prepareLegacyBuild = async () => {
         });
 
 
-        const buildDirectory = path.join(__dirname, "..", "lib");
+        const buildDirectory = path.join(settings.buildDirectory, "generated");
 
         if (!fs.existsSync(buildDirectory)) {
             fs.mkdirSync(buildDirectory)

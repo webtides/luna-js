@@ -2,7 +2,6 @@ import {loadFromCache, writeToCache} from "../cache/cache";
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {paramCase} from "param-case";
-import {camelToDash} from "@webtides/element-js/src/util/AttributeParser";
 
 const getComponentCacheKey = (component, attributes = {}) => {
     return `${component.element.name}.${JSON.stringify(attributes)};`
@@ -56,7 +55,7 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
 
     // Write the element properties back to attributes.
     Object.keys(element.properties()).forEach(key => {
-        attributes[camelToDash(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
+        attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
     });
 
     const markup = await renderToString(element.template({html, unsafeHTML}));

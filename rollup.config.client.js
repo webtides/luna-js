@@ -92,7 +92,7 @@ const componentBundles = settings.componentsDirectory
 
         if (settings.legacyBuild) {
             bundles.push({
-                input: path.join(__dirname, "lib/entry.legacy.js"),
+                input: path.join(settings.buildDirectory, "generated/entry.legacy.js"),
                 output: {
                     dir: bundle.outputDirectory,
                     sourcemap: true,

@@ -52,7 +52,7 @@ const routes = async ({router}) => {
     }
 
     const registerApiRoute = async ({file, name}) => {
-        const module = (await import(path.resolve(file)));
+        const module = (require(path.resolve(file)));
 
         const get = module.get || module.default;
         const post = module.post;
