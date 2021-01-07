@@ -1,6 +1,6 @@
-const path = require("path");
-const postcss = require("postcss");
-const fs = require("fs");
+import path from "path";
+import postcss from "postcss";
+import fs from "fs";
 
 /**
  * The loaded styles, grouped by their modulePath.
@@ -28,8 +28,8 @@ const requireExtension = (currentModulePath) => {
 }
 
 const postcssPlugins = [
-    require('postcss-import'),
-    require('postcss-preset-env')({ stage: 1 }),
+    require("postcss-import"),
+    require("postcss-preset-env")({ stage: 1 }),
 ];
 
 const transformCssModules = async () => {
