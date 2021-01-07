@@ -1,10 +1,26 @@
 import {loadSettings} from "../../framework/config";
 import {prepareLegacyBuild} from "./legacy";
-
 import rollup from "rollup";
 import loadConfigFile from "rollup/dist/loadConfigFile";
 import path from "path";
+import {registerAvailableComponents} from "../../framework/loaders/component-loader";
+import fs from "fs";
 
+
+const prebuild = async () => {
+    const settings = await loadSettings();
+
+    const availableComponents = (await registerAvailableComponents({generateCssBundles: true}));
+
+    const generatedDirectory = path.join(settings.buildDirectory, "generated");
+    if (!fs.existsSync(generatedDirectory)) {
+        fs.mkdirSync(generatedDirectory);
+    }
+
+    const manifest = {availableComponents};
+
+    fs.writeFileSync(path.join(generatedDirectory, "manifest.json"), JSON.stringify(manifest), {encoding: "utf-8"});
+};
 
 const startRollupWatch = async (configFile, callback = () => {
 }) => {
@@ -62,5 +78,6 @@ const build = async () => {
 
 export {
     startDevelopmentBuilds,
-    build
+    build,
+    prebuild
 }
