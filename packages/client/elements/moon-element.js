@@ -42,15 +42,17 @@ export default class MoonElement extends StyledElement {
 
             this.registerEventsAndRefs();
 
-            this.triggerHook('connected');
-
-            this.setAttribute('hydrate', 'true');
+            if (!isOnServer() && !this._options.shadowRender) {
+                this.triggerHook('connected');
+            }
 
             if (!isOnServer() && this._options.shadowRender) {
                 this.requestUpdate({notify: false}).then(() => {
                     this.triggerHook('connected');
                 });
             }
+
+            this.setAttribute('hydrate', 'true');
 
         } else if (this.hasAttribute('defer-update') || this._options.deferUpdate) {
             // don't updates/render, but register refs and events
@@ -89,6 +91,8 @@ export default class MoonElement extends StyledElement {
         this.renderTemplate();
 
         if (!isOnServer()) {
+            this.appendStyleSheets(this._styles);
+
             super.update(options);
         }
     }
@@ -110,16 +114,6 @@ export default class MoonElement extends StyledElement {
 
     template({html, unsafeHTML}) {
         return html``;
-    }
-
-    // custom polyfill for constructable stylesheets by appending styles to the end of an element
-    appendStyleSheets(styles) {
-        if (this.hasAttribute('ssr')) {
-            // Don't append stylesheets if the element was rendered on the server.
-            return;
-        }
-
-        super.appendStyleSheets(styles);
     }
 
     getRoot() {

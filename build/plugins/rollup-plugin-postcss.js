@@ -29,7 +29,7 @@ module.exports =  function(options) {
                 const module = proxy(importers[id]).default;
                 const element = new module();
 
-                const extractCss = !!(options.serverBuild || false) ? !element._options.shadowRender : element._options.shadowRender;
+                const extractCss = !(options.serverBuild || false) && element._options.shadowRender;
 
                 // We only need the process the css if it should be inside the components shadow.
                 if (extractCss) {
