@@ -1,7 +1,7 @@
-import {build, prebuild, startDevelopmentBuilds} from "./functions/build";
-import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./functions/watcher";
-import {checkRequirements} from "./functions/prepare";
-import { publishDockerFile} from "./functions/docker";
+import {build, prebuild, startDevelopmentBuilds} from "./tasks/build";
+import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./tasks/watcher";
+import {checkRequirements} from "./tasks/prepare";
+import { publishDockerFile} from "./tasks/docker";
 
 const startMoonJS = async () => {
     require("../framework").startServer();
