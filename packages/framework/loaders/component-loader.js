@@ -1,7 +1,6 @@
 import glob from "glob";
-import config, {loadSettings, hasManifest} from "../config.js";
+import {loadSettings} from "../config.js";
 import path from "path";
-import {setPostcssModule, transformCssModules} from "../../client/styles/postcss-loader";
 import {paramCase} from "param-case";
 
 let allAvailableComponents = {};
@@ -18,31 +17,28 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
 
     const settings = await loadSettings();
 
-    const bundles = settings.componentsDirectory.map(({ basePath, styles, outputDirectory }) => {
+    const bundles = settings.componentsDirectory.map((bundle) => {
+        const { basePath } = bundle._generated;
+        const { outputDirectory } = bundle;
+
         return {
             files: glob.sync(`${basePath}/**/*.js`),
             basePath,
-            styles,
             outputDirectory
         }
     });
 
     for (const bundle of bundles) {
-        const { files, basePath, styles, outputDirectory } = bundle;
+        const { files, basePath, outputDirectory } = bundle;
 
-        if (generateCssBundles) {
-            // Set the current module to let the css parser know which postcss settings to apply.
-            setPostcssModule(basePath, styles);
-        }
+        console.log(files);
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
 
-            // By importing the module here, we are also loading the css for the module.
-            const module = require(path.resolve(file));
+            const element = require(path.resolve(file));
 
             const relativePath = file.substring(basePath.length);
-            const element = module.default;
 
             if (typeof element?.prototype?.connectedCallback === "undefined") {
                 continue;
@@ -62,8 +58,6 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
             const hasDynamicProperties = isDynamicElement(element);
             const tagName = paramCase(element.name);
 
-            console.log(tagName);
-
             allAvailableComponents[tagName] = {
                 element,
                 tagName,
@@ -75,10 +69,6 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
                 outputDirectory
             }
         }
-    }
-
-    if (generateCssBundles) {
-        await transformCssModules();
     }
 
     return allAvailableComponents;

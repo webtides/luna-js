@@ -1,7 +1,7 @@
 const acorn = require("acorn");
 const walk = require("acorn-walk");
 
-export default function () {
+module.exports = function () {
     return {
         name: 'moon-strip-server-code',
         transform(code, id) {

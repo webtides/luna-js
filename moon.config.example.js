@@ -8,7 +8,8 @@ module.exports = {
 
     componentsDirectory: [
         {
-            basePath: path.join(__dirname, "components"),
+            basePath: path.join(__dirname, "app"),
+            directory: "components",
             outputDirectory: ".build/public/assets",
 
             styles: {

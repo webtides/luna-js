@@ -1,13 +1,14 @@
-import path from "path";
-import glob from "glob-all";
-import babel from '@rollup/plugin-babel';
-import multi from "@rollup/plugin-multi-entry";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import copy from "./build/plugins/rollup-plugin-copy";
-import {postcssPlugins} from "./packages/client/styles/postcss-loader";
-import postcss from 'rollup-plugin-postcss'
-import strip from "./build/plugins/rollup-plugin-strip-server-code";
+require("./lib/packages/framework/bootstrap");
+
+const path = require("path");
+const glob = require("glob-all");
+const {babel} = require('@rollup/plugin-babel');
+const multi = require("@rollup/plugin-multi-entry");
+const {nodeResolve} = require("@rollup/plugin-node-resolve");
+const commonjs = require("@rollup/plugin-commonjs");
+const copy = require("./build/plugins/rollup-plugin-copy");
+const postcss = require('./build/plugins/rollup-plugin-postcss');
+const strip = require("./build/plugins/rollup-plugin-strip-server-code");
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -23,13 +24,8 @@ const styleBundles = styleSettings.bundles.map(bundle => {
         },
         plugins: [
             postcss({
-                inject: false,
-                extract: bundle.filename,
-                plugins: [
-                    ...postcssPlugins,
-                    ...bundle.postcssPlugins
-                ],
-                extension: [".css"]
+                postcssPlugins: [],
+                // TODO: extract.
             })
         ]
     }
@@ -44,7 +40,7 @@ const moonBundle = {
         format: 'iife'
     },
     plugins: [
-        resolve(),
+        nodeResolve(),
         commonjs()
     ]
 };
@@ -52,7 +48,7 @@ const moonBundle = {
 const componentBundles = settings.componentsDirectory
     .flatMap(bundle => {
         const inputFiles = glob.sync([
-            path.join(bundle.basePath, "**/*.js")
+            path.join(bundle.basePath, bundle.directory, "**/*.js")
         ]);
 
         if (inputFiles.length === 0) {
@@ -60,12 +56,7 @@ const componentBundles = settings.componentsDirectory
         }
 
         const pluginPostcss = postcss({
-            inject: false,
-            extract: false,
-            plugins: [
-                ...postcssPlugins
-            ],
-            extension: [".css"]
+            ...bundle.styles
         });
 
         const bundles = [{
@@ -77,13 +68,13 @@ const componentBundles = settings.componentsDirectory
                 format: 'es'
             },
             plugins: [
-                strip(),
-                resolve(),
-                commonjs(),
                 pluginPostcss,
+                nodeResolve(),
                 babel({
                     configFile: path.resolve(__dirname, 'babel.config.client.js')
                 }),
+                strip(),
+                commonjs(),
                 copy({
                     sources: staticSettings.sources
                 })
@@ -99,11 +90,11 @@ const componentBundles = settings.componentsDirectory
                     format: 'iife'
                 },
                 plugins: [
+                    pluginPostcss,
                     strip(),
                     multi({entryFileName: "bundle.legacy.js"}),
-                    resolve(),
+                    nodeResolve(),
                     commonjs(),
-                    pluginPostcss,
                     babel({
                         configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
                     })
@@ -121,4 +112,4 @@ const bundles = [
     ...componentBundles,
 ];
 
-export default bundles;
+module.exports = bundles;

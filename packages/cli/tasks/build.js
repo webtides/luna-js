@@ -79,5 +79,8 @@ const build = async () => {
 export {
     startDevelopmentBuilds,
     build,
-    prebuild
+    prebuild,
+
+    startRollup,
+    startRollupWatch
 }
