@@ -9,10 +9,6 @@ import fs from "fs";
 const loadedStyles = { };
 const postcssSettings = { };
 
-require.extensions['.css'] = (module, filename) => {
-    module.exports = "";
-};
-
 const requireExtension = (currentModulePath) => {
     return (module, filename) => {
         const css = fs.readFileSync(filename, 'utf8');
@@ -32,6 +28,10 @@ const postcssPlugins = [
     require("postcss-preset-env")({ stage: 1 }),
 ];
 
+const processCss = ({ css, plugins }) => {
+    return postcss([ ...postcssPlugins, ...plugins ]).process(css);
+}
+
 const transformCssModules = async () => {
     Object.keys(loadedStyles).map(async basePath => {
         const styles = loadedStyles[basePath];
@@ -39,7 +39,7 @@ const transformCssModules = async () => {
 
         const css = styles.join("\r\n");
 
-        const result = await postcss([ ...postcssPlugins, ...settings.postcssPlugins ]).process(css);
+        const result = await processCss({ css, plugins: settings.postcssPlugins });
 
         const { outputDirectory, filename } = settings;
 
@@ -51,14 +51,7 @@ const transformCssModules = async () => {
     });
 };
 
-const setPostcssModule = (modulePath, settings) => {
-    postcssSettings[modulePath] = settings;
-
-    require.extensions['.css'] = requireExtension(modulePath);
-};
 
 export {
-    postcssPlugins,
-    setPostcssModule,
-    transformCssModules
+    processCss
 }

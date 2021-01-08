@@ -1,15 +1,15 @@
-import path from "path";
+const path = require("path");
 
-import glob from "glob-all";
-import resolve from '@rollup/plugin-node-resolve';
-import json from '@rollup/plugin-json';
-import babel from '@rollup/plugin-babel';
+const glob = require("glob-all");
+const { nodeResolve } = require('@rollup/plugin-node-resolve/dist/cjs');
+const json = require('@rollup/plugin-json');
+const {babel} = require('@rollup/plugin-babel');
 
 const settings = {
     buildDirectory: 'lib',
 };
 
-export default {
+module.exports = {
     input: "index.js",
     output: {
         dir: settings.buildDirectory,
@@ -21,7 +21,7 @@ export default {
         'glob', 'fs', 'path'
     ],
     plugins: [
-        resolve({
+        nodeResolve({
             preferBuiltins: true,
             only: [ '@webtides/element-js' ]
         }),

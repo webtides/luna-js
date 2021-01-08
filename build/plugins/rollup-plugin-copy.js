@@ -1,12 +1,12 @@
-import glob from "glob";
-import fs from "fs";
-import path from "path";
+const glob = require("glob");
+const fs = require("fs");
+const path = require("path");
 
 const getPathRelativeToBasePath = (path, basePath) => {
     return path.substring(basePath.length - 1);
 };
 
-export default function (options) {
+module.exports = function(options) {
     return {
         name: 'moon-copy',
         generateBundle() {

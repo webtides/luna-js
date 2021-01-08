@@ -3,6 +3,7 @@ import fs from "fs";
 
 let _hasManifest;
 
+
 const hasManifest = async () => {
     if (typeof _hasManifest === "undefined") {
         const settings = await loadSettings();
@@ -23,7 +24,22 @@ const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
 
 const loadSettings = async () => {
     try {
-        return (await import(path.join(process.cwd(), "moon.config.js"))).default;
+        const settings = (await import(path.join(process.cwd(), "moon.config.js"))).default;
+
+        settings.componentsDirectory = settings.componentsDirectory.map(bundle => {
+            bundle._generated = {
+                basePath: path.join(settings.buildDirectory, "generated", "components")
+            }
+
+            return bundle;
+        });
+
+        settings._generated = {
+            pagesDirectory: path.join(settings.buildDirectory, "generated", "pages")
+        }
+
+        return settings;
+
     } catch (error) {
         console.error(error);
         return false;

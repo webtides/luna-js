@@ -15,13 +15,15 @@ const getLayout = async (factory, {context}) => {
 const loadPageMetaData = async ({file}) => {
     const page = require(path.resolve(file));
 
+    const pageElement = typeof page?.default === "undefined" ? page : page.default;
+
     const availableMethods = [];
-    if (typeof page.default.prototype?.connectedCallback === "undefined") {
+    if (typeof pageElement.prototype?.connectedCallback === "undefined") {
         if (typeof page.post === "function") {
             availableMethods.push("post");
         }
     } else {
-        const element = new (page.default)();
+        const element = new (pageElement)();
 
         if (typeof element.post === "function") {
             availableMethods.push("post");
@@ -40,8 +42,10 @@ const loadSinglePage = async ({page, request, response}) => {
     let markup = "";
     let layoutFactory = baseLayoutFactory;
 
+    const pageElement = typeof page?.default === "undefined" ? page : page.default;
+
     let element;
-    if (typeof page?.default?.prototype?.connectedCallback === "undefined") {
+    if (typeof pageElement?.prototype?.connectedCallback === "undefined") {
         markup = await renderToString(page.default({html, request, response}));
 
         if (page.layout) {
@@ -54,7 +58,7 @@ const loadSinglePage = async ({page, request, response}) => {
     } else {
         // We are dealing with a custom element here.
         const component = {
-            element: page.default,
+            element: pageElement,
         };
 
         const result = (await renderComponent({component, attributes: {}, request, response}));
@@ -83,27 +87,26 @@ const loadSinglePage = async ({page, request, response}) => {
 const loadPages = async () => {
     const settings = await loadSettings();
 
-    return settings.pagesDirectory.flatMap(basePath => {
-        console.log("Load pages in", basePath);
+    const basePath = settings._generated.pagesDirectory;
+    console.log("Load pages in", basePath);
 
-        const files = glob.sync(path.join(basePath, `**/*.js`));
-        const pages = [];
+    const files = glob.sync(path.join(basePath, `**/*.js`));
+    const pages = [];
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
 
-            const relativePath = file.substring(basePath.length);
-            const name = relativePath.split(".js")[0];
+        const relativePath = file.substring(basePath.length);
+        const name = relativePath.split(".js")[0];
 
-            pages.push({
-                file,
-                name,
-                relativePath
-            });
-        }
+        pages.push({
+            file,
+            name,
+            relativePath
+        });
+    }
 
-        return pages;
-    });
+    return pages;
 };
 
 
