@@ -12,7 +12,8 @@ module.exports = function(options) {
     const entries = {
         components: { },
         pages: { },
-        apis: { }
+        apis: { },
+        hooks: { }
     };
 
     const getEntryType = (id) => {
