@@ -56,6 +56,8 @@ const prepareServer = async () => {
 }
 
 const startServer = async () => {
+    console.log("Staring moon.js");
+
     await prepareServer();
 
     server = app.listen(port, async () => {
@@ -71,13 +73,15 @@ const stopServer = async () => {
     return new Promise((resolve, reject) => {
         if (server) {
             server.close(() => resolve());
+        } else {
+            resolve();
         }
     })
 }
 
 const restartServer = async () => {
     await stopServer();
-    startServer();
+    return startServer();
 }
 
 export { stopServer, startServer, restartServer, prepareServer };

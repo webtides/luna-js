@@ -70,12 +70,7 @@ module.exports = function(options) {
         },
 
         async renderChunk(code, chunk, options) {
-            // console.log(chunk.facadeModuleId, pages);
-            //
-
             if (chunk.facadeModuleId !== null && hasRegisteredEntry(path.resolve(chunk.facadeModuleId))) {
-                console.log("Has registered entry", chunk.facadeModuleId);
-
                 entries[getEntryType(chunk.facadeModuleId).type][path.resolve(chunk.facadeModuleId)].file = chunk.fileName;
             }
 

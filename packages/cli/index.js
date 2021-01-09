@@ -1,14 +1,19 @@
 import "../framework/bootstrap";
-
-import {build, prebuild, startDevelopmentBuilds} from "./tasks/build";
-import {startWatchingComponentDirectories, startWatchingPagesDirectories} from "./tasks/watcher";
 import {checkRequirements} from "./tasks/prepare";
 import { publishDockerFile} from "./tasks/docker";
-import {buildComponentsForServer, buildPagesForServer} from "./tasks/build/server";
+import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
+import {clearCache} from "../framework/cache/cache";
+import { restartServer } from "../framework";
 
+let moonJSStarting = false;
 
 const startMoonJS = async () => {
-    require("../framework").startServer();
+    if (moonJSStarting) return;
+    moonJSStarting = true;
+
+    await restartServer();
+
+    moonJSStarting = false;
 };
 
 const execute = async (argv) => {
@@ -21,18 +26,16 @@ const execute = async (argv) => {
     if (argv.dev) {
         console.log("Starting moon in development mode.");
 
-        startDevelopmentBuilds();
-
-        startMoonJS();
-
-        startWatchingPagesDirectories();
-        startWatchingComponentDirectories();
+        startApplicationDevelopmentBuild(() => {
+            clearCache();
+            startMoonJS();
+        });
 
         return;
     }
 
     if (argv.build) {
-        await build();
+        await buildComponentsForApplication();
         return;
     }
 
@@ -47,8 +50,8 @@ const execute = async (argv) => {
     }
 
     // Default
-    await buildComponentsForServer();
-    await build();
+    await buildComponentsForApplication();
+    // await buildComponentsForClient();
     startMoonJS();
 };
 

@@ -1,7 +1,7 @@
 const path = require("path");
 
 const glob = require("glob-all");
-const { nodeResolve } = require('@rollup/plugin-node-resolve/dist/cjs');
+const {nodeResolve} = require('@rollup/plugin-node-resolve/dist/cjs');
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 
@@ -23,10 +23,10 @@ module.exports = {
     plugins: [
         nodeResolve({
             preferBuiltins: true,
-            only: [ '@webtides/element-js' ]
+            only: ['@webtides/element-js']
         }),
         babel({
-            configFile: path.resolve(__dirname, 'babel.config.js')
+            configFile: path.resolve(__dirname, "../..", 'babel.config.js')
         }),
         json()
     ]

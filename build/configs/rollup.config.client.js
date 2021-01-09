@@ -1,4 +1,4 @@
-require("./lib/packages/framework/bootstrap");
+require("../../lib/packages/framework/bootstrap");
 
 const path = require("path");
 const glob = require("glob-all");
@@ -6,9 +6,9 @@ const {babel} = require('@rollup/plugin-babel');
 const multi = require("@rollup/plugin-multi-entry");
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
-const copy = require("./build/plugins/rollup-plugin-copy");
-const postcss = require('./build/plugins/rollup-plugin-postcss');
-const strip = require("./build/plugins/rollup-plugin-strip-server-code");
+const copy = require("../plugins/rollup-plugin-copy");
+const postcss = require('../plugins/rollup-plugin-postcss');
+const strip = require("../plugins/rollup-plugin-strip-server-code");
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -32,7 +32,7 @@ const styleBundles = styleSettings.bundles.map(bundle => {
 });
 
 const moonBundle = {
-    input: `${__dirname}/packages/client/moon.js`,
+    input: path.join(__dirname, "../..", `/packages/client/moon.js`),
     output: {
         dir: settings.publicDirectory,
         entryFileNames: '[name].js',
@@ -71,7 +71,7 @@ const componentBundles = settings.componentsDirectory
                 pluginPostcss,
                 nodeResolve(),
                 babel({
-                    configFile: path.resolve(__dirname, 'babel.config.client.js')
+                    configFile: path.resolve(__dirname, "babel", 'babel.config.client.js')
                 }),
                 strip(),
                 commonjs(),
@@ -96,7 +96,7 @@ const componentBundles = settings.componentsDirectory
                     nodeResolve(),
                     commonjs(),
                     babel({
-                        configFile: path.resolve(__dirname, 'babel.config.client.legacy.js')
+                        configFile: path.resolve(__dirname, "babel", 'babel.config.client.legacy.js')
                     })
                 ]
             });

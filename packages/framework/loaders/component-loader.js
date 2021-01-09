@@ -19,7 +19,7 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
 
     const manifest = await loadManifest();
 
-    const basePath = settings._generated.componentsDirectory;
+    const basePath = settings._generated.applicationDirectory;
 
     for (const component of manifest.components) {
         const { file, relativePath, settings } = component;
