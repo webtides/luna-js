@@ -9,19 +9,27 @@ const clientBundles = require("./rollup.config.client");
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
-const {pagesDirectory, componentsDirectory} = settings;
+const {pagesDirectory, componentsDirectory, apisDirectory} = settings;
 
 const basePaths = {
-    pages: [ ],
-    components: []
+    pages: [],
+    components: [],
+    apis: []
 };
 
 const pages = pagesDirectory.flatMap(page => {
     basePaths.pages.push({
-        basePath: path.join(page.basePath, page.directory)
+        basePath: page
     })
-    return glob.sync(path.join(page.basePath, page.directory, "**/*.js"));
+    return glob.sync(path.join(page, "**/*.js"));
 });
+
+const apis = apisDirectory.flatMap(api => {
+    basePaths.apis.push({
+        basePath: api
+    });
+    return glob.sync(path.join(api, "**/*.js"));
+})
 
 const components = componentsDirectory.flatMap(component => {
     basePaths.components.push({
@@ -33,7 +41,7 @@ const components = componentsDirectory.flatMap(component => {
     return glob.sync(path.join(component.basePath, component.directory, "**/*.js"))
 });
 
-const files = [ ...pages, ...components];
+const files = [ ...pages, ...components, ...apis ];
 
 const bundle = {
     input: files,

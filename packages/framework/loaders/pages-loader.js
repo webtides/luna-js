@@ -2,7 +2,6 @@ import path from "path";
 import {loadManifest, loadSettings} from '../config.js';
 
 import {html, renderToString} from "@popeindustries/lit-html-server";
-import glob from "glob";
 
 import baseLayoutFactory from "../../client/layouts/base.js";
 import {renderComponent} from "../engine/element-renderer";

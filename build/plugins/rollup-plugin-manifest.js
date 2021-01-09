@@ -11,7 +11,8 @@ module.exports = function(options) {
     const { config } = options;
     const entries = {
         components: { },
-        pages: { }
+        pages: { },
+        apis: { }
     };
 
     const getEntryType = (id) => {
