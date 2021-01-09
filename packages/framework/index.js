@@ -8,7 +8,7 @@ import {callHook} from "./hooks";
 import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
-import {hasManifest, loadSettings} from "./config";
+import {loadManifest, loadSettings} from "./config";
 
 let app;
 let server;
@@ -34,7 +34,7 @@ const prepareServer = async () => {
     await callHook(HOOKS.HOOKS_LOADED);
 
     await registerAvailableComponents({
-        generateCssBundles: !(await hasManifest())
+        generateCssBundles: !(await loadManifest())
     });
 
     await callHook(HOOKS.COMPONENTS_LOADED, {

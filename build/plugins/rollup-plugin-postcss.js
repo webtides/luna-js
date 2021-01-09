@@ -26,6 +26,10 @@ module.exports =  function(options) {
 
         async transform(code, id) {
             if (id.endsWith(".css") && importers[id]) {
+                if (options.ignore) {
+                    return "export default null";
+                }
+
                 const module = proxy(importers[id]).default;
                 const element = new module();
 
@@ -50,6 +54,10 @@ module.exports =  function(options) {
         },
 
         async writeBundle() {
+            if (options.ignore) {
+                return;
+            }
+
             const {css, map} = await processCss({ css: extractedCss.join("\r\n"), plugins: options.postcssPlugins });
 
             if (!fs.existsSync(options.outputDirectory)) {

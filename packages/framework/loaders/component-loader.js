@@ -1,5 +1,5 @@
 import glob from "glob";
-import {loadSettings} from "../config.js";
+import {loadManifest, loadSettings} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
 
@@ -17,57 +17,45 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
 
     const settings = await loadSettings();
 
-    const bundles = settings.componentsDirectory.map((bundle) => {
-        const { basePath } = bundle._generated;
-        const { outputDirectory } = bundle;
+    const manifest = await loadManifest();
 
-        return {
-            files: glob.sync(`${basePath}/**/*.js`),
-            basePath,
-            outputDirectory
+    const basePath = settings._generated.componentsDirectory;
+
+    for (const component of manifest.components) {
+        const { file, relativePath, settings } = component;
+        const absolutePath = path.join(basePath, file);
+
+        const element = require(path.resolve(absolutePath));
+
+        if (typeof element?.prototype?.connectedCallback === "undefined") {
+            return;
         }
-    });
 
-    for (const bundle of bundles) {
-        const { files, basePath, outputDirectory } = bundle;
+        let hasStaticProperties = false;
 
-        console.log(files);
+        if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
+            const staticProperties = await element.loadStaticProperties();
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-
-            const element = require(path.resolve(file));
-
-            const relativePath = file.substring(basePath.length);
-
-            if (typeof element?.prototype?.connectedCallback === "undefined") {
-                continue;
+            if (staticProperties) {
+                hasStaticProperties = true;
+                element.staticProperties = staticProperties;
             }
+        }
 
-            let hasStaticProperties = false;
+        const hasDynamicProperties = isDynamicElement(element);
+        const tagName = paramCase(element.name);
 
-            if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
-                const staticProperties = await element.loadStaticProperties();
+        console.log("Register component", tagName);
 
-                if (staticProperties) {
-                    hasStaticProperties = true;
-                    element.staticProperties = staticProperties;
-                }
-            }
-
-            const hasDynamicProperties = isDynamicElement(element);
-            const tagName = paramCase(element.name);
-
-            allAvailableComponents[tagName] = {
-                element,
-                tagName,
-                hasStaticProperties,
-                hasDynamicProperties,
-                name: element.name,
-                file,
-                relativePath,
-                outputDirectory
-            }
+        allAvailableComponents[tagName] = {
+            element,
+            tagName,
+            hasStaticProperties,
+            hasDynamicProperties,
+            name: element.name,
+            file,
+            relativePath,
+            outputDirectory: settings.outputDirectory
         }
     }
 
