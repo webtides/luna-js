@@ -21,7 +21,7 @@ module.exports = {
     ],
 
     hooksDirectory: [ path.join(__dirname, "hooks") ],
-    apiDirectory: [ path.join(__dirname, "api") ],
+    apisDirectory: [ path.join(__dirname, "api") ],
 
     legacyBuild: false,
 

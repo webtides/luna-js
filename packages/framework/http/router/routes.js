@@ -54,7 +54,7 @@ const routes = async ({router}) => {
     const registerApiRoute = async ({file, name}) => {
         const module = (require(path.resolve(file)));
 
-        const get = module.get || module.default;
+        const get = module.get || module;
         const post = module.post;
 
         get && router.get(`/api${name}`, (request, response) => {
