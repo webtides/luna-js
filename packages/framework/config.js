@@ -1,21 +1,17 @@
 import path from "path";
 import fs from "fs";
 
-let _hasManifest;
 
+const loadManifest = async () => {
+    const settings = await loadSettings();
 
-const hasManifest = async () => {
-    if (typeof _hasManifest === "undefined") {
-        const settings = await loadSettings();
+    const pathToManifest = path.join(settings.buildDirectory, "generated", "manifest.json");
 
-        if (fs.existsSync(path.join(settings.buildDirectory, "generated", "manifest.json"))) {
-            _hasManifest = true;
-        } else {
-            _hasManifest = false;
-        }
+    if (fs.existsSync(pathToManifest)) {
+        return JSON.parse(fs.readFileSync(pathToManifest, { encoding: "utf-8" }));
     }
 
-    return _hasManifest;
+    return false;
 };
 
 const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
@@ -35,7 +31,9 @@ const loadSettings = async () => {
         });
 
         settings._generated = {
-            pagesDirectory: path.join(settings.buildDirectory, "generated", "pages")
+            pagesDirectory: path.join(settings.buildDirectory, "generated", "pages"),
+            componentsDirectory: path.join(settings.buildDirectory, "generated", "pages"),
+            manifest: path.join(settings.buildDirectory, "generated", "manifest.json")
         }
 
         return settings;
@@ -46,4 +44,4 @@ const loadSettings = async () => {
     }
 };
 
-export { getPathToConfigFile, loadSettings, hasManifest };
+export { getPathToConfigFile, loadSettings, loadManifest };

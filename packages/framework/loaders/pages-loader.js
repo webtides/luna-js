@@ -1,5 +1,5 @@
 import path from "path";
-import {loadSettings} from '../config.js';
+import {loadManifest, loadSettings} from '../config.js';
 
 import {html, renderToString} from "@popeindustries/lit-html-server";
 import glob from "glob";
@@ -87,26 +87,20 @@ const loadSinglePage = async ({page, request, response}) => {
 const loadPages = async () => {
     const settings = await loadSettings();
 
+    const manifest = await loadManifest();
     const basePath = settings._generated.pagesDirectory;
-    console.log("Load pages in", basePath);
 
-    const files = glob.sync(path.join(basePath, `**/*.js`));
-    const pages = [];
+    return manifest.pages.map(page => {
+        const { relativePath, file } = page;
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        const relativePath = file.substring(basePath.length);
         const name = relativePath.split(".js")[0];
 
-        pages.push({
-            file,
-            name,
-            relativePath
-        });
-    }
-
-    return pages;
+        return {
+            file: path.join(basePath, file),
+            relativePath,
+            name
+        };
+    });
 };
 
 
