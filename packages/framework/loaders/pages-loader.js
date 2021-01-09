@@ -88,7 +88,7 @@ const loadPages = async () => {
     const settings = await loadSettings();
 
     const manifest = await loadManifest();
-    const basePath = settings._generated.pagesDirectory;
+    const basePath = settings._generated.applicationDirectory;
 
     return manifest.pages.map(page => {
         const { relativePath, file } = page;

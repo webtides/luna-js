@@ -31,8 +31,7 @@ const loadSettings = async () => {
         });
 
         settings._generated = {
-            pagesDirectory: path.join(settings.buildDirectory, "generated", "pages"),
-            componentsDirectory: path.join(settings.buildDirectory, "generated", "pages"),
+            applicationDirectory: path.join(settings.buildDirectory, "generated", "application"),
             manifest: path.join(settings.buildDirectory, "generated", "manifest.json")
         }
 

@@ -1,26 +1,5 @@
-import {loadSettings} from "../../framework/config";
-import {prepareLegacyBuild} from "./legacy";
 import * as rollup from "rollup";
 import loadConfigFile from "rollup/dist/loadConfigFile";
-import path from "path";
-import {registerAvailableComponents} from "../../framework/loaders/component-loader";
-import fs from "fs";
-
-
-const prebuild = async () => {
-    const settings = await loadSettings();
-
-    const availableComponents = (await registerAvailableComponents({generateCssBundles: true}));
-
-    const generatedDirectory = path.join(settings.buildDirectory, "generated");
-    if (!fs.existsSync(generatedDirectory)) {
-        fs.mkdirSync(generatedDirectory);
-    }
-
-    const manifest = {availableComponents};
-
-    fs.writeFileSync(path.join(generatedDirectory, "manifest.json"), JSON.stringify(manifest), {encoding: "utf-8"});
-};
 
 const startRollupWatch = async (configFile, callback = () => {
 }) => {
@@ -34,16 +13,13 @@ const startRollupWatch = async (configFile, callback = () => {
                 result.close();
                 return;
             case "START":
-                console.log("Compiling client components.");
                 break;
             case "END":
-                console.log("Client components compiled successfully.");
+                console.log("END BUNDLE!!!");
                 callback();
                 break;
         }
     });
-
-    console.log("Start watching client components.");
 }
 
 const startRollup = async (configFile) => {
@@ -59,28 +35,9 @@ const startRollup = async (configFile) => {
 
         await bundle.close();
     }
-
 }
 
-const startDevelopmentBuilds = async () => {
-    startRollupWatch(path.join(global.moon.currentDirectory, "rollup.config.client.js"));
-};
-
-const build = async () => {
-    const settings = await loadSettings();
-
-    if (settings.legacyBuild) {
-        await prepareLegacyBuild();
-    }
-
-    await startRollup(path.join(global.moon.currentDirectory, "rollup.config.client.js"));
-};
-
 export {
-    startDevelopmentBuilds,
-    build,
-    prebuild,
-
     startRollup,
     startRollupWatch
 }

@@ -5,6 +5,7 @@ const {babel} = require('@rollup/plugin-babel');
 const postcss = require("../plugins/rollup-plugin-postcss");
 const outputStructure = require("../plugins/rollup-plugin-output-structure");
 const moonManifest = require("../plugins/rollup-plugin-manifest");
+const clientBundles = require("./rollup.config.client");
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -32,14 +33,12 @@ const components = componentsDirectory.flatMap(component => {
     return glob.sync(path.join(component.basePath, component.directory, "**/*.js"))
 });
 
-console.log(basePaths);
-
 const files = [ ...pages, ...components];
 
 const bundle = {
     input: files,
     output: {
-        dir: path.join(settings.buildDirectory, "generated", "pages"),
+        dir: path.join(settings.buildDirectory, "generated", "application"),
         entryFileNames: '[name].js',
         sourcemap: true,
         format: 'cjs',
@@ -64,4 +63,4 @@ const bundle = {
     ]
 };
 
-module.exports = bundle;
+module.exports = [ bundle, ...clientBundles ];
