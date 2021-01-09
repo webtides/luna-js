@@ -1,25 +1,17 @@
-import config, {loadSettings} from "../config";
-import glob from "glob";
+import {loadManifest, loadSettings} from "../config";
 import path from "path";
 import {registerHook} from "../hooks";
 
 const loadHooks = async () => {
     const settings = await loadSettings();
 
-    const fileGroups = settings.hooksDirectory.map(hooksDirectory => {
-        return {
-            files: glob.sync(`${hooksDirectory}/**/*.js`),
-            basePath: hooksDirectory
-        }
-    });
+    const manifest = await loadManifest();
+    const basePath = settings._generated.applicationDirectory;
 
-    await Promise.all(fileGroups.map(async ({ files, basePath }) => {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const module = require(path.resolve(file));
-            registerHook(module.name, module.default);
-        }
-    }));
+    manifest.hooks.forEach(({file, relativePath}) => {
+        const module = require(path.resolve(path.join(basePath, file)));
+        registerHook(module.name, module.default);
+    });
 };
 
 export {
