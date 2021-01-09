@@ -17,18 +17,16 @@ const generateStaticSite = async () => {
         const {html} = await loadSinglePage({page, request: false, response: false });
         const renderedPage = await ssr(html, { request: false, response: false });
 
-        const pageDirectory = path.join(outputDirectory, name);
+        let pageDirectory = path.join(outputDirectory, name);
 
-        if (name === "/index") {
-            fs.writeFileSync(path.join(outputDirectory, "index.html"), renderedPage, {
-                encoding: "UTF-8"
-            });
-        } else {
-            fs.mkdirSync(pageDirectory, {recursive: true});
-            fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
-                encoding: "UTF-8"
-            });
+        if (pageDirectory.endsWith("index")) {
+            pageDirectory = path.join(pageDirectory, "..");
         }
+
+        fs.mkdirSync(pageDirectory, {recursive: true});
+        fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
+            encoding: "UTF-8"
+        });
 
         await Promise.all(glob.sync(path.join(settings.publicDirectory, "**/*")).map((file) => {
             if (fs.lstatSync(file).isDirectory()) {

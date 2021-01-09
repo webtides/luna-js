@@ -14,23 +14,7 @@ const getLayout = async (factory, {context}) => {
 const loadPageMetaData = async ({file}) => {
     const page = require(path.resolve(file));
 
-    const pageElement = typeof page?.default === "undefined" ? page : page.default;
-
-    const availableMethods = [];
-    if (typeof pageElement.prototype?.connectedCallback === "undefined") {
-        if (typeof page.post === "function") {
-            availableMethods.push("post");
-        }
-    } else {
-        const element = new (pageElement)();
-
-        if (typeof element.post === "function") {
-            availableMethods.push("post");
-        }
-    }
-
     return {
-        availableMethods,
         page
     }
 };
@@ -45,7 +29,7 @@ const loadSinglePage = async ({page, request, response}) => {
 
     let element;
     if (typeof pageElement?.prototype?.connectedCallback === "undefined") {
-        markup = await renderToString(page.default({html, request, response}));
+        markup = await renderToString(pageElement({html, request, response}));
 
         if (page.layout) {
             const layoutModule = page.layout;
@@ -66,8 +50,7 @@ const loadSinglePage = async ({page, request, response}) => {
         element = result.element;
 
         if (result.element.layout) {
-            const layoutModule = result.element.layout;
-            layoutFactory = layoutModule.default;
+            layoutFactory = result.element.layout;
         }
     }
 
