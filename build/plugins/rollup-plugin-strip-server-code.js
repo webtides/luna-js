@@ -4,7 +4,7 @@ const walk = require("acorn-walk");
 module.exports = function () {
     return {
         name: 'moon-strip-server-code',
-        transform(code, id) {
+        async transform(code, id) {
             try {
                 const toRemove = [ ];
 
@@ -24,10 +24,9 @@ module.exports = function () {
                 });
 
                 for (const partToRemove of toRemove) {
-                    code = code.split(toRemove).join("");
+                    code = code.split(partToRemove).join("");
                 }
-
-            } catch (error) {}
+            } catch (error) { }
 
             return { code };
         },

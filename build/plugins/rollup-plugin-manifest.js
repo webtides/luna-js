@@ -95,6 +95,6 @@ module.exports = function(options) {
             })
 
             fs.writeFileSync(manifest, JSON.stringify(pagesManifest), { encoding: "utf-8" });
-        }
+        },
     }
 }
