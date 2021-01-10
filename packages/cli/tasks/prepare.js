@@ -11,8 +11,10 @@ const copyEmptyMoonConfig = async () => {
 
     settings.pagesDirectory.forEach(page => fs.mkdirSync(page));
     settings.hooksDirectory.forEach(hook => fs.mkdirSync(hook));
-    settings.apiDirectory.forEach(api => fs.mkdirSync(api));
-    settings.componentsDirectory.forEach(component => fs.mkdirSync(component.basePath));
+    settings.apisDirectory.forEach(api => fs.mkdirSync(api));
+    settings.componentsDirectory.forEach(component => fs.mkdirSync(path.join(component.basePath, component.directory)));
+
+    fs.copyFileSync(path.join(moon.currentDirectory, "packages/cli/tasks", "prepare/page.example.js"), path.join(settings.pagesDirectory[0], "index.js"));
 };
 
 const checkRequirements = async () => {

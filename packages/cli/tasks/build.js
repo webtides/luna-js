@@ -15,7 +15,6 @@ const startRollupWatch = async (configFile, callback = () => {
             case "START":
                 break;
             case "END":
-                console.log("END BUNDLE!!!");
                 callback();
                 break;
         }
