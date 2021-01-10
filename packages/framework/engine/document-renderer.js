@@ -4,6 +4,21 @@ import { loadSettings } from "../config";
 import {renderComponent} from "./element-renderer";
 import {paramCase} from "param-case";
 
+const addDependenciesToUpgradedElements = async (dependencies, upgradedElements) => {
+    dependencies = [ dependencies ].flat();
+
+    for (const dependency of dependencies) {
+        if (!upgradedElements[dependency]) {
+            const component = await loadSingleComponentByTagName(dependency);
+
+            const element = new (component.element)();
+
+            await addDependenciesToUpgradedElements(element.dependencies(), upgradedElements);
+
+            upgradedElements[dependency] = component;
+        }
+    }
+};
 
 /**
  * Takes a cheerio-node and tries to match it with a custom element.
@@ -32,7 +47,7 @@ const renderNodeAsCustomElement = async (node, upgradedElements, {request, respo
 
     const attributes = Object.assign({}, node.attribs) || {};
 
-    const {markup, element} = await renderComponent({component, attributes, request, response});
+    const {markup, element, dependencies} = await renderComponent({component, attributes, request, response});
 
     const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false), upgradedElements, {
         request,
@@ -42,6 +57,7 @@ const renderNodeAsCustomElement = async (node, upgradedElements, {request, respo
     return {
         attributes,
         component,
+        dependencies,
         innerHTML: !element._options.shadowRender ? innerDocument.html() : ""
     };
 };
@@ -70,7 +86,9 @@ const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
                 return;
             }
 
-            const {component, attributes, innerHTML} = result;
+            const {component, attributes, innerHTML, dependencies} = result;
+
+            await addDependenciesToUpgradedElements(dependencies, upgradedElements);
 
             const $node = $(node);
             $node.html(innerHTML);

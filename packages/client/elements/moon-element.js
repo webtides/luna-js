@@ -120,6 +120,8 @@ export default class MoonElement extends StyledElement {
         return this.shadowRoot !== null ? this.shadowRoot : this;
     }
 
+    dependencies() { return []; }
+
     /**
      * This will be loaded each time the custom element is found on the page.
      * Make sure to really only load data which is unique for every element on the page.
