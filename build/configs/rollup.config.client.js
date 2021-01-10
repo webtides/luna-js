@@ -17,15 +17,17 @@ const staticSettings = settings.assets.static;
 
 const styleBundles = styleSettings.bundles.map(bundle => {
     return {
-        input: glob.sync(bundle.input),
+        input: bundle.input,
         output: {
             dir: bundle.outputDirectory,
             entryFileNames: 'empty.js'
         },
         plugins: [
             postcss({
-                postcssPlugins: [],
-                // TODO: extract.
+                postcssPlugins: bundle.postcssPlugins || [ ],
+
+                outputDirectory: bundle.outputDirectory,
+                filename: bundle.filename
             })
         ]
     }

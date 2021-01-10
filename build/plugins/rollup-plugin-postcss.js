@@ -8,17 +8,25 @@ module.exports =  function(options) {
     const importers = { };
     const extractedCss = [];
 
+    const idsToExtract = [];
+
     return {
         name: 'moon-postcss',
 
         async resolveId(source, importer) {
             if (source.endsWith(".css")) {
-                const importerDirectory = importer ? path.dirname(importer) : "";
+                if (!!importer) {
+                    const importerDirectory = path.dirname(importer);
 
-                const id = path.join(importerDirectory, source);
-                importers[id] = importer;
+                    const id = path.join(importerDirectory, source);
+                    importers[id] = importer;
 
-                return id;
+                    return id;
+                }
+
+                // We have imported the css file directly.
+                idsToExtract.push(source);
+                return source;
             }
 
             return null;
@@ -48,6 +56,11 @@ module.exports =  function(options) {
                     extractedCss.push(code);
                     return "export default null";
                 }
+            }
+
+            if (idsToExtract.includes(id)) {
+                extractedCss.push(code);
+                return '';
             }
 
             return null;
