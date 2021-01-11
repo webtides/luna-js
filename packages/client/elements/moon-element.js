@@ -156,4 +156,8 @@ export default class MoonElement extends StyledElement {
     }
 
     static get disableSSR() { return false; }
+
+    static get dynamicPropertiesCacheable() { return false; }
 }
+
+export { isOnServer };

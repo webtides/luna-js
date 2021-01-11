@@ -23,3 +23,5 @@ global.document = {
 global.html = html;
 global.render = renderToString;
 global.unsafeHTML = unsafeHTML;
+
+global.currentWorkingDirectory = process.cwd();
