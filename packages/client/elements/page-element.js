@@ -1,4 +1,4 @@
-import  MoonElement from "./moon-element";
+import MoonElement from "./moon-element";
 
 class PageElement extends MoonElement {
 
