@@ -60,7 +60,7 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
 
     const markup = await renderToString(element.template({html, unsafeHTML}));
 
-    if (!dynamicProperties) {
+    if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
         await writeToCache(getComponentCacheKey(component, attributes), {markup, element}, "components");
     }
 
