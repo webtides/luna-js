@@ -11,9 +11,11 @@ const addDependenciesToUpgradedElements = async (dependencies, upgradedElements)
         if (!upgradedElements[dependency]) {
             const component = await loadSingleComponentByTagName(dependency);
 
-            const element = new (component.element)();
+            if (!component) {
+                continue;
+            }
 
-            await addDependenciesToUpgradedElements(element.dependencies(), upgradedElements);
+            await addDependenciesToUpgradedElements(component.children, upgradedElements);
 
             upgradedElements[dependency] = component;
         }
@@ -86,9 +88,9 @@ const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
                 return;
             }
 
-            const {component, attributes, innerHTML, dependencies} = result;
+            const {component, attributes, innerHTML} = result;
 
-            await addDependenciesToUpgradedElements(dependencies, upgradedElements);
+            await addDependenciesToUpgradedElements(component.children, upgradedElements);
 
             const $node = $(node);
             $node.html(innerHTML);

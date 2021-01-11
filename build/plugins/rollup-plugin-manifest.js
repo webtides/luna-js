@@ -3,8 +3,17 @@ const { loadSettings } = require("../../lib/packages/framework/config");
 const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
+const {proxy} = require("../../packages/cli/tasks/build/esm-proxy");
 
-const getComponentSettingsFromId = (id) => {
+const loadComponentChildren = contents => {
+    const regex = new RegExp(/<(?:\w*-\w*)(?:-\w*)*/gm);
+    const result = regex.exec(contents);
+
+    if (result) {
+        return [ ...result ].filter(result => !!result && result.startsWith("<")).map(result => result.substring(1));
+    }
+
+    return [];
 };
 
 module.exports = function(options) {
@@ -73,7 +82,12 @@ module.exports = function(options) {
 
         async renderChunk(code, chunk, options) {
             if (chunk.facadeModuleId !== null && hasRegisteredEntry(path.resolve(chunk.facadeModuleId))) {
-                entries[getEntryType(chunk.facadeModuleId).type][path.resolve(chunk.facadeModuleId)].file = chunk.fileName;
+                const type = getEntryType(chunk.facadeModuleId).type;
+                entries[type][path.resolve(chunk.facadeModuleId)].file = chunk.fileName;
+
+                if (type === "components") {
+                    entries[type][path.resolve(chunk.facadeModuleId)].children = loadComponentChildren(code);
+                }
             }
 
             return null;

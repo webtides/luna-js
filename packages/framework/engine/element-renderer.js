@@ -59,13 +59,12 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
     });
 
     const markup = await renderToString(element.template({html, unsafeHTML}));
-    const dependencies = element.dependencies();
 
     if (!dynamicProperties) {
         await writeToCache(getComponentCacheKey(component, attributes), {markup, element}, "components");
     }
 
-    return {markup, element, dependencies};
+    return {markup, element};
 };
 
 export { renderComponent };
