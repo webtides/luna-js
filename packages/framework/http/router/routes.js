@@ -58,11 +58,19 @@ const routes = async ({router}) => {
         const post = module.post;
 
         get && router.get(`/api${name}`, (request, response) => {
-            return get({request, response});
+            try {
+                return get({request, response});
+            } catch (error) {
+                return response.status(500);
+            }
         });
 
         post && router.post(`/api${name}`, (request, response) => {
-            return post({request, response});
+            try {
+                return post({request, response});
+            } catch (error) {
+                return response.status(500);
+            }
         });
 
         console.log("Registered api routes for", name);
