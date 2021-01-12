@@ -4,14 +4,14 @@ export default class MoonDownElement extends MoonElement {
 
     async loadDynamicProperties({ request, response }) {
         if (!this.source) {
-            return false;
+            return {};
         }
 
         const fs = (await import("fs")).default;
 
         if (!fs.existsSync(this.source)) {
             console.log(`File ${this.source} does not exist.`)
-            return false;
+            return {};
         }
 
         const frontmatter = (await import("@github-docs/frontmatter")).default;
