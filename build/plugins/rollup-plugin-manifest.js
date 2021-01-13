@@ -69,11 +69,13 @@ module.exports = function(options) {
                 const { type, basePath, settings } = entryType;
 
                 const relativePath = id.substring(basePath.length);
+                const relativeBasePath = basePath.substring(process.cwd().length);
 
                 entries[type][path.resolve(id)] = {
                     relativePath,
                     file: null,
-                    settings
+                    settings,
+                    basePath: relativeBasePath.split('\\').join('/')
                 };
             }
 

@@ -85,21 +85,24 @@ const componentBundles = settings.componentsDirectory
 
         if (settings.legacyBuild) {
             bundles.push({
-                input: path.join(settings.buildDirectory, "generated/entry.legacy.js"),
+                input: [ path.join(moon.currentDirectory, "packages/client/moon.js"), path.join(settings.buildDirectory, "generated/entry.legacy.js") ],
                 output: {
                     dir: bundle.outputDirectory,
                     sourcemap: true,
-                    format: 'iife'
+                    entryFileNames: "bundle.legacy.js",
+                    format: 'iife',
+                    strict: false
                 },
                 plugins: [
-                    pluginPostcss,
-                    strip(),
-                    multi({entryFileName: "bundle.legacy.js"}),
                     nodeResolve(),
-                    commonjs(),
+                    multi({entryFileName: "bundle.legacy.js"}),
+                    strip(),
                     babel({
-                        configFile: path.resolve(__dirname, "babel", 'babel.config.client.legacy.js')
-                    })
+                        configFile: path.resolve(__dirname, "babel", 'babel.config.client.legacy.js'),
+                        babelHelpers: "bundled"
+                    }),
+                    commonjs(),
+                    pluginPostcss,
                 ]
             });
         }

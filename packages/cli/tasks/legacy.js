@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import glob from "glob";
-import {loadSettings} from "../../framework/config";
+import {loadManifest, loadSettings} from "../../framework/config";
 import {pascalCase} from "pascal-case";
 
 const prepareLegacyBuild = async () => {
@@ -9,8 +9,11 @@ const prepareLegacyBuild = async () => {
 
     const settings = await loadSettings();
 
-    const generateEntryFile = () => {
+    const generateEntryFile = async () => {
+
         let contents = `
+            import "moon.js/packages/client/libraries/runtime.js";
+            
             // TODO: use core-js in near future
             Object.defineProperty(Array.prototype, "includes", {
                 value: function(searchElement, fromIndex) {
@@ -19,21 +22,24 @@ const prepareLegacyBuild = async () => {
             });
         `;
 
-        settings.componentsDirectory.map(bundle => {
-            const elements = glob.sync(path.join(bundle.basePath, "**/*.js"));
-            const relativePath = bundle.outputDirectory.substring(settings.publicDirectory.length);
+        const basePath = settings._generated.applicationDirectory;
+        const manifest = await loadManifest();
 
-            contents += elements.map(element => {
-                const elementName = element.split("/").pop().split(".js")[0];
-                const className = pascalCase(elementName);
+        let code = [];
 
-                return `
-                   import ${className} from "${relativePath}/${elementName}.js";
-                   customElements.define("${elementName}", ${className});
-               `;
-            }).join("\n\r");
-        });
+        for (const component of manifest.components) {
+            const {file, basePath, relativePath, settings, children} = component;
 
+            const elementName = relativePath.split("/").pop().split(".js")[0];
+            const className = pascalCase(elementName);
+
+            code.push(`
+               import ${className} from "../..${basePath}${relativePath}";
+               customElements.define("${elementName}", ${className});
+           `);
+        }
+
+        contents += code.join("\r\n");
 
         const buildDirectory = path.join(settings.buildDirectory, "generated");
 
@@ -44,7 +50,7 @@ const prepareLegacyBuild = async () => {
         fs.writeFileSync(path.join(buildDirectory, "entry.legacy.js"), contents, {encoding: "utf-8"});
     };
 
-    generateEntryFile();
+    await generateEntryFile();
 };
 
 export { prepareLegacyBuild };
