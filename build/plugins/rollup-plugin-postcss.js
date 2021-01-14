@@ -6,7 +6,7 @@ const fs = require("fs");
 
 module.exports =  function(options) {
     const importers = { };
-    const extractedCss = [];
+    let extractedCss = { };
 
     const idsToExtract = [];
 
@@ -53,7 +53,7 @@ module.exports =  function(options) {
                         map
                     };
                 } else {
-                    extractedCss.push(code);
+                    extractedCss[id] = code;
                     return "export default null";
                 }
             }
@@ -71,10 +71,16 @@ module.exports =  function(options) {
                 return;
             }
 
-            const {css, map} = await processCss({ css: extractedCss.join("\r\n"), plugins: options.postcssPlugins });
+            const extracted = Object.keys(extractedCss).map(key => extractedCss[key]).join("\r\n");
+
+            const {css, map} = await processCss({ css: extracted, plugins: options.postcssPlugins });
 
             if (!fs.existsSync(options.outputDirectory)) {
                 fs.mkdirSync(options.outputDirectory, { recursive: true });
+            }
+
+            if (fs.existsSync(path.join(options.outputDirectory, options.filename))) {
+
             }
 
             fs.writeFileSync(path.join(options.outputDirectory, options.filename), css, { encoding: "utf-8" });

@@ -14,6 +14,7 @@ const buildComponentsForApplication = async () => {
 };
 
 const startApplicationDevelopmentBuild = async (callback = () => { }) => {
+    const settings = await loadSettings();
 
     if (settings.legacyBuild) {
         await prepareLegacyBuild();
