@@ -59,7 +59,7 @@ module.exports =  function(options) {
             }
 
             if (idsToExtract.includes(id)) {
-                extractedCss.push(code);
+                extractedCss[id] = code;
                 return '';
             }
 
@@ -77,10 +77,6 @@ module.exports =  function(options) {
 
             if (!fs.existsSync(options.outputDirectory)) {
                 fs.mkdirSync(options.outputDirectory, { recursive: true });
-            }
-
-            if (fs.existsSync(path.join(options.outputDirectory, options.filename))) {
-
             }
 
             fs.writeFileSync(path.join(options.outputDirectory, options.filename), css, { encoding: "utf-8" });
