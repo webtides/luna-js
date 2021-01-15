@@ -6,14 +6,11 @@ const path = require("path");
 const {proxy} = require("../../packages/cli/tasks/build/esm-proxy");
 
 const loadComponentChildren = contents => {
-    const regex = new RegExp(/<(?:\w*-\w*)(?:-\w*)*/gm);
-    const result = regex.exec(contents);
+    const result = contents.match(/<(?:\w*-\w*)(?:-\w*)*/gm);
 
-    if (result) {
-        return [ ...result ].filter(result => !!result && result.startsWith("<")).map(result => result.substring(1));
-    }
-
-    return [];
+    return result
+        ? result.filter(result => !!result && result.startsWith("<")).map(result => result.substring(1))
+        : [];
 };
 
 module.exports = function(options) {
