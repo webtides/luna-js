@@ -15,7 +15,14 @@ const addDependenciesToUpgradedElements = async (dependencies, upgradedElements)
                 continue;
             }
 
-            await addDependenciesToUpgradedElements(component.children, upgradedElements);
+            const element = new (component.element)();
+
+            const children = component.children;
+            if (typeof element.dependencies === "function") {
+                children.push(...element.dependencies());
+            }
+
+            await addDependenciesToUpgradedElements(children, upgradedElements);
 
             upgradedElements[dependency] = component;
         }
@@ -40,7 +47,7 @@ const renderNodeAsCustomElement = async (node, upgradedElements, {request, respo
         return false;
     }
 
-    if (component.element.disableSSR) {
+    if (typeof component.element.loadStaticProperties === "undefined" || component.element.disableSSR) {
         return {
             component,
             noSSR: true
@@ -88,9 +95,9 @@ const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
                 return;
             }
 
-            const {component, attributes, innerHTML} = result;
+            const {component, attributes, innerHTML, dependencies} = result;
 
-            await addDependenciesToUpgradedElements(component.children, upgradedElements);
+            await addDependenciesToUpgradedElements([...component.children, ...dependencies ], upgradedElements);
 
             const $node = $(node);
             $node.html(innerHTML);

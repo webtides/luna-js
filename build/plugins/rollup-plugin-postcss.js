@@ -38,6 +38,7 @@ module.exports =  function(options) {
                     return "export default null";
                 }
 
+                // TODO: find a better way with support for modern language features.
                 const module = proxy(importers[id]).default;
                 const element = new module();
 

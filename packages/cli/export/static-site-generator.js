@@ -1,9 +1,9 @@
-import {loadPageMetaData, loadPages, loadSinglePage} from "../framework/loaders/pages-loader.js";
-import ssr from "../framework/engine/document-renderer.js";
+import {loadPageMetaData, loadPages, loadSinglePage} from "../../framework/loaders/pages-loader.js";
+import ssr from "../../framework/engine/document-renderer.js";
 import fs from "fs";
 import path from "path";
 import glob from "glob";
-import config, {loadSettings} from "../framework/config";
+import config, {loadSettings} from "../../framework/config";
 
 const generateStaticSite = async () => {
     const settings = await loadSettings();

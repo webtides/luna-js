@@ -4,7 +4,7 @@ import { publishDockerFile} from "./tasks/docker";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
 import {clearCache} from "../framework/cache/cache";
 import { restartServer } from "../framework";
-import exportStaticSite from "../export";
+import exportStaticSite from "./export";
 
 let moonJSStarting = false;
 

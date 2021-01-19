@@ -12,6 +12,8 @@ require.extensions['.css'] = function (module, filename) {
     module.exports = result.css;
 };
 
+// TODO: allow browser globals as externals
+
 global.SSR = true;
 global.HTMLElement = class {};
 
@@ -19,6 +21,7 @@ global.window = {};
 global.document = {
     getElementById() {},
 };
+global.CustomEvent = class {};
 
 global.html = html;
 global.render = renderToString;

@@ -64,7 +64,9 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
         await writeToCache(getComponentCacheKey(component, attributes), {markup, element}, "components");
     }
 
-    return {markup, element};
+    const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
+
+    return {markup, element, dependencies};
 };
 
 export { renderComponent };
