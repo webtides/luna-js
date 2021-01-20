@@ -32,14 +32,7 @@ module.exports = {
         buildDirectory: ".build/public/assets",
 
         styles: {
-            bundles: [ {
-                input: [ path.join(__dirname, "assets/css/base.css") ],
-
-                outputDirectory: ".build/public/assets/css",
-                filename: "base.css",
-
-                postcssPlugins: [ ]
-            } ]
+            bundles: [ ]
         },
 
         static: {
