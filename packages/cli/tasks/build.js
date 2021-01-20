@@ -7,7 +7,7 @@ const startRollupWatch = async (configFile, callback = () => {
     warnings.flush();
 
     const watcher = rollup.watch(options);
-    watcher.on("event", ({code, result}) => {
+    watcher.on("event", ({code, result, error }) => {
         switch (code) {
             case "BUNDLE_END":
                 result.close();
@@ -16,6 +16,13 @@ const startRollupWatch = async (configFile, callback = () => {
                 break;
             case "END":
                 callback();
+                break;
+            case "ERROR":
+                if (error.reason) {
+                    console.error(error.reason);
+                } else {
+                    console.error(error);
+                }
                 break;
         }
     });
