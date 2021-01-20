@@ -57,7 +57,6 @@ const execute = async (argv) => {
 
     // Default
     await buildComponentsForApplication();
-    // await buildComponentsForClient();
     startMoonJS();
 };
 
