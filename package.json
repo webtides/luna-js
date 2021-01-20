@@ -1,7 +1,7 @@
 {
-  "name": "moon-js",
+  "name": "@webtides/moon-js",
   "version": "0.1.0",
-  "description": "",
+  "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/index.js",
   "module": "index.js",
   "engines": {
@@ -53,5 +53,16 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webtides/moon-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webtides/moon-js/issues"
+  },
+  "homepage": "https://github.com/webtides/moon-js#readme"
 }
