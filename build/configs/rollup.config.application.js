@@ -1,8 +1,6 @@
 const path = require("path");
 const glob = require("glob-all");
 const json = require('@rollup/plugin-json');
-const ignore = require('rollup-plugin-ignore');
-const alias = require('@rollup/plugin-alias');
 const {babel} = require('@rollup/plugin-babel');
 const postcss = require("../plugins/rollup-plugin-postcss");
 const moonManifest = require("../plugins/rollup-plugin-manifest");
@@ -65,12 +63,7 @@ const bundle = {
         'glob', 'fs', 'path'
     ],
     plugins: [
-        alias({
-            entries: [{
-                find: "moon.js", // TODO: use real name @webtides/moon-js
-                replacement: "./node_modules/moon.js/lib/server.js"
-            }]
-        }),
+        require("../plugins/rollup-plugin-switch-renderer.js")(),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
             babelHelpers: "bundled"
