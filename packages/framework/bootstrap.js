@@ -1,5 +1,5 @@
 import {callHook} from "./hooks";
-import {html, renderToString} from "@popeindustries/lit-html-server";
+import * as litHtml from "@popeindustries/lit-html-server";
 import { unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {HOOKS} from "./hooks/definitions";
 import fs from "fs";
@@ -23,8 +23,9 @@ global.document = {
 };
 global.CustomEvent = class {};
 
-global.html = html;
-global.render = renderToString;
-global.unsafeHTML = unsafeHTML;
+global.serverLitHtml = litHtml;
+global.serverUnsafeHtml = {
+    unsafeHTML: unsafeHTML
+};
 
 global.currentWorkingDirectory = process.cwd();

@@ -115,7 +115,6 @@ const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
     const settings = await loadSettings();
 
     $("body")
-        .append(`<script type="module" src="/moon.js"></script>`)
         .append(`
             <script type="module">
                 ${Object.keys(upgradedElements)

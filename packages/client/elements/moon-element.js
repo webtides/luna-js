@@ -1,5 +1,10 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
 
+import { render, html } from "lit-html";
+import { unsafeHTML } from "lit-html/directives/unsafe-html";
+
+export {html, unsafeHTML};
+
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
 }
@@ -99,21 +104,22 @@ export default class MoonElement extends StyledElement {
 
     // 3. we need to inject a different context for the template method to be able to switch from lit-html to something that runs in node
     renderTemplate() {
-        const template = this._template || this.template({html, unsafeHTML});
+        const template = this._template || this.template();
+
         if (typeof template === 'string') {
             // just a plain string literal. no lit-html required
             this.getRoot().innerHTML = `${template}`;
         } else {
             // render via lit-html
-            render(html`${template} `, this.getRoot(), {
+            render(template, this.getRoot(), {
                 scopeName: this.localName,
                 eventContext: this,
             });
         }
     }
 
-    template({html, unsafeHTML}) {
-        return html``;
+    template() {
+        return '';
     }
 
     getRoot() {

@@ -24,7 +24,7 @@ const styleBundles = styleSettings.bundles.map(bundle => {
         },
         plugins: [
             postcss({
-                postcssPlugins: bundle.postcssPlugins || [ ],
+                postcssPlugins: bundle.postcssPlugins || [],
 
                 outputDirectory: bundle.outputDirectory,
                 filename: bundle.filename
@@ -32,20 +32,6 @@ const styleBundles = styleSettings.bundles.map(bundle => {
         ]
     }
 });
-
-const moonBundle = {
-    input: path.join(__dirname, "../..", `/packages/client/moon.js`),
-    output: {
-        dir: settings.publicDirectory,
-        entryFileNames: '[name].js',
-        sourcemap: true,
-        format: 'iife'
-    },
-    plugins: [
-        nodeResolve(),
-        commonjs()
-    ]
-};
 
 const componentBundles = settings.componentsDirectory
     .flatMap(bundle => {
@@ -62,6 +48,7 @@ const componentBundles = settings.componentsDirectory
         });
 
         const bundles = [{
+            preserveSymlinks: true,
             input: inputFiles,
             output: {
                 dir: bundle.outputDirectory,
@@ -73,7 +60,7 @@ const componentBundles = settings.componentsDirectory
                 pluginPostcss,
                 nodeResolve(),
                 babel({
-                    configFile: path.resolve(__dirname, "babel", 'babel.config.client.js')
+                    configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                 }),
                 strip(),
                 commonjs(),
@@ -85,7 +72,7 @@ const componentBundles = settings.componentsDirectory
 
         if (settings.legacyBuild) {
             bundles.push({
-                input: [ path.join(moon.currentDirectory, "packages/client/moon.js"), path.join(settings.buildDirectory, "generated/entry.legacy.js") ],
+                input: [path.join(moon.currentDirectory, "packages/client/moon.js"), path.join(settings.buildDirectory, "generated/entry.legacy.js")],
                 output: {
                     dir: bundle.outputDirectory,
                     sourcemap: true,
@@ -112,7 +99,6 @@ const componentBundles = settings.componentsDirectory
     .filter(bundle => bundle !== false);
 
 const bundles = [
-    moonBundle,
     ...styleBundles,
     ...componentBundles,
 ];

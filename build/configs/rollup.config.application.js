@@ -1,15 +1,16 @@
 const path = require("path");
 const glob = require("glob-all");
 const json = require('@rollup/plugin-json');
+const ignore = require('rollup-plugin-ignore');
+const alias = require('@rollup/plugin-alias');
 const {babel} = require('@rollup/plugin-babel');
 const postcss = require("../plugins/rollup-plugin-postcss");
-const outputStructure = require("../plugins/rollup-plugin-output-structure");
 const moonManifest = require("../plugins/rollup-plugin-manifest");
 const clientBundles = require("./rollup.config.client");
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
-const {pagesDirectory, componentsDirectory, apisDirectory, hooksDirectory } = settings;
+const {pagesDirectory, componentsDirectory, apisDirectory, hooksDirectory} = settings;
 
 const basePaths = {
     pages: [],
@@ -49,7 +50,7 @@ const components = componentsDirectory.flatMap(component => {
     return glob.sync(path.join(component.basePath, component.directory, "**/*.js"))
 });
 
-const files = [ ...pages, ...components, ...apis, ...hooks ];
+const files = [...pages, ...components, ...apis, ...hooks];
 
 const bundle = {
     input: files,
@@ -64,6 +65,12 @@ const bundle = {
         'glob', 'fs', 'path'
     ],
     plugins: [
+        alias({
+            entries: [{
+                find: "moon.js", // TODO: use real name @webtides/moon-js
+                replacement: "./node_modules/moon.js/lib/server.js"
+            }]
+        }),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
             babelHelpers: "bundled"
@@ -79,4 +86,4 @@ const bundle = {
     ]
 };
 
-module.exports = [ bundle, ...clientBundles ];
+module.exports = [bundle, ...clientBundles];
