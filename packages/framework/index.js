@@ -14,6 +14,8 @@ let app;
 let server;
 let port;
 
+let connections = [];
+
 const prepareServer = async () => {
     const settings = await loadSettings();
 
@@ -67,11 +69,17 @@ const startServer = async () => {
             app
         });
     });
+
+    server.on('connection', connection => {
+        connections.push(connection);
+        connection.on('close', () => connections = connections.filter(curr => curr !== connection));
+    });
 };
 
 const stopServer = async () => {
     return new Promise((resolve, reject) => {
         if (server) {
+            connections.forEach(connection => connection.destroy());
             server.close(() => resolve());
         } else {
             resolve();
