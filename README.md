@@ -196,7 +196,7 @@ The `loadDynamicProperties` method cannot be called in a static context. If you 
 your application as a static site this method will be ignored.
 
 
-### Api generator
+## Api generator
 
 `moon-js` also allows you to export your api routes as a standalone express
 application. This is useful for serverless environments or if you generated
