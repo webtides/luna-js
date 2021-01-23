@@ -1,6 +1,7 @@
 // Generated file. Do not modify.
 import express from "express";
 import bodyParser from "body-parser";
+import formidable from "express-formidable";
 
 const apisToRegister = [];
 __IMPORTS__
@@ -30,8 +31,8 @@ const startServer = async () => {
 
     const app = express();
 
-    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded());
+    app.use(formidable());
 
     let fallbackApi = null;
 

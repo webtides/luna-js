@@ -9,6 +9,7 @@ import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {loadManifest, loadSettings} from "./config";
+import formidable from "express-formidable";
 
 let app;
 let server;
@@ -26,8 +27,9 @@ const prepareServer = async () => {
 
     app = express();
 
-    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded());
+    app.use(formidable());
+
     app.use(express.static('.build/public'));
 
     port = settings.port ?? 3005;
