@@ -3,7 +3,7 @@ RUN apk update && apk upgrade
 RUN apk add nodejs
 RUN apk add --update npm git
 
-WORKDIR /moon.js
+WORKDIR /moon-js
 
 COPY .npmrc ./
 COPY package*.json ./

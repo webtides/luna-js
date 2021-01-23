@@ -726,4 +726,5 @@ var runtime = (function (exports) {
 
 }({}));
 
-regeneratorRuntime = runtime;
+window.regeneratorRuntime = runtime;
+

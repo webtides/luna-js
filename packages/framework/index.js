@@ -20,7 +20,7 @@ const prepareServer = async () => {
     const settings = await loadSettings();
 
     if (!settings) {
-        console.log("Could not start moon.js. Have you created your moon.config.js?");
+        console.log("Could not start moon-js. Have you created your moon.config.js?");
         return;
     }
 
@@ -58,12 +58,12 @@ const prepareServer = async () => {
 }
 
 const startServer = async () => {
-    console.log("Staring moon.js");
+    console.log("Staring moon-js");
 
     await prepareServer();
 
     server = app.listen(port, async () => {
-        console.log(`moon.js listening at: http://localhost:${port}`)
+        console.log(`moon-js listening at: http://localhost:${port}`)
 
         await callHook(HOOKS.SERVER_STARTED, {
             app

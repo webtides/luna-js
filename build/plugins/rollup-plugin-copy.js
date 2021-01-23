@@ -15,7 +15,8 @@ module.exports = function(options) {
             sources.forEach(source => {
                 const { input, output } = source;
 
-                const basePath = input.split("**/*")[0];
+                const basePath = input.replace(`**\\*`, '**/*').split("**/*")[0];
+
                 const files = glob.sync(input);
 
                 files.forEach(file => {

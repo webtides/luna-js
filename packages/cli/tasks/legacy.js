@@ -10,10 +10,7 @@ const prepareLegacyBuild = async () => {
     const settings = await loadSettings();
 
     const generateEntryFile = async () => {
-
         let contents = `
-            import "moon.js/packages/client/libraries/runtime.js";
-            
             // TODO: use core-js in near future
             Object.defineProperty(Array.prototype, "includes", {
                 value: function(searchElement, fromIndex) {
@@ -22,13 +19,12 @@ const prepareLegacyBuild = async () => {
             });
         `;
 
-        const basePath = settings._generated.applicationDirectory;
         const manifest = await loadManifest();
 
         let code = [];
 
         for (const component of manifest.components) {
-            const {file, basePath, relativePath, settings, children} = component;
+            const {basePath, relativePath} = component;
 
             const elementName = relativePath.split("/").pop().split(".js")[0];
             const className = pascalCase(elementName);
@@ -41,7 +37,7 @@ const prepareLegacyBuild = async () => {
 
         contents += code.join("\r\n");
 
-        const buildDirectory = path.join(settings.buildDirectory, "generated");
+        const buildDirectory = settings._generated.baseDirectory;
 
         if (!fs.existsSync(buildDirectory)) {
             fs.mkdirSync(buildDirectory)

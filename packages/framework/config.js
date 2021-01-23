@@ -20,7 +20,7 @@ const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
 
 const loadSettings = async () => {
     try {
-        const settings = (await import(path.join(process.cwd(), "moon.config.js"))).default;
+        const settings = (await import(getPathToConfigFile())).default;
 
         settings.componentsDirectory = settings.componentsDirectory.map(bundle => {
             bundle._generated = {
@@ -31,6 +31,7 @@ const loadSettings = async () => {
         });
 
         settings._generated = {
+            baseDirectory: path.join(settings.buildDirectory, "generated"),
             applicationDirectory: path.join(settings.buildDirectory, "generated", "application"),
             manifest: path.join(settings.buildDirectory, "generated", "manifest.json")
         }

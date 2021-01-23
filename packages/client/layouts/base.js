@@ -1,6 +1,7 @@
 const scripts = ({ html }) => {
     return html`
         <script src="/libraries/webcomponents-bundle.js" nomodule></script>
+        <script src="/libraries/runtime.js" nomodule></script>
         <script src="/assets/bundle.legacy.js" nomodule></script>
     `;
 }
