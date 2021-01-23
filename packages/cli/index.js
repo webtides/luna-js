@@ -4,7 +4,8 @@ import { publishDockerFile} from "./tasks/docker";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
 import {clearCache} from "../framework/cache/cache";
 import { restartServer } from "../framework";
-import exportStaticSite from "./export";
+import exportStaticSite from "./tasks/export";
+import {generateAPI} from "./tasks/export/api-generator";
 
 let moonJSStarting = false;
 
@@ -51,7 +52,12 @@ const execute = async (argv) => {
     }
 
     if (argv.export) {
-        exportStaticSite();
+        if (argv.api) {
+            await generateAPI();
+        } else {
+            exportStaticSite();
+        }
+
         return;
     }
 

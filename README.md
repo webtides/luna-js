@@ -167,3 +167,57 @@ export { post, get };
 
 To extend functionality and to react on certain events, `moon-js` introduces a hook system. You have
 multiple of hooks available. To register a hook, create a file in your `Hooks Directory`.
+
+
+## Static site generator
+
+Using `moon-js` as a static site generator is possible, too. 
+The following command exports you complete application as a static site:
+```
+moon --export
+```
+
+Before you can export your site, you have to set you `outputDirectory` inside
+your `moon.config.js`.
+
+```
+{
+    ...,
+    export: {
+        outputDirectory: ".export"    
+    },
+    ...
+}
+```
+
+### Gotchas
+
+The `loadDynamicProperties` method cannot be called in a static context. If you export
+your application as a static site this method will be ignored.
+
+
+### Api generator
+
+`moon-js` also allows you to export your api routes as a standalone express
+application. This is useful for serverless environments or if you generated
+your static site, but don't want to loose all your serverside functionality.
+
+To generate an api server, you can use the follwing command:
+
+```
+moon --export --api
+```
+Before you can export your api, you have to set your `apiOutputDirectory` inside
+your `moon.config.js`. If `apiOutputDirectory` is not set, `moon-js` will fall back
+to `outputDirectory`.
+
+```
+{
+    ...,
+    export: {
+        outputDirectory: ".export",
+        apiOutputDirectory: ".api"
+    },
+    ...
+}
+```

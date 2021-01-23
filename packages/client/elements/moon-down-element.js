@@ -14,8 +14,8 @@ export default class MoonDownElement extends MoonElement {
             return {};
         }
 
-        const frontmatter = (await import("@github-docs/frontmatter")).default;
-        const marked = (await import("marked")).default;
+        const frontmatter = require("@github-docs/frontmatter");
+        const marked = require("marked");
 
         const result = frontmatter(fs.readFileSync(this.source, { encoding: "utf-8" }));
 
