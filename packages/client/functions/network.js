@@ -1,20 +1,23 @@
-const getBaseRequestHeaders = ({ contentType = "application/json" } = { }) => {
-    const headers = { };
-
-    if (contentType) {
-        headers['Content-Type'] = contentType;
+const getBaseRequestHeaders = () => {
+    return {
+        'Content-Type': 'application/json'
     }
-
-    return headers;
 }
 
-const getContentTypeFromBody = (body) => {
+const parseBody = body => {
+    if (!body) {
+        return undefined;
+    }
+
+    let json = body;
+
     if (body instanceof FormData) {
-        return false;
+        json = { };
+        body.forEach((value, key) => json[key] = value);
     }
 
-    return "application/json";
-}
+    return JSON.stringify(json);
+};
 
 
 const apiRequest = async (api, { method = "GET", headers = [], body }) => {
@@ -23,22 +26,29 @@ const apiRequest = async (api, { method = "GET", headers = [], body }) => {
     try {
         const response = await fetch([ "api", ...parts ].join("/"), {
             method,
-            body,
+            body: parseBody(body),
             headers: {
-                ...getBaseRequestHeaders({
-                    contentType: getContentTypeFromBody(body)
-                }),
+                ...getBaseRequestHeaders(),
                 ...headers
             }
         });
 
         const success = response.ok;
 
+        let data;
+        switch (response.headers.get("Content-Type")) {
+            case "application/json":
+                data = await response.json();
+                return;
+            default:
+                data = await response.text();
+        }
+
         return {
             success,
             status: response.status,
             response,
-            data: await response.json()
+            data
         };
 
     } catch (error) {

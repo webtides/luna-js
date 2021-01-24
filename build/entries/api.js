@@ -7,7 +7,7 @@ const apisToRegister = [];
 __IMPORTS__
 
 const registerApiRoute = (router, name, { get, post }) => {
-    get && router.get(`${name}`, (request, response) => {
+    get && router.get(`api${name}`, (request, response) => {
         try {
             return get({request, response});
         } catch (error) {
@@ -15,7 +15,7 @@ const registerApiRoute = (router, name, { get, post }) => {
         }
     });
 
-    post && router.post(`${name}`, (request, response) => {
+    post && router.post(`api${name}`, (request, response) => {
         try {
             return post({request, response});
         } catch (error) {
