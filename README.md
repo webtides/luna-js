@@ -199,8 +199,7 @@ your application as a static site this method will be ignored.
 ## Api generator
 
 `moon-js` also allows you to export your api routes as a standalone express
-application. This is useful for serverless environments or if you generated
-your static site, but don't want to loose all your serverside functionality.
+application. This will only export your api, without any frontend assets.
 
 To generate an api server, you can use the follwing command:
 
@@ -221,3 +220,21 @@ to `outputDirectory`.
     ...
 }
 ```
+
+### Hybrid export
+
+A hybric export is useful for serverless environments or if you generated
+your static site, but don't want to loose all your serverside functionality.
+`moon-js` will generate a static site and export an express application
+which is configured to serve your exported static site and your api.
+
+
+To generate a hybrid export run:
+```
+moon --export --hybrid
+```
+
+#### Gotchas
+
+The `loadDynamicProperties` method cannot be called in a static context. If make a hybrid
+ export of your application this method will be ignored.

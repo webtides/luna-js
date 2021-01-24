@@ -5,10 +5,10 @@ import path from "path";
 import glob from "glob";
 import config, {loadSettings} from "../../../framework/config";
 
-const generateStaticSite = async () => {
+const generateStaticSite = async ({ outputDirectory = false } = { }) => {
     const settings = await loadSettings();
 
-    const outputDirectory = settings.export.outputDirectory;
+    outputDirectory = outputDirectory || settings.export.outputDirectory;
 
     const pages = await loadPages();
     await Promise.all(pages.map(async ({ file, name, relativePath }) => {

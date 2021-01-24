@@ -1,13 +1,14 @@
 // Generated file. Do not modify.
 import express from "express";
 import bodyParser from "body-parser";
-import formidable from "express-formidable";
+
+import path from "path";
 
 const apisToRegister = [];
 __IMPORTS__
 
 const registerApiRoute = (router, name, { get, post }) => {
-    get && router.get(`api${name}`, (request, response) => {
+    get && router.get(`/api${name}`, (request, response) => {
         try {
             return get({request, response});
         } catch (error) {
@@ -15,7 +16,7 @@ const registerApiRoute = (router, name, { get, post }) => {
         }
     });
 
-    post && router.post(`api${name}`, (request, response) => {
+    post && router.post(`/api${name}`, (request, response) => {
         try {
             return post({request, response});
         } catch (error) {
@@ -32,7 +33,9 @@ const startServer = async () => {
     const app = express();
 
     app.use(bodyParser.urlencoded());
-    app.use(formidable());
+    app.use(bodyParser.json());
+
+    __STATIC_SITE__
 
     let fallbackApi = null;
 

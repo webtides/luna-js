@@ -80,6 +80,8 @@ module.exports =  function(options) {
                 fs.mkdirSync(options.outputDirectory, { recursive: true });
             }
 
+            console.log("Writing extracted css to", options.outputDirectory, options.filename);
+
             fs.writeFileSync(path.join(options.outputDirectory, options.filename), css, { encoding: "utf-8" });
         }
     }

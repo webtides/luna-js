@@ -23,7 +23,8 @@ const legacyComponentBundles = settings.componentsDirectory
         }
 
         const pluginPostcss = postcss({
-            ...bundle.styles
+            ...bundle.styles,
+            ignore: true
         });
 
         return {

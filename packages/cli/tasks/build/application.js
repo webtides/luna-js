@@ -10,9 +10,8 @@ const buildComponentsForApplication = async () => {
 
     if (settings.legacyBuild) {
         await prepareLegacyBuild();
+        await startRollup(path.join(moon.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
     }
-
-    await startRollup(path.join(moon.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
 };
 
 const startApplicationDevelopmentBuild = async (callback = () => { }) => {

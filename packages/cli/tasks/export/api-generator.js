@@ -3,8 +3,10 @@ import path from "path";
 import fs from "fs";
 import {loadManifest, loadSettings} from "../../../framework/config";
 import {buildComponentsForApplication} from "../build/application";
+import {generateStaticSite} from "./static-site-generator";
+import {registerAvailableComponents} from "../../../framework/loaders/component-loader";
 
-const generateApiEntry = async () => {
+const generateApiEntry = async ({ withStaticSite = false } = { }) => {
     const settings = await loadSettings();
     const manifest = await loadManifest();
 
@@ -16,6 +18,10 @@ const generateApiEntry = async () => {
 
     entryBlueprint = entryBlueprint.split("__PORT__").join(port);
     entryBlueprint = entryBlueprint.split("__FALLBACK_API_ROUTE__").join(fallbackApiRoute ? `"${fallbackApiRoute}"` : 'false');
+
+    entryBlueprint = entryBlueprint.split("__STATIC_SITE__").join(
+        withStaticSite ? `app.use(express.static(path.join(__dirname, "public")));` : ""
+    )
 
     const imports = [];
     let index = 0;
@@ -48,12 +54,24 @@ const generateApiEntry = async () => {
 };
 
 
-const generateAPI = async () => {
+const generateAPI = async ({ withStaticSite = false } = { }) => {
+
     await buildComponentsForApplication();
     console.log("Generate api entry file.");
-    await generateApiEntry();
+    await generateApiEntry({ withStaticSite });
     console.log("Generate api...");
     await startRollup(path.join(moon.currentDirectory, "build/configs/rollup.config.api.js"));
+
+    if (withStaticSite) {
+        const settings = await loadSettings();
+
+        const outputDirectory = settings.export.apiOutputDirectory ?? settings.export.outputDirectory;
+
+        await registerAvailableComponents();
+        await generateStaticSite({
+            outputDirectory: path.join(outputDirectory, "public")
+        });
+    }
 };
 
 export { generateAPI };

@@ -54,6 +54,10 @@ const execute = async (argv) => {
     if (argv.export) {
         if (argv.api) {
             await generateAPI();
+        } else if (argv.hybrid) {
+            await generateAPI({
+                withStaticSite: true
+            });
         } else {
             exportStaticSite();
         }
