@@ -11,13 +11,14 @@
     "moon": ".bin/moon.js"
   },
   "scripts": {
-    "prepublish": "npm run compile",
+    "postinstall": "npm run compile",
     "compile": "npx babel packages --out-dir lib/packages && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/cli": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-export-default-from": "^7.10.4",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
@@ -52,9 +53,6 @@
     "rollup-plugin-external-globals": "^0.6.1",
     "serverless-http": "^2.6.0",
     "yargs": "^16.2.0"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.12.10"
   },
   "directories": {
     "lib": "lib"
