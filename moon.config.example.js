@@ -38,5 +38,10 @@ module.exports = {
         static: {
             sources: []
         }
-    }
+    },
+
+    export: {
+        outputDirectory: ".export",
+        apiOutputDirectory: ".api"
+    },
 }

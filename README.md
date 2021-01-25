@@ -238,3 +238,8 @@ moon --export --hybrid
 
 The `loadDynamicProperties` method cannot be called in a static context. If make a hybrid
  export of your application this method will be ignored.
+
+
+## License 
+
+MIT License
