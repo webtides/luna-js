@@ -1,4 +1,2 @@
 .idea
 node_modules
-.gitignore
-rollup.config.server.js

@@ -11,7 +11,7 @@
     "moon": ".bin/moon.js"
   },
   "scripts": {
-    "postinstall": "npm run compile",
+    "prepublish": "npm run compile",
     "compile": "npx babel packages --out-dir lib/packages && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",
