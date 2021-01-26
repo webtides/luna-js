@@ -2,22 +2,19 @@ require("../../lib/packages/framework/bootstrap");
 
 const path = require("path");
 const glob = require("glob-all");
+const { terser } = require("rollup-plugin-terser");
 const {babel} = require('@rollup/plugin-babel');
-const multi = require("@rollup/plugin-multi-entry");
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
 const copy = require("../plugins/rollup-plugin-copy");
 const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
 
+const production = process.env.NODE_ENV === "production";
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 const styleSettings = settings.assets.styles;
 const staticSettings = settings.assets.static;
-
-const postcssPlugins = [
-
-];
 
 const styleBundles = styleSettings.bundles.map(bundle => {
     return {
@@ -47,23 +44,21 @@ const componentBundles = settings.componentsDirectory
             return false;
         }
 
-        const pluginPostcss = postcss({
-            ...bundle.styles
-        });
-
         return [{
             preserveSymlinks: true,
             input: inputFiles,
             output: {
                 dir: bundle.outputDirectory,
                 entryFileNames: '[name].js',
-                sourcemap: true,
+                sourcemap: !production,
                 format: 'es'
             },
             plugins: [
-                pluginPostcss,
+                postcss({
+                    ...bundle.styles
+                }),
                 nodeResolve(),
-                commonjs({ requireReturnsDefault: true }),
+                commonjs({requireReturnsDefault: true}),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                 }),
@@ -71,6 +66,7 @@ const componentBundles = settings.componentsDirectory
                 copy({
                     sources: staticSettings.sources
                 }),
+                production ? terser() : undefined
             ]
         }];
     })

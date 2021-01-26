@@ -2,6 +2,7 @@ require("../../lib/packages/framework/bootstrap");
 
 const path = require("path");
 const glob = require("glob-all");
+const { terser } = require("rollup-plugin-terser");
 const {babel} = require('@rollup/plugin-babel');
 const multi = require("@rollup/plugin-multi-entry");
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
@@ -10,6 +11,7 @@ const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
 const copy = require("../plugins/rollup-plugin-copy");
 
+const production = process.env.NODE_ENV === "production";
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 const legacyComponentBundles = settings.componentsDirectory
@@ -22,22 +24,19 @@ const legacyComponentBundles = settings.componentsDirectory
             return false;
         }
 
-        const pluginPostcss = postcss({
-            ...bundle.styles,
-            ignore: true
-        });
-
         return {
             input: [path.join(settings.buildDirectory, "generated/entry.legacy.js")],
             output: {
                 dir: bundle.outputDirectory,
-                sourcemap: true,
+                sourcemap: !production,
                 entryFileNames: "bundle.legacy.js",
                 format: 'iife',
                 strict: false
             },
             plugins: [
-                pluginPostcss,
+                postcss({
+                    ignore: true
+                }),
                 nodeResolve(),
                 commonjs({ requireReturnsDefault: true }),
                 multi({entryFileName: "bundle.legacy.js"}),
@@ -52,6 +51,7 @@ const legacyComponentBundles = settings.componentsDirectory
                         output: path.resolve(settings.publicDirectory, "libraries")
                     }]
                 }),
+                production ? terser() : undefined
             ]
         }
 

@@ -1,6 +1,6 @@
 {
   "name": "@webtides/moon-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/client.js",
   "module": "index.js",
@@ -17,8 +17,8 @@
   "author": "webtides",
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "^7.12.10",
     "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-export-default-from": "^7.10.4",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
@@ -51,6 +51,7 @@
     "regenerator-runtime": "^0.13.7",
     "rollup": "^2.35.1",
     "rollup-plugin-external-globals": "^0.6.1",
+    "rollup-plugin-terser": "^7.0.2",
     "serverless-http": "^2.6.0",
     "yargs": "^16.2.0"
   },
