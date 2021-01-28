@@ -1,6 +1,11 @@
-import path from "path";
-import postcss from "postcss";
-import fs from "fs";
+const path = require("path");
+const postcss = require("postcss");
+const fs = require("fs");
+
+const postcssPlugins = [
+    require("postcss-import"),
+    require("postcss-preset-env")({ stage: 1 }),
+];
 
 /**
  * The loaded styles, grouped by their modulePath.
@@ -22,11 +27,6 @@ const requireExtension = (currentModulePath) => {
         module.exports = css;
     };
 }
-
-const postcssPlugins = [
-    require("postcss-import"),
-    require("postcss-preset-env")({ stage: 1 }),
-];
 
 const processCss = ({ css, plugins }) => {
     return postcss([ ...postcssPlugins, ...plugins ]).process(css);
@@ -52,6 +52,6 @@ const transformCssModules = async () => {
 };
 
 
-export {
+module.exports = {
     processCss
-}
+};

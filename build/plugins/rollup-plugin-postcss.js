@@ -1,8 +1,8 @@
-const {processCss} = require("../../lib/packages/client/styles/postcss-loader");
 const {proxy} = require("../../lib/packages/cli/tasks/build/esm-proxy");
 
 const path = require("path");
 const fs = require("fs");
+const {processCss} = require("./postcss/postcss-loader");
 
 module.exports =  function(options) {
     const importers = { };
