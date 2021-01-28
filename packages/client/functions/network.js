@@ -36,12 +36,12 @@ const apiRequest = async (api, { method = "GET", headers = [], body }) => {
         const success = response.ok;
 
         let data;
-        switch (response.headers.get("Content-Type")) {
-            case "application/json":
-                data = await response.json();
-                return;
-            default:
-                data = await response.text();
+
+        const contentType = response.headers.get("Content-Type");
+        if (contentType.indexOf("application/json") !== -1) {
+            data = await response.json();
+        } else {
+            data = await response.text();
         }
 
         return {
