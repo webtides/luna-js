@@ -1,6 +1,6 @@
 {
   "name": "@webtides/moon-js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/client.js",
   "module": "index.js",
@@ -37,6 +37,7 @@
     "acorn-walk": "^8.0.0",
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.5",
+    "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "glob-all": "^3.2.1",
