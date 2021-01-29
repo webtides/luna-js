@@ -60,7 +60,7 @@ const bundle = {
         exports: "auto"
     },
     external: [
-        'glob', 'fs', 'path', 'marked'
+        'glob', 'fs', 'path'
     ],
     plugins: [
         require("../plugins/rollup-plugin-switch-renderer.js")(),

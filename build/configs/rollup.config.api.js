@@ -9,6 +9,7 @@ const json = require('@rollup/plugin-json');
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
 const outputDirectory = settings.export.apiOutputDirectory || settings.export.outputDirectory;
+const externals = settings.export && settings.export.api && settings.export.api.externals ? settings.export.api.externals : [];
 
 module.exports = {
     input: path.join(settings.buildDirectory, "generated/entry.apis.js"),
@@ -18,6 +19,9 @@ module.exports = {
         entryFileNames: "api-server.js",
         format: 'cjs',
     },
+    external: [
+        ...externals
+    ],
     plugins: [
         nodeResolve({
             moduleDirectories: [
@@ -32,6 +36,7 @@ module.exports = {
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
             babelHelpers: "bundled"
         }),
-        json()
+        json(),
+        require("../plugins/rollup-plugin-export")({ outputDirectory, externals })
     ]
 }
