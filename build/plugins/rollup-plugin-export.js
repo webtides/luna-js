@@ -11,7 +11,13 @@ const minimalPackageJSON = {
 
 const loadCurrentPackageJSON = () => {
     return JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), { encoding: "utf-8" }));
-}
+};
+
+const loadMoonPackageJSON = () => {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, "../..", "package.json"), { encoding: "utf-8" }));
+};
+
+const additionalDependencies = [ "express", "dotenv", "body-parser" ];
 
 module.exports =  function({ externals, outputDirectory }) {
 
@@ -20,12 +26,19 @@ module.exports =  function({ externals, outputDirectory }) {
 
         async writeBundle() {
             const currentPackageJSON = loadCurrentPackageJSON();
+            const moonPackageJSON = loadMoonPackageJSON();
             const exportPackageJSON = { ...minimalPackageJSON };
 
-            for (const external of externals) {
-                if (currentPackageJSON.dependencies[external]) {
-                    exportPackageJSON.dependencies[external] = currentPackageJSON.dependencies[external];
+            for (const key of Object.keys(currentPackageJSON.dependencies)) {
+                if (key === "@webtides/moon-js") {
+                    continue;
                 }
+
+                exportPackageJSON.dependencies[key] = currentPackageJSON.dependencies[key];
+            }
+
+            for (const key of additionalDependencies) {
+                exportPackageJSON.dependencies[key] = moonPackageJSON.dependencies[key];
             }
 
             fs.writeFileSync(path.join(outputDirectory, "package.json"), JSON.stringify(exportPackageJSON), { encoding: "utf-8" });
