@@ -41,6 +41,8 @@ module.exports =  function({ externals, outputDirectory }) {
                 exportPackageJSON.dependencies[key] = moonPackageJSON.dependencies[key];
             }
 
+            exportPackageJSON.name = currentPackageJSON.name;
+
             fs.writeFileSync(path.join(outputDirectory, "package.json"), JSON.stringify(exportPackageJSON), { encoding: "utf-8" });
         }
     }

@@ -1,20 +1,45 @@
-const {proxy} = require("../../lib/packages/cli/tasks/build/esm-proxy");
-
+const postcss = require("postcss");
 const path = require("path");
 const fs = require("fs");
-const {processCss} = require("./postcss/postcss-loader");
+
+const basePostcssPlugins = [
+    require("postcss-import"),
+    require("postcss-preset-env")({ stage: 1 }),
+];
 
 module.exports =  function(options) {
     const importers = { };
-    let extractedCss = { };
-
+    const extractedCss = { };
     const idsToExtract = [];
+
+    const processCss = ({ css, plugins, from = process.cwd() }) => {
+        return postcss([ ...basePostcssPlugins, ...plugins ]).process(css, {
+            from
+        });
+    };
+
+    const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
+        const { css, map, messages } = await processCss({
+            css: code,
+            plugins: options.postcssPlugins,
+            from: id
+        });
+
+        messages.forEach(message => {
+            if (message.type === "dependency" && message.plugin === "postcss-import") {
+                addWatchFile(message.file);
+            }
+        });
+
+        return {css, map};
+    }
 
     return {
         name: 'moon-postcss',
 
         async resolveId(source, importer) {
             if (source.endsWith(".css")) {
+
                 if (!!importer) {
                     const importerDirectory = path.dirname(importer);
 
@@ -33,34 +58,35 @@ module.exports =  function(options) {
         },
 
         async transform(code, id) {
+
             if (id.endsWith(".css") && importers[id]) {
                 if (options.ignore) {
                     return "export default null";
                 }
 
-                // TODO: find a better way with support for modern language features.
-                const module = proxy(importers[id]).default;
-                const element = new module();
+                const { css, map } = await processCssAndWatchDependencies(code, id, this.addWatchFile);
 
-                const extractCss = !(options.serverBuild || false) && element._options.shadowRender;
+                const moduleInformation = this.getModuleInfo(importers[id]);
 
-                // We only need the process the css if it should be inside the components shadow.
-                if (extractCss) {
-                    console.log("Extract css for", importers[id]);
-                    const {css, map} = await processCss({ css: code, plugins: options.postcssPlugins });
+                // Check if the imported css is assigned to a variable. If not, we should extract it.
+                moduleInformation.ast.body.map(node => {
+                    if (node.type === "ImportDeclaration") {
+                        if (path.join(path.dirname(importers[id]), node.source.value) === id
+                            && node.specifiers.length === 0) {
+                            extractedCss[id] = css;
+                        }
+                    }
+                })
 
-                    return {
-                        code: `export default \`${css}\`;`,
-                        map
-                    };
-                } else {
-                    extractedCss[id] = code;
-                    return "export default null";
-                }
+                // We can always export the css, because it will be removed if it is unused.
+                return {
+                    code: `export default \`${css}\`;`,
+                    map
+                };
             }
 
             if (idsToExtract.includes(id)) {
-                extractedCss[id] = code;
+                extractedCss[id] = (await processCssAndWatchDependencies(code, id, this.addWatchFile)).css;
                 return '';
             }
 
@@ -72,9 +98,7 @@ module.exports =  function(options) {
                 return;
             }
 
-            const extracted = Object.keys(extractedCss).map(key => extractedCss[key]).join("\r\n");
-
-            const {css, map} = await processCss({ css: extracted, plugins: options.postcssPlugins });
+            const css = Object.values(extractedCss).join("\r\n");
 
             if (!fs.existsSync(options.outputDirectory)) {
                 fs.mkdirSync(options.outputDirectory, { recursive: true });

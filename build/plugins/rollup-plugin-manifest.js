@@ -1,9 +1,7 @@
 const { loadSettings } = require("../../lib/packages/framework/config");
 
-const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
-const {proxy} = require("../../packages/cli/tasks/build/esm-proxy");
 
 const loadComponentChildren = contents => {
     const result = contents.match(/<(?:\w*-\w*)(?:-\w*)*/gm);
