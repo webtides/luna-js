@@ -204,7 +204,7 @@ application. This will only export your api, without any frontend assets.
 To generate an api server, you can use the follwing command:
 
 ```
-moon --export --api
+moon --export=api
 ```
 Before you can export your api, you have to set your `apiOutputDirectory` inside
 your `moon.config.js`. If `apiOutputDirectory` is not set, `moon-js` will fall back
@@ -230,9 +230,22 @@ which is configured to serve your exported static site and your api.
 
 
 To generate a hybrid export run:
+
 ```
-moon --export --hybrid
+moon --export=hybrid
 ```
+
+### Serverless
+
+Exporting your api or hybrid api to a serverless environment is as easy as passing the 
+additional `--serverless` flag to your export command.
+
+```
+moon --export=hybrid --serverless // or
+moon --export=api --serverless
+```
+
+You may have to install your npm dependencies in your exported directory.
 
 #### Gotchas
 

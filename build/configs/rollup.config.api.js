@@ -25,6 +25,9 @@ module.exports = {
         ...externals
     ],
     plugins: [
+        nodeResolve({
+            resolveOnly: [ '@webtides/moon-js' ]
+        }),
         commonjs({ requireReturnsDefault: true }),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),

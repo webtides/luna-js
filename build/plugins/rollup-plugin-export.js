@@ -17,7 +17,7 @@ const loadMoonPackageJSON = () => {
     return JSON.parse(fs.readFileSync(path.join(__dirname, "../..", "package.json"), { encoding: "utf-8" }));
 };
 
-const additionalDependencies = [ "express", "dotenv", "body-parser" ];
+const additionalDependencies = [ "express", "dotenv", "body-parser", "serverless-http" ];
 
 module.exports =  function({ externals, outputDirectory }) {
 

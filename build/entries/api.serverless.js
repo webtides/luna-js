@@ -1,18 +1,21 @@
+import serverless from "serverless-http";
+
 import {prepareServer} from "@webtides/moon-js/build/entries/helpers/prepare";
 
 const apisToRegister = [];
 __IMPORTS__
 
-(async () => {
-    const port = __PORT__;
-
+const handler = async (event, context) => {
     const app = await prepareServer({
         apis: apisToRegister,
         fallbackApiRoute: __FALLBACK_API_ROUTE__,
         serveStaticSite: __SERVE_STATIC_SITE__
     });
 
-    app.listen(port, async () => {
-        console.log(`Server listening on port ${port}.`);
-    });
-})();
+    return serverless(app, {
+        binary: [ 'image/*', 'application/*' ],
+        basePath: '/'
+    })(event, context);
+};
+
+export { handler };
