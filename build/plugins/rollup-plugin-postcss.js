@@ -86,6 +86,10 @@ module.exports =  function(options) {
             }
 
             if (idsToExtract.includes(id)) {
+                if (options.ignore) {
+                    return "export default null";
+                }
+
                 extractedCss[id] = (await processCssAndWatchDependencies(code, id, this.addWatchFile)).css;
                 return '';
             }

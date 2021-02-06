@@ -1,4 +1,4 @@
-import MoonElement, { html, unsafeHTML } from "./packages/client/elements/moon-element.js";
+import MoonElement, { html, unsafeHTML, guard, until } from "./packages/client/elements/moon-element.js";
 import MoonDownElement from "./packages/client/elements/moon-down-element";
 import baseLayout from "./packages/client/layouts/base.js";
 import { HOOKS } from "./packages/framework/hooks/definitions";
@@ -16,6 +16,10 @@ export {
     layouts,
     HOOKS,
     apiRequest,
+
+    // LitHTML
     html,
-    unsafeHTML
+    unsafeHTML,
+    guard,
+    until,
 }

@@ -2,8 +2,10 @@ import {StyledElement} from '@webtides/element-js/src/StyledElement';
 
 import { render, html } from "lit-html";
 import { unsafeHTML } from "lit-html/directives/unsafe-html";
+import { guard } from "lit-html/directives/guard";
+import {until} from "lit-html/directives/until";
 
-export {html, unsafeHTML};
+export {html, unsafeHTML, guard, until};
 
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);

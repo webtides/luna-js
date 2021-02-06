@@ -46,7 +46,9 @@ const serverBundle = {
         externalGlobals(
             {
                 'lit-html': 'serverLitHtml',
-                'lit-html/directives/unsafe-html': 'serverUnsafeHtml'
+                'lit-html/directives/unsafe-html': 'serverUnsafeHtml',
+                'lit-html/directives/guard': 'serverGuard',
+                'lit-html/directives/until': 'serverUntil',
             }),
         nodeResolve({
             preferBuiltins: true,
