@@ -31,38 +31,14 @@ export default class MoonElement extends StyledElement {
         }
     }
 
-    // 1. we need to skip initial render when we already have rendered server side
     connectedCallback() {
-        // define all attributes to "this" as properties
-        this.defineAttributesAsProperties();
-
-        // define all properties to "this"
-        this.defineProperties();
-
-        // define all computed properties to "this"
-        this.defineComputedProperties();
-
-        // define everything that should be observed
-        this.defineObserver();
-
-        this.registerEventsAndRefs();
-
-        if (this.hasAttribute('defer-update') || this._options.deferUpdate) {
-            this.triggerHook('connected');
-        } else {
-            // Also request an update on server rendered elements to allow lit-html to
-            // set its initial state.
-            this.requestUpdate({notify: false}).then(() => {
-                this.triggerHook('connected');
-            });
-        }
+        super.connectedCallback();
 
         if (this.hasAttribute('ssr')) {
             this.setAttribute('hydrate', 'true');
         }
     }
 
-    // 2. we need to be able to inject properties from outside that will contain the attributes as well
     defineProperties(properties = this.properties()) {
         Object.keys(properties).forEach((prop) => {
             // when mixing shadow dom elements with light dom elements and nesting custom elements
