@@ -13,6 +13,17 @@ const isOnServer = () => {
 
 export default class MoonElement extends StyledElement {
 
+    isInitialRender = false;
+    _initialRenderRoot = null;
+
+    getInitialRenderRoot() {
+        if (!this._initialRenderRoot) {
+            this._initialRenderRoot = document.createElement('template');
+        }
+
+        return this._initialRenderRoot;
+    }
+
     constructor(options) {
         super({
             deferUpdate: false,
@@ -32,11 +43,13 @@ export default class MoonElement extends StyledElement {
     }
 
     connectedCallback() {
-        super.connectedCallback();
-
         if (this.hasAttribute('ssr')) {
             this.setAttribute('hydrate', 'true');
+        } else {
+            this.isInitialRender = false;
         }
+
+        super.connectedCallback();
     }
 
     defineProperties(properties = this.properties()) {
@@ -77,11 +90,17 @@ export default class MoonElement extends StyledElement {
             // just a plain string literal. no lit-html required
             this.getRoot().innerHTML = `${template}`;
         } else {
+            // Render to a invisible template element the first time to let
+            // lit build it's internal state.
+            const root = this.isInitialRender ? this.getInitialRenderRoot() : this.getRoot();
+
             // render via lit-html
-            render(template, this.getRoot(), {
+            render(template, root, {
                 scopeName: this.localName,
                 eventContext: this,
             });
+
+            this.isInitialRender = false;
         }
     }
 

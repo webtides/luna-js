@@ -1,4 +1,3 @@
-import glob from "glob";
 import {loadManifest, loadSettings} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
@@ -66,6 +65,8 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
 const getAvailableComponents = () => allAvailableComponents;
 
 const loadSingleComponentByTagName = async (tagName) => {
+    tagName = tagName.toLowerCase();
+
     const components = getAvailableComponents();
 
     if (components[tagName]) {

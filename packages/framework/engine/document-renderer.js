@@ -1,8 +1,9 @@
-import cheerio from "cheerio";
 import {loadSingleComponentByTagName} from "../loaders/component-loader";
 import { loadSettings } from "../config";
 import {renderComponent} from "./element-renderer";
 import {paramCase} from "param-case";
+
+import { JSDOM } from "jsdom";
 
 const addDependenciesToUpgradedElements = async (dependencies, upgradedElements) => {
     dependencies = [ dependencies ].flat();
@@ -30,17 +31,17 @@ const addDependenciesToUpgradedElements = async (dependencies, upgradedElements)
 };
 
 /**
- * Takes a cheerio-node and tries to match it with a custom element.
+ * Takes a html-node and tries to match it with a custom element.
  * Recursively renders & upgrades all child elements.
  *
- * @param node Node
+ * @param $node
  * @param upgradedElements *
  * @param {*}
  *
  * @returns {Promise<boolean|{component: ({file: string, relativePath: string, name: *, element: *}|boolean), innerHTML: (jQuery|string), attributes: (*|{})}>}
  */
-const renderNodeAsCustomElement = async (node, upgradedElements, {request, response}) => {
-    const tag = node.tagName;
+const renderNodeAsCustomElement = async ($node, upgradedElements, {request, response}) => {
+    const tag = $node.tagName.toLowerCase();
     const component = await loadSingleComponentByTagName(tag);
 
     if (!component) {
@@ -54,11 +55,20 @@ const renderNodeAsCustomElement = async (node, upgradedElements, {request, respo
         }
     }
 
-    const attributes = Object.assign({}, node.attribs) || {};
+    const attributes = {};
+    for (const attribute of $node.attributes) {
+        const attributeValue = $node.getAttribute(attribute.name);
+        if (attributeValue) {
+            attributes[attribute.name] = attributeValue;
+        }
+    }
 
     const {markup, element, dependencies} = await renderComponent({component, attributes, request, response});
 
-    const innerDocument = await parseHtmlDocument(cheerio.load(markup, null, false), upgradedElements, {
+    $node.innerHTML = markup;
+
+    // Upgrades all custom elements inside this custom element.
+    const innerDocument = await parseHtmlDocument($node, upgradedElements, {
         request,
         response
     });
@@ -67,31 +77,31 @@ const renderNodeAsCustomElement = async (node, upgradedElements, {request, respo
         attributes,
         component,
         dependencies,
-        innerHTML: !element._options.shadowRender ? innerDocument.html() : ""
+        innerHTML: !element._options.shadowRender ? innerDocument.innerHTML : ""
     };
 };
 
 /**
- * Takes a cheerio object and tries to renders all available custom elements.
+ * Takes a html node and tries to renders all available custom elements.
  *
- * @param $
+ * @param document
  * @param upgradedElements
  * @param {*}
  *
- * @returns {Promise<jQuery|HTMLElement>}
+ * @returns {Promise<*>}
  */
-const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
-    await Promise.all($("*").map(async (index, node) => {
-        if (node.tagName.includes("-")) {
+const parseHtmlDocument = async (document, upgradedElements, {request, response}) => {
+    await Promise.all([...document.querySelectorAll("*")].map(async ($node, index) => {
+        if ($node.tagName.includes("-")) {
             // This is potentially a custom element.
-            const result = await renderNodeAsCustomElement(node, upgradedElements, {request, response});
+            const result = await renderNodeAsCustomElement($node, upgradedElements, {request, response});
 
             if (!result) {
                 return;
             }
 
             if (result.noSSR) {
-                upgradedElements[node.tagName] = result.component;
+                upgradedElements[$node.tagName.toLowerCase()] = result.component;
                 return;
             }
 
@@ -99,23 +109,22 @@ const parseHtmlDocument = async ($, upgradedElements, {request, response}) => {
 
             await addDependenciesToUpgradedElements([...component.children, ...dependencies ], upgradedElements);
 
-            const $node = $(node);
-            $node.html(innerHTML);
+            $node.innerHTML = innerHTML;
 
-            attributes && Object.keys(attributes).forEach(key => $node.attr(key, attributes[key]));
+            attributes && Object.keys(attributes).forEach(key => $node.setAttribute(key, attributes[key]));
 
-            upgradedElements[node.tagName] = component;
+            upgradedElements[$node.tagName.toLowerCase()] = component;
         }
     }));
 
-    return $;
+    return document;
 };
 
-const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
+const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
     const settings = await loadSettings();
 
-    $("body")
-        .append(`
+    dom.window.document.querySelector("body")
+        .innerHTML += `
             <script type="module">
                 ${Object.keys(upgradedElements)
                     .filter(key => !upgradedElements[key].element.disableCSR)
@@ -132,7 +141,7 @@ const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
                     .join("\n")
                 }
             </script>
-        `);
+        `;
 };
 
 /**
@@ -144,13 +153,13 @@ const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
  * @returns {Promise<string>}
  */
 export default async (htmlDocument, {request, response}) => {
-    const $ = cheerio.load(htmlDocument, null, true);
+    const dom = new JSDOM(htmlDocument);
 
     const upgradedElements = {};
-    await parseHtmlDocument($, upgradedElements, {request, response});
+    await parseHtmlDocument(dom.window.document, upgradedElements, {request, response});
 
-    await appendUpgradedElementsToDocument($, upgradedElements);
+   await appendUpgradedElementsToDocument(dom, upgradedElements);
 
-    return $.html();
+    return dom.serialize();
 };
 

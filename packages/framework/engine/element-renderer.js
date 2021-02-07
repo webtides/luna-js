@@ -1,6 +1,5 @@
 import {loadFromCache, writeToCache} from "../cache/cache";
-import {html, renderToString} from "@popeindustries/lit-html-server";
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
+import {renderToString} from "@popeindustries/lit-html-server";
 import {paramCase} from "param-case";
 
 const getComponentCacheKey = (component, attributes = {}) => {
@@ -55,10 +54,14 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
 
     // Write the element properties back to attributes.
     Object.keys(element.properties()).forEach(key => {
+        if (typeof properties[key] === "undefined") {
+            return;
+        }
+        
         attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
     });
 
-    const markup = await renderToString(element.template({html, unsafeHTML}));
+    const markup = await renderToString(element.template());
 
     if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
         await writeToCache(getComponentCacheKey(component, attributes), {markup, element}, "components");
