@@ -4,6 +4,7 @@ import baseLayout from "./packages/client/layouts/base.js";
 import { HOOKS } from "./packages/framework/hooks/definitions";
 import { apiRequest } from "./packages/client/functions/network";
 import {BaseElement} from "@webtides/element-js/src/BaseElement";
+import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
 
 const layouts = {
     base: baseLayout
@@ -12,7 +13,11 @@ const layouts = {
 export {
     MoonElement,
     MoonDownElement,
+
+    // element-js
     BaseElement,
+    TemplateElement,
+
     layouts,
     HOOKS,
     apiRequest,

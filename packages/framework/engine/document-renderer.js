@@ -118,6 +118,7 @@ const appendUpgradedElementsToDocument = async ($, upgradedElements) => {
         .append(`
             <script type="module">
                 ${Object.keys(upgradedElements)
+                    .filter(key => !upgradedElements[key].element.disableCSR)
                     .map(key => {
                         const component = upgradedElements[key];
                         const relativePath = component.outputDirectory.substring(settings.publicDirectory.length);

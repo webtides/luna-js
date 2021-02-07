@@ -45,31 +45,20 @@ export default class MoonElement extends StyledElement {
         // define everything that should be observed
         this.defineObserver();
 
-        if (this.hasAttribute('ssr')) {
+        this.registerEventsAndRefs();
 
-            this.registerEventsAndRefs();
-
-            if (!isOnServer() && !this._options.shadowRender) {
-                this.triggerHook('connected');
-            }
-
-            if (!isOnServer() && this._options.shadowRender) {
-                this.requestUpdate({notify: false}).then(() => {
-                    this.triggerHook('connected');
-                });
-            }
-
-            this.setAttribute('hydrate', 'true');
-
-        } else if (this.hasAttribute('defer-update') || this._options.deferUpdate) {
-            // don't updates/render, but register refs and events
-            this.registerEventsAndRefs();
-
+        if (this.hasAttribute('defer-update') || this._options.deferUpdate) {
             this.triggerHook('connected');
         } else {
+            // Also request an update on server rendered elements to allow lit-html to
+            // set its initial state.
             this.requestUpdate({notify: false}).then(() => {
                 this.triggerHook('connected');
             });
+        }
+
+        if (this.hasAttribute('ssr')) {
+            this.setAttribute('hydrate', 'true');
         }
     }
 
@@ -128,6 +117,13 @@ export default class MoonElement extends StyledElement {
         return this.shadowRoot !== null ? this.shadowRoot : this;
     }
 
+    /**
+     * An array of tag names this custom element has as children. Useful for when the element
+     * is only rendered on the client, but we still need to inform the framework that it's children
+     * should be loaded.
+     *
+     * @returns {string[]}
+     */
     dependencies() { return []; }
 
     /**
@@ -163,8 +159,28 @@ export default class MoonElement extends StyledElement {
         return false;
     }
 
+    /**
+     * Sets the element to be client side only. It won't be rendered on the server.
+     * But it will be included, so all imports should be compatible with a node enironment.
+     *
+     * @returns {boolean}
+     */
     static get disableSSR() { return false; }
 
+    /**
+     * The element will only be rendered on the server. The generated javascript won't be passed
+     * to the client. Useful for elements which are not interactive.
+     *
+     * @returns {boolean}
+     */
+    static get disableCSR() { return false; }
+
+    /**
+     * Sets the dynamic properties to be cacheable. Normally the dynamic properties will be reloaded
+     * on every request. With this flag they will only be loaded once and then cached.
+     *
+     * @returns {boolean}
+     */
     static get dynamicPropertiesCacheable() { return false; }
 }
 

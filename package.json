@@ -1,6 +1,6 @@
 {
   "name": "@webtides/moon-js",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/client.js",
   "module": "index.js",
