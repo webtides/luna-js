@@ -2,8 +2,11 @@ const postcss = require("postcss");
 const path = require("path");
 const fs = require("fs");
 
-const basePostcssPlugins = [
+const basePostcssPluginsBefore = [
     require("postcss-import"),
+];
+
+const basePostcssPluginsAfter = [
     require("postcss-preset-env")({ stage: 1 }),
 ];
 
@@ -13,7 +16,7 @@ module.exports =  function(options) {
     const idsToExtract = [];
 
     const processCss = ({ css, plugins, from = process.cwd() }) => {
-        return postcss([ ...basePostcssPlugins, ...plugins ]).process(css, {
+        return postcss([ ...basePostcssPluginsBefore, ...plugins, ...basePostcssPluginsAfter ]).process(css, {
             from
         });
     };
