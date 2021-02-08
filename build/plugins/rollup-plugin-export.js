@@ -17,7 +17,10 @@ const loadMoonPackageJSON = () => {
     return JSON.parse(fs.readFileSync(path.join(__dirname, "../..", "package.json"), { encoding: "utf-8" }));
 };
 
-const additionalDependencies = [ "express", "dotenv", "body-parser", "serverless-http" ];
+const additionalDependencies = [ "express", "dotenv", "body-parser" ];
+if (global.serverlessApiBuild) {
+    additionalDependencies.push('serverless-http');
+}
 
 module.exports =  function({ externals, outputDirectory }) {
 
@@ -41,6 +44,7 @@ module.exports =  function({ externals, outputDirectory }) {
                 exportPackageJSON.dependencies[key] = moonPackageJSON.dependencies[key];
             }
 
+            exportPackageJSON.version = currentPackageJSON.version;
             exportPackageJSON.name = currentPackageJSON.name;
 
             fs.writeFileSync(path.join(outputDirectory, "package.json"), JSON.stringify(exportPackageJSON), { encoding: "utf-8" });

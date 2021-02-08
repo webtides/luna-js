@@ -61,7 +61,13 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
     console.log("Generate api entry file.");
     await generateApiEntry({ withStaticSite, serverless });
     console.log("Generate api...");
+
+    if (serverless) {
+        global.serverlessApiBuild = true;
+    }
+
     await startRollup(path.join(moon.currentDirectory, "build/configs/rollup.config.api.js"));
+
 
     if (withStaticSite) {
         const settings = await loadSettings();
