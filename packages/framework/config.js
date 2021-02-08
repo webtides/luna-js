@@ -1,10 +1,10 @@
 import path from "path";
 import fs from "fs";
 
-const loadManifest = async () => {
+const loadManifest = async (filename = "manifest.json") => {
     const settings = await loadSettings();
 
-    const pathToManifest = path.join(settings.buildDirectory, "generated", "manifest.json");
+    const pathToManifest = path.join(settings.buildDirectory, "generated", filename);
 
     if (fs.existsSync(pathToManifest)) {
         return JSON.parse(fs.readFileSync(pathToManifest, { encoding: "utf-8" }));
@@ -32,7 +32,8 @@ const loadSettings = async () => {
         settings._generated = {
             baseDirectory: path.join(settings.buildDirectory, "generated"),
             applicationDirectory: path.join(settings.buildDirectory, "generated", "application"),
-            manifest: path.join(settings.buildDirectory, "generated", "manifest.json")
+            manifest: path.join(settings.buildDirectory, "generated", "manifest.json"),
+            clientManifest: path.join(settings.buildDirectory, "generated", "manifest.client.json"),
         }
 
         return settings;

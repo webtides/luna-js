@@ -1,5 +1,5 @@
 import {loadSingleComponentByTagName} from "../loaders/component-loader";
-import { loadSettings } from "../config";
+import {loadManifest, loadSettings} from "../config";
 import {renderComponent} from "./element-renderer";
 import {paramCase} from "param-case";
 
@@ -122,6 +122,7 @@ const parseHtmlDocument = async (document, upgradedElements, {request, response}
 
 const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
     const settings = await loadSettings();
+    const manifest = await loadManifest("manifest.client.json");
 
     dom.window.document.querySelector("body")
         .innerHTML += `
@@ -130,11 +131,14 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
                     .filter(key => !upgradedElements[key].element.disableCSR)
                     .map(key => {
                         const component = upgradedElements[key];
+                        
                         const relativePath = component.outputDirectory.substring(settings.publicDirectory.length);
-                        const componentPath = component.relativePath.split("/").pop();
-        
+                        
+                        const manifestKey = "/" + component.directory + component.relativePath;
+                        const importPath = `${relativePath}/${manifest[manifestKey]}`;
+                        
                         return `
-                            import ${component.name} from "${relativePath}/${componentPath}";
+                            import ${component.name} from "${importPath}";
                             customElements.define("${paramCase(component.name)}", ${component.name});
                         `;
                     })

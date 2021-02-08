@@ -9,6 +9,7 @@ const commonjs = require("@rollup/plugin-commonjs");
 const copy = require("../plugins/rollup-plugin-copy");
 const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
+const del = require("rollup-plugin-delete");
 
 const production = process.env.NODE_ENV === "production";
 const settings = require(path.join(process.cwd(), "moon.config.js"));
@@ -49,11 +50,14 @@ const componentBundles = settings.componentsDirectory
             input: inputFiles,
             output: {
                 dir: bundle.outputDirectory,
-                entryFileNames: '[name].js',
+                entryFileNames: '[name]-[hash].js',
                 sourcemap: !production,
                 format: 'es'
             },
             plugins: [
+                require("../plugins/rollup-plugin-client-manifest")({
+                    config: bundle
+                }),
                 postcss({
                     ...bundle.styles
                 }),
@@ -66,7 +70,8 @@ const componentBundles = settings.componentsDirectory
                 copy({
                     sources: staticSettings.sources
                 }),
-                production ? terser() : undefined
+                production ? terser() : undefined,
+                del({ targets: path.join(bundle.outputDirectory, "*.js") })
             ]
         }];
     })

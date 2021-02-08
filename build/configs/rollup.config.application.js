@@ -5,6 +5,7 @@ const {babel} = require('@rollup/plugin-babel');
 const postcss = require("../plugins/rollup-plugin-postcss");
 const moonManifest = require("../plugins/rollup-plugin-manifest");
 const clientBundles = require("./rollup.config.client");
+const del = require("rollup-plugin-delete");
 
 const settings = require(path.join(process.cwd(), "moon.config.js"));
 
@@ -41,6 +42,7 @@ const hooks = hooksDirectory.flatMap(hook => {
 const components = componentsDirectory.flatMap(component => {
     basePaths.components.push({
         basePath: path.join(component.basePath, component.directory),
+        directory: component.directory,
         settings: {
             outputDirectory: component.outputDirectory,
         }
@@ -75,6 +77,9 @@ const bundle = {
         postcss({
             basePaths,
             ignore: true
+        }),
+        del({
+            targets: path.join(settings.buildDirectory, "generated", "application", "*")
         })
     ]
 };

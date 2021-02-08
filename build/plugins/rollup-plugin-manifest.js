@@ -31,6 +31,7 @@ module.exports = function(options) {
                     result = {
                         type,
                         basePath: path.resolve(basePath),
+                        directory: configRow.directory,
                         settings: configRow.settings
                     }
                 }
@@ -61,13 +62,14 @@ module.exports = function(options) {
                     return null;
                 }
 
-                const { type, basePath, settings } = entryType;
+                const { type, basePath, settings, directory } = entryType;
 
                 const relativePath = id.substring(basePath.length);
                 const relativeBasePath = basePath.substring(process.cwd().length);
 
                 entries[type][path.resolve(id)] = {
                     relativePath,
+                    directory,
                     file: null,
                     settings,
                     basePath: relativeBasePath.split('\\').join('/')

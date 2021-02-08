@@ -21,7 +21,7 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
     const basePath = settings._generated.applicationDirectory;
 
     for (const component of manifest.components) {
-        const { file, relativePath, settings, children } = component;
+        const { file, directory, relativePath, settings, children } = component;
         const absolutePath = path.join(basePath, file);
 
         const element = require(path.resolve(absolutePath));
@@ -54,6 +54,7 @@ const registerAvailableComponents = async ({ generateCssBundles = true } = {}) =
             name: element.name,
             file,
             relativePath,
+            directory,
             outputDirectory: settings.outputDirectory,
             children
         }
