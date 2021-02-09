@@ -2,16 +2,27 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-
 import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
+import {callHook, registerHook} from "../../../packages/framework/hooks";
+import {HOOKS} from "../../../packages/framework/hooks/definitions";
 
-const prepareServer = async ({ apis, fallbackApiRoute, serveStaticSite }) => {
+const prepareServer = async ({ hooks, apis, fallbackApiRoute, serveStaticSite }) => {
     const app = express();
 
     app.use(bodyParser.urlencoded());
     app.use(bodyParser.json());
+
+    for (const hook of hooks) {
+        registerHook(hook.module.name, hook.module.default);
+    }
+
+    await callHook(HOOKS.HOOKS_LOADED);
+
+    await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {
+        router: app
+    });
 
     serveStaticSite && app.use(express.static(path.join(__dirname, "public")));
 
@@ -38,6 +49,10 @@ const prepareServer = async ({ apis, fallbackApiRoute, serveStaticSite }) => {
     if (fallbackApi) {
         registerApiRoute(app, "*", fallbackApi.methods);
     }
+
+    await callHook(HOOKS.ROUTES_AFTER_REGISTER, {
+        router: app
+    });
 
     return app;
 };

@@ -43,6 +43,21 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
         index++;
     }
 
+    index = 0;
+    for (const hook of manifest.hooks) {
+        const { basePath, relativePath } = hook;
+
+        const pathToHookFile = path.posix.join(basePath, relativePath).split("\\").join("/");
+        imports.push(`
+            import * as hook${index} from "../..${pathToHookFile}";
+            hooksToRegister.push({
+                module: hook${index}
+            });
+        `);
+
+        index++;
+    }
+
     entryBlueprint = entryBlueprint.split("__IMPORTS__").join(imports.join("\r\n"));
 
     const buildDirectory = settings._generated.baseDirectory;
