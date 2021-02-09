@@ -6,7 +6,8 @@
 
 The idea behind `moon-js` is to allow developers to rapidly create a full fledged
  web application using custom-elements with support for server side rendering.  
-Under the hood it uses [@webtides/element-js](https://github.com/webtides/element-js).
+Under the hood it uses [@webtides/element-js](https://github.com/webtides/element-js), which is based
+on the WebComponents standard.
 
 ## Installation
 
@@ -34,6 +35,61 @@ You can read all about `element-js` here: [@webtides/element-js](https://github.
 structure. The file is called `moon.config.js` and will be generated automatically the first time you run the `moon-js` 
 cli.
 
+Example moon.config.js:
+```js
+const path = require("path");
+
+module.exports = {
+    buildDirectory: ".build",
+    publicDirectory: ".build/public",
+
+    pagesDirectory: [ path.join(__dirname, "pages") ],
+
+    componentsDirectory: [
+        {
+            basePath: path.join(__dirname),
+            directory: "components",
+            outputDirectory: ".build/public/assets",
+
+            styles: {
+                outputDirectory: ".build/public/assets/css",
+                filename: "base.css",
+                postcssPlugins: [ ]
+            }
+        }
+    ],
+
+    hooksDirectory: [ path.join(__dirname, "hooks") ],
+    apisDirectory: [ path.join(__dirname, "api") ],
+
+    /**
+     * If true, the framework will build an additional bundle and polyfills needed for older browsers with
+     * no full support of WebComponents.
+     */
+    legacyBuild: false,
+
+    fallbackRoute: "/fallback",
+    fallbackApiRoute: "/fallback",
+
+    assets: {
+        buildDirectory: ".build/public/assets",
+
+        styles: {
+            bundles: [ ]
+        },
+
+        static: {
+            sources: []
+        }
+    },
+
+    export: {
+        outputDirectory: ".export",
+        apiOutputDirectory: ".api"
+    },
+}
+```
+
 ### Pages & Routes
 
 By creating a file in your configured `Pages Directory`, you can register a new route. The name of the fill will be 
@@ -55,7 +111,7 @@ export default () => {
     return html`
         <h1>Welcome to moon-js</h1>
     `;
-});
+};
 ```
 
 ### Layouts
@@ -123,6 +179,131 @@ export default (() => {
 });
 ```
 
+### Components
+
+Components are one of the core concepts of `moon-js`. They are based on [@webtides/element-js](https://github.com/webtides/element-js)
+which is based on the WebComponents standard.
+
+Components should be placed in a `Components Directory` specified in the `moon.config.js`.
+
+#### Rendering Components
+
+Components which render should extend the `MoonElement`, which extends the `StyledElement` from
+[@webtides/element-js](https://github.com/webtides/element-js). You can use all available methods and concepts
+from `element-js`.
+
+Example component:
+```js
+import {MoonElement, html} from "@webtides/moon-js";
+
+import "./header-element.css";
+
+export default class HeaderElement extends MoonElement {
+
+    template() {
+        return html`
+            <div class="flex items-center justify-between">
+                <img class="w-32" src="/assets/images/logo.png" alt="Logo" />
+                
+                <button class="button">Warenkorb</button>
+            </div>
+        `;
+    }
+}
+```
+
+##### Additional class methods
+
+```js
+import {MoonElement, html} from "@webtides/moon-js";
+
+export default class HeaderElement extends MoonElement {
+    ...
+
+    /**
+     * An array of tag names this custom element has as children. Useful for when the element
+     * is only rendered on the client, but we still need to inform the framework that it's children
+     * should be loaded.
+     *
+     * @returns {string[]}
+     */
+    dependencies() { return []; }
+
+    /**
+     * This will be loaded each time the custom element is found on the page.
+     * Make sure to really only load data which is unique for every element on the page.
+     *
+     * Here we can make calls to the database or any other service with data we require on each page load.
+     *
+     * If we are statically exporting the site, these properties won't ever be loaded.
+     *
+     * @param {*}
+     *
+     * @returns {Promise<{}>}   An object which holds the dynamically loaded data.
+     *                          Make sure that each key returned by this method is also present
+     *                          inside your {@link properties() } method. If a key is not
+     *                          present, it won't be passed to the client.
+     */
+    async loadDynamicProperties({ request, response }) {
+        return false;
+    }
+
+
+    /**
+     * These properties will be loaded once as the server starts up, or if
+     * we want to statically export our site.
+     *
+     * @returns {Promise<{}>}   An object which holds the statically loaded data.
+     *                          Make sure that each key returned by this method is also present
+     *                          inside your {@link properties() } method. If a key is not
+     *                          present, it won't be passed to the client.
+     */
+    static async loadStaticProperties() {
+        return false;
+    }
+
+    /**
+     * Sets the element to be client side only. It won't be rendered on the server.
+     * But it will be included, so all imports should be compatible with a node enironment.
+     *
+     * @returns {boolean}
+     */
+    static get disableSSR() { return false; }
+
+    /**
+     * The element will only be rendered on the server. The generated javascript won't be passed
+     * to the client. Useful for elements which are not interactive.
+     *
+     * @returns {boolean}
+     */
+    static get disableCSR() { return false; }
+
+    /**
+     * Sets the dynamic properties to be cacheable. Normally the dynamic properties will be reloaded
+     * on every request. With this flag they will only be loaded once and then cached.
+     *
+     * @returns {boolean}
+     */
+    static get dynamicPropertiesCacheable() { return false; }
+}
+```
+
+#### Non-rendering components
+
+Components that don't render can extends the `BaseElement` directly.
+
+```js
+import {BaseElement} from "@webtides/moon-js";
+
+export default class ClientElement extends BaseElement {
+    
+    connected() {
+        console.log("ClientElement has connected.");
+    }
+}
+```
+
+
 ### APIs
 
 Api routes can be created the same way as page routes. To register an api route, just create 
@@ -167,6 +348,63 @@ export { post, get };
 
 To extend functionality and to react on certain events, `moon-js` introduces a hook system. You have
 multiple of hooks available. To register a hook, create a file in your `Hooks Directory`.
+
+Example of the `SERVER_STARTED` hook:
+```js
+import {HOOKS} from "@webtides/moon-js/lib/packages/framework/hooks/definitions";
+
+const name = HOOKS.SERVER_STARTED;
+export { name };
+
+export default () => {
+    console.log("Express server has started");
+};
+```
+
+Example of the `REQUEST_RECEIVED` hook:
+```js
+import {HOOKS} from "@webtides/moon-js/lib/packages/framework/hooks/definitions";
+
+const name = HOOKS.REQUEST_RECEIVED;
+export { name };
+
+export default ({ request, response }) => {
+    console.log("Request received.");
+};
+```
+
+A hook can receive additional parameters.
+
+#### List of available hooks
+
+ - `HOOKS_LOADED`: Will be called right after all hooks have been loaded.
+ 
+ - `COMPONENTS_LOADED`: Called after all available components habe been loaded.  
+    Parameters:
+    - `components`: An array of all available components
+    
+ - `ROUTES_BEFORE_REGISTER`: Called before the page and api routes will be registered.  
+    Parameters:  
+    - `router`: The express app instance.
+    
+ - `MIDDLEWARE_REGISTER`: Here you can register additional express middleware.  
+    Parameters: 
+    - `app`: The express app instance.
+    
+ - `ROUTES_AFTER_REGISTER`: Called after the page and api routes have been registered.  
+    Parameters:
+    - `router`: The express app instance.
+    
+ - `REQUEST_RECEIVED`: Will be called on every request, before passing the request to the route,
+ but after the middleware registered in the `MIDDLEWARE_REGISTER` hook.
+    Parameters:
+    - `request`: The express request object.
+    - `response`: The express response object.
+
+
+### Rendering
+
+Rendering on the client and on the server is done by [lit-html](https://lit-html.polymer-project.org/).
 
 
 ## Static site generator

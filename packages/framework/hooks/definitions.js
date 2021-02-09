@@ -11,8 +11,6 @@ const HOOKS = {
     REQUEST_RECEIVED: "request-received",
 
     MIDDLEWARE_REGISTER: "middleware-register",
-
-    CSS_LOAD: "css-load"
 };
 
 export { HOOKS };

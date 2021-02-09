@@ -7,17 +7,6 @@ import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html
 import {guard} from "@popeindustries/lit-html-server/directives/guard";
 import {until} from "@popeindustries/lit-html-server/directives/until";
 
-import {HOOKS} from "./hooks/definitions";
-import fs from "fs";
-
-require.extensions['.css'] = function (module, filename) {
-    const file = fs.readFileSync(filename, 'utf8');
-
-    const result = callHook(HOOKS.CSS_LOAD, { css: file });
-
-    module.exports = result.css;
-};
-
 // TODO: allow browser globals as externals
 
 global.SSR = true;

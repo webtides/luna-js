@@ -36,9 +36,7 @@ const prepareServer = async () => {
 
     await callHook(HOOKS.HOOKS_LOADED);
 
-    await registerAvailableComponents({
-        generateCssBundles: !(await loadManifest())
-    });
+    await registerAvailableComponents();
 
     await callHook(HOOKS.COMPONENTS_LOADED, {
         components: getAvailableComponents()

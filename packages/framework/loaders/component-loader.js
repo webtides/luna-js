@@ -11,7 +11,7 @@ const isDynamicElement = element => {
     return availableProperties.includes("loadDynamicProperties");
 };
 
-const registerAvailableComponents = async ({ generateCssBundles = true } = {}) => {
+const registerAvailableComponents = async () => {
     allAvailableComponents = { };
 
     const settings = await loadSettings();
