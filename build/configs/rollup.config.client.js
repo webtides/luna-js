@@ -50,7 +50,7 @@ const componentBundles = settings.componentsDirectory
             input: inputFiles,
             output: {
                 dir: bundle.outputDirectory,
-                entryFileNames: '[name]-[hash].js',
+                entryFileNames: production ? '[name]-[hash].js' : '[name].js',
                 sourcemap: !production,
                 format: 'es'
             },

@@ -51,7 +51,8 @@ const renderNodeAsCustomElement = async ($node, upgradedElements, {request, resp
     if (typeof component.element.loadStaticProperties === "undefined" || component.element.disableSSR) {
         return {
             component,
-            noSSR: true
+            noSSR: true,
+            dependencies: []
         }
     }
 
@@ -100,14 +101,16 @@ const parseHtmlDocument = async (document, upgradedElements, {request, response}
                 return;
             }
 
+            const { component, dependencies } = result;
+
+            await addDependenciesToUpgradedElements([...component.children, ...dependencies ], upgradedElements);
+
             if (result.noSSR) {
                 upgradedElements[$node.tagName.toLowerCase()] = result.component;
                 return;
             }
 
-            const {component, attributes, innerHTML, dependencies} = result;
-
-            await addDependenciesToUpgradedElements([...component.children, ...dependencies ], upgradedElements);
+            const {attributes, innerHTML} = result;
 
             $node.innerHTML = innerHTML;
 
@@ -162,7 +165,7 @@ export default async (htmlDocument, {request, response}) => {
     const upgradedElements = {};
     await parseHtmlDocument(dom.window.document, upgradedElements, {request, response});
 
-   await appendUpgradedElementsToDocument(dom, upgradedElements);
+    await appendUpgradedElementsToDocument(dom, upgradedElements);
 
     return dom.serialize();
 };

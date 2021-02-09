@@ -1,8 +1,10 @@
 let cache = { };
 
 const clearCache = () => {
-    Object.keys(require.cache).forEach(key => delete require.cache[require.resolve(key)]);
-    cache = { };
+    try {
+        Object.keys(require.cache).forEach(key => delete require.cache[require.resolve(key)]);
+        cache = { }
+    } catch { }
 }
 
 const loadFromCache = async (key, group = "default", defaultValue = false) => {
