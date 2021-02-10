@@ -490,6 +490,17 @@ You may have to install your npm dependencies in your exported directory.
 The `loadDynamicProperties` method cannot be called in a static context. If make a hybrid
  export of your application this method will be ignored.
 
+## Additional features
+
+### Postcss
+
+You can import (post)css files directly into your components and `moon-js` will generate
+a bundle with all imported css files. The bundle name can be specified in the `moon.config.js`.
+
+### Markdown
+
+You can import markdown files with frontmatter in your application. `moon-js` will read 
+them and return them as a html string for you to use.
 
 ## License 
 

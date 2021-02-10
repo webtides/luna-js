@@ -78,6 +78,7 @@ const bundle = {
             basePaths,
             ignore: true
         }),
+        require("../plugins/rollup-plugin-markdown.js")(),
         del({
             targets: path.join(settings.buildDirectory, "generated", "application", "*")
         })
