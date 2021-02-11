@@ -10,14 +10,7 @@ const prepareLegacyBuild = async () => {
     const settings = await loadSettings();
 
     const generateEntryFile = async () => {
-        let contents = `
-            // TODO: use core-js in near future
-            Object.defineProperty(Array.prototype, "includes", {
-                value: function(searchElement, fromIndex) {
-                    return this.indexOf(searchElement) !== -1;
-                }
-            });
-        `;
+        let contents = ``;
 
         const manifest = await loadManifest();
 
