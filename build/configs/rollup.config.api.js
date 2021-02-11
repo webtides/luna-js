@@ -25,6 +25,7 @@ module.exports = {
         ...externals
     ],
     plugins: [
+        require("../plugins/rollup-plugin-markdown.js")(),
         nodeResolve({
             resolveOnly: [ '@webtides/moon-js' ]
         }),
