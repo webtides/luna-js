@@ -23,7 +23,6 @@ const handler = async (event, context) => {
 
     return serverless(app, {
         binary: [ 'image/*', 'application/*' ],
-        basePath: '/'
     })(event, context);
 };
 
