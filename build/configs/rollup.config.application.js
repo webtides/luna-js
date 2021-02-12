@@ -52,12 +52,14 @@ const components = componentsDirectory.flatMap(component => {
 
 const files = [...pages, ...components, ...apis, ...hooks];
 
+const production = process.env.NODE_ENV === "production";
+
 const bundle = {
     input: files,
     output: {
         dir: path.join(settings.buildDirectory, "generated", "application"),
         entryFileNames: '[name].js',
-        sourcemap: true,
+        sourcemap: !production,
         format: 'cjs',
         exports: "auto"
     },
@@ -80,7 +82,11 @@ const bundle = {
         }),
         require("../plugins/rollup-plugin-markdown.js")(),
         del({
-            targets: path.join(settings.buildDirectory, "generated", "application", "*")
+            targets: [
+                path.join(settings.buildDirectory, "generated/public/assets", "*"),
+                path.join(settings.buildDirectory, "generated/application", "*")
+            ],
+            runOnce: true
         })
     ]
 };
