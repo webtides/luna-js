@@ -1,3 +1,5 @@
+import { html } from '@popeindustries/lit-html-server';
+
 const scripts = ({ html }) => {
     return html`
         <script src="/libraries/webcomponents-bundle.js" nomodule></script>
@@ -6,7 +8,7 @@ const scripts = ({ html }) => {
     `;
 }
 
-const template = ({ html, context }) => {
+const template = (page, context = {}) => {
     return html`
         <!doctype html>
         <html lang="">
@@ -15,7 +17,7 @@ const template = ({ html, context }) => {
                 ${context.head ?? ""}
             </head>
             <body>
-                ${context.page ?? ""}
+                ${page ?? ""}
 
                 ${context.footer ?? ""}
                 

@@ -1,4 +1,4 @@
-import {loadPageMetaData, loadPages, loadSinglePage} from "../../loaders/pages-loader.js";
+import {loadPages, loadSinglePage} from "../../loaders/pages-loader.js";
 import ssr from "../../engine/document-renderer.js";
 import {loadApis} from "../../loaders/api-loader";
 import path from "path";
@@ -35,16 +35,15 @@ const routes = async ({router}) => {
 
     const registerPageRoute = async ({file, name}) => {
         const route = getRouteName(name);
-        const {page} = await loadPageMetaData({file});
 
         router.get(route, async (request, response) => {
             console.log("Calling", route, request.path);
-            const {html} = await loadSinglePage({page, request, response});
+            const {html} = await loadSinglePage({file, request, response});
             return response.send(await ssr(html, {request, response}));
         });
 
         router.post(route, async (request, response) => {
-            const {html} = await loadSinglePage({page, method: "post", request, response});
+            const {html} = await loadSinglePage({file, request, response});
             return response.send(await ssr(html, {request, response}));
         })
 
