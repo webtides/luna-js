@@ -7,62 +7,62 @@ import baseLayoutFactory from "../../client/layouts/base.js";
 import {renderComponent} from "../engine/element-renderer";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 
-const getLayout = async (factory, {context}) => {
-    return renderToString(factory({html, context}));
+const applyLayout = async (factory, page) => {
+    return renderToString(await factory(page));
 };
 
-const loadPageMetaData = async ({file}) => {
-    const page = require(path.resolve(file));
+const loadPageModule = async ({file}) => {
+    const module = await import(path.resolve(file));
 
     return {
-        page
+        module,
+        page: module.default,
+        layout: module.layout
     }
 };
 
-const loadSinglePage = async ({page, request, response}) => {
-    const settings = await loadSettings();
+const loadAnonymousPage = async ({ module, request, response }) => {
+    const { page, layout } = module;
+    const markup = await renderToString(page({html, request, response}));
 
-    let markup = "";
-    let layoutFactory = baseLayoutFactory;
+    return {
+        markup,
+        element: page,
+        layoutFactory: layout
+    };
+};
 
-    const pageElement = typeof page?.default === "undefined" ? page : page.default;
+const loadComponentPage = async ({ module, request, response }) => {
+    const { page, layout } = module;
 
-    let element;
-    if (typeof pageElement?.prototype?.connectedCallback === "undefined") {
-        markup = await renderToString(pageElement({html, request, response}));
+    const component = {
+        element: page,
+    };
 
-        if (page.layout) {
-            const layoutModule = page.layout;
-            layoutFactory = typeof layoutModule === "function" ? layoutModule : layoutModule.default;
-        }
+    const result = (await renderComponent({component, attributes: {}, request, response}));
 
-        element = page;
+    // Create a stub for the async layout factory to get them in the same
+    // format as the anonymous layout factory. Use the element as context.
+    result.layoutFactory = layout ? async page => layout(page, result.element) : false;
 
-    } else {
-        // We are dealing with a custom element here.
-        const component = {
-            element: pageElement,
-        };
+    return result;
+};
 
-        const result = (await renderComponent({component, attributes: {}, request, response}));
+const loadSinglePage = async ({file, request, response}) => {
+    const module = await loadPageModule({file});
 
-        markup = result.markup;
-        element = result.element;
+    const result = typeof module.page?.prototype?.connectedCallback === "undefined"
+        ? await loadAnonymousPage({ module, request, response })
+        : await loadComponentPage({ module, request, response });
 
-        if (result.element.layout) {
-            layoutFactory = result.element.layout;
-        }
-    }
 
-    const pageHTML = await getLayout(layoutFactory, {
-        context: {
-            page: html`${unsafeHTML(markup)}`
-        }
-    });
+    const page = html`${unsafeHTML(result.markup)}`
+
+    const pageHTML = await applyLayout(result.layoutFactory ?? (page => baseLayoutFactory(page)), page);
 
     return {
         html: pageHTML,
-        element
+        element: result.element
     }
 };
 
@@ -73,7 +73,7 @@ const loadPages = async () => {
     const basePath = settings._generated.applicationDirectory;
 
     return manifest.pages.map(page => {
-        const { relativePath, file } = page;
+        const {relativePath, file} = page;
 
         const name = relativePath.split(".js")[0];
 
@@ -86,4 +86,4 @@ const loadPages = async () => {
 };
 
 
-export {loadPages, loadSinglePage, loadPageMetaData};
+export {loadPages, loadSinglePage};

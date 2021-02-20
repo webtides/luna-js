@@ -1,9 +1,9 @@
-import {loadPageMetaData, loadPages, loadSinglePage} from "../../../framework/loaders/pages-loader.js";
+import {loadPages, loadSinglePage} from "../../../framework/loaders/pages-loader.js";
 import ssr from "../../../framework/engine/document-renderer.js";
 import fs from "fs";
 import path from "path";
 import glob from "glob";
-import config, {loadSettings} from "../../../framework/config";
+import {loadSettings} from "../../../framework/config";
 
 const generateStaticSite = async ({ outputDirectory = false } = { }) => {
     const settings = await loadSettings();
@@ -12,9 +12,7 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
 
     const pages = await loadPages();
     await Promise.all(pages.map(async ({ file, name, relativePath }) => {
-        const {page} = await loadPageMetaData({file});
-
-        const {html} = await loadSinglePage({page, request: false, response: false });
+        const {html} = await loadSinglePage({file, request: false, response: false });
         const renderedPage = await ssr(html, { request: false, response: false });
 
         let pageDirectory = path.join(outputDirectory, "public", name);
