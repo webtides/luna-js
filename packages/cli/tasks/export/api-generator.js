@@ -91,7 +91,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
 
         await registerAvailableComponents();
         await generateStaticSite({
-            outputDirectory: path.join(outputDirectory, "public")
+            outputDirectory
         });
     }
 };

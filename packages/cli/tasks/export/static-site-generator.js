@@ -17,7 +17,7 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
         const {html} = await loadSinglePage({page, request: false, response: false });
         const renderedPage = await ssr(html, { request: false, response: false });
 
-        let pageDirectory = path.join(outputDirectory, name);
+        let pageDirectory = path.join(outputDirectory, "public", name);
 
         if (pageDirectory.endsWith("index")) {
             pageDirectory = path.join(pageDirectory, "..");
@@ -28,17 +28,33 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
             encoding: "UTF-8"
         });
 
-        await Promise.all(glob.sync(path.join(settings.publicDirectory, "**/*")).map((file) => {
-            if (fs.lstatSync(file).isDirectory()) {
-                return;
+        const directoriesToCopy = [
+            ...(settings.export?.api?.include ?? [])
+        ].map(directory => {
+            return {
+                input: path.posix.join(settings.buildDirectory, directory),
+                output: path.posix.join(outputDirectory, directory)
             }
+        });
 
-            const relativePath = file.substring(settings.publicDirectory.length);
-            const publicAssetDirectory = path.dirname(path.join(outputDirectory, relativePath));
+        directoriesToCopy.push({
+            input: settings.publicDirectory,
+            output: path.posix.join(outputDirectory, 'public')
+        });
 
-            fs.mkdirSync(publicAssetDirectory, { recursive: true });
-            fs.copyFileSync(file, path.join(outputDirectory, relativePath));
-        }));
+        for (const directory of directoriesToCopy) {
+            await Promise.all(glob.sync(path.join(directory.input, "**/*")).map((file) => {
+                if (fs.lstatSync(file).isDirectory()) {
+                    return;
+                }
+
+                const relativePath = file.substring(directory.input.length);
+                const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
+
+                fs.mkdirSync(publicAssetDirectory, { recursive: true });
+                fs.copyFileSync(file, path.join(directory.output, relativePath));
+            }));
+        }
 
     }));
 };
