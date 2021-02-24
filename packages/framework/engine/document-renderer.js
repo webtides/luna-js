@@ -149,6 +149,15 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
                 }
             </script>
         `;
+
+    if (settings.legacyBuild) {
+        dom.window.document.querySelector("body")
+            .innerHTML += `
+                <script src="/libraries/webcomponents-bundle.js" nomodule></script>
+                <script src="/libraries/runtime.js" nomodule></script>
+                <script src="/assets/bundle.legacy.js" nomodule></script>
+            `;
+    }
 };
 
 /**
