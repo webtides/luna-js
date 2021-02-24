@@ -1,7 +1,7 @@
 const path = require("path");
 const externalGlobals = require("rollup-plugin-external-globals");
 
-const {nodeResolve} = require('@rollup/plugin-node-resolve/dist/cjs');
+const {nodeResolve} = require('@rollup/plugin-node-resolve');
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 
