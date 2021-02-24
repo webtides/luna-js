@@ -15,6 +15,6 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm publish
-        env:
-          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - uses: JS-DevTools/npm-publish@v1
+          with:
+            token: ${{ secrets.NPM_TOKEN }}
