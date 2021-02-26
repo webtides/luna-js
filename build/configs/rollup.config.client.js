@@ -52,7 +52,7 @@ const componentBundles = settings.componentsDirectory
                 dir: bundle.outputDirectory,
                 entryFileNames: production ? '[name]-[hash].js' : '[name].js',
                 sourcemap: !production,
-                format: 'es'
+                format: 'es',
             },
             plugins: [
                 require("../plugins/rollup-plugin-client-manifest")({
@@ -61,6 +61,7 @@ const componentBundles = settings.componentsDirectory
                 postcss({
                     ...bundle.styles
                 }),
+                require("../plugins/rollup-plugin-markdown.js")(),
                 nodeResolve(),
                 commonjs({requireReturnsDefault: true}),
                 babel({
@@ -71,7 +72,6 @@ const componentBundles = settings.componentsDirectory
                     sources: staticSettings.sources
                 }),
                 production ? terser() : undefined,
-                del({ targets: path.join(bundle.outputDirectory, "*.js") })
             ]
         }];
     })
