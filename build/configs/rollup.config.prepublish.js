@@ -18,7 +18,7 @@ const clientBundle = {
         format: 'cjs'
     },
     external: [
-        'glob', 'fs', 'path'
+        'glob', 'fs', 'path', 'buffer', 'stream'
     ],
     plugins: [
         nodeResolve({

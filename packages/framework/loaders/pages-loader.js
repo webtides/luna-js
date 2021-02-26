@@ -23,7 +23,8 @@ const loadPageModule = async ({file}) => {
 
 const loadAnonymousPage = async ({ module, request, response }) => {
     const { page, layout } = module;
-    const markup = await renderToString(page({html, request, response}));
+
+    const markup = await renderToString(page({request, response}));
 
     return {
         markup,
