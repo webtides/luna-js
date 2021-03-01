@@ -11,6 +11,18 @@ const isDynamicElement = element => {
     return availableProperties.includes("loadDynamicProperties");
 };
 
+const loadStaticProperties = async element => {
+    if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
+        const staticProperties = await element.loadStaticProperties();
+
+        if (staticProperties) {
+            return staticProperties;
+        }
+    }
+
+    return undefined;
+};
+
 const registerAvailableComponents = async () => {
     allAvailableComponents = { };
 
@@ -30,16 +42,7 @@ const registerAvailableComponents = async () => {
             return;
         }
 
-        let hasStaticProperties = false;
-
-        if (!element.disableSSR && typeof element.loadStaticProperties === "function") {
-            const staticProperties = await element.loadStaticProperties();
-
-            if (staticProperties) {
-                hasStaticProperties = true;
-                element.staticProperties = staticProperties;
-            }
-        }
+        element.staticProperties = await loadStaticProperties(element);
 
         const hasDynamicProperties = isDynamicElement(element);
         const tagName = paramCase(element.name);
@@ -49,7 +52,7 @@ const registerAvailableComponents = async () => {
         allAvailableComponents[tagName] = {
             element,
             tagName,
-            hasStaticProperties,
+            hasStaticProperties: typeof element.staticProperties !== "undefined",
             hasDynamicProperties,
             name: element.name,
             file,
@@ -81,5 +84,6 @@ const loadSingleComponentByTagName = async (tagName) => {
 export {
     loadSingleComponentByTagName,
     registerAvailableComponents,
+    loadStaticProperties,
     getAvailableComponents
 }
