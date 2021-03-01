@@ -15,5 +15,11 @@ jobs:
           node-version: 12
       - run: npm ci
       - uses: JS-DevTools/npm-publish@v1
+        if: github.ref == 'refs/head/main'
         with:
           token: ${{ secrets.NPM_TOKEN }}
+      - uses: JS-DevTools/npm-publish@v1
+        if: github.ref != 'refs/head/main'
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: 'alpha'
