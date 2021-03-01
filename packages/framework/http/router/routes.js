@@ -1,4 +1,4 @@
-import {loadPages, loadSinglePage} from "../../loaders/pages-loader.js";
+import {loadPages, generatePageMarkup} from "../../loaders/pages-loader.js";
 import ssr from "../../engine/document-renderer.js";
 import {loadApis} from "../../loaders/api-loader";
 import path from "path";
@@ -33,17 +33,17 @@ const routes = async ({router}) => {
     let fallbackPage = false,
         fallbackApi = false;
 
-    const registerPageRoute = async ({file, name}) => {
+    const registerPageRoute = async ({module, name}) => {
         const route = getRouteName(name);
 
         router.get(route, async (request, response) => {
             console.log("Calling", route, request.path);
-            const {html} = await loadSinglePage({file, request, response});
+            const {html} = await generatePageMarkup({module, request, response});
             return response.send(await ssr(html, {request, response}));
         });
 
         router.post(route, async (request, response) => {
-            const {html} = await loadSinglePage({file, request, response});
+            const {html} = await generatePageMarkup({module, request, response});
             return response.send(await ssr(html, {request, response}));
         })
 

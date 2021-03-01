@@ -1,4 +1,4 @@
-import {loadPages, loadSinglePage} from "../../../framework/loaders/pages-loader.js";
+import {loadPages, generatePageMarkup} from "../../../framework/loaders/pages-loader.js";
 import ssr from "../../../framework/engine/document-renderer.js";
 import fs from "fs";
 import path from "path";
@@ -11,8 +11,8 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
     outputDirectory = outputDirectory || settings.export.outputDirectory;
 
     const pages = await loadPages();
-    await Promise.all(pages.map(async ({ file, name, relativePath }) => {
-        const {html} = await loadSinglePage({file, request: false, response: false });
+    await Promise.all(pages.map(async ({ module, name, relativePath }) => {
+        const {html} = await generatePageMarkup({module, request: false, response: false });
         const renderedPage = await ssr(html, { request: false, response: false });
 
         let pageDirectory = path.join(outputDirectory, "public", name);

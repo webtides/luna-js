@@ -6,6 +6,7 @@ import {html, renderToString} from "@popeindustries/lit-html-server";
 import baseLayoutFactory from "../../client/layouts/base.js";
 import {renderComponent} from "../engine/element-renderer";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
+import {loadStaticProperties} from "./component-loader";
 
 const applyLayout = async (factory, page) => {
     return renderToString(await factory(page));
@@ -13,10 +14,15 @@ const applyLayout = async (factory, page) => {
 
 const loadPageModule = async ({file}) => {
     const module = await import(path.resolve(file));
+    const page = module.default;
+
+    if (typeof page?.prototype?.connectedCallback !== "undefined") {
+        page.staticProperties = await loadStaticProperties(page);
+    }
 
     return {
         module,
-        page: module.default,
+        page,
         layout: module.layout
     }
 };
@@ -49,9 +55,7 @@ const loadComponentPage = async ({ module, request, response }) => {
     return result;
 };
 
-const loadSinglePage = async ({file, request, response}) => {
-    const module = await loadPageModule({file});
-
+const generatePageMarkup = async ({module, request, response}) => {
     const result = typeof module.page?.prototype?.connectedCallback === "undefined"
         ? await loadAnonymousPage({ module, request, response })
         : await loadComponentPage({ module, request, response });
@@ -73,18 +77,20 @@ const loadPages = async () => {
     const manifest = await loadManifest();
     const basePath = settings._generated.applicationDirectory;
 
-    return manifest.pages.map(page => {
+    return Promise.all(manifest.pages.map(async page => {
         const {relativePath, file} = page;
+        const module = await loadPageModule({ file: path.join(basePath, file) });
 
         const name = relativePath.split(".js")[0];
 
         return {
             file: path.join(basePath, file),
             relativePath,
-            name
+            name,
+            module
         };
-    });
+    }));
 };
 
 
-export {loadPages, loadSinglePage};
+export {loadPages, generatePageMarkup};
