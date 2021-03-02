@@ -59,7 +59,7 @@ module.exports = {
             styles: {
                 outputDirectory: ".build/public/assets/css",
                 filename: "base.css",
-                postcssPlugins: [ ]
+                postcssPlugins: () => ([ ])
             }
         }
     ],
