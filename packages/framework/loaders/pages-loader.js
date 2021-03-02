@@ -9,6 +9,9 @@ import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html
 import {loadStaticProperties} from "./component-loader";
 
 const applyLayout = async (factory, page) => {
+    if (typeof factory === "undefined") {
+    }
+
     return renderToString(await factory(page));
 };
 
@@ -63,7 +66,7 @@ const generatePageMarkup = async ({module, request, response}) => {
 
     const page = html`${unsafeHTML(result.markup)}`
 
-    const pageHTML = await applyLayout(result.layoutFactory ?? (page => baseLayoutFactory(page)), page);
+    const pageHTML = await applyLayout(result.layoutFactory || (page => baseLayoutFactory(page)), page);
 
     return {
         html: pageHTML,
