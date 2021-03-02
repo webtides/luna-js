@@ -38,12 +38,12 @@ const routes = async ({router}) => {
 
         router.get(route, async (request, response) => {
             console.log("Calling", route, request.path);
-            const {html} = await generatePageMarkup({module, request, response});
+            const {html} = await generatePageMarkup({route, module, request, response});
             return response.send(await ssr(html, {request, response}));
         });
 
         router.post(route, async (request, response) => {
-            const {html} = await generatePageMarkup({module, request, response});
+            const {html} = await generatePageMarkup({route, module, request, response});
             return response.send(await ssr(html, {request, response}));
         })
 

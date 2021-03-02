@@ -7,6 +7,7 @@ import baseLayoutFactory from "../../client/layouts/base.js";
 import {renderComponent} from "../engine/element-renderer";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {loadStaticProperties} from "./component-loader";
+import {loadFromCache, writeToCache} from "../cache/cache";
 
 const applyLayout = async (factory, page) => {
     if (typeof factory === "undefined") {
@@ -30,10 +31,14 @@ const loadPageModule = async ({file}) => {
     }
 };
 
-const loadAnonymousPage = async ({ module, request, response }) => {
+const loadAnonymousPage = async ({ module, route = '' }) => {
+    let markup = await loadFromCache(route, 'pages');
     const { page, layout } = module;
 
-    const markup = await renderToString(page({request, response}));
+    if (!markup) {
+        markup = await renderToString(page());
+        await writeToCache(route, markup, 'pages');
+    }
 
     return {
         markup,
@@ -49,7 +54,7 @@ const loadComponentPage = async ({ module, request, response }) => {
         element: page,
     };
 
-    const result = (await renderComponent({component, attributes: {}, request, response}));
+    const result = (await renderComponent({component, attributes: {}, group: 'pages', request, response}));
 
     // Create a stub for the async layout factory to get them in the same
     // format as the anonymous layout factory. Use the element as context.
@@ -58,9 +63,9 @@ const loadComponentPage = async ({ module, request, response }) => {
     return result;
 };
 
-const generatePageMarkup = async ({module, request, response}) => {
+const generatePageMarkup = async ({module, route = '', request, response}) => {
     const result = typeof module.page?.prototype?.connectedCallback === "undefined"
-        ? await loadAnonymousPage({ module, request, response })
+        ? await loadAnonymousPage({ module, route })
         : await loadComponentPage({ module, request, response });
 
 
