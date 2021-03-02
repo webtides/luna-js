@@ -113,10 +113,7 @@ const routes = async ({router}) => {
     }
 
     if (fallbackPage) {
-        await registerPageRoute({
-            file: fallbackPage.file,
-            name: "*"
-        });
+        await registerPageRoute({ module: fallbackPage.module, name: "*" });
     }
 };
 
