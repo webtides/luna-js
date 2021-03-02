@@ -11,13 +11,18 @@ on the WebComponents standard.
 
 ## Installation
 
-moon.js should be installed as a npm dependency. To install the module
-add the following line to your dependencies and run `npm install`  
-`"@webtides/moon-js": "git@github.com:webtides/moon-js.git"`.
+moon-js should be installed as a npm dependency. To install moon-js run
+ 
+ `npm install @webtides/moon-js --save`
+
+To get started with development, you should install the moon cli as a development
+dependency as well:
+
+`npm install @webtides/moon-cli --save-dev`
 
 ## Getting started
 
-`moon-js` ships with a command line tool. After installing `moon-js` as a dependency, you can simply run `moon --dev`
+ After installing `moon-js` and the `moon-cli` as a dependency, you can simply run `moon --dev`
 to start your application in development mode. If this is the first time you have started `moon-js`, you will be asked 
 if `moon-js` should generate a config-file and a basic directory structure for you. 
 
