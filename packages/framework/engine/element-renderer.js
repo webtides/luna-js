@@ -13,17 +13,20 @@ const getComponentCacheKey = (component, attributes = {}) => {
  *
  * @param component ({ element: * })
  * @param attributes
- * @param onElementLoaded
+ * @param request
+ * @param response
+ * @param group string      The component cache group. Can be used to use different caches for
+ *                          different types of components.
  *
  * @returns {Promise<{markup: string, element: *}>}
  */
-const renderComponent = async ({component, attributes = {}, request, response}) => {
-    const cachedValue = await loadFromCache(getComponentCacheKey(component, attributes), "components");
+const renderComponent = async ({component, attributes = {}, group = 'components', request, response}) => {
+    attributes["ssr"] = true;
+
+    const cachedValue = await loadFromCache(getComponentCacheKey(component, attributes), group);
     if (cachedValue) {
         return cachedValue;
     }
-
-    attributes["ssr"] = true;
 
     const element = new (component.element)();
 
@@ -35,7 +38,8 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
         let attributeToDefine = attributes[key];
         try {
             attributeToDefine = JSON.parse(attributes[key]);
-        } catch { }
+        } catch {
+        }
 
         element.defineProperty(paramCase(key), attributeToDefine);
     });
@@ -57,19 +61,20 @@ const renderComponent = async ({component, attributes = {}, request, response}) 
         if (typeof properties[key] === "undefined") {
             return;
         }
-        
+
         attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
     });
 
     const markup = await renderToString(element.template());
 
+    const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
+
     if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
-        await writeToCache(getComponentCacheKey(component, attributes), {markup, element}, "components");
+        await writeToCache(getComponentCacheKey(component, attributes), {markup, element, dependencies}, group);
     }
 
-    const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
 
     return {markup, element, dependencies};
 };
 
-export { renderComponent };
+export {renderComponent};
