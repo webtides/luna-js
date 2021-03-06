@@ -30,6 +30,7 @@ module.exports = {
 
     assets: {
         buildDirectory: ".build/public/assets",
+        context: '',
 
         styles: {
             bundles: [ ]

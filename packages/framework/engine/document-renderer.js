@@ -138,7 +138,7 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
                         const relativePath = component.outputDirectory.substring(settings.publicDirectory.length);
                         
                         const manifestKey = "/" + component.directory + component.relativePath;
-                        const importPath = `${relativePath}/${manifest[manifestKey]}`;
+                        const importPath = moon.asset(`${relativePath}/${manifest[manifestKey]}`);
                         
                         return `
                             import ${component.name} from "${importPath}";
@@ -153,9 +153,9 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
     if (settings.legacyBuild) {
         dom.window.document.querySelector("body")
             .innerHTML += `
-                <script src="/libraries/webcomponents-bundle.js" nomodule></script>
-                <script src="/libraries/runtime.js" nomodule></script>
-                <script src="/assets/bundle.legacy.js" nomodule></script>
+                <script src="${moon.asset("/libraries/webcomponents-bundle.js")}" nomodule></script>
+                <script src="${moon.asset("/libraries/runtime.js")}" nomodule></script>
+                <script src="${moon.asset("/assets/bundle.legacy.js")}"" nomodule></script>
             `;
     }
 };
