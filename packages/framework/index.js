@@ -8,7 +8,8 @@ import {callHook} from "./hooks";
 import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
-import {loadManifest, loadSettings} from "./config";
+import {loadSettings} from "./config";
+import {initializeMoonObject} from "./moon";
 
 let app;
 let server;
@@ -18,6 +19,7 @@ let connections = [];
 
 const prepareServer = async () => {
     const settings = await loadSettings();
+    await initializeMoonObject();
 
     if (!settings) {
         console.log("Could not start moon-js. Have you created your moon.config.js?");

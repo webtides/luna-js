@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import {callHook} from "./hooks";
 import * as litHtml from "@popeindustries/lit-html-server";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {guard} from "@popeindustries/lit-html-server/directives/guard";
