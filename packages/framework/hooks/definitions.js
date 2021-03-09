@@ -1,6 +1,8 @@
 const HOOKS = {
     HOOKS_LOADED: "hooks-loaded",
 
+    MOON_INITIALIZE: "moon-initialize",
+
     COMPONENTS_LOADED: "components-loaded",
 
     SERVER_STARTED: "server-started",
