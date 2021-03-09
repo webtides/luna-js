@@ -1,5 +1,5 @@
 import {loadSingleComponentByTagName} from "../loaders/component-loader";
-import {loadManifest, loadSettings} from "../config";
+import {loadManifest, loadSettings, getSerializableConfig} from "../config";
 import {renderComponent} from "./element-renderer";
 import {paramCase} from "param-case";
 
@@ -155,9 +155,19 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
             .innerHTML += `
                 <script src="${moon.asset("/libraries/webcomponents-bundle.js")}" nomodule></script>
                 <script src="${moon.asset("/libraries/runtime.js")}" nomodule></script>
-                <script src="${moon.asset("/assets/bundle.legacy.js")}"" nomodule></script>
+                <script src="${moon.asset("/assets/bundle.legacy.js")}" nomodule></script>
             `;
     }
+
+    const config = JSON.stringify(getSerializableConfig());
+
+    dom.window.document.querySelector("body")
+        .innerHTML += `
+            <script type="text/javascript">
+                window.moonConfig = JSON.parse('${config}');
+            </script>
+            <script type="text/javascript" src="${moon.asset('/moon.js')}" />
+        `;
 };
 
 /**

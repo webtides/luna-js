@@ -2,7 +2,7 @@ import {loadPages, generatePageMarkup} from "../../loaders/pages-loader.js";
 import ssr from "../../engine/document-renderer.js";
 import {loadApis} from "../../loaders/api-loader";
 import path from "path";
-import {loadSettings} from "../../config";
+import {getSettings, loadSettings} from "../../config";
 
 let currentRouter;
 
@@ -50,13 +50,15 @@ const routes = async ({router}) => {
         console.log(`Registered route ${route}.`);
     }
 
-    const registerApiRoute = async ({file, name}) => {
+    const registerApiRoute = async ({route, file}) => {
         const module = (require(path.resolve(file)));
 
         const get = module.get || module;
         const post = module.post;
 
-        get && router.get(`/api${name}`, (request, response) => {
+
+
+        get && router.get(`${route}`, (request, response) => {
             try {
                 return get({request, response});
             } catch (error) {
@@ -64,7 +66,7 @@ const routes = async ({router}) => {
             }
         });
 
-        post && router.post(`/api${name}`, (request, response) => {
+        post && router.post(`${route}`, (request, response) => {
             try {
                 return post({request, response});
             } catch (error) {
@@ -72,7 +74,7 @@ const routes = async ({router}) => {
             }
         });
 
-        console.log("Registered api routes for", name);
+        console.log("Registered api routes for", route);
     };
 
     const sortedPages = pages.sort((a, b) => {
@@ -96,19 +98,19 @@ const routes = async ({router}) => {
     }
 
     const apis = await loadApis();
-    apis.map(async ({file, name, relativePath}) => {
+    apis.map(async ({name, route, file}) => {
         if (name === fallbackApiRoute) {
-            fallbackApi = {file, name};
+            fallbackApi = {route, file};
             return;
         }
 
-        await registerApiRoute({file, name});
+        await registerApiRoute({route, file});
     });
 
     if (fallbackApi) {
         await registerApiRoute({
             file: fallbackApi.file,
-            name: "/*"
+            route: "/*"
         });
     }
 
