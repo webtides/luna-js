@@ -18,8 +18,10 @@ jobs:
         if: github.ref == 'refs/head/main'
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          dry-run: true
       - uses: JS-DevTools/npm-publish@v1
         if: github.ref != 'refs/head/main'
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: 'alpha'
+          dry-run: true
