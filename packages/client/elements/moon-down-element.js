@@ -7,7 +7,7 @@ export default class MoonDownElement extends MoonElement {
             return {};
         }
 
-        const fs = (await import("fs")).default;
+        const fs = require("fs");
 
         if (!fs.existsSync(this.source)) {
             console.log(`File ${this.source} does not exist.`)

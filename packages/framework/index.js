@@ -26,6 +26,8 @@ const prepareServer = async () => {
     // Load and register all available hooks.
     await loadHooks();
 
+    global.moon = callHook(HOOKS.MOON_INITIALIZE, global.moon);
+
     const settings = getSettings();
 
     await callHook(HOOKS.HOOKS_LOADED);

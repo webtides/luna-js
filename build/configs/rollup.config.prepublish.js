@@ -15,7 +15,7 @@ const clientBundle = {
         dir: settings.buildDirectory,
         entryFileNames: 'client.js',
         sourcemap: true,
-        format: 'cjs'
+        format: 'es'
     },
     external: [
         'glob', 'fs', 'path', 'buffer', 'stream'
