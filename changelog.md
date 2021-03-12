@@ -6,6 +6,9 @@
  - Concept for middleware for specific routes (#21)
  - Route based caching (#24)
 
+### Changed
+ - Allow multiple dynamic route params
+
 ## [0.5.1] - 10.03.2021
 
 ### Fixed
