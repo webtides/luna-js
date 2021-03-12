@@ -8,11 +8,9 @@ import {renderComponent} from "../engine/element-renderer";
 import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
 import {loadStaticProperties} from "./component-loader";
 import {loadFromCache, writeToCache} from "../cache/cache";
+import {parseMiddleware} from "../http/middleware";
 
 const applyLayout = async (factory, page) => {
-    if (typeof factory === "undefined") {
-    }
-
     return renderToString(await factory(page));
 };
 
@@ -27,6 +25,7 @@ const loadPageModule = async ({file}) => {
     return {
         module,
         page,
+        middleware: await parseMiddleware({ middleware: module.middleware }),
         layout: module.layout
     }
 };
