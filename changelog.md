@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.1] - 10.03.2021
+
+### Fixed
+ - Various bug fixes
+
+## [0.5.0] - 10.03.2021
+
+### Added
+ - Configurable asset and api context path and domain (#17, #18)
+ - Global moon-js config object for server and client (#13)
+
 ## [0.4.0] - 
 
 ### Added
