@@ -28,11 +28,11 @@ const registerRoute = ({ router, route, middleware = [] }, { get = null, post = 
     };
 
     get && (
-        middleware.length > 0 ? router.get(route, middleware, normalizeRoute(get)) : router.get(route, normalizeRoute(get))
+        router.get(route, middleware, normalizeRoute(get))
     );
 
     post && (
-        middleware.length > 0 ? router.post(route, middleware, normalizeRoute(post)) : router.post(route, normalizeRoute(post))
+        router.post(route, middleware, normalizeRoute(post))
     );
 };
 
