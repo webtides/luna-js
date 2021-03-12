@@ -10,6 +10,7 @@ import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {getSettings} from "./config";
 import {initializeMoon} from "./moon";
+import {cacheMiddleware} from "./http/middleware/cache-middleware";
 
 let app;
 let server;
@@ -52,6 +53,9 @@ const prepareServer = async () => {
     });
 
     await registerMiddleware({ app });
+
+    app.use(cacheMiddleware());
+
     await routes({router: app});
 
     await callHook(HOOKS.ROUTES_AFTER_REGISTER, {
