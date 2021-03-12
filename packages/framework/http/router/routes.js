@@ -20,7 +20,7 @@ const getRouteName = (name) => {
 const isRouteWithParam = name => {
     const regex = new RegExp(/\[(.*)]/);
     return regex.test(name);
-}
+};
 
 const registerRoute = ({ router, route, middleware = [] }, { get = null, post = null }) => {
     const normalizeRoute = (method) => {
@@ -66,7 +66,13 @@ const routes = async ({router}) => {
 
         const callback = async ({ request, response }) => {
             const {html} = await generatePageMarkup({route, module, request, response});
-            return response.send(await ssr(html, {request, response}));
+            const result = await ssr(html, {request, response});
+
+            if (request.moon?.isCacheable) {
+                request.moon.cachedResponse = result;
+            }
+
+            return response.send(result);
         };
 
         registerRoute({ router, route, middleware: module.middleware }, {

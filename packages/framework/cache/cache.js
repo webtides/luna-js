@@ -16,6 +16,10 @@ const loadFromCache = async (key, group = "default", defaultValue = false) => {
     return defaultValue;
 };
 
+const isInCache = (key, group = 'default') => {
+    return cache[group] && cache[group][key];
+}
+
 const writeToCache = async (key, value, group = "default") => {
     if (!cache[group]) {
         cache[group] = { };
@@ -26,6 +30,7 @@ const writeToCache = async (key, value, group = "default") => {
 
 export {
     clearCache,
+    isInCache,
     writeToCache,
     loadFromCache
 }

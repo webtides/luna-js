@@ -12,6 +12,9 @@ const defaultSettings = {
     assets: {
         domain: false,
         context: ''
+    },
+    routes: {
+        cacheable: []
     }
 };
 
