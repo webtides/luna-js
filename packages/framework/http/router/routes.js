@@ -2,7 +2,8 @@ import {loadPages, generatePageMarkup} from "../../loaders/pages-loader.js";
 import ssr from "../../engine/document-renderer.js";
 import {loadApis} from "../../loaders/api-loader";
 import path from "path";
-import {getSettings, loadSettings} from "../../config";
+import {loadSettings} from "../../config";
+import {parseMiddleware} from "../middleware";
 
 let currentRouter;
 
@@ -21,10 +22,37 @@ const isRouteWithParam = name => {
     return regex.test(name);
 }
 
+const registerRoute = ({ router, route, middleware = [] }, { get = null, post = null }) => {
+    const normalizeRoute = (method) => {
+        return (request, response) => method({ request, response });
+    };
+
+    get && (
+        middleware.length > 0 ? router.get(route, middleware, normalizeRoute(get)) : router.get(route, normalizeRoute(get))
+    );
+
+    post && (
+        middleware.length > 0 ? router.post(route, middleware, normalizeRoute(post)) : router.post(route, normalizeRoute(post))
+    );
+};
+
+const sortRoutes = (routes) => {
+    return routes.sort((a, b) => {
+        if (isRouteWithParam(a.name) && !isRouteWithParam(b.name)) {
+            return 1;
+        } else if (isRouteWithParam(b.name) && !isRouteWithParam(a.name)) {
+            return -1;
+        }
+        return 0;
+    });
+};
+
 const routes = async ({router}) => {
     currentRouter = router;
 
-    const pages = await loadPages();
+    const pages = sortRoutes(await loadPages());
+    const apis = sortRoutes(await loadApis());
+
     const settings = await loadSettings();
 
     const fallbackRoute = settings.fallbackRoute ?? false;
@@ -36,59 +64,34 @@ const routes = async ({router}) => {
     const registerPageRoute = async ({module, name}) => {
         const route = getRouteName(name);
 
-        router.get(route, async (request, response) => {
-            console.log("Calling", route, request.path);
+        const callback = async ({ request, response }) => {
             const {html} = await generatePageMarkup({route, module, request, response});
             return response.send(await ssr(html, {request, response}));
-        });
+        };
 
-        router.post(route, async (request, response) => {
-            const {html} = await generatePageMarkup({route, module, request, response});
-            return response.send(await ssr(html, {request, response}));
+        registerRoute({ router, route, middleware: module.middleware }, {
+            get: callback,
+            post: callback
         })
 
-        console.log(`Registered route ${route}.`);
+        console.log(`Registered route ${route}`);
     }
 
     const registerApiRoute = async ({route, file}) => {
-        const module = (require(path.resolve(file)));
+        const module = require(path.resolve(file));
+        route = getRouteName(route);
 
-        const get = module.get || module;
-        const post = module.post;
+        const middleware = await parseMiddleware({ middleware: module.middleware });
 
-
-
-        get && router.get(`${route}`, (request, response) => {
-            try {
-                return get({request, response});
-            } catch (error) {
-                return response.status(500);
-            }
+        registerRoute({ router, route, middleware }, {
+            get: module.get ?? module.default ?? module,
+            post: module.post
         });
 
-        post && router.post(`${route}`, (request, response) => {
-            try {
-                return post({request, response});
-            } catch (error) {
-                return response.status(500);
-            }
-        });
-
-        console.log("Registered api routes for", route);
+        console.log(`Registered api route ${route}`);
     };
 
-    const sortedPages = pages.sort((a, b) => {
-        if (isRouteWithParam(a.name) && !isRouteWithParam(b.name)) {
-            return 1;
-        } else if (isRouteWithParam(b.name) && !isRouteWithParam(a.name)) {
-            return -1;
-        }
-        return 0;
-    });
-
-    for (let i = 0; i < sortedPages.length; i++) {
-        const page = sortedPages[i];
-
+    for (const page of pages) {
         if (page.name === fallbackRoute) {
             fallbackPage = page;
             continue;
@@ -97,21 +100,17 @@ const routes = async ({router}) => {
         await registerPageRoute(page);
     }
 
-    const apis = await loadApis();
-    apis.map(async ({name, route, file}) => {
-        if (name === fallbackApiRoute) {
-            fallbackApi = {route, file};
-            return;
+    for (const api of apis) {
+        if (api.name === fallbackApiRoute) {
+            fallbackApi = api;
+            continue;
         }
 
-        await registerApiRoute({route, file});
-    });
+        await registerApiRoute(api);
+    }
 
     if (fallbackApi) {
-        await registerApiRoute({
-            file: fallbackApi.file,
-            route: "/*"
-        });
+        await registerApiRoute({ file: fallbackApi.file, route: "/*" });
     }
 
     if (fallbackPage) {
