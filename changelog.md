@@ -4,6 +4,7 @@
 
 ### Added
  - Concept for middleware for specific routes (#21)
+ - Route based caching (#24)
 
 ## [0.5.1] - 10.03.2021
 
