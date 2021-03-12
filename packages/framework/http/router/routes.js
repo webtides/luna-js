@@ -8,7 +8,7 @@ import {parseMiddleware} from "../middleware";
 let currentRouter;
 
 const getRouteName = (name) => {
-    name = name.replace(/\[(.*)]/, ":$1");
+    name = name.replace(/\[(\w*)]/g, ":$1");
 
     if (name.endsWith("/index")) {
         return name.substring(0, name.length - "/index".length);
