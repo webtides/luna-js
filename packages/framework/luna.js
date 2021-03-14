@@ -1,9 +1,9 @@
 import {getSerializableConfig, loadSettings} from "./config";
 
-import moonObject from "./shared/moon-object";
+import lunaObject from "./shared/luna-object";
 
 /**
- * The main initialization method of our moon js framework.
+ * The main initialization method of our luna js framework.
  * Here we load all settings, and initialize all required elements
  * on startup.
  *
@@ -11,7 +11,7 @@ import moonObject from "./shared/moon-object";
  *
  * @returns {Promise<boolean>}
  */
-const initializeMoon = async () => {
+const initializeLuna = async () => {
     // First we load all settings.
     if (!(await loadSettings())) {
         return false;
@@ -19,13 +19,13 @@ const initializeMoon = async () => {
 
     const config = getSerializableConfig();
 
-    initializeMoonObject(config);
+    initializeLunaObject(config);
     return true;
 };
 
 
-const initializeMoonObject = (config) => {
-    global.moon = moonObject(config);
+const initializeLunaObject = (config) => {
+    global.luna = lunaObject(config);
 };
 
-export { initializeMoon };
+export { initializeLuna };

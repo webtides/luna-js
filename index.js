@@ -1,12 +1,12 @@
-import MoonElement, { html, unsafeHTML, guard, until } from "./packages/client/elements/moon-element.js";
-import MoonDownElement from "./packages/client/elements/moon-down-element";
+import LunaElement, { html, unsafeHTML, guard, until } from "./packages/client/elements/luna-element.js";
+import LunaMarkdownElement from "./packages/client/elements/luna-markdown-element";
 import { apiRequest } from "./packages/client/functions/network";
 import {BaseElement} from "@webtides/element-js/src/BaseElement";
 import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
 
 export {
-    MoonElement,
-    MoonDownElement,
+    LunaElement,
+    LunaMarkdownElement,
 
     // element-js
     BaseElement,

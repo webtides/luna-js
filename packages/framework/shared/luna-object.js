@@ -1,6 +1,6 @@
 export default (config) => ({
     /**
-     * The serializable configuration moon-js uses.
+     * The serializable configuration luna-js uses.
      */
     config: config,
 
