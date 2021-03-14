@@ -8,6 +8,7 @@
 
 ### Changed
  - Allow multiple dynamic route params
+ - **BREAKING**: renamed moon-js to luna-js to prevent naming clash
 
 ## [0.5.1] - 10.03.2021
 
@@ -18,7 +19,7 @@
 
 ### Added
  - Configurable asset and api context path and domain (#17, #18)
- - Global moon-js config object for server and client (#13)
+ - Global luna-js config object for server and client (#13)
 
 ## [0.4.0] - 
 

@@ -41,13 +41,13 @@ const cacheMiddleware = () => (request, response, next) => {
             return;
         }
 
-        request.moon = request.moon ?? {};
-        request.moon.isCacheable = true;
+        request.luna = request.luna ?? {};
+        request.luna.isCacheable = true;
 
         response.on('finish', () => {
 
-            if (request.moon?.cachedResponse) {
-                writeToCache(cacheKey, request.moon.cachedResponse, 'routes');
+            if (request.luna?.cachedResponse) {
+                writeToCache(cacheKey, request.luna.cachedResponse, 'routes');
             }
         });
     }

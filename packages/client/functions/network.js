@@ -24,7 +24,7 @@ const apiRequest = async (api, { method = "GET", headers = [], body } = {}) => {
     const parts = api.split("/").filter(part => part.length > 0);
 
     try {
-        const response = await fetch(window.moon.api([...parts ].join("/")), {
+        const response = await fetch(window.luna.api([...parts ].join("/")), {
             method,
             body: parseBody(body),
             headers: {

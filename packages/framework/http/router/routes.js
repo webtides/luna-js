@@ -68,8 +68,8 @@ const routes = async ({router}) => {
             const {html} = await generatePageMarkup({route, module, request, response});
             const result = await ssr(html, {request, response});
 
-            if (request.moon?.isCacheable) {
-                request.moon.cachedResponse = result;
+            if (request.luna?.isCacheable) {
+                request.luna.cachedResponse = result;
             }
 
             return response.send(result);

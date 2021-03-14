@@ -51,7 +51,7 @@ const loadManifest = async (filename = "manifest.json") => {
 };
 
 const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
-    return path.join(currentWorkingDirectory, "moon.config.js");
+    return path.join(currentWorkingDirectory, "luna.config.js");
 }
 
 const loadSettings = async () => {

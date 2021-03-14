@@ -1,6 +1,6 @@
-import MoonElement from "./moon-element";
+import LunaElement from "./luna-element";
 
-export default class MoonDownElement extends MoonElement {
+export default class LunaMarkdownElement extends LunaElement {
 
     async loadDynamicProperties({ request, response }) {
         if (!this.source) {

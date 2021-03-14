@@ -9,7 +9,7 @@ import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {getSettings} from "./config";
-import {initializeMoon} from "./moon";
+import {initializeLuna} from "./luna";
 import {cacheMiddleware} from "./http/middleware/cache-middleware";
 
 let app;
@@ -19,15 +19,15 @@ let port;
 let connections = [];
 
 const prepareServer = async () => {
-    if (!(await initializeMoon())) {
-        console.log("Could not start moon-js. Have you created your moon.config.js?");
+    if (!(await initializeLuna())) {
+        console.log("Could not start luna-js. Have you created your luna.config.js?");
         return;
     }
 
     // Load and register all available hooks.
     await loadHooks();
 
-    global.moon = callHook(HOOKS.MOON_INITIALIZE, global.moon);
+    global.luna = callHook(HOOKS.LUNA_INITIALIZE, global.luna);
 
     const settings = getSettings();
 
@@ -66,12 +66,12 @@ const prepareServer = async () => {
 }
 
 const startServer = async () => {
-    console.log("Staring moon-js");
+    console.log("Staring luna-js");
 
     await prepareServer();
 
     server = app.listen(port, async () => {
-        console.log(`moon-js listening at: http://localhost:${port}`)
+        console.log(`luna-js listening at: http://localhost:${port}`)
 
         await callHook(HOOKS.SERVER_STARTED, {
             app

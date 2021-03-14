@@ -1,6 +1,6 @@
 {
-  "name": "@webtides/moon-js",
-  "version": "0.6.0-0.3",
+  "name": "@webtides/luna-js",
+  "version": "0.6.0-1.2",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/client.js",
   "module": "index.js",
@@ -44,10 +44,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webtides/moon-js.git"
+    "url": "git+https://github.com/webtides/luna-js.git"
   },
   "bugs": {
-    "url": "https://github.com/webtides/moon-js/issues"
+    "url": "https://github.com/webtides/luna-js/issues"
   },
-  "homepage": "https://github.com/webtides/moon-js#readme"
+  "homepage": "https://github.com/webtides/luna-js#readme"
 }
