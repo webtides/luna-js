@@ -1,7 +1,7 @@
 const HOOKS = {
     HOOKS_LOADED: "hooks-loaded",
 
-    MOON_INITIALIZE: "moon-initialize",
+    LUNA_INITIALIZE: "luna-initialize",
 
     COMPONENTS_LOADED: "components-loaded",
 
