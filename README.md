@@ -36,7 +36,7 @@ You can read all about `element-js` here: [@webtides/element-js](https://github.
 
 ## Complete documentation
 
-The complete documentation can be found under: [https://docs.moonjs.dev/](https://docs.moonjs.dev/)
+The complete documentation can be found under: [https://docs.lunajs.dev/](https://docs.lunajs.dev/)
 
 ## License
 
