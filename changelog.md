@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.6.0] -
+## [0.6.0] - 15.03.2021
 
 ### Added
  - Concept for middleware for specific routes (#21)
