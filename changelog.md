@@ -13,7 +13,7 @@
     - MoonDownElement -> LunaMarkdownElement
     - moon.config.js -> luna.config.js
     - import * from '@webtides/moon-js' -> import * from '@webtides/luna-js'
-    - `moon` cli command is now ´luna´
+    - `moon` cli command is now `luna`
  - **BREAKING**: postcss-plugins in luna.config.js must be a function returning an array
 
 ## [0.5.1] - 10.03.2021
