@@ -2,6 +2,13 @@ import {loadManifest, loadSettings} from "../config";
 import path from "path";
 import {registerHook} from "../hooks";
 
+
+/**
+ * Loads all available hooks from the generated manifest and registers
+ * these hooks.
+ *
+ * @returns {Promise<*[]>}
+ */
 const loadHooks = async () => {
     const settings = await loadSettings();
 

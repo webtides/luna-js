@@ -24,6 +24,12 @@ const initializeLuna = async () => {
 };
 
 
+/**
+ * Initialize the global luna object with a config that can be
+ * shared between the server and client.
+ *
+ * @param config
+ */
 const initializeLunaObject = (config) => {
     global.luna = lunaObject(config);
 };
