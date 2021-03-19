@@ -1,4 +1,3 @@
-const { startServer, stopServer } = require("../packages/luna/lib/framework");
 const {execSync, spawn} = require("child_process");
 const path = require("path");
 const fs = require("fs");
@@ -9,6 +8,7 @@ describe("Luna routes test", function() {
     this.timeout(10000);
 
     before(async function() {
+        const { startServer, stopServer } = require("../packages/luna/lib/framework");
         process.chdir(path.join(global.currentWorkingDirectory, "test/fixtures/basic"));
 
         global.originalConsoleLog = console.log;
@@ -16,6 +16,7 @@ describe("Luna routes test", function() {
     });
 
     after(async function() {
+        const { startServer, stopServer } = require("../packages/luna/lib/framework");
         console.log = global.originalConsoleLog;
         await stopServer();
     });
