@@ -79,11 +79,22 @@ describe("Luna cli test", function () {
     });
 
     describe("Run test", function() {
-        it("should start the luna on port 3010", async function() {
-            spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
+        it("should start the luna on port 3010", function(done) {
+            const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
 
-            const response = await chai.request('http://localhost:3010').get('/').send();
-            console.log(response);
+            child.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+                if (data.indexOf('http://localhost:3010') !== -1) {
+                    setTimeout(async () => {
+                        await chai.request('http://localhost:3010').get('/').send();
+
+                        child.stdin.pause();
+                        child.kill();
+
+                        done();
+                    }, 100);
+                }
+            });
         });
     })
 });
