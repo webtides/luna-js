@@ -6,6 +6,8 @@ module.exports = {
 
     pagesDirectory: [ path.join(__dirname, "views/pages") ],
 
+    port: 3010,
+
     componentsDirectory: [
         {
             basePath: path.join(__dirname, "views"),
