@@ -8,15 +8,15 @@ describe("Luna routes test", function() {
     this.timeout(10000);
 
     before(async function() {
-        const { startServer, stopServer } = require("../packages/luna/lib/framework");
-        process.chdir(path.join(global.currentWorkingDirectory, "test/fixtures/basic"));
+        const { startServer } = require("../packages/luna/lib/framework");
+        process.chdir(global.currentWorkingDirectory);
 
         global.originalConsoleLog = console.log;
         await startServer();
     });
 
     after(async function() {
-        const { startServer, stopServer } = require("../packages/luna/lib/framework");
+        const { stopServer } = require("../packages/luna/lib/framework");
         console.log = global.originalConsoleLog;
         await stopServer();
     });
