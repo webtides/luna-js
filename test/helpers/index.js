@@ -14,7 +14,7 @@ const execute = (cmd) => {
 };
 
 if (!global.currentWorkingDirectory) {
-    global.currentWorkingDirectory = process.cwd();
+    global.currentWorkingDirectory = process.cwd() + "/test/fixtures/basic";
 }
 
 const startLuna = ({ onStart, onMessage } = { }) => {
