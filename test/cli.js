@@ -8,7 +8,7 @@ describe("Luna cli test", function () {
     this.timeout(0);
 
     before(function() {
-        process.chdir(path.join(currentWorkingDirectory, "test/fixtures/basic"));
+        process.chdir(global.currentWorkingDirectory);
     });
 
     describe("Fixture preparation", function() {
