@@ -5,6 +5,14 @@ let settings = false;
 
 const defaultSettings = {
     port: 3005,
+
+    legacyBuild: false,
+    hooksDirectory: [],
+    apisDirectory: [],
+
+    fallbackRoute: false,
+    fallbackApiRoute: false,
+
     api: {
         domain: false,
         context: '/api'

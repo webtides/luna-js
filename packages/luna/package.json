@@ -36,8 +36,6 @@
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
-    "chai": "^4.3.4",
-    "mocha": "^8.3.2",
     "rollup": "^2.35.1",
     "rollup-plugin-external-globals": "^0.6.1"
   },
