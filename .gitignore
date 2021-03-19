@@ -1,9 +1,2 @@
-node_modules/
-src/
-views/
-lib/
-
-
 .idea
-
 *.iml

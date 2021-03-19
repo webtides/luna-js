@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-js",
-  "version": "0.6.0",
+  "version": "0.6.1-0.1",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/client.js",
   "module": "index.js",
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "prepublish": "npm run compile",
-    "compile": "npx babel packages --out-dir lib/packages && rollup --config build/configs/rollup.config.prepublish.js"
+    "compile": "npx babel src --out-dir lib && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",
   "license": "MIT",
@@ -36,11 +36,13 @@
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
+    "chai": "^4.3.4",
+    "mocha": "^8.3.2",
     "rollup": "^2.35.1",
     "rollup-plugin-external-globals": "^0.6.1"
   },
   "directories": {
-    "lib": "lib"
+    "lib": "../../lib"
   },
   "repository": {
     "type": "git",
