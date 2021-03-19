@@ -4,7 +4,7 @@
   "description": "## Static Site Generation & SSR framework for custom-elements.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "nyc mocha test/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "chai": "^4.3.4",
     "chai-fs": "^2.0.0",
     "chai-http": "^4.3.0",
-    "mocha": "^8.3.2"
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0"
   }
 }
