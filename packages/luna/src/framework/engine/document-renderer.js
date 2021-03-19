@@ -164,7 +164,7 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
     dom.window.document.querySelector("body")
         .innerHTML += `
             <script type="text/javascript">
-                window.moonConfig = JSON.parse('${config}');
+                window.lunaConfig = JSON.parse('${config}');
             </script>
             <script type="text/javascript" src="${luna.asset('/luna.js')}" />
         `;
