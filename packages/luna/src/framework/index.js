@@ -27,7 +27,7 @@ const prepareServer = async () => {
     // Load and register all available hooks.
     await loadHooks();
 
-    global.luna = callHook(HOOKS.LUNA_INITIALIZE, global.luna);
+    global.luna = await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
 
     const settings = getSettings();
 

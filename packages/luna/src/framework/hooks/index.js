@@ -4,7 +4,7 @@ const registerHook = (name, hook, index = 0) => {
     hooks[name] = hook;
 };
 
-const callHook = (name, params = false) => {
+const callHook = async (name, params = false) => {
     if (hooks[name]) {
         return hooks[name](params);
     }
