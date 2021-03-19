@@ -1,30 +1,30 @@
-const {execSync, spawn} = require("child_process");
-const path = require("path");
-const fs = require("fs");
-
-const { chai } = require("./helpers");
+const { chai, sleep } = require("../helpers");
 
 describe("Luna routes test", function() {
     this.timeout(10000);
 
     before(async function() {
-        const { startServer } = require("../packages/luna/lib/framework");
         process.chdir(global.currentWorkingDirectory);
 
-        global.originalConsoleLog = console.log;
+        const { startServer } = require("../../packages/luna/lib/framework");
         await startServer();
+
+        await sleep(200);
+
+        console.log("STARTED THE SERVER");
     });
 
     after(async function() {
-        const { stopServer } = require("../packages/luna/lib/framework");
-        console.log = global.originalConsoleLog;
+        const { stopServer } = require("../../packages/luna/lib/framework");
         await stopServer();
     });
 
-    it("should not register the /foo route", async function() {
-        const response = await chai.request('http://localhost:3010').get('/foo').send();
-        chai.expect(response.status).to.be.equal(404);
-    });
+    describe("Special cases", function() {
+        it("should not register the /foo route", async function() {
+            const response = await chai.request('http://localhost:3010').get('/foo').send();
+            chai.expect(response.status).to.be.equal(404);
+        });
+    })
 
     describe("Index page", function() {
         it("registers the index route", async function() {

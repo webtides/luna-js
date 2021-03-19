@@ -13,6 +13,12 @@ const execute = (cmd) => {
     return execSync(cmd, { stdio: 'inherit' });
 };
 
+const sleep = (timeout) => {
+    return new Promise((resolve => {
+        setTimeout(() => resolve(), timeout);
+    }));
+}
+
 if (!global.currentWorkingDirectory) {
     global.currentWorkingDirectory = process.cwd() + "/test/fixtures/basic";
 }
@@ -41,5 +47,6 @@ module.exports = {
     LUNA_START_SCRIPT,
     startLuna,
     execute,
-    chai
+    chai,
+    sleep
 };
