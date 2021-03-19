@@ -1,32 +1,33 @@
-const {execSync} = require("child_process");
+const {execSync, spawn} = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
 const chai = require("chai");
 chai.use(require("chai-fs"));
+chai.use(require("chai-http"));
 
 const BUILD_SCRIPT = 'node node_modules/@webtides/luna-cli/.bin/luna.js'
+const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/.bin/luna.js'
+
 const execute = (cmd) => {
     return execSync(cmd, { stdio: 'inherit' });
 };
 
-let previousWorkingDirectory;
-
-before(function() {
-    previousWorkingDirectory = process.cwd();
-});
-
 describe("Luna cli test", function () {
     this.timeout(0);
 
-    describe("Prepare", function() {
-        execSync('cd packages/cli && npm install');
-        execSync('cd packages/luna && npm install');
-
+    before(function() {
         process.chdir(path.join(process.cwd(), "test/fixtures/basic"));
+    });
 
-        execute('npm install --save-dev $(npm pack ../../../packages/cli | tail -1)');
-        execute('npm install --save $(npm pack ../../../packages/luna | tail -1)');
+    describe("Fixture preparation", function() {
+        it("should prepare the fixtures", function() {
+            execSync('cd ../../../packages/cli && npm install');
+            execSync('cd ../../../packages/luna && npm install');
+
+            execute('npm install --save-dev $(npm pack ../../../packages/cli | tail -1)');
+            execute('npm install --save $(npm pack ../../../packages/luna | tail -1)');
+        })
     })
 
     describe("Build test", function () {
@@ -76,8 +77,13 @@ describe("Luna cli test", function () {
             });
         });
     });
-});
 
-after(function() {
-    process.chdir(previousWorkingDirectory);
-})
+    describe("Run test", function() {
+        it("should start the luna on port 3010", async function() {
+            spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
+
+            const response = await chai.request('http://localhost:3010').get('/').send();
+            console.log(response);
+        });
+    })
+});
