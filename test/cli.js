@@ -2,22 +2,13 @@ const {execSync, spawn} = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
-const chai = require("chai");
-chai.use(require("chai-fs"));
-chai.use(require("chai-http"));
-
-const BUILD_SCRIPT = 'node node_modules/@webtides/luna-cli/.bin/luna.js'
-const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/.bin/luna.js'
-
-const execute = (cmd) => {
-    return execSync(cmd, { stdio: 'inherit' });
-};
+const { execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai } = require("./helpers");
 
 describe("Luna cli test", function () {
     this.timeout(0);
 
     before(function() {
-        process.chdir(path.join(process.cwd(), "test/fixtures/basic"));
+        process.chdir(path.join(currentWorkingDirectory, "test/fixtures/basic"));
     });
 
     describe("Fixture preparation", function() {
@@ -95,5 +86,5 @@ describe("Luna cli test", function () {
                 }
             });
         });
-    })
+    });
 });

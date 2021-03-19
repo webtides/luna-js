@@ -21,8 +21,8 @@ module.exports = {
         }
     ],
 
-    apisDirectory: [],
-    hooksDirectory: [],
+    apisDirectory: [ path.join(__dirname, "api") ],
+    hooksDirectory: [ path.join(__dirname, "hooks") ],
 
     assets: {
         styles: {
