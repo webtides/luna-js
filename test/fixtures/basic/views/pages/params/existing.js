@@ -1,7 +1,7 @@
 import {html} from "@webtides/luna-js";
 
-export default () => {
+export default async () => {
     return html`
-        HELLO MOCHA
+        NO PARAMETER
     `;
 }

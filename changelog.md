@@ -7,6 +7,7 @@
 
 ## Changed
  - Put the cli and the base framework back into the same monorepo, but in different (npm) packages (#30)
+ - **BREAKING**: If something was imported directly from the `lib/packages` directory, the `packages` part must be omitted
 
 ## [0.6.0] - 15.03.2021
 
