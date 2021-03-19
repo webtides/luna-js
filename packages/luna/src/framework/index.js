@@ -66,21 +66,25 @@ const prepareServer = async () => {
 }
 
 const startServer = async () => {
-    console.log("Staring luna-js");
+    return new Promise(async (resolve, reject) => {
+        console.log("Staring luna-js");
 
-    await prepareServer();
+        await prepareServer();
 
-    server = app.listen(port, async () => {
-        console.log(`luna-js listening at: http://localhost:${port}`)
+        server = app.listen(port, async () => {
+            console.log(`luna-js listening at: http://localhost:${port}`)
 
-        await callHook(HOOKS.SERVER_STARTED, {
-            app
+            await callHook(HOOKS.SERVER_STARTED, {
+                app
+            });
+
+            resolve();
         });
-    });
 
-    server.on('connection', connection => {
-        connections.push(connection);
-        connection.on('close', () => connections = connections.filter(curr => curr !== connection));
+        server.on('connection', connection => {
+            connections.push(connection);
+            connection.on('close', () => connections = connections.filter(curr => curr !== connection));
+        });
     });
 };
 
