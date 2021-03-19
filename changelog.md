@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.1] -
+
+### Added
+ - Test setup (#30)
+
+## Changed
+ - Put the cli and the base framework back into the same monorepo, but in different (npm) packages (#30)
+
 ## [0.6.0] - 15.03.2021
 
 ### Added

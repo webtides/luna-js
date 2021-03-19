@@ -83,7 +83,6 @@ describe("Luna cli test", function () {
             const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
 
             child.stdout.on('data', (data) => {
-                console.log(`stdout: ${data}`);
                 if (data.indexOf('http://localhost:3010') !== -1) {
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
