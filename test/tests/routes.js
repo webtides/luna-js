@@ -1,10 +1,11 @@
 const { chai, sleep } = require("../helpers");
 
 describe("Luna routes test", function() {
-    this.timeout(10000);
+    this.timeout(15000);
 
     before(async function() {
         process.chdir(global.currentWorkingDirectory);
+        global.originalConsoleLog = console.log;
 
         const { startServer } = require("../../packages/luna/lib/framework");
         await startServer();
@@ -17,6 +18,8 @@ describe("Luna routes test", function() {
     after(async function() {
         const { stopServer } = require("../../packages/luna/lib/framework");
         await stopServer();
+
+        console.log = global.originalConsoleLog;
     });
 
     describe("Special cases", function() {
@@ -114,6 +117,22 @@ describe("Luna routes test", function() {
         it('does not register middleware for other routes', async function() {
             let response = await chai.request(`http://localhost:3010`).get('/').send();
             chai.expect(response.headers['luna-middleware']).to.be.undefined;
+        });
+    });
+
+    describe("Route cache", function() {
+        it('caches the route on the second request', async function() {
+            let count = 0;
+            console.log = (text, data) => {
+                if (text.trim() === 'Cache hit' && data && data.group === 'routes') {
+                    count++;
+                }
+            };
+
+            await chai.request(`http://localhost:3010`).get('/cache').send();
+            await chai.request(`http://localhost:3010`).get('/cache').send();
+
+            chai.expect(count).to.equal(1);
         });
     })
 });
