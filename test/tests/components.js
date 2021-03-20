@@ -37,6 +37,11 @@ describe("Luna element test", function() {
             const response = await chai.request('http://localhost:3010').get('/rendering').send();
             chai.expect(response.text).to.include('/client-component.js')
         });
+
+        it("renders the properties correctly", async function() {
+            const response = await chai.request('http://localhost:3010').get('/rendering/properties').send();
+            chai.expect(response.text).to.include('PROPERTY COMPONENT MOCHA');
+        })
     });
 
     describe("Special cases", function() {
