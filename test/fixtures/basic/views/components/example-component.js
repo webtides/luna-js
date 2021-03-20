@@ -4,7 +4,7 @@ export default class ExampleComponent extends LunaElement {
 
     template() {
         return html`
-            I am an example component.
+            MOCHA COMPONENT
         `;
     }
 }

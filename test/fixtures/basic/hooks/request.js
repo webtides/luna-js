@@ -4,5 +4,5 @@ const name = HOOKS.REQUEST_RECEIVED;
 export { name };
 
 export default async ({ request }) => {
-    console.log("HOOKS.REQUEST_RECEIVED");
+    console.log("HOOKS.REQUEST_RECEIVED", request.path);
 };
