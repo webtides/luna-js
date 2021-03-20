@@ -1,0 +1,10 @@
+{
+  "include": [
+    "packages/luna/**/*"
+  ],
+  "exclude": [
+    "**/bootstrap.js",
+    "test/**",
+    "**/luna-object.js"
+  ]
+}
