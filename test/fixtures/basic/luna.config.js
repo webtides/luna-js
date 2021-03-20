@@ -24,6 +24,12 @@ module.exports = {
     apisDirectory: [ path.join(__dirname, "api") ],
     hooksDirectory: [ path.join(__dirname, "hooks") ],
 
+    routes: {
+        cacheable: [
+            /cache/
+        ]
+    },
+
     assets: {
         styles: {
             bundles: []
