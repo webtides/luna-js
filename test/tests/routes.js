@@ -9,7 +9,7 @@ describe("Luna routes test", function() {
         const { startServer } = require("../../packages/luna/lib/framework");
         await startServer();
 
-        await sleep(200);
+        await sleep(600);
 
         console.log("STARTED THE SERVER");
     });

@@ -12,7 +12,7 @@ describe("Luna api test", function() {
         global.originalConsoleLog = console.log;
         await startServer();
 
-        await sleep(200);
+        await sleep(600);
     });
 
     after(async function() {
