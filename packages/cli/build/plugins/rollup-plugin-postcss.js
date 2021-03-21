@@ -24,7 +24,7 @@ module.exports =  function(options) {
     const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
         const { css, map, messages } = await processCss({
             css: code,
-            plugins: options.postcssPlugins,
+            plugins: options.plugins,
             from: id
         });
 
@@ -105,15 +105,18 @@ module.exports =  function(options) {
                 return;
             }
 
+            const output = path.join(options.publicDirectory, options.output);
+            const outputDirectory = path.dirname(output);
+
             const css = Object.values(extractedCss).join("\r\n");
 
-            if (!fs.existsSync(options.outputDirectory)) {
-                fs.mkdirSync(options.outputDirectory, { recursive: true });
+            if (!fs.existsSync(outputDirectory)) {
+                fs.mkdirSync(outputDirectory, { recursive: true });
             }
 
-            console.log("Writing extracted css to", options.outputDirectory, options.filename);
+            console.log("Writing extracted css to", output);
 
-            fs.writeFileSync(path.join(options.outputDirectory, options.filename), css, { encoding: "utf-8" });
+            fs.writeFileSync(output, css, 'utf-8');
         }
     }
 }

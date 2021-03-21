@@ -1,5 +1,3 @@
-require("@webtides/luna-js/lib/framework/bootstrap");
-
 const path = require("path");
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
@@ -7,17 +5,20 @@ const commonjs = require("@rollup/plugin-commonjs");
 const json = require('@rollup/plugin-json');
 const del = require("rollup-plugin-delete");
 
-const settings = require(path.join(process.cwd(), "luna.config.js"));
+const { getSettings } = require('@webtides/luna-js/lib/framework/config');
 
-const outputDirectory = settings.export.apiOutputDirectory || settings.export.outputDirectory;
-const externals = settings.export && settings.export.api && settings.export.api.externals ? settings.export.api.externals : [];
 
-const entryFileNames = settings.export && settings.export.api && settings.export.api.outputFilename ? settings.export.api.outputFilename : "api-server.js";
+const settings = getSettings();
+
+const outputDirectory = settings.export?.api?.output?.directory ?? settings.export.output;
+const externals = settings.export?.api?.externals ?? [];
+
+const entryFileNames = settings.export?.api?.output.filename ?? 'api-server.js';
 
 const production = process.env.NODE_ENV === "production";
 
 module.exports = {
-    input: path.join(settings.buildDirectory, "generated/entry.apis.js"),
+    input: path.join(settings._generated.baseDirectory, "entry.apis.js"),
     output: {
         dir: outputDirectory,
         sourcemap: !production,

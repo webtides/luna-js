@@ -1,30 +1,9 @@
 import path from "path";
 import fs from "fs";
+import deepmerge from "deepmerge";
+import defaultSettings from "./config/default.config";
 
 let settings = false;
-
-const defaultSettings = {
-    port: 3005,
-
-    legacyBuild: false,
-    hooksDirectory: [],
-    apisDirectory: [],
-
-    fallbackRoute: false,
-    fallbackApiRoute: false,
-
-    api: {
-        domain: false,
-        context: '/api'
-    },
-    assets: {
-        domain: false,
-        context: ''
-    },
-    routes: {
-        cacheable: []
-    }
-};
 
 /**
  * Removes the trailing slash from the domain and from the context.
@@ -35,7 +14,8 @@ const defaultSettings = {
  *
  * @returns {{domain: *, context: string}}
  */
-const normalizeDomainAndContext = ({ domain, context }) => {
+const normalizeDomainAndContext = (settings) => {
+    let { domain, context } = settings;
     context = context || '';
 
     if (context.endsWith("/")) {
@@ -52,7 +32,7 @@ const normalizeDomainAndContext = ({ domain, context }) => {
         domain = domain.substring(0, domain.length - 1);
     }
 
-    return { context, domain };
+    return Object.assign(settings, { domain, context });
 };
 
 /**
@@ -66,10 +46,10 @@ const normalizeDomainAndContext = ({ domain, context }) => {
 const loadManifest = async (filename = "manifest.json") => {
     const settings = await loadSettings();
 
-    const pathToManifest = path.join(settings.buildDirectory, "generated", filename);
+    const pathToManifest = path.join(settings._generated.baseDirectory, filename);
 
     if (fs.existsSync(pathToManifest)) {
-        return JSON.parse(fs.readFileSync(pathToManifest, { encoding: "utf-8" }));
+        return JSON.parse(fs.readFileSync(pathToManifest, "utf-8"));
     }
 
     return false;
@@ -99,21 +79,17 @@ const loadSettings = async () => {
     }
 
     try {
-        settings = Object.assign({}, defaultSettings, (await import(getPathToConfigFile())).default);
+        settings = deepmerge(defaultSettings, (await import(getPathToConfigFile())).default);
+        console.log(settings);
 
-        settings.componentsDirectory = settings.componentsDirectory.map(bundle => {
-            bundle._generated = {
-                basePath: path.join(settings.buildDirectory, "generated", "components")
-            }
-
-            return bundle;
-        });
+        settings.publicDirectory = path.join(settings.build.output, "public");
 
         settings._generated = {
-            baseDirectory: path.join(settings.buildDirectory, "generated"),
-            applicationDirectory: path.join(settings.buildDirectory, "generated", "application"),
-            manifest: path.join(settings.buildDirectory, "generated", "manifest.json"),
-            clientManifest: path.join(settings.buildDirectory, "generated", "manifest.client.json"),
+            baseDirectory: path.join(settings.build.output, "generated"),
+            applicationDirectory: path.join(settings.build.output, "generated", "application"),
+
+            manifest: path.join(settings.build.output, "generated", "manifest.json"),
+            clientManifest: path.join(settings.build.output, "generated", "manifest.client.json"),
         }
 
         /*
@@ -127,6 +103,8 @@ const loadSettings = async () => {
 
         settings.api = normalizeDomainAndContext(settings.api);
         settings.assets = normalizeDomainAndContext(settings.assets);
+
+        console.log(settings);
 
         return settings;
 

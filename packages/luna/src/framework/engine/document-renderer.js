@@ -135,10 +135,7 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
                     .map(key => {
                         const component = upgradedElements[key];
                         
-                        const relativePath = component.outputDirectory.substring(settings.publicDirectory.length);
-                        
-                        const manifestKey = "/" + component.directory + component.relativePath;
-                        const importPath = luna.asset(`${relativePath}/${manifest[manifestKey]}`);
+                        const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
                         
                         return `
                             import ${component.name} from "${importPath}";
