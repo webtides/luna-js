@@ -1,5 +1,3 @@
-require("@webtides/luna-js/lib/framework/bootstrap");
-
 const path = require("path");
 const glob = require("glob-all");
 const { terser } = require("rollup-plugin-terser");
@@ -9,12 +7,12 @@ const commonjs = require("@rollup/plugin-commonjs");
 const copy = require("../plugins/rollup-plugin-copy");
 const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
-const del = require("rollup-plugin-delete");
+
+const { getSettings } = require('@webtides/luna-js/lib/framework/config');
 
 const production = process.env.NODE_ENV === "production";
-const settings = require(path.join(process.cwd(), "luna.config.js"));
+const settings = getSettings();
 
-const styleSettings = settings.assets.styles;
 const staticSettings = settings.assets.static;
 
 const configBundle = {
@@ -30,28 +28,26 @@ const configBundle = {
     ]
 }
 
-const styleBundles = styleSettings.bundles.map(bundle => {
+const styleBundles = settings.assets?.styles?.bundles?.map(bundle => {
     return {
         input: bundle.input,
         output: {
-            dir: bundle.outputDirectory,
+            dir: path.join(settings.publicDirectory, path.dirname(bundle.output)),
             entryFileNames: 'empty.js'
         },
         plugins: [
             postcss({
-                postcssPlugins: bundle.postcssPlugins || [],
-
-                outputDirectory: bundle.outputDirectory,
-                filename: bundle.filename
+                publicDirectory: settings.publicDirectory,
+                ...bundle
             })
         ]
     }
-});
+}) ?? [];
 
-const componentBundles = settings.componentsDirectory
+const componentBundles = settings.components.bundles
     .flatMap(bundle => {
         const inputFiles = glob.sync([
-            path.join(bundle.basePath, bundle.directory, "**/*.js")
+            path.join(bundle.input, '**/*.js')
         ]);
 
         if (inputFiles.length === 0) {
@@ -62,7 +58,7 @@ const componentBundles = settings.componentsDirectory
             preserveSymlinks: true,
             input: inputFiles,
             output: {
-                dir: bundle.outputDirectory,
+                dir: path.join(settings.publicDirectory, bundle.output),
                 entryFileNames: production ? '[name]-[hash].js' : '[name].js',
                 sourcemap: !production,
                 format: 'es',
@@ -73,6 +69,7 @@ const componentBundles = settings.componentsDirectory
                     config: bundle
                 }),
                 postcss({
+                    publicDirectory: settings.publicDirectory,
                     ...bundle.styles
                 }),
                 require("../plugins/rollup-plugin-markdown.js")(),
