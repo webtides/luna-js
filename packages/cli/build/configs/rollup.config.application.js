@@ -6,10 +6,9 @@ const postcss = require("../plugins/rollup-plugin-postcss");
 const moonManifest = require("../plugins/rollup-plugin-manifest");
 const clientBundles = require("./rollup.config.client");
 const del = require("rollup-plugin-delete");
+const { getSettings } = require("@webtides/luna-js/lib/framework/config");
 
-const settings = require(path.join(process.cwd(), "luna.config.js"));
-
-const {pagesDirectory, componentsDirectory, apisDirectory, hooksDirectory} = settings;
+const settings = getSettings();
 
 const basePaths = {
     pages: [],
@@ -18,36 +17,35 @@ const basePaths = {
     hooks: []
 };
 
-const pages = pagesDirectory.flatMap(page => {
+const pages = settings.pages.input.flatMap(page => {
     basePaths.pages.push({
         basePath: page
     })
     return glob.sync(path.join(page, "**/*.js"));
 });
 
-const apis = apisDirectory.flatMap(api => {
+const apis = settings.api.input.flatMap(api => {
     basePaths.apis.push({
         basePath: api
     });
     return glob.sync(path.join(api, "**/*.js"));
 });
 
-const hooks = hooksDirectory.flatMap(hook => {
+const hooks = settings.hooks.input.flatMap(hook => {
     basePaths.hooks.push({
         basePath: hook
     });
     return glob.sync(path.join(hook, "**/*.js"));
 });
 
-const components = componentsDirectory.flatMap(component => {
+const components = settings.components.bundles.flatMap(component => {
     basePaths.components.push({
-        basePath: path.join(component.basePath, component.directory),
-        directory: component.directory,
+        basePath: component.input,
         settings: {
-            outputDirectory: component.outputDirectory,
+            outputDirectory: component.output,
         }
     });
-    return glob.sync(path.join(component.basePath, component.directory, "**/*.js"))
+    return glob.sync(path.join(component.input, "**/*.js"))
 });
 
 const files = [...pages, ...components, ...apis, ...hooks];
@@ -57,7 +55,7 @@ const production = process.env.NODE_ENV === "production";
 const bundle = {
     input: files,
     output: {
-        dir: path.join(settings.buildDirectory, "generated", "application"),
+        dir: settings._generated.applicationDirectory,
         entryFileNames: '[name].js',
         sourcemap: !production,
         format: 'cjs',
@@ -77,14 +75,13 @@ const bundle = {
             config: basePaths
         }),
         postcss({
-            basePaths,
             ignore: true
         }),
         require("../plugins/rollup-plugin-markdown.js")(),
         del({
             targets: [
-                path.join(settings.buildDirectory, "generated/public/assets", "*"),
-                path.join(settings.buildDirectory, "generated/application", "*")
+                path.join(settings.publicDirectory, "*"),
+                path.join(settings._generated.applicationDirectory, "*")
             ],
             runOnce: true
         })

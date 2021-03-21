@@ -1,4 +1,4 @@
-const { loadSettings } = require("@webtides/luna-js/lib/framework/config");
+const { getSettings } = require("@webtides/luna-js/lib/framework/config");
 
 const fs = require("fs");
 const path = require("path");
@@ -31,7 +31,6 @@ module.exports = function(options) {
                     result = {
                         type,
                         basePath: path.resolve(basePath),
-                        directory: configRow.directory,
                         settings: configRow.settings
                     }
                 }
@@ -53,10 +52,10 @@ module.exports = function(options) {
 
     return {
         name: 'luna-manifest',
-        async resolveId(id, importer) {
+        resolveId(id, importer) {
             // A entry route.
             if (importer === undefined) {
-                const moonSettings = await loadSettings();
+                const moonSettings = getSettings();
 
                 const entryType = getEntryType(id);
 
@@ -64,21 +63,22 @@ module.exports = function(options) {
                     return null;
                 }
 
-                const { type, basePath, settings, directory } = entryType;
+                const { type, basePath, settings } = entryType;
 
                 const relativePath = id.substring(basePath.length);
                 const relativeBasePath = basePath.substring(process.cwd().length);
 
                 entries[type][path.resolve(id)] = {
                     relativePath,
-                    directory,
                     file: null,
                     settings,
                     basePath: relativeBasePath.split('\\').join('/')
                 };
 
+                // TODO: that is ugly
                 if (type === 'apis') {
                     const { context } = moonSettings.api;
+                    console.log("CONTEXT IS", context, moonSettings.api);
                     const apiRoute = relativePath.split(".js")[0];
 
                     entries[type][path.resolve(id)].route = `${context}${apiRoute}`;
@@ -101,8 +101,8 @@ module.exports = function(options) {
             return null;
         },
 
-        async generateBundle() {
-            const settings = await loadSettings();
+        generateBundle() {
+            const settings = getSettings();
             const { manifest } = settings._generated;
 
             const directory = path.dirname(manifest);

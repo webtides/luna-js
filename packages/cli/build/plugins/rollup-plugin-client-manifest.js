@@ -1,10 +1,9 @@
-const { loadSettings } = require("@webtides/luna-js/lib/framework/config");
+const { getSettings } = require("@webtides/luna-js/lib/framework/config");
 
 const fs = require("fs");
 const path = require("path");
 
 module.exports = function(options) {
-    const { config } = options;
     const entries = {};
 
     const hasRegisteredEntry = id => {
@@ -16,11 +15,9 @@ module.exports = function(options) {
         resolveId(id, importer) {
             // A entry route.
             if (importer === undefined) {
-                const { basePath } = config;
-                const relativePath = id.substring(basePath.length);
-
                 entries[path.resolve(id)] = {
-                    relativePath,
+                    relativePath: path.dirname(id).substring(options.config.input.length),
+                    filename: path.basename(id),
                     file: null,
                 };
             }
@@ -36,8 +33,8 @@ module.exports = function(options) {
             return null;
         },
 
-        async generateBundle() {
-            const settings = await loadSettings();
+        generateBundle() {
+            const settings = getSettings();
             const { clientManifest } = settings._generated;
 
             let manifest = { };
@@ -46,14 +43,14 @@ module.exports = function(options) {
             if (!fs.existsSync(directory)) {
                 fs.mkdirSync(directory, { recursive: true });
             } else if (fs.existsSync(clientManifest)) {
-                manifest = JSON.parse(fs.readFileSync(clientManifest, { encoding: "utf-8" }));
+                manifest = JSON.parse(fs.readFileSync(clientManifest, 'utf-8'));
             }
 
             Object.keys(entries).forEach(id => {
-                manifest[entries[id].relativePath] = entries[id].file;
-            })
+                manifest[entries[id].relativePath + "/" + entries[id].filename] = entries[id].file;
+            });
 
-            fs.writeFileSync(clientManifest, JSON.stringify(manifest), { encoding: "utf-8" });
+            fs.writeFileSync(clientManifest, JSON.stringify(manifest), 'utf-8');
         },
     }
 }

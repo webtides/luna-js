@@ -1,7 +1,7 @@
 const { chai, sleep } = require("../helpers");
 
 describe("Luna routes test", function() {
-    this.timeout(15000);
+    this.timeout(20000);
 
     before(async function() {
         process.chdir(global.currentWorkingDirectory);

@@ -1,28 +1,34 @@
 const path = require("path");
 
 module.exports = {
-    buildDirectory: ".build",
-    publicDirectory: ".build/public",
-
-    pagesDirectory: [ path.join(__dirname, "views/pages") ],
-
     port: 3010,
 
-    componentsDirectory: [
-        {
-            basePath: path.join(__dirname, "views"),
-            directory: "components",
-            outputDirectory: ".build/public/assets",
+    build: {
+        output: '.build'
+    },
+
+    pages: {
+        input: [path.join(__dirname, "views/pages")]
+    },
+
+    components: {
+        bundles: [{
+            input: path.join(__dirname, "views/components"),
+            output: "assets",
 
             styles: {
-                outputDirectory: ".build/public/assets/css",
-                filename: "base.css",
+                output: "assets/css/base.css",
             }
-        }
-    ],
+        }]
+    },
 
-    apisDirectory: [ path.join(__dirname, "api") ],
-    hooksDirectory: [ path.join(__dirname, "hooks") ],
+    api: {
+        input: [path.join(__dirname, "api")],
+    },
+
+    hooks: {
+        input: [path.join(__dirname, "hooks")],
+    },
 
     routes: {
         cacheable: [
