@@ -75,10 +75,8 @@ module.exports = function(options) {
                     basePath: relativeBasePath.split('\\').join('/')
                 };
 
-                // TODO: that is ugly
                 if (type === 'apis') {
                     const { context } = moonSettings.api;
-                    console.log("CONTEXT IS", context, moonSettings.api);
                     const apiRoute = relativePath.split(".js")[0];
 
                     entries[type][path.resolve(id)].route = `${context}${apiRoute}`;

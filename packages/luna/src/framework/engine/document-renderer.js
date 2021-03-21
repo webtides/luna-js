@@ -147,7 +147,7 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
             </script>
         `;
 
-    if (settings.legacyBuild) {
+    if (settings.build.legacy) {
         dom.window.document.querySelector("body")
             .innerHTML += `
                 <script src="${luna.asset("/libraries/webcomponents-bundle.js")}" nomodule></script>

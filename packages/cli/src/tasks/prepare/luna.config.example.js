@@ -1,48 +1,42 @@
-const path = require("path");
+import path from "path";
 
-module.exports = {
-    buildDirectory: ".build",
-    publicDirectory: ".build/public",
+export default {
+    build: {
+        output: '.build',
+    },
 
-    pagesDirectory: [ path.join(__dirname, "views/pages") ],
+    pages: {
+        input: [ path.join(__dirname, 'views/pages') ],
+    },
 
-    componentsDirectory: [
-        {
-            basePath: path.join(__dirname, "views"),
-            directory: "components",
-            outputDirectory: ".build/public/assets",
+    api: {
+        input: [ path.join(__dirname, 'api') ],
+    },
+
+    components: {
+        bundles: [{
+            input: path.join(__dirname, 'views/components'),
+            output: 'assets',
 
             styles: {
-                outputDirectory: ".build/public/assets/css",
-                filename: "base.css",
-                postcssPlugins: () => {
-                    return [];
-                }
+                output: 'assets/css/base.css',
+                plugins: () => []
             }
-        }
-    ],
+        }]
+    },
 
-    hooksDirectory: [ path.join(__dirname, "hooks") ],
-    apisDirectory: [ path.join(__dirname, "api") ],
-
-    legacyBuild: false,
-
-    fallbackRoute: "/fallback",
-    fallbackApiRoute: "/fallback",
+    hooks: {
+        input: [ path.join(__dirname, 'hooks') ]
+    },
 
     assets: {
-        buildDirectory: ".build/public/assets",
-        context: '',
-
         styles: {
             bundles: [{
                 input: [ path.join(__dirname, "assets/css/main.css") ],
 
                 outputDirectory: ".build/public/assets/css",
                 filename: "main.css",
-                postcssPlugins: () => {
-                    return [];
-                }
+                plugins: () => []
             } ]
         },
 
@@ -54,7 +48,13 @@ module.exports = {
     },
 
     export: {
-        outputDirectory: ".export",
-        apiOutputDirectory: ".api"
+        output: '.export',
+
+        api: {
+            output: {
+                directory: ".api",
+                filename: "api-server.js"
+            }
+        },
     },
 }

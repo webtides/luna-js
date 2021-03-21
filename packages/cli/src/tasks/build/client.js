@@ -11,7 +11,7 @@ const startClientDevelopmentBuild = () => {
 const buildComponentsForClient = async () => {
     const settings = await loadSettings();
 
-    if (settings.legacyBuild) {
+    if (settings.build.legacy) {
         await prepareLegacyBuild();
     }
 
