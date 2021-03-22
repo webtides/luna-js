@@ -4,7 +4,7 @@ describe("Luna hooks test", function () {
     this.timeout(10000);
 
     before(async function () {
-        process.chdir(global.currentWorkingDirectory);
+        process.chdir(global.getCurrentWorkingDirectory('basic'));
 
         global.originalConsoleLog = console.log;
     });

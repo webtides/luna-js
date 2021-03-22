@@ -8,7 +8,7 @@ describe("Basic cli test", function () {
     this.timeout(0);
 
     before(function() {
-        process.chdir(global.currentWorkingDirectory);
+        process.chdir(global.getCurrentWorkingDirectory('basic'));
     });
 
     describe("Fixture preparation", function() {
