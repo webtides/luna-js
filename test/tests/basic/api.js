@@ -1,4 +1,4 @@
-const { chai, sleep } = require("../helpers");
+const { chai, sleep } = require("../../helpers");
 
 process.chdir(global.currentWorkingDirectory);
 
@@ -6,8 +6,7 @@ describe("Luna api test", function() {
     this.timeout(10000);
 
     before(async function() {
-
-        const { startServer } = require("../../packages/luna/lib/framework");
+        const { startServer } = require("../../../packages/luna/lib/framework");
 
         global.originalConsoleLog = console.log;
         await startServer();
@@ -16,7 +15,7 @@ describe("Luna api test", function() {
     });
 
     after(async function() {
-        const { stopServer } = require("../../packages/luna/lib/framework");
+        const { stopServer } = require("../../../packages/luna/lib/framework");
         console.log = global.originalConsoleLog;
         await stopServer();
     });

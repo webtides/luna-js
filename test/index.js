@@ -1,5 +1,4 @@
-require("./tests/cli");
-require("./tests/routes");
-require("./tests/api");
-require("./tests/components");
-require("./tests/hooks");
+global.previousWorkingDirectory = process.cwd();
+
+require("./tests/basic.js");
+require("./tests/legacy.js");

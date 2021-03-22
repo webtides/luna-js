@@ -1,4 +1,4 @@
-const {chai, sleep} = require("../helpers");
+const {chai, sleep} = require("../../helpers");
 
 describe("Luna hooks test", function () {
     this.timeout(10000);
@@ -17,7 +17,7 @@ describe("Luna hooks test", function () {
         it("should call the startup hooks in the right order", function (done) {
             const calledHooks = [];
 
-            const {startServer, stopServer} = require("../../packages/luna/lib/framework");
+            const {startServer, stopServer} = require("../../../packages/luna/lib/framework");
 
             const assertHooks = () => {
                 chai.assert.deepEqual(calledHooks, [
@@ -53,7 +53,7 @@ describe("Luna hooks test", function () {
         });
 
         it('should call the request hook', function (done) {
-            const {startServer, stopServer} = require("../../packages/luna/lib/framework");
+            const {startServer, stopServer} = require("../../../packages/luna/lib/framework");
 
             console.log = text => {
                 if (text === 'HOOKS.REQUEST_RECEIVED') {

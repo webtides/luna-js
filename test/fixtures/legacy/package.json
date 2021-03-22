@@ -1,0 +1,19 @@
+{
+  "name": "legacy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "luna.config.js",
+  "scripts": {
+    "build": "luna --build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@webtides/luna-js": "file:webtides-luna-js-0.6.1-0.3.tgz"
+  },
+  "devDependencies": {
+    "@webtides/luna-cli": "file:webtides-luna-cli-0.7.0-0.9.tgz"
+  }
+}
