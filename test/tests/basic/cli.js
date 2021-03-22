@@ -2,9 +2,9 @@ const {execSync, spawn} = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
-const { sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai } = require("../helpers");
+const { sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai } = require("../../helpers");
 
-describe("Luna cli test", function () {
+describe("Basic cli test", function () {
     this.timeout(0);
 
     before(function() {
