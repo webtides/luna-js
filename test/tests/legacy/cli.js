@@ -11,7 +11,6 @@ describe("Legacy cli test", function () {
 
     describe("Fixture preparation", function() {
         it("should prepare the fixtures", function() {
-            console.log("CURRENTW ORKINASDFIOASDNF POIASEJDF OASDJF ", process.cwd());
             execSync('cd ../../../packages/cli && npm install');
             execSync('cd ../../../packages/luna && npm install');
 
