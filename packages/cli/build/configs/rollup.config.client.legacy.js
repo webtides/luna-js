@@ -1,5 +1,3 @@
-require("@webtides/luna-js/lib/framework/bootstrap");
-
 const path = require("path");
 const glob = require("glob-all");
 const { terser } = require("rollup-plugin-terser");
@@ -11,23 +9,17 @@ const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
 const copy = require("../plugins/rollup-plugin-copy");
 
+const { getSettings } = require('@webtides/luna-js/lib/framework/config');
+
 const production = process.env.NODE_ENV === "production";
-const settings = require(path.join(process.cwd(), "luna.config.js"));
+const settings = getSettings();
 
-const legacyComponentBundles = settings.componentsDirectory
+const legacyComponentBundles = settings.components.bundles
     .map(bundle => {
-        const inputFiles = glob.sync([
-            path.join(bundle.basePath, bundle.directory, "**/*.js")
-        ]);
-
-        if (inputFiles.length === 0) {
-            return false;
-        }
-
         return {
-            input: [path.join(settings.buildDirectory, "generated/entry.legacy.js")],
+            input: [path.join(settings._generated.baseDirectory, "entry.legacy.js")],
             output: {
-                dir: bundle.outputDirectory,
+                dir: path.dirname(path.join(settings.publicDirectory, bundle.output)),
                 sourcemap: !production,
                 entryFileNames: "bundle.legacy.js",
                 format: 'iife',
@@ -48,7 +40,7 @@ const legacyComponentBundles = settings.componentsDirectory
                 }),
                 copy({
                     sources: [ {
-                        input: path.resolve(__dirname, "../..", "packages/client/libraries/**/*"),
+                        input: path.resolve(__dirname, "..", "libraries/**/*"),
                         output: path.resolve(settings.publicDirectory, "libraries")
                     }]
                 }),

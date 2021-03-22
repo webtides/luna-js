@@ -9,6 +9,9 @@ const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/.bin/luna.js'
 
 const LUNA_START_SCRIPT = 'node_modules/@webtides/luna-js/start';
 
+const currentFixture = global.currentFixture ?? "basic";
+global.currentWorkingDirectory = global.previousWorkingDirectory + "/test/fixtures/" + currentFixture;
+
 const execute = (cmd) => {
     return execSync(cmd, { stdio: 'inherit' });
 };
@@ -17,10 +20,6 @@ const sleep = (timeout) => {
     return new Promise((resolve => {
         setTimeout(() => resolve(), timeout);
     }));
-}
-
-if (!global.currentWorkingDirectory) {
-    global.currentWorkingDirectory = process.cwd() + "/test/fixtures/basic";
 }
 
 const startLuna = ({ onStart, onMessage } = { }) => {
