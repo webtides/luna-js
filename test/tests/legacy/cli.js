@@ -6,7 +6,7 @@ describe("Legacy cli test", function () {
     this.timeout(0);
 
     before(function() {
-        process.chdir(global.currentWorkingDirectory);
+        process.chdir(global.getCurrentWorkingDirectory('legacy'));
     });
 
     describe("Fixture preparation", function() {

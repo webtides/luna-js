@@ -1,11 +1,11 @@
 const { chai, sleep } = require("../../helpers");
 
-process.chdir(global.currentWorkingDirectory);
-
 describe("Luna api test", function() {
     this.timeout(10000);
 
     before(async function() {
+        process.chdir(global.getCurrentWorkingDirectory('basic'));
+
         const { startServer } = require("../../../packages/luna/lib/framework");
 
         global.originalConsoleLog = console.log;

@@ -4,7 +4,8 @@ describe("Luna routes test", function() {
     this.timeout(20000);
 
     before(async function() {
-        process.chdir(global.currentWorkingDirectory);
+        process.chdir(global.getCurrentWorkingDirectory('basic'));
+
         global.originalConsoleLog = console.log;
 
         const { startServer } = require("../../../packages/luna/lib/framework");
