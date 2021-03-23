@@ -98,11 +98,13 @@ module.exports = function(options) {
                 const { type, basePath, settings } = entryType;
 
                 const relativePath = id.substring(basePath.length);
+                const relativeBasePath = basePath.substring(process.cwd().length);
 
                 const entry = {
                     relativePath,
                     file: null,
                     settings,
+                    basePath: relativeBasePath.split('\\').join('/')
                 };
 
                 if (type === 'apis' || type === 'pages') {
