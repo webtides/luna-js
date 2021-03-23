@@ -55,8 +55,8 @@ const routes = async ({router}) => {
 
     const settings = await loadSettings();
 
-    const fallbackRoute = settings.fallbackRoute ?? false;
-    const fallbackApiRoute = settings.fallbackApiRoute ?? false;
+    const fallbackRoute = settings.pages?.fallback ?? false;
+    const fallbackApiRoute = settings.api?.fallback ?? false;
 
     let fallbackPage = false,
         fallbackApi = false;
@@ -116,7 +116,7 @@ const routes = async ({router}) => {
     }
 
     if (fallbackApi) {
-        await registerApiRoute({ file: fallbackApi.file, route: "/*" });
+        await registerApiRoute({ file: fallbackApi.file, route: `${settings.api?.context ?? "/api"}/*` });
     }
 
     if (fallbackPage) {
