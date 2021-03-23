@@ -45,5 +45,18 @@ module.exports = {
         static: {
             sources: []
         }
+    },
+
+    export: {
+        api: {
+            output: {
+                directory: ".api",
+                filename: "test-export.js"
+            },
+
+            excluded: [
+                'cors'
+            ]
+        }
     }
 }
