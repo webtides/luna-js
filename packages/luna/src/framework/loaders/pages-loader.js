@@ -47,7 +47,7 @@ const loadPageModule = async ({file}) => {
     return {
         module,
         page,
-        middleware: await parseMiddleware({ middleware: module.middleware }),
+        middleware: await parseMiddleware({middleware: module.middleware}),
         layout: module.layout
     }
 };
@@ -61,9 +61,9 @@ const loadPageModule = async ({file}) => {
  *
  * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
  */
-const loadAnonymousPage = async ({ module, route = '' }) => {
+const loadAnonymousPage = async ({module, route = ''}) => {
     let markup = await loadFromCache(route, 'pages');
-    const { page, layout } = module;
+    const {page, layout} = module;
 
     if (!markup) {
         markup = await renderToString(page());
@@ -87,8 +87,8 @@ const loadAnonymousPage = async ({ module, route = '' }) => {
  *
  * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
  */
-const loadComponentPage = async ({ module, request, response }) => {
-    const { page, layout } = module;
+const loadComponentPage = async ({module, request, response}) => {
+    const {page, layout} = module;
 
     const component = {
         element: page,
@@ -117,8 +117,8 @@ const loadComponentPage = async ({ module, request, response }) => {
  */
 const generatePageMarkup = async ({module, route = '', request, response}) => {
     const result = typeof module.page?.prototype?.connectedCallback === "undefined"
-        ? await loadAnonymousPage({ module, route })
-        : await loadComponentPage({ module, request, response });
+        ? await loadAnonymousPage({module, route})
+        : await loadComponentPage({module, request, response});
 
 
     const page = html`${unsafeHTML(result.markup)}`
@@ -134,7 +134,7 @@ const generatePageMarkup = async ({module, route = '', request, response}) => {
 /**
  * Loads all available pages (routes) from the generated manifest.
  *
- * @returns {Promise<*[]>}
+ * @returns {Promise<{ fallback: *, pages: *[]}>}
  */
 const loadPages = async () => {
     const settings = await loadSettings();
@@ -142,19 +142,23 @@ const loadPages = async () => {
     const manifest = await loadManifest();
     const basePath = settings._generated.applicationDirectory;
 
-    return Promise.all(manifest.pages.map(async page => {
-        const {relativePath, file} = page;
-        const module = await loadPageModule({ file: path.join(basePath, file) });
+    const pages = [];
+    let fallback = false;
 
-        const name = relativePath.split(".js")[0];
+    for (const page of manifest.pages) {
+        const {file, route} = page;
+        const module = await loadPageModule({file: path.join(basePath, file)});
 
-        return {
-            file: path.join(basePath, file),
-            relativePath,
-            name,
-            module
-        };
-    }));
+        if (page.fallback ?? false) {
+            fallback = {module, route};
+        } else {
+            pages.push({ module, route });
+        }
+    }
+
+    return {
+        fallbackPage: fallback, pages
+    };
 };
 
 

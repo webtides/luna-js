@@ -11,13 +11,45 @@ const loadComponentChildren = contents => {
         : [];
 };
 
+const getRouteName = (name) => {
+    name = name.replace(/\[(\w*)]/g, ":$1");
+
+    if (name.endsWith("/index")) {
+        return name.substring(0, name.length - "/index".length);
+    }
+
+    return name;
+};
+
+const isRouteWithParam = name => {
+    const regex = new RegExp(/(:\w*)/);
+    return regex.test(name);
+};
+
+const sortRoutes = (routes) => {
+    return routes.sort((a, b) => {
+        if (a.fallback && !b.fallback) {
+            return 1;
+        } else if (!a.fallback && b.fallback) {
+            return -1;
+        }
+
+        if (isRouteWithParam(a.route) && !isRouteWithParam(b.route)) {
+            return 1;
+        } else if (isRouteWithParam(b.route) && !isRouteWithParam(a.route)) {
+            return -1;
+        }
+        return 0;
+    });
+};
+
 module.exports = function(options) {
     const { config } = options;
     const entries = {
         components: { },
         pages: { },
         apis: { },
-        hooks: { }
+        hooks: { },
     };
 
     const getEntryType = (id) => {
@@ -66,21 +98,29 @@ module.exports = function(options) {
                 const { type, basePath, settings } = entryType;
 
                 const relativePath = id.substring(basePath.length);
-                const relativeBasePath = basePath.substring(process.cwd().length);
 
-                entries[type][path.resolve(id)] = {
+                const entry = {
                     relativePath,
                     file: null,
                     settings,
-                    basePath: relativeBasePath.split('\\').join('/')
                 };
 
-                if (type === 'apis') {
-                    const { context } = moonSettings.api;
-                    const apiRoute = relativePath.split(".js")[0];
+                if (type === 'apis' || type === 'pages') {
+                    const fallbackRoute = moonSettings.pages?.fallback ?? false;
+                    const fallbackApiRoute = moonSettings.api?.fallback ?? false;
 
-                    entries[type][path.resolve(id)].route = `${context}${apiRoute}`;
+                    const { context } = type === 'apis' ? moonSettings.api : moonSettings.pages;
+                    let route = getRouteName(relativePath.split(".js")[0]);
+
+                    if (type === 'apis' && route === fallbackApiRoute || type === 'pages' && route === fallbackRoute) {
+                        entry.route = `${context ?? ''}/*`;
+                        entry.fallback = true;
+                    } else {
+                        entry.route = `${context ?? ''}${route}`;
+                    }
                 }
+
+                entries[type][path.resolve(id)] = entry;
             }
 
             return null;
@@ -112,7 +152,10 @@ module.exports = function(options) {
 
             Object.keys(entries).forEach(type => {
                 pagesManifest[type] = Object.keys(entries[type]).map(key => entries[type][key]);
-            })
+            });
+
+            pagesManifest['pages'] = sortRoutes(pagesManifest['pages']);
+            pagesManifest['apis'] = sortRoutes(pagesManifest['apis']);
 
             fs.writeFileSync(manifest, JSON.stringify(pagesManifest), { encoding: "utf-8" });
         },

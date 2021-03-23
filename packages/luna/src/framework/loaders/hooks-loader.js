@@ -15,7 +15,7 @@ const loadHooks = async () => {
     const manifest = await loadManifest();
     const basePath = settings._generated.applicationDirectory;
 
-    manifest.hooks.forEach(({file, relativePath}) => {
+    manifest.hooks.forEach(({file}) => {
         const module = require(path.resolve(path.join(basePath, file)));
         registerHook(module.name, module.default);
     });
