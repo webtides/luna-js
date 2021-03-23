@@ -24,9 +24,16 @@ describe("Luna routes test", function() {
     });
 
     describe("Special cases", function() {
-        it("should not register the /foo route", async function() {
+        it("should use the fallback route the /foo route", async function() {
             const response = await chai.request('http://localhost:3010').get('/foo').send();
-            chai.expect(response.status).to.be.equal(404);
+            chai.expect(response.status).to.be.equal(200);
+            chai.expect(response.text).to.include("MOCHA FALLBACK PAGE");
+        });
+
+        it("should use the fallback api route the /api/foo route", async function() {
+            const response = await chai.request('http://localhost:3010').get('/api/foo').send();
+            chai.expect(response.status).to.be.equal(200);
+            chai.expect(response.body.result).to.equal("MOCHA FALLBACK API");
         });
     })
 

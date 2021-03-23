@@ -8,7 +8,8 @@ module.exports = {
     },
 
     pages: {
-        input: [path.join(__dirname, "views/pages")]
+        input: [path.join(__dirname, "views/pages")],
+        fallback: '/custom-fallback'
     },
 
     components: {
@@ -24,6 +25,7 @@ module.exports = {
 
     api: {
         input: [path.join(__dirname, "api")],
+        fallback: '/fallback-api'
     },
 
     hooks: {

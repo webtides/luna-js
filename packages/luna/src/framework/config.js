@@ -80,7 +80,6 @@ const loadSettings = async () => {
 
     try {
         settings = deepmerge(defaultSettings, (await import(getPathToConfigFile())).default);
-        console.log(settings);
 
         settings.publicDirectory = path.join(settings.build.output, "public");
 
@@ -103,8 +102,6 @@ const loadSettings = async () => {
 
         settings.api = normalizeDomainAndContext(settings.api);
         settings.assets = normalizeDomainAndContext(settings.assets);
-
-        console.log(settings);
 
         return settings;
 

@@ -9,6 +9,11 @@ const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/.bin/luna.js'
 
 const LUNA_START_SCRIPT = 'node_modules/@webtides/luna-js/start';
 
+global.previousWorkingDirectory = global.previousWorkingDirectory || process.cwd();
+global.getCurrentWorkingDirectory = fixture => {
+    return global.previousWorkingDirectory + "/test/fixtures/" + fixture;
+};
+
 const execute = (cmd) => {
     return execSync(cmd, { stdio: 'inherit' });
 };
