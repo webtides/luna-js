@@ -1,7 +1,14 @@
 import {getSettings} from "../../config";
 import {isInCache, loadFromCache, writeToCache} from "../../cache/cache";
 
-
+/**
+ * Looks inside the luna.config.js to determine whether or not the
+ * current request is cacheable or not.
+ *
+ * @param request           The express request method
+ *
+ * @returns {boolean}
+ */
 const isRequestCacheable = request => {
     if (request.method !== 'GET') {
         return false;
