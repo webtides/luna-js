@@ -67,7 +67,7 @@ const prepareServer = async () => {
 
 const startServer = async () => {
     return new Promise(async (resolve, reject) => {
-        console.log("Staring luna-js");
+        console.log("Starting luna-js");
 
         await prepareServer();
 
