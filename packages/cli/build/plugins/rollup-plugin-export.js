@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const { getSettings } = require("@webtides/luna-js/lib/framework/config");
+
 const minimalPackageJSON = {
     "name": "",
     "description": "",
@@ -23,17 +25,24 @@ if (global.serverlessApiBuild) {
 }
 
 module.exports =  function({ externals, outputDirectory }) {
-
     return {
         name: 'luna-api-export',
 
         async writeBundle() {
+            const settings = getSettings();
+
             const currentPackageJSON = loadCurrentPackageJSON();
             const moonPackageJSON = loadMoonPackageJSON();
             const exportPackageJSON = { ...minimalPackageJSON };
 
+            const excludedDependencies = settings.export?.api?.excluded ?? [];
+
             for (const key of Object.keys(currentPackageJSON.dependencies)) {
                 if (key === "@webtides/luna-js") {
+                    continue;
+                }
+
+                if (excludedDependencies.includes(key)) {
                     continue;
                 }
 

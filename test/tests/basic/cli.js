@@ -2,17 +2,17 @@ const {execSync, spawn} = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
-const { sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai } = require("../../helpers");
+const {sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai} = require("../../helpers");
 
 describe("Basic cli test", function () {
     this.timeout(0);
 
-    before(function() {
+    before(function () {
         process.chdir(global.getCurrentWorkingDirectory('basic'));
     });
 
-    describe("Fixture preparation", function() {
-        it("should prepare the fixtures", function() {
+    describe("Fixture preparation", function () {
+        it("should prepare the fixtures", function () {
             execSync('cd ../../../packages/cli && npm install');
             execSync('cd ../../../packages/luna && npm install');
 
@@ -22,46 +22,46 @@ describe("Basic cli test", function () {
     })
 
     describe("Build test", function () {
-        before(function() {
+        before(function () {
             execSync(`${BUILD_SCRIPT} --build`);
         });
 
         it("has generated the build directory", async function () {
-            chai.expect('.build').to.be.a.directory().with.contents([ 'public', 'generated' ]);
+            chai.expect('.build').to.be.a.directory().with.contents(['public', 'generated']);
         });
 
         it("has generated the manifest files", async function () {
-            chai.expect('.build/generated').to.be.a.directory().with.files([ 'manifest.json', 'manifest.client.json' ]);
+            chai.expect('.build/generated').to.be.a.directory();
         });
 
-        describe("Manifest test", function() {
-            before(function() {
+        describe("Manifest test", function () {
+            before(function () {
                 this.manifest = JSON.parse(fs.readFileSync(".build/generated/manifest.json", "utf-8"));
             })
 
-            it("has generated all components from the manifest", function() {
-                const { components } = this.manifest;
+            it("has generated all components from the manifest", function () {
+                const {components} = this.manifest;
                 for (const component of components) {
                     chai.expect(path.join('.build/generated/application', component.file)).to.be.a.file().and.not.empty;
                 }
             });
 
-            it("has generated all pages from the manifest", function() {
-                const { pages } = this.manifest;
+            it("has generated all pages from the manifest", function () {
+                const {pages} = this.manifest;
                 for (const page of pages) {
                     chai.expect(path.join('.build/generated/application', page.file)).to.be.a.file().and.not.empty;
                 }
             });
 
-            it("has generated all apis from the manifest", function() {
-                const { apis } = this.manifest;
+            it("has generated all apis from the manifest", function () {
+                const {apis} = this.manifest;
                 for (const api of apis) {
                     chai.expect(path.join('.build/generated/application', api.file)).to.be.a.file().and.not.empty;
                 }
             });
 
-            it("has generated all hooks from the manifest", function() {
-                const { hooks } = this.manifest;
+            it("has generated all hooks from the manifest", function () {
+                const {hooks} = this.manifest;
                 for (const hook of hooks) {
                     chai.expect(path.join('.build/generated/application', hook.file)).to.be.a.file().and.not.empty;
                 }
@@ -69,19 +69,50 @@ describe("Basic cli test", function () {
         });
     });
 
-    describe("Run test", function() {
-        it("should start the luna on port 3010", function(done) {
-            const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
+    describe("Api Export test", function () {
+        before(function () {
+            execSync(`${BUILD_SCRIPT} --export=api`);
+        });
+
+        it("has generated the api entry", async function () {
+            chai.expect(".api").to.be.a.directory();
+            chai.expect(".api/test-export.js").to.be.a.file();
+        });
+
+        it ("starts the exported api server", function(done) {
+            const child = spawn(`node`, [ ".api/test-export.js" ]);
 
             child.stdout.on('data', (data) => {
-                if (data.indexOf('http://localhost:3010') !== -1) {
+                console.log(data.toString());
+                if (data.toString().indexOf('Server listening on port 3010.') !== -1) {
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
 
                         child.stdin.pause();
                         child.kill();
 
-                        await sleep(300);
+                        await sleep(1000);
+
+                        done();
+                    }, 100);
+                }
+            });
+        });
+    });
+
+    describe("Run test", function () {
+        it("starts luna on port 3010", function (done) {
+            const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
+
+            child.stdout.on('data', (data) => {
+                if (data.toString().indexOf('http://localhost:3010') !== -1) {
+                    setTimeout(async () => {
+                        await chai.request('http://localhost:3010').get('/').send();
+
+                        child.stdin.pause();
+                        child.kill();
+
+                        await sleep(1000);
 
                         done();
                     }, 100);

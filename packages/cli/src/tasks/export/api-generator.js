@@ -27,16 +27,14 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const imports = [];
     let index = 0;
     for (const api of manifest.apis) {
-        const {basePath, relativePath} = api;
-
-        const apiRoute = relativePath.split(".js")[0];
+        const {basePath, relativePath, route} = api;
 
         const pathToApiFile = path.posix.join(basePath, relativePath).split("\\").join("/");
         imports.push(`
             import * as api${index} from "../..${pathToApiFile}";
             apisToRegister.push({
-                name: "${apiRoute}",
-                module: api${index}
+                route: "${route}",
+                module: api${index},
             });
         `);
 
