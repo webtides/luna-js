@@ -84,7 +84,7 @@ describe("Basic cli test", function () {
 
             child.stdout.on('data', (data) => {
                 console.log(data.toString());
-                if (data.toString().indexOf('Server listening on port 3010.') !== -1) {
+                if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
 
@@ -105,7 +105,7 @@ describe("Basic cli test", function () {
             const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
 
             child.stdout.on('data', (data) => {
-                if (data.toString().indexOf('http://localhost:3010') !== -1) {
+                if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
 

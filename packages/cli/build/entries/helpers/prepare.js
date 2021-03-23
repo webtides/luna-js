@@ -69,7 +69,7 @@ const registerApiRoute = (router, name, { get, post }) => {
         }
     });
 
-    post && router.post(`/api${name}`, (request, response) => {
+    post && router.post(`${name}`, (request, response) => {
         try {
             return post({request, response});
         } catch (error) {

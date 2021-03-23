@@ -1,6 +1,12 @@
 name: NPM test
 
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - *
+  push:
+    branches:
+      - develop
 
 jobs:
   test:
