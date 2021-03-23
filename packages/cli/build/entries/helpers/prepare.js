@@ -45,26 +45,13 @@ const prepareApiServer = async ({ hooks, apis, fallbackApiRoute, serveStaticSite
     let fallbackApi = null;
 
     apis.forEach(api => {
-        const { module, name } = api;
+        const { module, route } = api;
 
         const get = module.get || module.default;
         const post = module.post;
 
-        // This route is going to be our fallback route. Mark it as such.
-        if (name === fallbackApiRoute) {
-            fallbackApi = {
-                name,
-                methods: { get, post }
-            };
-            return;
-        }
-
-        registerApiRoute(app, name, { get, post });
+        registerApiRoute(app, route, { get, post });
     });
-
-    if (fallbackApi) {
-        registerApiRoute(app, "*", fallbackApi.methods);
-    }
 
     await callHook(HOOKS.ROUTES_AFTER_REGISTER, {
         router: app
@@ -74,7 +61,7 @@ const prepareApiServer = async ({ hooks, apis, fallbackApiRoute, serveStaticSite
 };
 
 const registerApiRoute = (router, name, { get, post }) => {
-    get && router.get(`/api${name}`, (request, response) => {
+    get && router.get(`${name}`, (request, response) => {
         try {
             return get({request, response});
         } catch (error) {

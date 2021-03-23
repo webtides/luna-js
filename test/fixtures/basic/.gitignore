@@ -3,4 +3,5 @@ node_modules
 webtides*
 
 .build
+.api
 .export

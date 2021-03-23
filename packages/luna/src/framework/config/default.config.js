@@ -57,7 +57,9 @@ export default {
             output: {
                 directory: ".api",
                 filename: "api-server.js"
-            }
+            },
+
+            excluded: []
         },
     },
 }
