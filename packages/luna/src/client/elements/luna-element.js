@@ -11,6 +11,9 @@ const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
 }
 
+/**
+ * The main class from which server rendered elements should inherit.
+ */
 export default class LunaElement extends StyledElement {
 
     constructor(options) {

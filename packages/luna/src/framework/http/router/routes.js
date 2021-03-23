@@ -1,10 +1,16 @@
 import {loadPages, generatePageMarkup} from "../../loaders/pages-loader.js";
 import ssr from "../../engine/document-renderer.js";
 import { loadApis} from "../../loaders/api-loader";
-import {loadManifest} from "../../config";
 
 let currentRouter;
 
+/**
+ * Helper method for registering a single route. Normalized the
+ * route method and registers post/get routes if available.
+ *
+ * @param {{router: *, route: string, middleware: *[]}}
+ * @param {{ get: *, post: *}}
+ */
 const registerRoute = ({ router, route, middleware = [] }, { get = null, post = null }) => {
     const normalizeRoute = (method) => {
         return (request, response) => method({ request, response });
@@ -19,6 +25,14 @@ const registerRoute = ({ router, route, middleware = [] }, { get = null, post = 
     );
 };
 
+/**
+ * The main routing part of our application. All pages
+ * and apis are being registered here.
+ *
+ * @param router                The express app or an express router.
+ *
+ * @returns {Promise<void>}
+ */
 const routes = async ({router}) => {
     currentRouter = router;
 
