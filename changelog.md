@@ -1,13 +1,16 @@
 # Changelog
 
-## [0.6.1] -
+## [0.7.0] - 24.03.2021
 
 ### Added
  - Test setup with coverage report (#30)
+ - An option to the luna.config.js to exclude dependencies from the api build (#29)
 
 ## Changed
  - Put the cli and the base framework back into the same monorepo, but in different (npm) packages (#30)
  - **BREAKING**: If something is imported directly from the `lib/packages` directory, the `packages` part must be omitted
+ - Sorting routes and setting route parameters is now done by the cli in the build step (#32)
+ - **BREAKING**: Cleaned up luna.config.js (#25)
 
 ## [0.6.0] - 15.03.2021
 
