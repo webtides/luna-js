@@ -1,5 +1,3 @@
-import path from "path";
-
 export default {
     port: 3005,
 
@@ -9,12 +7,12 @@ export default {
     },
 
     pages: {
-        input: [ path.join(__dirname, 'pages') ],
+        input: [],
         fallback: false
     },
 
     api: {
-        input: [ path.join(__dirname, 'api') ],
+        input: [],
         context: '/api',
         fallback: false
     },
@@ -24,19 +22,11 @@ export default {
     },
 
     components: {
-        bundles: [{
-            input: path.join(__dirname, 'views/components'),
-            output: 'assets',
-
-            styles: {
-                output: 'assets/css/base.css',
-                plugins: []
-            }
-        }]
+        bundles: []
     },
 
     hooks: {
-        input: [ path.join(__dirname, 'hooks') ]
+        input: []
     },
 
     assets: {

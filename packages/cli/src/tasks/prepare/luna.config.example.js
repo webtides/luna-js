@@ -1,6 +1,6 @@
-import path from "path";
+const path = require("path");
 
-export default {
+module.exports = {
     build: {
         output: '.build',
     },
@@ -34,15 +34,13 @@ export default {
             bundles: [{
                 input: [ path.join(__dirname, "assets/css/main.css") ],
 
-                outputDirectory: ".build/public/assets/css",
-                filename: "main.css",
+                output: "assets/css/main.css",
                 plugins: () => []
             } ]
         },
 
         static: {
             sources: [ {
-                input: "assets/images/**/*", output: ".build/public/assets/images^"
             } ]
         }
     },
