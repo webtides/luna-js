@@ -5,24 +5,24 @@ import inquirer from "inquirer";
 import path from "path";
 
 const copyEmptyMoonConfig = async () => {
-    fs.copyFileSync(path.join(moonCli.currentDirectory, "packages/cli/tasks/prepare", "luna.config.example.js"), getPathToConfigFile(moonCli.currentWorkingDirectory));
+    fs.copyFileSync(path.join(moonCli.currentDirectory, "src/tasks/prepare", "luna.config.example.js"), getPathToConfigFile(moonCli.currentWorkingDirectory));
 
     const settings = await loadSettings();
 
-    settings.pagesDirectory.forEach(page => fs.mkdirSync(page, { recursive: true }));
-    settings.hooksDirectory.forEach(hook => fs.mkdirSync(hook));
-    settings.apisDirectory.forEach(api => fs.mkdirSync(api));
-    settings.componentsDirectory.forEach(component => {
-        fs.mkdirSync(path.join(component.basePath, component.directory), { recursive: true })
+    settings.pages?.input?.forEach(page => fs.mkdirSync(page, { recursive: true }));
+    settings.hooks?.input?.forEach(hook => fs.mkdirSync(hook));
+    settings.api?.input?.forEach(api => fs.mkdirSync(api));
+    settings.components?.bundles.forEach(component => {
+        fs.mkdirSync(component.input, { recursive: true })
     });
 
     fs.mkdirSync(path.join(moonCli.currentWorkingDirectory, "views/layouts"), { recursive: true });
     fs.mkdirSync(path.join(moonCli.currentWorkingDirectory, "assets/css"), { recursive: true });
 
     const filesToCopy = [
-        { from: "packages/cli/tasks/prepare/page.example.js", to: path.join(settings.pagesDirectory[0], "index.js") },
-        { from: "packages/cli/tasks/prepare/layout.example.js", to: path.join(moonCli.currentWorkingDirectory, "views/layouts", "base.js") },
-        { from: "packages/cli/tasks/prepare/assets/main.example.css", to: path.join(moonCli.currentWorkingDirectory, "assets/css", "main.css") },
+        { from: "src/tasks/prepare/page.example.js", to: path.join(settings.pages[0], "index.js") },
+        { from: "src/tasks/prepare/layout.example.js", to: path.join(moonCli.currentWorkingDirectory, "views/layouts", "base.js") },
+        { from: "src/tasks/prepare/assets/main.example.css", to: path.join(moonCli.currentWorkingDirectory, "assets/css", "main.css") },
     ]
 
     filesToCopy.forEach(({ from, to }) => {
