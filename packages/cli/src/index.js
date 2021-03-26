@@ -20,13 +20,13 @@ const startMoonJS = async () => {
 };
 
 const execute = async (argv) => {
-    await initializeLuna();
-
-    const meetsRequirements = await checkRequirements();
+    const meetsRequirements = await checkRequirements({ setup: argv.setup });
 
     if (!meetsRequirements) {
         return;
     }
+
+    await initializeLuna();
 
     if (argv.dev) {
         console.log("Starting luna in development mode.");
