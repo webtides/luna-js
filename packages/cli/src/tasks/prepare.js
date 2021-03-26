@@ -20,7 +20,7 @@ const copyEmptyMoonConfig = async () => {
     fs.mkdirSync(path.join(moonCli.currentWorkingDirectory, "assets/css"), { recursive: true });
 
     const filesToCopy = [
-        { from: "src/tasks/prepare/page.example.js", to: path.join(settings.pages[0], "index.js") },
+        { from: "src/tasks/prepare/page.example.js", to: path.join(settings.pages.input[0], "index.js") },
         { from: "src/tasks/prepare/layout.example.js", to: path.join(moonCli.currentWorkingDirectory, "views/layouts", "base.js") },
         { from: "src/tasks/prepare/assets/main.example.css", to: path.join(moonCli.currentWorkingDirectory, "assets/css", "main.css") },
     ]
@@ -30,22 +30,27 @@ const copyEmptyMoonConfig = async () => {
     });
 };
 
-const checkRequirements = async () => {
+const checkRequirements = async ({ setup } = { setup: false }) => {
     const pathToConfigFile = getPathToConfigFile(moonCli.currentWorkingDirectory);
 
     if (!fs.existsSync(pathToConfigFile)) {
         console.log("We couldn't detect a luna.config.js in your application directory.");
-        const questions = [
-            {
-                type: "confirm",
-                default: false,
-                name: "createConfig",
-                describe: "Would you like to create a config file?"
-            }
-        ];
+        let result;
 
-        const result = await inquirer.prompt(questions);
-        if (result.createConfig) {
+        if (!setup) {
+            const questions = [
+                {
+                    type: "confirm",
+                    default: false,
+                    name: "createConfig",
+                    describe: "Would you like to create a config file?"
+                }
+            ];
+
+            result = await inquirer.prompt(questions);
+        }
+
+        if (setup || result?.createConfig) {
             await copyEmptyMoonConfig();
             return true;
         }
