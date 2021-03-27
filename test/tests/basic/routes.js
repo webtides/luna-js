@@ -29,12 +29,6 @@ describe("Luna routes test", function() {
             chai.expect(response.status).to.be.equal(200);
             chai.expect(response.text).to.include("MOCHA FALLBACK PAGE");
         });
-
-        it("should use the fallback api route the /api/foo route", async function() {
-            const response = await chai.request('http://localhost:3010').get('/api/foo').send();
-            chai.expect(response.status).to.be.equal(200);
-            chai.expect(response.body.result).to.equal("MOCHA FALLBACK API");
-        });
     })
 
     describe("Index page", function() {

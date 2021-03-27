@@ -28,6 +28,12 @@ const basic = () => {
         chai.expect(+response.body.id).to.be.equal(id);
         chai.expect(response.body.post).to.be.true;
     });
+
+    it("should use the fallback api route the /api/foo route", async function() {
+        const response = await chai.request('http://localhost:3010').get('/api/foo').send();
+        chai.expect(response.status).to.be.equal(200);
+        chai.expect(response.body.result).to.equal("MOCHA FALLBACK API");
+    });
 };
 
 module.exports = {
