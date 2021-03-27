@@ -11,18 +11,17 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
 
     outputDirectory = outputDirectory || settings.export.outputDirectory;
 
-    const pages = await loadPages();
-    await Promise.all(pages.map(async ({ module, name, relativePath }) => {
+    const {pages} = await loadPages();
+    await Promise.all(pages.map(async ({ module, route }) => {
         const {html} = await generatePageMarkup({module, request: false, response: false });
         const renderedPage = await ssr(html, { request: false, response: false });
 
-        let pageDirectory = path.join(outputDirectory, "public", name);
+        let pageDirectory = path.join(outputDirectory, "public", route);
 
-        if (pageDirectory.endsWith("index")) {
-            pageDirectory = path.join(pageDirectory, "..");
-        }
+        try {
+            fs.mkdirSync(pageDirectory, {recursive: true});
+        } catch {}
 
-        fs.mkdirSync(pageDirectory, {recursive: true});
         fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
             encoding: "UTF-8"
         });
@@ -31,7 +30,7 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
             ...(settings.export?.api?.include ?? [])
         ].map(directory => {
             return {
-                input: path.posix.join(settings.buildDirectory, directory),
+                input: path.posix.join(settings.build.output, directory),
                 output: path.posix.join(outputDirectory, directory)
             }
         });

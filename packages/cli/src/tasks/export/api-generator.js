@@ -17,7 +17,7 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     let entryBlueprint = fs.readFileSync(pathToEntry, { encoding: "utf-8" });
 
     const port = settings.port ?? 3005;
-    const fallbackApiRoute = settings.fallbackApiRoute ?? false;
+    const fallbackApiRoute = settings.api?.fallback ?? false;
 
     entryBlueprint = entryBlueprint.split("__PORT__").join(port);
     entryBlueprint = entryBlueprint.split("__FALLBACK_API_ROUTE__").join(fallbackApiRoute ? `"${fallbackApiRoute}"` : 'false');
