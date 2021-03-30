@@ -41,7 +41,7 @@ const legacyComponentBundles = settings.components.bundles
                 copy({
                     sources: [ {
                         input: path.resolve(__dirname, "..", "libraries/**/*"),
-                        output: path.resolve(settings.publicDirectory, "libraries")
+                        output: 'libraries'
                     }]
                 }),
                 production ? terser() : undefined
