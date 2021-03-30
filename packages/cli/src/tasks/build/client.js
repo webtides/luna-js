@@ -5,7 +5,7 @@ import {prepareLegacyBuild} from "../legacy";
 import {startRollup, startRollupWatch} from "../build";
 
 const startClientDevelopmentBuild = () => {
-    startRollupWatch(path.join(global.moonCli.currentDirectory, "build/configs", "rollup.config.client.js"));
+    startRollupWatch(path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.client.js"));
 };
 
 const buildComponentsForClient = async () => {
@@ -15,7 +15,7 @@ const buildComponentsForClient = async () => {
         await prepareLegacyBuild();
     }
 
-    await startRollup(path.join(global.moonCli.currentDirectory, "build/configs", "rollup.config.client.js"));
+    await startRollup(path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.client.js"));
 };
 
 export {
