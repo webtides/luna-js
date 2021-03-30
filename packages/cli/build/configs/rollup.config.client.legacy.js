@@ -39,6 +39,7 @@ const legacyComponentBundles = settings.components.bundles
                     babelHelpers: "bundled"
                 }),
                 copy({
+                    publicDirectory: settings.publicDirectory,
                     sources: [ {
                         input: path.resolve(__dirname, "..", "libraries/**/*"),
                         output: 'libraries'
