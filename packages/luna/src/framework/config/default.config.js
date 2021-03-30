@@ -3,7 +3,8 @@ export default {
 
     build: {
         output: '.build',
-        legacy: false
+        legacy: false,
+        livereload: true
     },
 
     pages: {

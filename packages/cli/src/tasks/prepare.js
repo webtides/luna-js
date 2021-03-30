@@ -5,7 +5,7 @@ import inquirer from "inquirer";
 import path from "path";
 
 const copyEmptyMoonConfig = async () => {
-    fs.copyFileSync(path.join(moonCli.currentDirectory, "src/tasks/prepare", "luna.config.example.js"), getPathToConfigFile(moonCli.currentWorkingDirectory));
+    fs.copyFileSync(path.join(lunaCli.currentDirectory, "src/tasks/prepare", "luna.config.example.js"), getPathToConfigFile(lunaCli.currentWorkingDirectory));
 
     const settings = await loadSettings();
 
@@ -16,22 +16,22 @@ const copyEmptyMoonConfig = async () => {
         fs.mkdirSync(component.input, { recursive: true })
     });
 
-    fs.mkdirSync(path.join(moonCli.currentWorkingDirectory, "views/layouts"), { recursive: true });
-    fs.mkdirSync(path.join(moonCli.currentWorkingDirectory, "assets/css"), { recursive: true });
+    fs.mkdirSync(path.join(lunaCli.currentWorkingDirectory, "views/layouts"), { recursive: true });
+    fs.mkdirSync(path.join(lunaCli.currentWorkingDirectory, "assets/css"), { recursive: true });
 
     const filesToCopy = [
         { from: "src/tasks/prepare/page.example.js", to: path.join(settings.pages.input[0], "index.js") },
-        { from: "src/tasks/prepare/layout.example.js", to: path.join(moonCli.currentWorkingDirectory, "views/layouts", "base.js") },
-        { from: "src/tasks/prepare/assets/main.example.css", to: path.join(moonCli.currentWorkingDirectory, "assets/css", "main.css") },
+        { from: "src/tasks/prepare/layout.example.js", to: path.join(lunaCli.currentWorkingDirectory, "views/layouts", "base.js") },
+        { from: "src/tasks/prepare/assets/main.example.css", to: path.join(lunaCli.currentWorkingDirectory, "assets/css", "main.css") },
     ]
 
     filesToCopy.forEach(({ from, to }) => {
-        fs.copyFileSync(path.join(moonCli.currentDirectory, from), to);
+        fs.copyFileSync(path.join(lunaCli.currentDirectory, from), to);
     });
 };
 
 const checkRequirements = async ({ setup } = { setup: false }) => {
-    const pathToConfigFile = getPathToConfigFile(moonCli.currentWorkingDirectory);
+    const pathToConfigFile = getPathToConfigFile(lunaCli.currentWorkingDirectory);
 
     if (!fs.existsSync(pathToConfigFile)) {
         console.log("We couldn't detect a luna.config.js in your application directory.");

@@ -92,10 +92,11 @@ const loadSettings = async () => {
         }
 
         /*
-         * The cli sets the global flag moonIsExporting if the user initialized an export.
+         * The cli sets the global flag isExporting if the user initialized an export.
          * Here we override the api and assets settings with the specific export settings.
          */
-        if (typeof global.moonIsExporting !== 'undefined' && global.moonIsExporting === true) {
+        // TODO: find some kind of plugin system to "connect" the cli and luna
+        if (global.lunaCli?.isExporting === true) {
             settings.api = Object.assign(settings.api, settings.export?.api ?? {});
             settings.assets = Object.assign(settings.assets, settings.export?.assets ?? {});
         }
@@ -132,6 +133,8 @@ const getSerializableConfig = () => {
     }
 
     return {
+        port: settings.port,
+
         assets: {
             domain: settings.assets.domain,
             context: settings.assets.context,

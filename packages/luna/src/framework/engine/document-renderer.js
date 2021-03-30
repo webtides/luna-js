@@ -165,6 +165,12 @@ const appendUpgradedElementsToDocument = async (dom, upgradedElements) => {
             </script>
             <script type="text/javascript" src="${luna.asset('/luna.js')}" />
         `;
+
+    // TODO: find some kind of plugin system to "connect" the cli and luna
+    if (global.lunaCli?.documentInject) {
+        dom.window.document.querySelector("body")
+            .innerHTML += global.lunaCli.documentInject;
+    }
 };
 
 /**

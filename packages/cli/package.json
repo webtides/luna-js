@@ -14,6 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/webtides/luna-cli.git"
   },
+  "peerDependencies": {
+    "@webtides/luna-js": "^0.7.0"
+  },
   "dependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
@@ -47,6 +50,7 @@
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-external-globals": "^0.6.1",
     "rollup-plugin-terser": "^7.0.2",
+    "ws": "^7.4.4",
     "yargs": "^16.2.0"
   },
   "keywords": [],

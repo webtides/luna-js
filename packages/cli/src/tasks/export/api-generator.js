@@ -11,7 +11,7 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const manifest = await loadManifest();
 
     const pathToEntry = path.join(
-        moonCli.currentDirectory,
+        lunaCli.currentDirectory,
         serverless ? "build/entries/api.serverless.js" : "build/entries/api.js"
     );
     let entryBlueprint = fs.readFileSync(pathToEntry, { encoding: "utf-8" });
@@ -79,7 +79,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
         global.serverlessApiBuild = true;
     }
 
-    await startRollup(path.join(moonCli.currentDirectory, "build/configs/rollup.config.api.js"));
+    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
 
 
     if (withStaticSite) {
