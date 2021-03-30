@@ -5,13 +5,13 @@ const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 
-global.moonCli = {
-    currentWorkingDirectory: process.cwd(),
-    currentDirectory: path.dirname(__dirname),
-}
-
 const argv = yargs(hideBin(process.argv)).argv;
 
-global.moonIsExporting = !!argv.export;
+global.lunaCli = {
+    currentWorkingDirectory: process.cwd(),
+    currentDirectory: path.dirname(__dirname),
+    isExporting: !!argv.export,
+    documentInject: ''
+}
 
 execute(argv);

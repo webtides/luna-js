@@ -8,11 +8,11 @@ import chokidar from "chokidar";
 const buildComponentsForApplication = async () => {
     const settings = getSettings();
 
-    await startRollup(path.join(moonCli.currentDirectory, "build/configs/rollup.config.application.js"));
+    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.application.js"));
 
     if (settings.build.legacy) {
         await prepareLegacyBuild();
-        await startRollup(path.join(moonCli.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
+        await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
     }
 };
 
@@ -20,7 +20,7 @@ const startApplicationDevelopmentBuild = async (callback = () => { }) => {
     const settings = getSettings();
 
     let watcher = await startRollupWatch(
-        path.join(global.moonCli.currentDirectory, "build/configs", "rollup.config.application.js"),
+        path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
         callback
     );
 
@@ -36,7 +36,7 @@ const startApplicationDevelopmentBuild = async (callback = () => { }) => {
 
             watcher && watcher.close();
             watcher = await startRollupWatch(
-                path.join(global.moonCli.currentDirectory, "build/configs", "rollup.config.application.js"),
+                path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
                 callback
             );
         });

@@ -21,6 +21,7 @@ module.exports = function(options) {
 
                 files.forEach(file => {
                     const target = path.join(
+                        options.publicDirectory,
                         output,
                         getPathRelativeToBasePath(file, basePath)
                     );

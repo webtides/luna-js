@@ -7,10 +7,11 @@ import {checkRequirements} from "./tasks/prepare";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
+import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
 
 let moonJSStarting = false;
 
-const startMoonJS = async () => {
+const startLunaJS = async () => {
     if (moonJSStarting) return;
     moonJSStarting = true;
 
@@ -31,9 +32,13 @@ const execute = async (argv) => {
     if (argv.dev) {
         console.log("Starting luna in development mode.");
 
-        startApplicationDevelopmentBuild(() => {
+        await startLivereloadServer();
+
+        startApplicationDevelopmentBuild(async () => {
             clearCache();
-            startMoonJS();
+
+            await startLunaJS();
+            await sendReloadMessage();
         });
 
         return;
@@ -45,7 +50,7 @@ const execute = async (argv) => {
     }
 
     if (argv.start) {
-        startMoonJS();
+        startLunaJS();
         return;
     }
 
@@ -68,7 +73,7 @@ const execute = async (argv) => {
 
     // Default
     await buildComponentsForApplication();
-    startMoonJS();
+    startLunaJS();
 };
 
 export { execute };

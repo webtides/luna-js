@@ -80,7 +80,11 @@ const componentBundles = settings.components.bundles
                 }),
                 strip(),
                 copy({
-                    sources: staticSettings.sources
+                    publicDirectory: settings.publicDirectory,
+                    sources: [
+                        { input: path.resolve(__dirname, "../../", 'src/client/**/*'), output: 'assets/dev' },
+                        ...staticSettings.sources
+                    ]
                 }),
                 production ? terser() : undefined,
             ]
