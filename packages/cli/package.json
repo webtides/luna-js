@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.7.0",
+  "version": "0.7.1-0.1",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "url": "git+https://github.com/webtides/luna-cli.git"
   },
   "peerDependencies": {
-    "@webtides/luna-js": "^0.7.0"
+    "@webtides/luna-js": ">= 0.7.0"
   },
   "dependencies": {
     "@babel/cli": "^7.12.10",
