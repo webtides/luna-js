@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1] -
+
+### Added
+ - Really basic livereload functionality (#39)
+
+### Changed
+ - Internally renamed occurences of moonCli to lunaCli
+
 ## [0.7.0] - 24.03.2021
 
 ### Added
