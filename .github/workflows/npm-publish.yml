@@ -28,9 +28,8 @@ jobs:
           node-version: 14
       - run: npm ci
       - run: npm run compile
-  publish_cli_latest:
+  publish_cli:
     needs: build_cli
-    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -43,14 +42,25 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          dry-run: true
-  publish_cli_next:
-    needs: build_cli
-    if: ${{ github.ref == 'refs/heads/develop' }}
+  build_luna:
+    needs: test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/cli
+        working-directory: ./packages/luna
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: npm ci
+      - run: npm run compile
+  publish_luna:
+    needs: build_cli
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/luna
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
@@ -59,5 +69,3 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          tag: 'next'
-          dry-run: true
