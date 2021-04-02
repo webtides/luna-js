@@ -15,26 +15,26 @@ jobs:
           node-version: 14
       - run: npm ci
       - run: npm test
-  publish:
+  publish_cli:
     needs: test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/cli
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
           node-version: 12
       - run: npm ci
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
+      - run: npm run compile
       - uses: JS-DevTools/npm-publish@v1
-        if: steps.extract_branch.outputs.branch == 'main'
+        if: GITHUB_REF == 'refs/heads/main'
         with:
           token: ${{ secrets.NPM_TOKEN }}
           dry-run: true
       - uses: JS-DevTools/npm-publish@v1
-        if: steps.extract_branch.outputs.branch == 'develop'
+        if: GITHUB_REF == 'refs/heads/develop'
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: 'next'
