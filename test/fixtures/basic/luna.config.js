@@ -48,6 +48,8 @@ module.exports = {
     },
 
     export: {
+        outputDirectory: ".export",
+
         api: {
             output: {
                 directory: ".api",
@@ -57,6 +59,10 @@ module.exports = {
             excluded: [
                 'cors'
             ]
+        },
+
+        entries: async () => {
+            return [ '' ];
         }
     }
 }
