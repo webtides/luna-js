@@ -1,11 +1,11 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.7.1-0.1",
+  "version": "0.7.1-0.2",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run compile",
-    "compile": "npx babel src --out-dir lib"
+    "compile": "npx babel src --out-dir lib --source-maps inline"
   },
   "bin": {
     "luna": ".bin/luna.js"

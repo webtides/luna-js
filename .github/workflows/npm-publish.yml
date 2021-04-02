@@ -6,7 +6,17 @@ on:
       - v*
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: npm ci
+      - run: npm test
   publish:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -14,14 +24,18 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - uses: JS-DevTools/npm-publish@v1
-        if: github.ref == 'refs/head/main'
+        if: steps.extract_branch.outputs.branch == 'main'
         with:
           token: ${{ secrets.NPM_TOKEN }}
           dry-run: true
       - uses: JS-DevTools/npm-publish@v1
-        if: github.ref != 'refs/head/main'
+        if: steps.extract_branch.outputs.branch == 'develop'
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          tag: 'alpha'
+          tag: 'next'
           dry-run: true
