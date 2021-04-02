@@ -109,8 +109,10 @@ describe("Basic cli test", function () {
             chai.expect(".export").to.be.a.directory();
         });
 
-        it ("has generated the index.html", function(done) {
-            chai.expect(".export/public/index.html").to.be.a.file().with.content('HELLO MOCHA');
+        it ("has generated the index.html", function() {
+            chai.expect(".export/public/index.html").to.be.a.file();
+            const contents = fs.readFileSync('.export/public/index.html', 'utf-8');
+            chai.expect(contents).to.include('HELLO MOCHA');
         });
     });
 
