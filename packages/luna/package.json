@@ -8,7 +8,6 @@
     "node": "*"
   },
   "scripts": {
-    "prepublish": "npm run compile",
     "compile": "npx babel src --out-dir lib --source-maps inline && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",

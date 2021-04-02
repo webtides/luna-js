@@ -4,7 +4,6 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "prepublish": "npm run compile",
     "compile": "npx babel src --out-dir lib --source-maps inline"
   },
   "bin": {
