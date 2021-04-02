@@ -1,26 +1,61 @@
-import {loadPages, generatePageMarkup} from "@webtides/luna-js/lib/framework/loaders/pages-loader";
-import ssr from "@webtides/luna-js/lib/framework/engine/document-renderer";
-import {loadSettings} from "@webtides/luna-js/lib/framework/config";
+import {loadPages} from "@webtides/luna-js/lib/framework/loaders/pages-loader";
+import fetch from "node-fetch";
+import {getSettings} from "@webtides/luna-js/lib/framework/config";
+import {startServer, stopServer} from "@webtides/luna-js/lib/framework";
 
 import fs from "fs";
 import path from "path";
 import glob from "glob";
 
-const generateStaticSite = async ({ outputDirectory = false } = { }) => {
-    const settings = await loadSettings();
+const getStaticSiteEntryPoints = async () => {
+    const settings = getSettings();
+
+    const normalizeRoute = (route) => {
+        if (route.length === 0 || route === '/') {
+            return '';
+        }
+
+        if (route.startsWith('/')) {
+            route = route.substring(1, route.length)
+        }
+        if (!route.endsWith('/')) {
+            route = `${route}/`
+        }
+        return route;
+    };
+
+    if (typeof settings.export?.entries === 'function') {
+        return (await settings.export.entries())
+            .map(route => normalizeRoute(route));
+    }
+
+    const {pages} = await loadPages();
+    return pages
+        .filter(page => !page.fallback)
+        .map(page => normalizeRoute(page.route));
+};
+
+const generateStaticSite = async ({outputDirectory = false} = {}) => {
+    const settings = getSettings();
 
     outputDirectory = outputDirectory || settings.export.outputDirectory;
 
-    const {pages} = await loadPages();
-    await Promise.all(pages.map(async ({ module, route }) => {
-        const {html} = await generatePageMarkup({module, request: false, response: false });
-        const renderedPage = await ssr(html, { request: false, response: false });
+    const entryPoints = await getStaticSiteEntryPoints();
+
+    await startServer();
+
+    const url = `http://localhost:${settings.port}`;
+
+    await Promise.all(entryPoints.map(async (route) => {
+        const response = await fetch(`${url}/${route}`);
+        const renderedPage = await response.text();
 
         let pageDirectory = path.join(outputDirectory, "public", route);
 
         try {
             fs.mkdirSync(pageDirectory, {recursive: true});
-        } catch {}
+        } catch {
+        }
 
         fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
             encoding: "UTF-8"
@@ -49,12 +84,13 @@ const generateStaticSite = async ({ outputDirectory = false } = { }) => {
                 const relativePath = file.substring(directory.input.length);
                 const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
 
-                fs.mkdirSync(publicAssetDirectory, { recursive: true });
+                fs.mkdirSync(publicAssetDirectory, {recursive: true});
                 fs.copyFileSync(file, path.join(directory.output, relativePath));
             }));
         }
-
     }));
+
+    await stopServer();
 };
 
 export {

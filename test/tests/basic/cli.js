@@ -69,7 +69,7 @@ describe("Basic cli test", function () {
         });
     });
 
-    describe("Api Export test", function () {
+    describe("Api export test", function () {
         before(function () {
             execSync(`${BUILD_SCRIPT} --export=api`);
         });
@@ -97,6 +97,20 @@ describe("Basic cli test", function () {
                     }, 100);
                 }
             });
+        });
+    });
+
+    describe("Static export test", function () {
+        before(function () {
+            execSync(`${BUILD_SCRIPT} --export`);
+        });
+
+        it("has generated the export directory", async function () {
+            chai.expect(".export").to.be.a.directory();
+        });
+
+        it ("has generated the index.html", function(done) {
+            chai.expect(".export/public/index.html").to.be.a.file().with.content('HELLO MOCHA');
         });
     });
 
