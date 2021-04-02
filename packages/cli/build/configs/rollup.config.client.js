@@ -1,19 +1,15 @@
 const path = require("path");
 const glob = require("glob-all");
+const json = require('@rollup/plugin-json');
 const { terser } = require("rollup-plugin-terser");
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
-const copy = require("../plugins/rollup-plugin-copy");
-const postcss = require('../plugins/rollup-plugin-postcss');
-const strip = require("../plugins/rollup-plugin-strip-server-code");
 
 const { getSettings } = require('@webtides/luna-js/lib/framework/config');
 
 const production = process.env.NODE_ENV === "production";
 const settings = getSettings();
-
-const staticSettings = settings.assets.static;
 
 const configBundle = {
     input: `@webtides/luna-js/src/client/functions/luna.js`,
@@ -36,7 +32,7 @@ const styleBundles = settings.assets?.styles?.bundles?.map(bundle => {
             entryFileNames: 'empty.js'
         },
         plugins: [
-            postcss({
+            require("../plugins/rollup-plugin-postcss")({
                 publicDirectory: settings.publicDirectory,
                 ...bundle
             })
@@ -64,26 +60,27 @@ const componentBundles = settings.components.bundles
                 format: 'es',
             },
             plugins: [
-                require("../plugins/rollup-plugin-switch-renderer.js")({ context: 'client' }),
+                require("../plugins/rollup-plugin-switch-renderer")({ context: 'client' }),
                 require("../plugins/rollup-plugin-client-manifest")({
                     config: bundle
                 }),
-                postcss({
+                require("../plugins/rollup-plugin-postcss")({
                     publicDirectory: settings.publicDirectory,
                     ...bundle.styles
                 }),
-                require("../plugins/rollup-plugin-markdown.js")(),
+                require("../plugins/rollup-plugin-markdown")(),
+                json(),
                 nodeResolve(),
                 commonjs({requireReturnsDefault: true}),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                 }),
-                strip(),
-                copy({
+                require("../plugins/rollup-plugin-strip-server-code")(),
+                require("../plugins/rollup-plugin-copy")({
                     publicDirectory: settings.publicDirectory,
                     sources: [
                         { input: path.resolve(__dirname, "../../", 'src/client/**/*'), output: 'assets/dev' },
-                        ...staticSettings.sources
+                        ...(settings?.static?.sources ?? [])
                     ]
                 }),
                 production ? terser() : undefined,

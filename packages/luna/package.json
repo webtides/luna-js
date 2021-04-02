@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-js",
-  "version": "0.7.1-0.1",
+  "version": "0.7.1-0.2",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "lib/client.js",
   "module": "index.js",
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "prepublish": "npm run compile",
-    "compile": "npx babel src --out-dir lib && rollup --config build/configs/rollup.config.prepublish.js"
+    "compile": "npx babel src --out-dir lib --source-maps inline && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",
   "license": "MIT",
