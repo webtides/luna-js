@@ -29,12 +29,12 @@ jobs:
       - run: npm ci
       - run: npm run compile
       - uses: JS-DevTools/npm-publish@v1
-        if: GITHUB_REF == 'refs/heads/main'
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           token: ${{ secrets.NPM_TOKEN }}
           dry-run: true
       - uses: JS-DevTools/npm-publish@v1
-        if: GITHUB_REF == 'refs/heads/develop'
+        if: ${{ github.ref == 'refs/heads/develop' }}
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: 'next'
