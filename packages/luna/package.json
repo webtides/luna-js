@@ -5,9 +5,10 @@
   "main": "lib/client.js",
   "module": "index.js",
   "engines": {
-    "node": "*"
+    "node": ">= 14.0.0"
   },
   "scripts": {
+    "prepublish": "npm run compile",
     "compile": "npx babel src --out-dir lib --source-maps inline && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",
