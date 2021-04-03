@@ -1,8 +1,11 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.7.1-0.2",
+  "version": "0.7.1",
   "description": "",
   "main": "lib/index.js",
+  "engines": {
+    "node": ">= 14.0.0"
+  },
   "scripts": {
     "prepublish": "npm run compile",
     "compile": "npx babel src --out-dir lib --source-maps inline"
@@ -13,9 +16,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/webtides/luna-cli.git"
-  },
-  "peerDependencies": {
-    "@webtides/luna-js": ">= 0.7.0"
   },
   "dependencies": {
     "@babel/cli": "^7.12.10",
