@@ -114,6 +114,18 @@ describe("Basic cli test", function () {
             const contents = fs.readFileSync('.export/public/index.html', 'utf-8');
             chai.expect(contents).to.include('HELLO MOCHA');
         });
+
+        it ("has generated the fallback/index.html", function() {
+            chai.expect(".export/public/fallback/index.html").to.be.a.file();
+            const contents = fs.readFileSync('.export/public/fallback/index.html', 'utf-8');
+            chai.expect(contents).to.include('MOCHA FALLBACK PAGE');
+        });
+
+        it ("has generated the dynamic page", function() {
+            chai.expect(".export/public/params/export/index.html").to.be.a.file();
+            const contents = fs.readFileSync('.export/public/params/export/index.html', 'utf-8');
+            chai.expect(contents).to.include('ID: export');
+        });
     });
 
     describe("Run test", function () {
