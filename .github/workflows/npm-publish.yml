@@ -56,7 +56,7 @@ jobs:
       - run: npm ci
       - run: npm run compile
   publish_luna:
-    needs: build_cli
+    needs: build_luna
     runs-on: ubuntu-latest
     defaults:
       run:
