@@ -111,8 +111,6 @@ export default class LunaElement extends StyledElement {
      *
      * Here we can make calls to the database or any other service with data we require on each page load.
      *
-     * If we are statically exporting the site, these properties won't ever be loaded.
-     *
      * @param {*}
      *
      * @returns {Promise<{}>}   An object which holds the dynamically loaded data.
