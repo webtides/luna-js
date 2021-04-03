@@ -71,12 +71,18 @@ describe("Basic cli test", function () {
 
     describe("Api export test", function () {
         before(function () {
-            execSync(`${BUILD_SCRIPT} --export=api`);
+            execSync(`${BUILD_SCRIPT} --export=hybrid`);
         });
 
         it("has generated the api entry", async function () {
             chai.expect(".api").to.be.a.directory();
             chai.expect(".api/test-export.js").to.be.a.file();
+        });
+
+        it ("has generated the index.html", function() {
+            chai.expect(".api/public/index.html").to.be.a.file();
+            const contents = fs.readFileSync('.api/public/index.html', 'utf-8');
+            chai.expect(contents).to.include('HELLO MOCHA');
         });
 
         it ("starts the exported api server", function(done) {
