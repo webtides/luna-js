@@ -1,4 +1,5 @@
 const {execSync, spawn} = require("child_process");
+const fs = require("fs");
 
 const { execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai, sleep } = require("../../helpers");
 
