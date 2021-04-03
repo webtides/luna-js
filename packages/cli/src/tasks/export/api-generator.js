@@ -85,7 +85,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
     if (withStaticSite) {
         const settings = await loadSettings();
 
-        const outputDirectory = settings.export.apiOutputDirectory ?? settings.export.outputDirectory;
+        const outputDirectory = settings.export.api?.output?.directory ?? settings.export.output;
 
         await registerAvailableComponents();
         await generateStaticSite({

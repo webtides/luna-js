@@ -48,8 +48,6 @@ module.exports = {
     },
 
     export: {
-        outputDirectory: ".export",
-
         api: {
             output: {
                 directory: ".api",

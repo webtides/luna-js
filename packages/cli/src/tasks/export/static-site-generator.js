@@ -38,7 +38,7 @@ const getStaticSiteEntryPoints = async () => {
 const generateStaticSite = async ({outputDirectory = false} = {}) => {
     const settings = getSettings();
 
-    outputDirectory = outputDirectory || settings.export.outputDirectory;
+    outputDirectory = outputDirectory || settings.export.output;
 
     const entryPoints = await getStaticSiteEntryPoints();
 

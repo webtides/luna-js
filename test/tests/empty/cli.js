@@ -29,6 +29,22 @@ describe("Empty cli test", function () {
         });
     });
 
+    describe("Static export test", function () {
+        before(function () {
+            execSync(`${BUILD_SCRIPT} --export`);
+        });
+
+        it("has generated the export directory", async function () {
+            chai.expect(".export").to.be.a.directory();
+        });
+
+        it("has generated the index.html", function () {
+            chai.expect(".export/public/index.html").to.be.a.file();
+            const contents = fs.readFileSync('.export/public/index.html', 'utf-8');
+            chai.expect(contents).to.include('Welcome to luna-js');
+        });
+    });
+
     describe("Run test", function () {
         it("starts luna on port 3005", function (done) {
             const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
