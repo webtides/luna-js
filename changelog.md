@@ -1,9 +1,10 @@
 # Changelog
 
-## [0.7.1] -
+## [0.7.1] - 03.04.2021
 
 ### Added
  - Really basic livereload functionality (#39)
+ - Dynamic entry points for static export (#38)
 
 ### Changed
  - Internally renamed occurences of moonCli to lunaCli
