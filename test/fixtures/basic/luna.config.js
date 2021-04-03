@@ -62,7 +62,7 @@ module.exports = {
         },
 
         entries: async () => {
-            return [ '' ];
+            return [ '', '/fallback', '/params/export' ];
         }
     }
 }
