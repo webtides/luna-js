@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.7.2] - 04.04.2021
+## [0.7.2] CLI - 04.04.2021
 
 ## Added
  - Test for static copy task
