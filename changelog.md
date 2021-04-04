@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.2] - 04.04.2021
+
+## Added
+ - Test for static copy task
+
+## Fixed
+ - Static copy task
+
 ## [0.7.1] - 03.04.2021
 
 ### Added

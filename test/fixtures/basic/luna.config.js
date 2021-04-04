@@ -43,7 +43,9 @@ module.exports = {
             bundles: []
         },
         static: {
-            sources: []
+            sources: [
+                { input: 'assets/**/*', output: 'assets/static' }
+            ]
         }
     },
 

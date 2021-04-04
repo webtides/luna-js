@@ -34,6 +34,11 @@ describe("Basic cli test", function () {
             chai.expect('.build/generated').to.be.a.directory();
         });
 
+        it("has copied the static assets", async function() {
+            chai.expect(".build/public/assets/static").to.be.a.directory();
+            chai.expect(".build/public/assets/static/test.txt").to.be.a.file().and.not.empty;
+        });
+
         describe("Manifest test", function () {
             before(function () {
                 this.manifest = JSON.parse(fs.readFileSync(".build/generated/manifest.json", "utf-8"));

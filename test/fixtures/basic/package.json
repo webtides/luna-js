@@ -11,10 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@webtides/luna-js": "file:webtides-luna-js-0.7.1-0.2.tgz",
+    "@webtides/luna-js": "file:webtides-luna-js-0.7.1.tgz",
     "cors": "^2.8.5"
   },
   "devDependencies": {
-    "@webtides/luna-cli": "file:webtides-luna-cli-0.7.1-0.2.tgz"
+    "@webtides/luna-cli": "file:webtides-luna-cli-0.7.1.tgz"
   }
 }
