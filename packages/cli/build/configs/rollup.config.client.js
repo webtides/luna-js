@@ -80,7 +80,7 @@ const componentBundles = settings.components.bundles
                     publicDirectory: settings.publicDirectory,
                     sources: [
                         { input: path.resolve(__dirname, "../../", 'src/client/**/*'), output: 'assets/dev' },
-                        ...(settings?.static?.sources ?? [])
+                        ...(settings?.assets?.static?.sources ?? [])
                     ]
                 }),
                 production ? terser() : undefined,

@@ -1,7 +1,7 @@
 {
-  "name": "moon-js",
+  "name": "luna-js-monorepo",
   "version": "1.0.0",
-  "description": "## Static Site Generation & SSR framework for custom-elements.",
+  "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha test/index.js"

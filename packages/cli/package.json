@@ -1,7 +1,7 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.7.1",
-  "description": "",
+  "version": "0.7.2",
+  "description": "The cli for luna-js.",
   "main": "lib/index.js",
   "engines": {
     "node": ">= 14.0.0"
