@@ -20,15 +20,31 @@ const buildComponentsForApplication = async () => {
     }
 };
 
-const startApplicationDevelopmentBuild = async (callback = () => { }) => {
+const startApplicationDevelopmentBuild = async (callback = () => {
+}) => {
     const settings = getSettings();
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
-    let watcher = await startRollupWatch(
-        path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
-        callback
-    );
+    let shouldRestart = false;
+    let watcher;
+
+    const initializeWatcher = async (restart = true) => {
+        if (!restart) {
+            return;
+        }
+
+        watcher = await startRollupWatch(
+            path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
+            callback
+        );
+
+        watcher.on('close', async () => {
+            console.log("WATCHER CLOSED", shouldRestart);
+            await initializeWatcher(shouldRestart);
+            shouldRestart = false;
+        });
+    };
 
     const componentDirectories = settings.components.bundles.map(bundle => bundle.input);
     chokidar.watch([
@@ -36,16 +52,25 @@ const startApplicationDevelopmentBuild = async (callback = () => { }) => {
         ...settings.pages.input,
         ...settings.api.input,
         ...settings.hooks.input
-    ], { ignoreInitial: true })
+    ], {ignoreInitial: true})
         .on("add", async (event, filePath) => {
             console.log("File added. Restart watcher");
 
-            watcher && watcher.close();
-            watcher = await startRollupWatch(
-                path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
-                callback
-            );
+            setTimeout(async () => {
+                shouldRestart = true;
+                watcher && watcher.close();
+            }, 20);
+        })
+        .on("unlink", async () => {
+            console.log("File removed. Restart watcher");
+
+            setTimeout(() => {
+                shouldRestart = true;
+                watcher && watcher.close();
+            }, 20);
         });
+
+    await initializeWatcher(true);
 };
 
 export {buildComponentsForApplication, startApplicationDevelopmentBuild};
