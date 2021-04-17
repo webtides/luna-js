@@ -37,6 +37,19 @@ const getStaticSiteEntryPoints = async () => {
         .map(page => normalizeRoute(page.route));
 };
 
+const groupEntryPoints = (entryPoints) => {
+    const chunkSize = 100;
+    let i, j;
+
+    const chunks = [];
+
+    for (i = 0, j = entryPoints.length; i < j; i += chunkSize) {
+        chunks.push(entryPoints.slice(i, i + chunkSize));
+    }
+
+    return chunks;
+};
+
 const generateStaticSite = async ({outputDirectory = false, clean = true } = { outputDirectory: false, clean: true }) => {
     const settings = getSettings();
 
@@ -47,59 +60,61 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
         rimraf.sync(outputDirectory);
     }
 
-    const entryPoints = await getStaticSiteEntryPoints();
+    const entryChunks = groupEntryPoints(await getStaticSiteEntryPoints());
 
     await startServer();
 
     const url = `http://localhost:${settings.port}`;
 
-    await Promise.all(entryPoints.map(async (route) => {
-        const response = await fetch(`${url}/${route}`);
-        const renderedPage = await response.text();
+    for (const entryChunk of entryChunks) {
+        await Promise.all(entryChunk.map(async (route) => {
+            const response = await fetch(`${url}/${route}`);
+            const renderedPage = await response.text();
 
-        let pageDirectory = path.join(outputDirectory, "public", route);
+            let pageDirectory = path.join(outputDirectory, "public", route);
 
-        try {
-            fs.mkdirSync(pageDirectory, {recursive: true});
-        } catch {
-        }
+            try {
+                fs.mkdirSync(pageDirectory, {recursive: true});
+            } catch {
+            }
 
-        fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
-            encoding: "UTF-8"
-        });
+            fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
+                encoding: "UTF-8"
+            });
+        }));
+    }
 
-        const directoriesToCopy = [
-            ...(settings.export?.api?.include ?? [])
-        ].map(directory => {
-            const inputPath = path.posix.join(settings.build.output, directory);
+    const directoriesToCopy = [
+        ...(settings.export?.api?.include ?? [])
+    ].map(directory => {
+        const inputPath = path.posix.join(settings.build.output, directory);
             return {
                 input: inputPath,
-                output: path.posix.join(outputDirectory, directory),
+            output: path.posix.join(outputDirectory, directory),
                 isFile: fs.lstatSync(inputPath).isFile(),
-            }
-        });
+        }
+    });
 
-        directoriesToCopy.push({
-            input: settings.publicDirectory,
-            output: path.posix.join(outputDirectory, 'public')
-        });
+    directoriesToCopy.push({
+        input: settings.publicDirectory,
+        output: path.posix.join(outputDirectory, 'public')
+    });
 
-        for (const directory of directoriesToCopy) {
-            const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
+    for (const directory of directoriesToCopy) {
+        const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
 
             filesToCopy.forEach((file) => {
-                if (fs.lstatSync(file).isDirectory()) {
-                    return;
-                }
+            if (fs.lstatSync(file).isDirectory()) {
+                return;
+            }
 
-                const relativePath = directory.isFile ? '.' : file.substring(directory.input.length);
-                const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
+            const relativePath = directory.isFile ? '.' : file.substring(directory.input.length);
+            const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
 
-                fs.mkdirSync(publicAssetDirectory, {recursive: true});
-                fs.copyFileSync(file, path.join(directory.output, relativePath));
-            });
-        }
-    }));
+            fs.mkdirSync(publicAssetDirectory, {recursive: true});
+            fs.copyFileSync(file, path.join(directory.output, relativePath));
+        });
+    }
 
     await stopServer();
 };
