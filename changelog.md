@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased] CLI
+
+## Changed
+ - Static export is now running in chunks for better performance
+
 ## [0.7.2] CLI - 04.04.2021
 
 ## Added
