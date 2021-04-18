@@ -1,5 +1,4 @@
 import {getSettings} from "../../config";
-import {isInCache, loadFromCache, writeToCache} from "../../cache/cache";
 
 /**
  * Looks inside the luna.config.js to determine whether or not the
@@ -34,14 +33,16 @@ const isRequestCacheable = request => {
  *
  * Should be registered after any custom auth middleware could be called.
  *
- * @returns {function(*=, *, *): void}
+ * @returns {function(*, *, *): Promise<*>}
  */
-const cacheMiddleware = () => (request, response, next) => {
+const cacheMiddleware = () => async (request, response, next) => {
     if (isRequestCacheable(request)) {
+        const cache = luna.get(luna.services.cache);
+
         const cacheKey = `${request.path}.${JSON.stringify(request.query)}`;
 
-        if (isInCache(cacheKey, 'routes')) {
-            loadFromCache(cacheKey, 'routes')
+        if (await cache.has(cacheKey, 'routes')) {
+            cache.get(cacheKey, 'routes')
                 .then(result => {
                     response.send(result).end();
                 })
@@ -52,9 +53,8 @@ const cacheMiddleware = () => (request, response, next) => {
         request.luna.isCacheable = true;
 
         response.on('finish', () => {
-
             if (request.luna?.cachedResponse) {
-                writeToCache(cacheKey, request.luna.cachedResponse, 'routes');
+                cache.set(cacheKey, request.luna.cachedResponse, 'routes');
             }
         });
     }

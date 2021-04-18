@@ -1,4 +1,3 @@
-import {loadFromCache, writeToCache} from "../cache/cache";
 import {renderToString} from "@popeindustries/lit-html-server";
 import {paramCase} from "param-case";
 
@@ -23,7 +22,9 @@ const getComponentCacheKey = (component, attributes = {}) => {
 const renderComponent = async ({component, attributes = {}, group = 'components', request, response}) => {
     attributes["ssr"] = true;
 
-    const cachedValue = await loadFromCache(getComponentCacheKey(component, attributes), group);
+    const cache = luna.get(luna.services.cache);
+
+    const cachedValue = await cache.get(getComponentCacheKey(component, attributes), group);
     if (cachedValue) {
         return cachedValue;
     }
@@ -70,7 +71,7 @@ const renderComponent = async ({component, attributes = {}, group = 'components'
     const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
 
     if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
-        await writeToCache(getComponentCacheKey(component, attributes), {markup, element, dependencies}, group);
+        await cache.set(getComponentCacheKey(component, attributes), {markup, element, dependencies}, group);
     }
 
 

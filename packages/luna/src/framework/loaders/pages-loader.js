@@ -8,7 +8,6 @@ import baseLayoutFactory from "../../client/layouts/base.js";
 import {loadManifest, loadSettings} from '../config.js';
 import {renderComponent} from "../engine/element-renderer";
 import {loadStaticProperties} from "./component-loader";
-import {loadFromCache, writeToCache} from "../cache/cache";
 import {parseMiddleware} from "../http/middleware";
 
 /**
@@ -62,12 +61,14 @@ const loadPageModule = async ({file}) => {
  * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
  */
 const loadAnonymousPage = async ({module, route = ''}) => {
-    let markup = await loadFromCache(route, 'pages');
+    const cache = luna.get(luna.services.cache);
+
+    let markup = await cache.get(route, 'pages');
     const {page, layout} = module;
 
     if (!markup) {
         markup = await renderToString(page());
-        await writeToCache(route, markup, 'pages');
+        await cache.set(route, markup, 'pages');
     }
 
     return {

@@ -9,8 +9,7 @@ let settings = false;
  * Removes the trailing slash from the domain and from the context.
  * Adds a slash to the beginning of the context path.
  *
- * @param domain string
- * @param context string
+ * @param settings {{ domain: string, context: string }}
  *
  * @returns {{domain: *, context: string}}
  */
