@@ -5,11 +5,10 @@ import bodyParser from "body-parser";
 import {routes} from "./http/router/routes.js";
 import {getAvailableComponents, registerAvailableComponents} from "./loaders/component-loader.js";
 import {callHook} from "./hooks";
-import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {getSettings} from "./config";
-import {initializeLuna} from "./luna";
+import {initializeLuna, prepareLuna} from "./luna";
 import {cacheMiddleware} from "./http/middleware/cache-middleware";
 
 let app;
@@ -19,15 +18,12 @@ let port;
 let connections = [];
 
 const prepareServer = async () => {
-    if (!(await initializeLuna())) {
+    if (!(await prepareLuna())) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");
         return;
     }
 
-    // Load and register all available hooks.
-    await loadHooks();
-
-    global.luna = (await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna }))?.luna ?? global.luna;
+    await initializeLuna();
 
     const settings = getSettings();
 

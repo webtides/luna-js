@@ -1,7 +1,6 @@
 import "@webtides/luna-js/lib/framework/bootstrap";
-import {clearCache} from "@webtides/luna-js/lib/framework/cache/cache";
 import { restartServer } from "@webtides/luna-js/lib/framework";
-import { initializeLuna } from "@webtides/luna-js/lib/framework/luna";
+import { prepareLuna } from "@webtides/luna-js/lib/framework/luna";
 
 import {checkRequirements} from "./tasks/prepare";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
@@ -27,15 +26,14 @@ const execute = async (argv) => {
         return;
     }
 
-    await initializeLuna();
+    await prepareLuna();
 
     if (argv.dev) {
         console.log("Starting luna in development mode.");
 
         await startLivereloadServer();
-
-        startApplicationDevelopmentBuild(async () => {
-            clearCache();
+        await startApplicationDevelopmentBuild(async () => {
+            luna.get(luna.services.cache).clear();
 
             await startLunaJS();
             await sendReloadMessage();
