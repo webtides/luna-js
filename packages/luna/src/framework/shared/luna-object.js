@@ -1,8 +1,30 @@
-export default (config) => ({
+export default class LunaBase {
+    constructor(config) {
+        this.config = config;
+    }
+
+    asset(path) {
+        if (path.indexOf("/") !== 0) {
+            path = "/" + path;
+        }
+
+        return `${this.config.assets.domain || ""}${this.config.assets.context}${path}`;
+    }
+
+    api(path) {
+        if (path.indexOf("/") !== 0) {
+            path = "/" + path;
+        }
+
+        return `${this.config.api.domain || ""}${this.config.api.context}${path}`;
+    }
+}
+
+const legacyObject = (config) => (new class {
     /**
      * The serializable configuration luna-js uses.
      */
-    config: config,
+    config = config;
 
     /**
      * Applies the configured asset path to this resource.
@@ -12,14 +34,13 @@ export default (config) => ({
      *
      * @returns {string}
      */
-    asset: function(path) {
+    asset(path) {
         if (path.indexOf("/") !== 0) {
             path = "/" + path;
         }
 
         return `${config.assets.domain || ""}${config.assets.context}${path}`;
-    },
-
+    }
 
     /**
      * Applies the configured api path to this resource.
@@ -29,7 +50,7 @@ export default (config) => ({
      *
      * @returns {string}
      */
-    api: function(path) {
+    api(path) {
         if (path.indexOf("/") !== 0) {
             path = "/" + path;
         }

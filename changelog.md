@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased] Luna
+
+## Added
+ - Really simple dependency injection container
+ - The ability to override the default cache provider (#47)
+
 ## [Unreleased] CLI
 
 ## Changed

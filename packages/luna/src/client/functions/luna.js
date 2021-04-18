@@ -1,5 +1,5 @@
-import lunaObject from "../../framework/shared/luna-object";
+import LunaBase from "../../framework/shared/luna-object";
 
 (function() {
-    window.luna = lunaObject(window.lunaConfig);
+    window.luna = new LunaBase(window.lunaConfig);
 })();
