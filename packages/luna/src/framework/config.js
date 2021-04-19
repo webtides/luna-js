@@ -120,6 +120,20 @@ const loadSettings = async () => {
  */
 const getSettings = () => settings;
 
+const getSetting = (key, defaultValue = false) => {
+    const parts = key.split('.');
+
+    let setting = getSettings();
+    for (const part of parts) {
+        if (setting[part]) {
+            setting = setting[part];
+        } else {
+            return defaultValue;
+        }
+    }
+    return setting;
+};
+
 /**
  * Takes the fields from the settings object that can be
  * serialized and shared between server and client.
@@ -146,4 +160,4 @@ const getSerializableConfig = () => {
     }
 };
 
-export { getPathToConfigFile, getSettings, loadSettings, loadManifest, getSerializableConfig };
+export { getPathToConfigFile, getSettings, getSetting, loadSettings, loadManifest, getSerializableConfig };

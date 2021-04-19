@@ -8,7 +8,10 @@ import LunaCache from "./luna-cache";
  * `.cache` directory. Does not have any kind of automatic invalidation.
  */
 export default class FileCache extends LunaCache {
-    cacheDirectory = '.storage/cache';
+    constructor() {
+        super();
+        this.cacheDirectory = luna.setting('cache.file.directory', '.storage/cache');
+    }
 
     hash(data) {
         return crypto.createHash('sha1').update(data).digest('hex');
