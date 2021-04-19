@@ -1,4 +1,4 @@
-export default class DiContainer {
+export default class ServiceContainer {
     _services = { };
 
     get(name) {
