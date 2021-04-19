@@ -1,13 +1,13 @@
-import {getSerializableConfig, loadSettings} from "./config";
+import {getSerializableConfig, getSetting, loadSettings} from "./config";
 import LunaBase from "./shared/luna-object";
 import {loadHooks} from "./loaders/hooks-loader";
 import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 import MemoryCache from "./cache/memory-cache";
-import DiContainer from "./engine/di/di-container";
+import ServiceContainer from "./engine/services/service-container";
 
 /**
- * The luna base class. Also provides a simple dependency injection
+ * The luna base class. Also provides a simple service
  * container.
  */
 class Luna extends LunaBase {
@@ -15,24 +15,28 @@ class Luna extends LunaBase {
         cache: 'cache'
     };
 
-    dependencyInjectionContainer = new DiContainer();
+    serviceContainer = new ServiceContainer();
 
-    dependencyInjectionDefaults = {
+    serviceDefaults = {
         [this.services.cache]: MemoryCache
     };
 
     initialize() {
-        Object.keys(this.dependencyInjectionDefaults).map(name => {
-            this.set(name, new this.dependencyInjectionDefaults[name]());
+        Object.keys(this.serviceDefaults).map(name => {
+            this.set(name, new this.serviceDefaults[name]());
         });
     }
 
+    setting(key, defaultValue = false) {
+        return getSetting(key, defaultValue);
+    }
+
     get(name) {
-        return this.dependencyInjectionContainer.get(name);
+        return this.serviceContainer.get(name);
     }
 
     set(name, implementation) {
-        this.dependencyInjectionContainer.set(name, implementation);
+        this.serviceContainer.set(name, implementation);
     }
 }
 
