@@ -127,8 +127,8 @@ describe("Luna routes test", function() {
             const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache").default;
             class TestCache extends MemoryCache {
                 async get(key, group = 'default', defaultValue = false) {
-                    await super.get(key, group, defaultValue);
                     console.log('Cache hit', { group, key });
+                    return super.get(key, group, defaultValue);
                 }
             }
 
@@ -143,9 +143,11 @@ describe("Luna routes test", function() {
                 }
             };
 
-            await chai.request(`http://localhost:3010`).get('/cache').send();
-            await chai.request(`http://localhost:3010`).get('/cache').send();
+            const response = await chai.request(`http://localhost:3010`).get('/cache').send();
+            const secondResponse = await chai.request(`http://localhost:3010`).get('/cache').send();
 
+            chai.expect(response.statusCode).to.be.equal(200);
+            chai.expect(secondResponse.statusCode).to.be.equal(200);
             chai.expect(count).to.equal(1);
         });
     })
