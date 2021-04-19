@@ -123,6 +123,17 @@ describe("Luna routes test", function() {
     });
 
     describe("Route cache", function() {
+        before(() => {
+            const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache");
+
+            luna.set(luna.services.cache, new class extends MemoryCache {
+                async get(key, group = 'default', defaultValue = false) {
+                    await super.get(key, group, defaultValue);
+                    console.log('Cache hit', { group, key });
+                }
+            })
+        });
+
         it('caches the route on the second request', async function() {
             let count = 0;
             console.log = (text, data) => {
