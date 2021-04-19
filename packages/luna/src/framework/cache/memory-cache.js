@@ -18,7 +18,6 @@ export default class MemoryCache extends LunaCache {
 
     async get(key, group = 'default', defaultValue = false) {
         if (this.cache[group] && this.cache[group][key]) {
-            console.log("Cache hit", { key, group });
             return this.cache[group][key];
         }
 
