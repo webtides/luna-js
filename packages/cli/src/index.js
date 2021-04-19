@@ -7,6 +7,7 @@ import {buildComponentsForApplication, startApplicationDevelopmentBuild} from ".
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
+import ServiceDefinitions from "@webtides/luna-js/lib/framework/services";
 
 let moonJSStarting = false;
 
@@ -33,8 +34,7 @@ const execute = async (argv) => {
 
         await startLivereloadServer();
         await startApplicationDevelopmentBuild(async () => {
-            luna.get(luna.services.cache).clear();
-
+            luna.get(ServiceDefinitions.Cache).clear();
             await startLunaJS();
             await sendReloadMessage();
         });

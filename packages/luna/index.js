@@ -3,6 +3,7 @@ import LunaMarkdownElement from "./src/client/elements/luna-markdown-element";
 import { apiRequest } from "./src/client/functions/network";
 import {BaseElement} from "@webtides/element-js/src/BaseElement";
 import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
+import ServiceDefinitions from "./src/framework/services";
 
 export {
     LunaElement,
@@ -19,4 +20,6 @@ export {
     unsafeHTML,
     guard,
     until,
+
+    ServiceDefinitions
 }

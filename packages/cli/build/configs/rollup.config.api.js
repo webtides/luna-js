@@ -6,8 +6,6 @@ const json = require('@rollup/plugin-json');
 const del = require("rollup-plugin-delete");
 
 const { getSettings } = require('@webtides/luna-js/lib/framework/config');
-
-
 const settings = getSettings();
 
 const outputDirectory = settings.export?.api?.output?.directory ?? settings.export.output;

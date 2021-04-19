@@ -9,6 +9,7 @@ import {loadManifest, loadSettings} from '../config.js';
 import {renderComponent} from "../engine/element-renderer";
 import {loadStaticProperties} from "./component-loader";
 import {parseMiddleware} from "../http/middleware";
+import ServiceDefinitions from "../services";
 
 /**
  * Takes a page and a layout factory and wraps the pages
@@ -61,7 +62,7 @@ const loadPageModule = async ({file}) => {
  * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
  */
 const loadAnonymousPage = async ({module, route = ''}) => {
-    const cache = luna.get(luna.services.cache);
+    const cache = luna.get(ServiceDefinitions.Cache);
 
     let markup = await cache.get(route, 'pages');
     const {page, layout} = module;
