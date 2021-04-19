@@ -120,7 +120,7 @@ const loadSettings = async () => {
  */
 const getSettings = () => settings;
 
-const getSetting = (key, defaultValue = false) => {
+const getConfigValue = (key, defaultValue = false) => {
     const parts = key.split('.');
 
     let setting = getSettings();
@@ -160,4 +160,4 @@ const getSerializableConfig = () => {
     }
 };
 
-export { getPathToConfigFile, getSettings, getSetting, loadSettings, loadManifest, getSerializableConfig };
+export { getPathToConfigFile, getSettings, getConfigValue, loadSettings, loadManifest, getSerializableConfig };

@@ -1,4 +1,4 @@
-import {getSerializableConfig, getSetting, loadSettings} from "./config";
+import {getSerializableConfig, getConfigValue, loadSettings} from "./config";
 import LunaBase from "./shared/luna-object";
 import {loadHooks} from "./loaders/hooks-loader";
 import {callHook} from "./hooks";
@@ -27,8 +27,8 @@ class Luna extends LunaBase {
         });
     }
 
-    setting(key, defaultValue = false) {
-        return getSetting(key, defaultValue);
+    config(key, defaultValue = false) {
+        return getConfigValue(key, defaultValue);
     }
 
     get(name) {

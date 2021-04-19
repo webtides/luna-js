@@ -10,7 +10,7 @@ import LunaCache from "./luna-cache";
 export default class FileCache extends LunaCache {
     constructor() {
         super();
-        this.cacheDirectory = luna.setting('cache.file.directory', '.storage/cache');
+        this.cacheDirectory = luna.config('cache.file.directory', '.storage/cache');
     }
 
     hash(data) {
