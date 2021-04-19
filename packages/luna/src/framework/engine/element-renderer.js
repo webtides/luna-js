@@ -1,5 +1,6 @@
 import {renderToString} from "@popeindustries/lit-html-server";
 import {paramCase} from "param-case";
+import ServiceDefinitions from "../services";
 
 const getComponentCacheKey = (component, attributes = {}) => {
     return `${component.element.name}.${JSON.stringify(attributes)};`
@@ -22,7 +23,7 @@ const getComponentCacheKey = (component, attributes = {}) => {
 const renderComponent = async ({component, attributes = {}, group = 'components', request, response}) => {
     attributes["ssr"] = true;
 
-    const cache = luna.get(luna.services.cache);
+    const cache = luna.get(ServiceDefinitions.Cache);
 
     const cachedValue = await cache.get(getComponentCacheKey(component, attributes), group);
     if (cachedValue) {

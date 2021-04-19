@@ -1,24 +1,21 @@
-import {getSerializableConfig, getConfigValue, loadSettings} from "./config";
-import LunaBase from "./shared/luna-object";
+import {getSerializableConfig, getConfigValue, loadSettings, getSettings} from "./config";
+import LunaBase from "./shared/luna-base";
 import {loadHooks} from "./loaders/hooks-loader";
 import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 import MemoryCache from "./cache/memory-cache";
-import ServiceContainer from "./engine/services/service-container";
+import ServiceContainer from "./services/service-container";
+import ServiceDefinitions from "./services";
 
 /**
  * The luna base class. Also provides a simple service
  * container.
  */
-class Luna extends LunaBase {
-    services = {
-        cache: 'cache'
-    };
-
+class LunaContainer extends LunaBase {
     serviceContainer = new ServiceContainer();
 
     serviceDefaults = {
-        [this.services.cache]: MemoryCache
+        [ServiceDefinitions.Cache]: MemoryCache
     };
 
     initialize() {
@@ -27,7 +24,11 @@ class Luna extends LunaBase {
         });
     }
 
-    config(key, defaultValue = false) {
+    config(key = undefined, defaultValue = false) {
+        if (typeof key === 'undefined') {
+            return getSettings();
+        }
+
         return getConfigValue(key, defaultValue);
     }
 
@@ -68,7 +69,7 @@ const prepareLuna = async () => {
     const config = getSerializableConfig();
     initializeLunaObject(config);
 
-    luna.initialize();
+    Luna.initialize();
 
     return true;
 };
@@ -81,7 +82,7 @@ const prepareLuna = async () => {
  * @param config
  */
 const initializeLunaObject = (config) => {
-    global.luna = new Luna(config);
+    global.Luna = new LunaContainer(config);
 };
 
 export { prepareLuna, initializeLuna };

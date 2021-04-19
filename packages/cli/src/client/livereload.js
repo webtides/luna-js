@@ -2,7 +2,7 @@
  * The luna-js livereload development script.
  */
 (function() {
-    const { port } = window.luna.config;
+    const { port } = window.luna.config();
     const livereloadPort = port + 1;
 
     const socket = new WebSocket(`ws://localhost:${livereloadPort}`);
