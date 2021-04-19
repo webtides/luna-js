@@ -124,7 +124,7 @@ describe("Luna routes test", function() {
 
     describe("Route cache", function() {
         before(() => {
-            const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache");
+            const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache").default;
             class TestCache extends MemoryCache {
                 async get(key, group = 'default', defaultValue = false) {
                     await super.get(key, group, defaultValue);
