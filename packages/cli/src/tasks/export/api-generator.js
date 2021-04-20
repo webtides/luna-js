@@ -4,7 +4,7 @@ import fs from "fs";
 import {loadManifest, loadSettings} from "@webtides/luna-js/lib/framework/config";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
-import {registerAvailableComponents} from "@webtides/luna-js/lib/framework/loaders/component-loader";
+import {ServiceDefinitions} from "@webtides/luna-js/lib/framework/services";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const settings = await loadSettings();
@@ -87,7 +87,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
 
         const outputDirectory = settings.export.api?.output?.directory ?? settings.export.output;
 
-        await registerAvailableComponents();
+        await luna.get(ServiceDefinitions.ComponentLoader).registerAvailableComponents();
         await generateStaticSite({
             outputDirectory
         });

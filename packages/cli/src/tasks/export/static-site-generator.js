@@ -1,7 +1,7 @@
-import {loadPages} from "@webtides/luna-js/lib/framework/loaders/pages-loader";
 import fetch from "node-fetch";
 import {getSettings} from "@webtides/luna-js/lib/framework/config";
 import {startServer, stopServer} from "@webtides/luna-js/lib/framework";
+import {ServiceDefinitions} from "@webtides/luna-js/lib/framework/services";
 
 import fs from "fs";
 import path from "path";
@@ -29,7 +29,7 @@ const getStaticSiteEntryPoints = async () => {
             .map(route => normalizeRoute(route));
     }
 
-    const {pages} = await loadPages();
+    const {pages} = await luna.get(ServiceDefinitions.PagesLoader).loadPages();
     return pages
         .filter(page => !page.fallback)
         .map(page => normalizeRoute(page.route));
