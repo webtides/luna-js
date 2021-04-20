@@ -3,13 +3,13 @@ import './bootstrap.js';
 import express from 'express';
 import bodyParser from "body-parser";
 import {routes} from "./http/router/routes.js";
-import {getAvailableComponents, registerAvailableComponents} from "./loaders/component-loader.js";
 import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 import {registerMiddleware} from "./http/middleware";
 import {getSettings} from "./config";
 import {initializeLuna, prepareLuna} from "./luna";
 import {cacheMiddleware} from "./http/middleware/cache-middleware";
+import ServiceDefinitions from "./services";
 
 let app;
 let server;
@@ -18,6 +18,8 @@ let port;
 let connections = [];
 
 const prepareServer = async () => {
+    const componentLoader = ServiceContainer.get(ServiceDefinitions.ComponentLoader);
+
     if (!(await prepareLuna())) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");
         return;
@@ -38,10 +40,10 @@ const prepareServer = async () => {
 
     port = settings.port;
 
-    await registerAvailableComponents();
+    await componentLoader.registerAvailableComponents();
 
     await callHook(HOOKS.COMPONENTS_LOADED, {
-        components: getAvailableComponents()
+        components: componentLoader.getAvailableComponents()
     });
 
     await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {

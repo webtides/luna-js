@@ -1,6 +1,4 @@
-import {loadPages, generatePageMarkup} from "../../loaders/pages-loader.js";
-import ssr from "../../engine/document-renderer.js";
-import { loadApis} from "../../loaders/api-loader";
+import ServiceDefinitions from "../../services";
 
 let currentRouter;
 
@@ -36,13 +34,16 @@ const registerRoute = ({ router, route, middleware = [] }, { get = null, post = 
 const routes = async ({router}) => {
     currentRouter = router;
 
-    const {pages, fallbackPage} = await loadPages();
-    const {apis, fallbackApi} = await loadApis();
+    const pagesLoader = luna.get(ServiceDefinitions.PagesLoader);
+    const documentRenderer = luna.get(ServiceDefinitions.DocumentRenderer);
+
+    const {pages, fallbackPage} = await pagesLoader.loadPages();
+    const {apis, fallbackApi} = await luna.get(ServiceDefinitions.ApiLoader).loadApis();
 
     const registerPageRoute = async ({module, route}) => {
         const callback = async ({ request, response }) => {
-            const {html} = await generatePageMarkup({route, module, request, response});
-            const result = await ssr(html, {request, response});
+            const {html} = await pagesLoader.generatePageMarkup({route, module, request, response});
+            const result = await documentRenderer.render(html, {request, response});
 
             if (request.luna?.isCacheable) {
                 request.luna.cachedResponse = result;
