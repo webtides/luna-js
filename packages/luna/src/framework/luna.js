@@ -1,11 +1,16 @@
 import {getSerializableConfig, getConfigValue, loadSettings, getSettings} from "./config";
 import LunaBase from "./shared/luna-base";
-import {loadHooks} from "./loaders/hooks-loader";
+import HooksLoader from "./loaders/hooks-loader";
 import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 import MemoryCache from "./cache/memory-cache";
 import ServiceContainer from "./services/service-container";
 import ServiceDefinitions from "./services";
+import ApiLoader from "./loaders/api-loader";
+import ComponentLoader from "./loaders/component-loader";
+import PagesLoader from "./loaders/pages-loader";
+import DocumentRenderer from "./engine/document-renderer";
+import ElementRenderer from "./engine/element-renderer";
 
 /**
  * The luna base class. Also provides a simple service
@@ -15,13 +20,24 @@ class LunaContainer extends LunaBase {
     serviceContainer = new ServiceContainer();
 
     serviceDefaults = {
-        [ServiceDefinitions.Cache]: MemoryCache
+        [ServiceDefinitions.Cache]: MemoryCache,
+
+        [ServiceDefinitions.ApiLoader]: ApiLoader,
+        [ServiceDefinitions.ComponentLoader]: ComponentLoader,
+        [ServiceDefinitions.HooksLoader]: HooksLoader,
+        [ServiceDefinitions.PagesLoader]: PagesLoader,
+
+        [ServiceDefinitions.ElementRenderer]: ElementRenderer,
+        [ServiceDefinitions.DocumentRenderer]: DocumentRenderer
     };
 
     initialize() {
         Object.keys(this.serviceDefaults).map(name => {
             this.set(name, new this.serviceDefaults[name]());
         });
+
+        // Make the luna service container available globally.
+        global.ServiceContainer = this.serviceContainer;
     }
 
     config(key = undefined, defaultValue = false) {
@@ -50,7 +66,7 @@ class LunaContainer extends LunaBase {
  */
 const initializeLuna = async () => {
     // Load and register all available hooks.
-    await loadHooks();
+    await luna.get(ServiceDefinitions.HooksLoader).loadHooks();
     await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
 };
 
@@ -66,10 +82,12 @@ const prepareLuna = async () => {
         return false;
     }
 
-    const config = getSerializableConfig();
-    initializeLunaObject(config);
-
-    Luna.initialize();
+    // Only initialize luna once.
+    if (!global.luna) {
+        const config = getSerializableConfig();
+        initializeLunaObject(config);
+        luna.initialize();
+    }
 
     return true;
 };
@@ -82,7 +100,7 @@ const prepareLuna = async () => {
  * @param config
  */
 const initializeLunaObject = (config) => {
-    global.Luna = new LunaContainer(config);
+    global.luna = new LunaContainer(config);
 };
 
 export { prepareLuna, initializeLuna };

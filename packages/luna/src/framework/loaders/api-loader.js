@@ -1,55 +1,53 @@
-import {loadManifest, loadSettings} from "../config";
+import {getSettings, loadManifest} from "../config";
 import path from "path";
-import {loadStaticProperties} from "./component-loader";
 import {parseMiddleware} from "../http/middleware";
 
-/**
- * Loads the api module and normalizes it so that it can be used
- * for registering api routes.
- *
- * Extracts the middleware and module.
- *
- * @param file string   The path to the api that should be loaded.
- *
- * @returns {Promise<{module: *, middleware: *}>}
- */
-const loadApiModule = async ({file}) => {
-    const module = await import(path.resolve(file));
+export default class ApiLoader {
+    /**
+     * Loads the api module and normalizes it so that it can be used
+     * for registering api routes.
+     *
+     * Extracts the middleware and module.
+     *
+     * @param file string   The path to the api that should be loaded.
+     *
+     * @returns {Promise<{module: *, middleware: *}>}
+     */
+    async loadApiModule({file}) {
+        const module = await import(path.resolve(file));
 
-    return {
-        module,
-        middleware: await parseMiddleware({ middleware: module.middleware })
-    }
-};
-
-/**
- * Loads all available api routes from the generated manifest.
- *
- * @returns {Promise<{ apis: *[], fallback: *}>}
- */
-const loadApis = async () => {
-    const settings = await loadSettings();
-
-    const manifest = await loadManifest();
-    const basePath = settings._generated.applicationDirectory;
-
-    const apis = [];
-    let fallback = false;
-
-    for (const api of manifest.apis) {
-        const { route, file } = api;
-        const module = await loadApiModule({ file: path.join(basePath, file) });
-
-        if (api.fallback) {
-            fallback = { module, route };
-        } else {
-            apis.push({ module, route })
+        return {
+            module,
+            middleware: await parseMiddleware({ middleware: module.middleware })
         }
     }
 
-    return {apis, fallbackApi: fallback};
-};
 
-export {
-    loadApis
+    /**
+     * Loads all available api routes from the generated manifest.
+     *
+     * @returns {Promise<{ apis: *[], fallback: *}>}
+     */
+    async loadApis() {
+        const settings = getSettings();
+
+        const manifest = await loadManifest();
+        const basePath = settings._generated.applicationDirectory;
+
+        const apis = [];
+        let fallback = false;
+
+        for (const api of manifest.apis) {
+            const { route, file } = api;
+            const module = await this.loadApiModule({ file: path.join(basePath, file) });
+
+            if (api.fallback) {
+                fallback = { module, route };
+            } else {
+                apis.push({ module, route })
+            }
+        }
+
+        return {apis, fallbackApi: fallback};
+    }
 }
