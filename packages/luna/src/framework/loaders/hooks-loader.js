@@ -1,7 +1,11 @@
 import {loadManifest, loadSettings} from "../config";
 import {registerHook} from "../hooks";
 import path from "path";
+import {LunaService} from "../../decorators/service";
 
+@LunaService({
+    name: 'HooksLoader'
+})
 export default class HooksLoader {
     /**
      * Loads all available hooks from the generated manifest and registers

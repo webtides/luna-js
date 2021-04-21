@@ -18,7 +18,7 @@ let port;
 let connections = [];
 
 const prepareServer = async () => {
-    const componentLoader = ServiceContainer.get(ServiceDefinitions.ComponentLoader);
+    const componentLoader = luna.get(ServiceDefinitions.ComponentLoader);
 
     if (!(await prepareLuna())) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");

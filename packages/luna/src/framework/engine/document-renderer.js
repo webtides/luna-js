@@ -3,14 +3,23 @@ import {paramCase} from "param-case";
 
 import { JSDOM } from "jsdom";
 import ServiceDefinitions from "../services";
+import {Inject, LunaService} from "../../decorators/service";
+import ComponentLoader from "../loaders/component-loader";
+import ElementRenderer from "./element-renderer";
 
+@LunaService({
+    name: 'DocumentRenderer'
+})
 export default class DocumentRenderer {
+    @Inject(ComponentLoader) componentLoader;
+    @Inject(ElementRenderer) elementRenderer;
+
     async addDependenciesToUpgradedElements(dependencies, upgradedElements) {
         dependencies = [ dependencies ].flat();
 
         for (const dependency of dependencies) {
             if (!upgradedElements[dependency]) {
-                const component = await luna.get(ServiceDefinitions.ComponentLoader).loadSingleComponentByTagName(dependency);
+                const component = await this.componentLoader.loadSingleComponentByTagName(dependency);
 
                 if (!component) {
                     continue;
@@ -23,7 +32,7 @@ export default class DocumentRenderer {
                     children.push(...element.dependencies());
                 }
 
-                await addDependenciesToUpgradedElements(children, upgradedElements);
+                await this.addDependenciesToUpgradedElements(children, upgradedElements);
 
                 upgradedElements[dependency] = component;
             }
@@ -42,7 +51,7 @@ export default class DocumentRenderer {
      */
     async renderNodeAsCustomElement($node, upgradedElements, {request, response}) {
         const tag = $node.tagName.toLowerCase();
-        const component = await luna.get(ServiceDefinitions.ComponentLoader).loadSingleComponentByTagName(tag);
+        const component = await this.componentLoader.loadSingleComponentByTagName(tag);
 
         if (!component) {
             return false;
@@ -64,9 +73,7 @@ export default class DocumentRenderer {
             }
         }
 
-        const elementRenderer = luna.get(ServiceDefinitions.ElementRenderer);
-
-        const {markup, element, dependencies} = await elementRenderer.renderComponent({component, attributes, request, response});
+        const {markup, element, dependencies} = await this.elementRenderer.renderComponent({component, attributes, request, response});
 
         $node.innerHTML = markup;
 

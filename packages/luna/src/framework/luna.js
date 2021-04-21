@@ -5,39 +5,41 @@ import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 import MemoryCache from "./cache/memory-cache";
 import ServiceContainer from "./services/service-container";
-import ServiceDefinitions from "./services";
 import ApiLoader from "./loaders/api-loader";
 import ComponentLoader from "./loaders/component-loader";
 import PagesLoader from "./loaders/pages-loader";
 import DocumentRenderer from "./engine/document-renderer";
 import ElementRenderer from "./engine/element-renderer";
+import LunaCache from "./cache/luna-cache";
 
 /**
  * The luna base class. Also provides a simple service
  * container.
  */
 class LunaContainer extends LunaBase {
-    serviceContainer = new ServiceContainer();
+    serviceDefaults = [
+        /* CACHE */
+        LunaCache,
+        MemoryCache,
 
-    serviceDefaults = {
-        [ServiceDefinitions.Cache]: MemoryCache,
+        /* LOADERS */
+        ApiLoader,
+        ComponentLoader,
+        HooksLoader,
 
-        [ServiceDefinitions.ApiLoader]: ApiLoader,
-        [ServiceDefinitions.ComponentLoader]: ComponentLoader,
-        [ServiceDefinitions.HooksLoader]: HooksLoader,
-        [ServiceDefinitions.PagesLoader]: PagesLoader,
+        /* RENDERERS */
+        ElementRenderer,
+        DocumentRenderer,
 
-        [ServiceDefinitions.ElementRenderer]: ElementRenderer,
-        [ServiceDefinitions.DocumentRenderer]: DocumentRenderer
-    };
+        /* SPECIAL (needs refactoring) */
+        PagesLoader,
+    ];
 
     initialize() {
         Object.keys(this.serviceDefaults).map(name => {
-            this.set(name, new this.serviceDefaults[name]());
-        });
 
-        // Make the luna service container available globally.
-        global.ServiceContainer = this.serviceContainer;
+            this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);
+        });
     }
 
     config(key = undefined, defaultValue = false) {
@@ -49,11 +51,11 @@ class LunaContainer extends LunaBase {
     }
 
     get(name) {
-        return this.serviceContainer.get(name);
+        return ServiceContainer.get(name);
     }
 
     set(name, implementation) {
-        this.serviceContainer.set(name, implementation);
+        ServiceContainer.set(name, implementation);
     }
 }
 
@@ -66,7 +68,7 @@ class LunaContainer extends LunaBase {
  */
 const initializeLuna = async () => {
     // Load and register all available hooks.
-    await luna.get(ServiceDefinitions.HooksLoader).loadHooks();
+    await ServiceContainer.get(HooksLoader).loadHooks();
     await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
 };
 

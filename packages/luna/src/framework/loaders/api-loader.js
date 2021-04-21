@@ -1,7 +1,11 @@
 import {getSettings, loadManifest} from "../config";
 import path from "path";
 import {parseMiddleware} from "../http/middleware";
+import {LunaService} from "../../decorators/service";
 
+@LunaService({
+    name: 'ApiLoader'
+})
 export default class ApiLoader {
     /**
      * Loads the api module and normalizes it so that it can be used
