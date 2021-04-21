@@ -3,11 +3,16 @@ import LunaMarkdownElement from "./src/client/elements/luna-markdown-element";
 import { apiRequest } from "./src/client/functions/network";
 import {BaseElement} from "@webtides/element-js/src/BaseElement";
 import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
-import ServiceDefinitions from "./src/framework/services";
+import { HideFromClient } from "./src/decorators/visibility";
+import { LunaService, Inject } from "./src/decorators/service";
 
 export {
     LunaElement,
     LunaMarkdownElement,
+
+    LunaService,
+    Inject,
+    HideFromClient,
 
     // element-js
     BaseElement,
@@ -20,6 +25,4 @@ export {
     unsafeHTML,
     guard,
     until,
-
-    ServiceDefinitions
 }

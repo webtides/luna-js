@@ -15,6 +15,11 @@ const LunaService = ({name, as }) => {
 
 const Inject = (service) => {
     return (target, name, descriptor) => {
+        if (process.env.CLIENT_BUNDLE) {
+            descriptor.initializer = () => null;
+            return;
+        }
+
         delete descriptor.writable;
         delete descriptor.initializer;
 
