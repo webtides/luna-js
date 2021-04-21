@@ -5,6 +5,7 @@ const { terser } = require("rollup-plugin-terser");
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
+const replace = require("@rollup/plugin-replace");
 
 const { getSettings } = require('@webtides/luna-js/lib/framework/config');
 
@@ -60,6 +61,7 @@ const componentBundles = settings.components.bundles
                 format: 'es',
             },
             plugins: [
+                require("../plugins/rollup-plugin-strip-server-code")(),
                 require("../plugins/rollup-plugin-switch-renderer")({ context: 'client' }),
                 require("../plugins/rollup-plugin-client-manifest")({
                     config: bundle
@@ -71,11 +73,13 @@ const componentBundles = settings.components.bundles
                 require("../plugins/rollup-plugin-markdown")(),
                 json(),
                 nodeResolve(),
-                commonjs({requireReturnsDefault: true}),
+                replace({
+                    'process.env.CLIENT_BUNDLE': true
+                }),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                 }),
-                require("../plugins/rollup-plugin-strip-server-code")(),
+                commonjs({requireReturnsDefault: true}),
                 require("../plugins/rollup-plugin-copy")({
                     publicDirectory: settings.publicDirectory,
                     sources: [
