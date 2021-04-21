@@ -7,9 +7,21 @@ import baseLayoutFactory from "../../client/layouts/base.js";
 
 import {loadManifest, loadSettings} from '../config.js';
 import {parseMiddleware} from "../http/middleware";
-import ServiceDefinitions from "../services";
+import {Inject, LunaService} from "../../decorators/service";
+import ComponentLoader from "./component-loader";
+import ElementRenderer from "../engine/element-renderer";
+import LunaCache from "../cache/luna-cache";
 
+@LunaService({
+    name: 'PagesLoader'
+})
 export default class PagesLoader {
+    @Inject(LunaCache) cache;
+    @Inject(ComponentLoader) componentLoader;
+    @Inject(ElementRenderer) elementRenderer;
+
+    constructor() {}
+
     /**
      * Takes a page and a layout factory and wraps the pages
      * with the layout.
@@ -40,7 +52,7 @@ export default class PagesLoader {
         const page = module.default;
 
         if (typeof page?.prototype?.connectedCallback !== "undefined") {
-            page.staticProperties = await luna.get(ServiceDefinitions.ComponentLoader).loadStaticProperties(page);
+            page.staticProperties = await this.componentLoader.loadStaticProperties(page);
         }
 
         return {
@@ -61,14 +73,12 @@ export default class PagesLoader {
      * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
      */
     async loadAnonymousPage({module, route = ''}) {
-        const cache = luna.get(ServiceDefinitions.Cache);
-
-        let markup = await cache.get(route, 'pages');
+        let markup = await this.cache.get(route, 'pages');
         const {page, layout} = module;
 
         if (!markup) {
             markup = await renderToString(page());
-            await cache.set(route, markup, 'pages');
+            await this.cache.set(route, markup, 'pages');
         }
 
         return {
@@ -95,9 +105,7 @@ export default class PagesLoader {
             element: page,
         };
 
-        const elementRenderer = luna.get(ServiceDefinitions.ElementRenderer);
-
-        const result = (await elementRenderer.renderComponent({component, attributes: {}, group: 'pages', request, response}));
+        const result = (await this.elementRenderer.renderComponent({component, attributes: {}, group: 'pages', request, response}));
 
         // Create a stub for the async layout factory to get them in the same
         // format as the anonymous layout factory. Use the element as context.

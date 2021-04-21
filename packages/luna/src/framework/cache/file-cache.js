@@ -2,11 +2,15 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto"
 import LunaCache from "./luna-cache";
+import {LunaService} from "../../decorators/service";
 
 /**
  * A simple file cache implementation. Saves the files in the
  * `.cache` directory. Does not have any kind of automatic invalidation.
  */
+@LunaService({
+    as: LunaCache
+})
 export default class FileCache extends LunaCache {
     constructor() {
         super();

@@ -1,11 +1,11 @@
 export default class ServiceDefinitions {
-    static Cache = 'cache';
+    static Cache = 'Cache';
 
-    static ApiLoader = 'apiLoader';
-    static ComponentLoader = 'componentLoader';
-    static HooksLoader = 'hooksLoader';
-    static PagesLoader = 'pagesLoader';
+    static ApiLoader = 'ApiLoader';
+    static ComponentLoader = 'ComponentLoader';
+    static HooksLoader = 'HooksLoader';
+    static PagesLoader = 'PagesLoader';
 
-    static ElementRenderer = 'elementRenderer';
-    static DocumentRenderer = 'documentRenderer';
+    static ElementRenderer = 'ElementRenderer';
+    static DocumentRenderer = 'DocumentRenderer';
 }
