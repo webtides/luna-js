@@ -2,7 +2,6 @@ import {loadManifest, loadSettings, getSerializableConfig} from "../config";
 import {paramCase} from "param-case";
 
 import { JSDOM } from "jsdom";
-import ServiceDefinitions from "../services";
 import {Inject, LunaService} from "../../decorators/service";
 import ComponentLoader from "../loaders/component-loader";
 import ElementRenderer from "./element-renderer";

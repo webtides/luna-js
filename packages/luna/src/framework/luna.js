@@ -37,7 +37,6 @@ class LunaContainer extends LunaBase {
 
     initialize() {
         Object.keys(this.serviceDefaults).map(name => {
-
             this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);
         });
     }

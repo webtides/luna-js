@@ -1,17 +1,70 @@
-const acorn = require("acorn");
-const walk = require("acorn-walk");
+const parser = require("@babel/parser");
+const traverse = require("@babel/traverse");
 
 module.exports = function () {
+
     return {
         name: 'luna-strip-server-code',
         async transform(code, id) {
             try {
-                const toRemove = [ ];
+                const toRemove = [];
+                const toReplace = [];
 
-                walk.simple(acorn.parse(code, {sourceType: "module", ecmaVersion: "latest"}), {
-                    MethodDefinition(node) {
+                traverse.default(parser.parse(code, {
+                    sourceType: "module",
+                    plugins: [
+                        "decorators-legacy",
+                        "classProperties"
+                    ]
+                }), {
+                    ClassDeclaration(path) {
+                        const { node } = path;
+
+                        if (!node.id) {
+                            return;
+                        }
+
+                        if (node.decorators) {
+                            for (const decorator of node.decorators) {
+                                if (decorator?.expression?.name === 'HideFromClient') {
+                                    toReplace.push({
+                                        from: code.substring(node.decorators[0].start, node.end),
+                                        to: `export default class {}`
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                    },
+                    ClassProperty(path) {
+                        const { node } = path;
+
                         if (!node.key) {
                             return;
+                        }
+
+                        if (node.decorators) {
+                            for (const decorator of node.decorators) {
+                                if (decorator?.expression?.name === 'HideFromClient') {
+                                    toRemove.push(code.substring(node.decorators[0].start, node.end));
+                                    break;
+                                }
+                            }
+                        }
+                    },
+                    ClassMethod(path) {
+                        const { node } = path;
+
+                        if (!node.key) {
+                            return;
+                        }
+
+                        if (node.decorators) {
+                            for (const decorator of node.decorators) {
+                                if (decorator?.expression?.name === 'HideFromClient') {
+                                    toRemove.push(code.substring(node.decorators[0].start, node.end));
+                                }
+                            }
                         }
 
                         switch (node.key.name) {
@@ -20,13 +73,19 @@ module.exports = function () {
                                 toRemove.push(code.substring(node.start, node.end));
                                 break;
                         }
-                    },
-                });
+                    }
+                })
 
                 for (const partToRemove of toRemove) {
                     code = code.split(partToRemove).join("");
                 }
-            } catch (error) { }
+
+                for (const partToReplace of toReplace) {
+                    code = code.split(partToReplace.from).join(partToReplace.to);
+                }
+            } catch (error) {
+                console.error(error);
+            }
 
             return { code };
         },
