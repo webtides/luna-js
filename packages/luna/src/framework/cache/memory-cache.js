@@ -1,10 +1,14 @@
 import LunaCache from "./luna-cache";
+import {LunaService} from "../../decorators/service";
 
 /**
  * A simple memory cache implementation. Saves the cache inside a class property. Not
  * recommended for larger applications.
  * Does not have any kind of automatic invalidation.
  */
+@LunaService({
+    as: LunaCache
+})
 export default class MemoryCache extends LunaCache {
     cache = {};
 

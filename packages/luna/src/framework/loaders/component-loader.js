@@ -1,7 +1,11 @@
 import {loadManifest, loadSettings} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
+import {LunaService} from "../../decorators/service";
 
+@LunaService({
+    name: 'ComponentLoader'
+})
 export default class ComponentLoader {
     allAvailableComponents = {};
 

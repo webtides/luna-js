@@ -1,12 +1,21 @@
 export default class ServiceContainer {
-    _services = { };
+    static _services = {};
 
-    get(id) {
-        return this._services[id] ?? false;
+    static get(id) {
+        if (id.$$luna?.serviceName ?? false) {
+            return ServiceContainer._services[id.$$luna.serviceName] ?? false;
+        }
+
+        return ServiceContainer._services[id] ?? false;
     }
 
-    set(id, instance) {
-        this._services[id] = instance;
+    static set(id, instance) {
+        if (id.$$luna?.serviceName ?? false) {
+            ServiceContainer._services[id.$$luna.serviceName] = instance;
+            return;
+        }
+
+        ServiceContainer._services[id] = instance;
     }
 }
 

@@ -2,6 +2,11 @@
  * The luna cache base class which includes the method stubs and
  * clears the require cache.
  */
+import {LunaService} from "../../decorators/service";
+
+@LunaService({
+    name: 'Cache'
+})
 export default class LunaCache {
     async clear() {
         try {
