@@ -5,7 +5,7 @@
 ### Changed
  - Core services are now class based and injectable (#50)
 
-## Added
+### Added
  - Really simple dependency injection container
  - The ability to override the default cache provider (#47)
  - Decorators for dependency injection (#50)
