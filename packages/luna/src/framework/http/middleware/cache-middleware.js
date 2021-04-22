@@ -1,5 +1,5 @@
 import {getSettings} from "../../config";
-import ServiceDefinitions from "../../services";
+import LunaCache from "../../cache/luna-cache";
 
 /**
  * Looks inside the luna.config.js to determine whether or not the
@@ -38,7 +38,7 @@ const isRequestCacheable = request => {
  */
 const cacheMiddleware = () => async (request, response, next) => {
     if (isRequestCacheable(request)) {
-        const cache = luna.get(ServiceDefinitions.Cache);
+        const cache = luna.get(LunaCache);
 
         const cacheKey = `${request.path}.${JSON.stringify(request.query)}`;
 

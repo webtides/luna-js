@@ -126,7 +126,6 @@ describe("Luna routes test", function() {
     describe("Route cache", function() {
         before(() => {
             const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache").default;
-            const ServiceDefinitions = require("../../../packages/luna/lib/framework/services").default;
 
             class TestCache extends MemoryCache {
                 async get(key, group = 'default', defaultValue = false) {
@@ -135,7 +134,7 @@ describe("Luna routes test", function() {
                 }
             }
 
-            luna.set(ServiceDefinitions.Cache, new TestCache());
+            luna.set('Cache', new TestCache());
         });
 
         it('caches the route on the second request', async function() {

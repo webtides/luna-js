@@ -9,7 +9,7 @@ import {registerMiddleware} from "./http/middleware";
 import {getSettings} from "./config";
 import {initializeLuna, prepareLuna} from "./luna";
 import {cacheMiddleware} from "./http/middleware/cache-middleware";
-import ServiceDefinitions from "./services";
+import ComponentLoader from "./loaders/component-loader";
 
 let app;
 let server;
@@ -18,14 +18,14 @@ let port;
 let connections = [];
 
 const prepareServer = async () => {
-    const componentLoader = luna.get(ServiceDefinitions.ComponentLoader);
-
     if (!(await prepareLuna())) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");
         return;
     }
 
     await initializeLuna();
+
+    const componentLoader = luna.get(ComponentLoader);
 
     const settings = getSettings();
 
