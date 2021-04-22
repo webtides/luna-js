@@ -2,21 +2,25 @@
 
 ## [Unreleased] Luna
 
+### Changed
+ - Core services are now class based and injectable (#50)
+
 ## Added
  - Really simple dependency injection container
  - The ability to override the default cache provider (#47)
+ - Decorators for dependency injection (#50)
 
 ## [Unreleased] CLI
 
-## Changed
+### Changed
  - Static export is now running in chunks for better performance
 
 ## [0.7.2] CLI - 04.04.2021
 
-## Added
+### Added
  - Test for static copy task
 
-## Fixed
+### Fixed
  - Static copy task
 
 ## [0.7.1] - 03.04.2021
