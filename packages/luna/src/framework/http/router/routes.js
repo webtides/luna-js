@@ -1,4 +1,6 @@
-import ServiceDefinitions from "../../services";
+import PagesLoader from "../../loaders/pages-loader";
+import DocumentRenderer from "../../engine/document-renderer";
+import ApiLoader from "../../loaders/api-loader";
 
 let currentRouter;
 
@@ -34,11 +36,11 @@ const registerRoute = ({ router, route, middleware = [] }, { get = null, post = 
 const routes = async ({router}) => {
     currentRouter = router;
 
-    const pagesLoader = luna.get(ServiceDefinitions.PagesLoader);
-    const documentRenderer = luna.get(ServiceDefinitions.DocumentRenderer);
+    const pagesLoader = luna.get(PagesLoader);
+    const documentRenderer = luna.get(DocumentRenderer);
 
     const {pages, fallbackPage} = await pagesLoader.loadPages();
-    const {apis, fallbackApi} = await luna.get(ServiceDefinitions.ApiLoader).loadApis();
+    const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
 
     const registerPageRoute = async ({module, route}) => {
         const callback = async ({ request, response }) => {

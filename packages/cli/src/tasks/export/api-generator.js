@@ -6,7 +6,7 @@ import {loadManifest, loadSettings} from "@webtides/luna-js/lib/framework/config
 import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
-import {ServiceDefinitions} from "@webtides/luna-js/lib/framework/services";
+import ComponentLoader from "@webtides/luna-js/lib/framework/loaders/component-loader";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const settings = await loadSettings();
@@ -92,7 +92,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
     await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
 
     if (withStaticSite) {
-        await luna.get(ServiceDefinitions.ComponentLoader).registerAvailableComponents();
+        await luna.get(ComponentLoader).registerAvailableComponents();
         await generateStaticSite({
             outputDirectory,
             clean: false
