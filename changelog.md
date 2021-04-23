@@ -4,11 +4,15 @@
 
 ### Changed
  - Core services are now class based and injectable (#50)
+ - **BREAKING**: `startServer` is now `startLuna`
+ - **BREAKING**: `stopServer` is now `stopLuna`
+ - **BREAKING**: `prepareLuna` is now exported from `framework/index.js`
 
 ### Added
  - Really simple dependency injection container
  - The ability to override the default cache provider (#47)
  - Decorators for dependency injection (#50)
+ - You can pass an additional `config` object to lunas `startLuna`
 
 ## [Unreleased] CLI
 
