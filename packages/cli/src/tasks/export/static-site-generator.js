@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import {getSettings} from "@webtides/luna-js/lib/framework/config";
-import {startServer, stopServer} from "@webtides/luna-js/lib/framework";
 import PagesLoader from "@webtides/luna-js/lib/framework/loaders/pages-loader";
+import Server from "@webtides/luna-js/lib/framework/http/server";
 
 import fs from "fs";
 import path from "path";
@@ -55,7 +55,7 @@ const generateStaticSite = async ({outputDirectory = false} = {}) => {
 
     const entryChunks = groupEntryPoints(await getStaticSiteEntryPoints());
 
-    await startServer();
+    await luna.get(Server).start();
 
     const url = `http://localhost:${settings.port}`;
 
@@ -105,7 +105,7 @@ const generateStaticSite = async ({outputDirectory = false} = {}) => {
         }));
     }
 
-    await stopServer();
+    await luna.get(Server).stop();
 };
 
 export {

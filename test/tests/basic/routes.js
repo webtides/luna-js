@@ -9,8 +9,8 @@ describe("Luna routes test", function() {
 
         global.originalConsoleLog = console.log;
 
-        const { startServer } = require("../../../packages/luna/lib/framework");
-        await startServer();
+        const { startLuna } = require("../../../packages/luna/lib/framework");
+        await startLuna();
 
         await sleep(600);
 
@@ -18,8 +18,8 @@ describe("Luna routes test", function() {
     });
 
     after(async function() {
-        const { stopServer } = require("../../../packages/luna/lib/framework");
-        await stopServer();
+        const Server = require("../../../packages/luna/lib/framework/http/server");
+        await luna.get('LunaServer').stop();
 
         console.log = global.originalConsoleLog;
     });
