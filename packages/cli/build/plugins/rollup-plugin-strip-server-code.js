@@ -20,22 +20,31 @@ module.exports = function () {
                     ClassDeclaration(path) {
                         const { node } = path;
 
-                        if (!node.id) {
+                        if (!node.id || !node.decorators) {
                             return;
                         }
 
-                        if (node.decorators) {
-                            for (const decorator of node.decorators) {
-                                if (decorator?.expression?.name === 'HideFromClient') {
-                                    toReplace.push({
-                                        from: code.substring(node.decorators[0].start, node.end),
-                                        to: `export default class {}`
-                                    });
-                                    break;
-                                }
+                        let shouldHideFromClient = false;
+                        for (const decorator of node.decorators) {
+                            if (decorator?.expression?.name === 'HideFromClient') {
+                                shouldHideFromClient = true;
+                                break;
                             }
                         }
+
+                        let replaceWith = `export default null`;
+
+                        const classDeclaration = code.substring(node.start, node.id.start);
+                        if (classDeclaration.indexOf('export default') === -1) {
+                            replaceWith = ``
+                        }
+
+                        toReplace.push({
+                            from: code.substring(node.decorators[0].start, node.end),
+                            to: replaceWith
+                        });
                     },
+
                     ClassProperty(path) {
                         const { node } = path;
 
@@ -52,6 +61,7 @@ module.exports = function () {
                             }
                         }
                     },
+
                     ClassMethod(path) {
                         const { node } = path;
 
