@@ -6,18 +6,9 @@ import {initializeLuna, prepareLuna} from "./luna";
 import ComponentLoader from "./loaders/component-loader";
 import Server from "./http/server";
 
-let lunaIsRunning = false;
-
 const startLuna = async ({ config } = {}) => {
-    if (lunaIsRunning) {
-        return;
-    }
-
-    lunaIsRunning = true;
-
     if (!(await prepareLuna({ config }))) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");
-        lunaIsRunning = false;
         return;
     }
 

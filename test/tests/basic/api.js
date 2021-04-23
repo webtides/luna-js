@@ -13,13 +13,14 @@ describe("Luna api test", function() {
         global.originalConsoleLog = console.log;
         await startLuna();
 
+        global.lunaServer = luna.get('LunaServer');
+
         await sleep(600);
     });
 
     after(async function() {
         console.log = global.originalConsoleLog;
-        const Server = require("../../../packages/luna/lib/framework/http/server");
-        await luna.get(Server).stop;
+        await global.lunaServer.stop();
     });
 
     describe("Basic api tests", function() {

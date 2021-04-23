@@ -11,11 +11,9 @@ import LunaCache from "@webtides/luna-js/lib/framework/cache/luna-cache";
 
 let moonJSStarting = false;
 
-const startLunaJS = async () => {
+const restartLunaJS = async () => {
     if (moonJSStarting) return;
     moonJSStarting = true;
-
-    await startLuna();
 
     const server = luna.get('LunaServer');
     await server.restart();
@@ -35,10 +33,12 @@ const execute = async (argv) => {
     if (argv.dev) {
         console.log("Starting luna in development mode.");
 
+        await startLuna();
+
         await startLivereloadServer();
         await startApplicationDevelopmentBuild(async () => {
             luna.get(LunaCache).clear();
-            await startLunaJS();
+            await restartLunaJS();
             await sendReloadMessage();
         });
 
@@ -51,7 +51,7 @@ const execute = async (argv) => {
     }
 
     if (argv.start) {
-        startLunaJS();
+        await startLuna();
         return;
     }
 
