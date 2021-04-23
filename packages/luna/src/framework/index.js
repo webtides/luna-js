@@ -1,10 +1,37 @@
 import './bootstrap.js';
 
+import {getSerializableConfig, loadSettings} from "./config";
 import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
-import {initializeLuna, prepareLuna} from "./luna";
+
 import ComponentLoader from "./loaders/component-loader";
 import Server from "./http/server";
+import LunaContainer from "./luna";
+
+/**
+ * This methods should be called before anything else.
+ * Performs checks for required files and loads the settings.
+ *
+ * @returns {Promise<boolean>}
+ */
+const prepareLuna = async ({ config } = {}) => {
+    // First we load all settings.
+    if (!(await loadSettings({ config }))) {
+        return false;
+    }
+
+    // Only initialize luna once.
+    if (!global.luna) {
+        const config = getSerializableConfig();
+        const luna = new LunaContainer(config);
+
+        luna.prepare();
+
+        global.luna = luna;
+    }
+
+    return true;
+};
 
 const startLuna = async ({ config } = {}) => {
     global.luna = undefined;
@@ -14,7 +41,7 @@ const startLuna = async ({ config } = {}) => {
         return;
     }
 
-    await initializeLuna();
+    await global.luna.initialize();
 
     await callHook(HOOKS.HOOKS_LOADED);
 
@@ -34,4 +61,4 @@ const stopLuna = async () => {
     await server.stop();
 }
 
-export { startLuna, stopLuna };
+export { prepareLuna, startLuna, stopLuna };

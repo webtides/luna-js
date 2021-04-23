@@ -1,4 +1,4 @@
-import {getSerializableConfig, getConfigValue, loadSettings, getSettings} from "./config";
+import {getConfigValue, getSettings} from "./config";
 import LunaBase from "./shared/luna-base";
 import HooksLoader from "./loaders/hooks-loader";
 import {callHook} from "./hooks";
@@ -17,7 +17,7 @@ import Server from "./http/server";
  * The luna base class. Also provides a simple service
  * container.
  */
-class LunaContainer extends LunaBase {
+export default class LunaContainer extends LunaBase {
     serviceDefaults = [
         /* CACHE */
         LunaCache,
@@ -38,10 +38,22 @@ class LunaContainer extends LunaBase {
         Server,
     ];
 
-    initialize() {
+    prepare() {
         Object.keys(this.serviceDefaults).map(name => {
             this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);
         });
+    }
+
+    /**
+     * The main initialization method of our luna js framework.
+     *
+     * Does not handle component/route registration.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async initialize() {
+        await this.get(HooksLoader).loadHooks();
+        await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
     }
 
     config(key = undefined, defaultValue = false) {
@@ -60,51 +72,3 @@ class LunaContainer extends LunaBase {
         ServiceContainer.set(name, implementation);
     }
 }
-
-/**
- * The main initialization method of our luna js framework.
- *
- * Does not handle component/route registration.
- *
- * @returns {Promise<boolean>}
- */
-const initializeLuna = async () => {
-    // Load and register all available hooks.
-    await ServiceContainer.get(HooksLoader).loadHooks();
-    await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
-};
-
-/**
- * This methods should be called before anything else.
- * Performs checks for required files and loads the settings.
- *
- * @returns {Promise<boolean>}
- */
-const prepareLuna = async ({ config } = {}) => {
-    // First we load all settings.
-    if (!(await loadSettings({ config }))) {
-        return false;
-    }
-
-    // Only initialize luna once.
-    if (!global.luna) {
-        const config = getSerializableConfig();
-        initializeLunaObject(config);
-        luna.initialize();
-    }
-
-    return true;
-};
-
-
-/**
- * Initialize the global luna object with a config that can be
- * shared between the server and client.
- *
- * @param config
- */
-const initializeLunaObject = (config) => {
-    global.luna = new LunaContainer(config);
-};
-
-export { prepareLuna, initializeLuna };
