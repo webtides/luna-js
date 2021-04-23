@@ -7,7 +7,6 @@ describe("Luna api test", function() {
 
     before(async function() {
         process.chdir(global.getCurrentWorkingDirectory('basic'));
-
         const { startLuna } = require("../../../packages/luna/lib/framework");
 
         global.originalConsoleLog = console.log;

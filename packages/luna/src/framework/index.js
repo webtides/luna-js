@@ -7,6 +7,8 @@ import ComponentLoader from "./loaders/component-loader";
 import Server from "./http/server";
 
 const startLuna = async ({ config } = {}) => {
+    global.luna = undefined;
+
     if (!(await prepareLuna({ config }))) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");
         return;

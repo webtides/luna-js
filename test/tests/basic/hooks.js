@@ -3,8 +3,6 @@ const {chai, sleep} = require("../../helpers");
 describe("Luna hooks test", function () {
     this.timeout(10000);
 
-    let lunaServer = false;
-
     before(async function () {
 
         process.chdir(global.getCurrentWorkingDirectory('basic'));
@@ -34,7 +32,9 @@ describe("Luna hooks test", function () {
                 ]);
 
                 stopLuna().then(() => {
-                    done()
+                    setTimeout(() => {
+                        done()
+                    }, 1000);
                 });
             }
 
