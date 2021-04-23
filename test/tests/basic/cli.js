@@ -143,8 +143,15 @@ describe("Basic cli test", function () {
         it("starts luna on port 3010", function (done) {
             const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
 
+            let isDone = false;
+
             child.stdout.on('data', (data) => {
                 if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
+                    if (isDone) {
+                        return;
+                    }
+                    isDone = true;
+
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
 

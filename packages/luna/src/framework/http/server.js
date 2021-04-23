@@ -54,6 +54,8 @@ export default class Server {
                         app: this.app
                     });
 
+                    console.log(`luna-js listening at port ${this.settings.port}.`);
+
                     resolve();
                 });
 
