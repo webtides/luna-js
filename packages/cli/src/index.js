@@ -1,6 +1,6 @@
 import "@webtides/luna-js/lib/framework/bootstrap";
-import { restartServer } from "@webtides/luna-js/lib/framework";
 import { prepareLuna } from "@webtides/luna-js/lib/framework/luna";
+import {startLuna} from "@webtides/luna-js/lib/framework";
 
 import {checkRequirements} from "./tasks/prepare";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
@@ -15,7 +15,10 @@ const startLunaJS = async () => {
     if (moonJSStarting) return;
     moonJSStarting = true;
 
-    await restartServer();
+    await startLuna();
+
+    const server = luna.get('LunaServer');
+    await server.restart();
 
     moonJSStarting = false;
 };

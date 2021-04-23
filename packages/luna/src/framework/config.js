@@ -173,15 +173,18 @@ const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
  * Adds some more fields for generated paths. Anything that the user
  * can set or change should come from this settings object.
  *
+ * @param {{ config: any }}
  * @returns {Promise<*|boolean>}
  */
-const loadSettings = async () => {
+const loadSettings = async ({ config } = {}) => {
     if (settings) {
         return settings;
     }
 
     try {
-        settings = deepmerge(defaultSettings, (await import(getPathToConfigFile())).default);
+        settings = config
+            ? deepmerge(defaultSettings, config)
+            : deepmerge(defaultSettings, (await import(getPathToConfigFile())).default);
 
         settings.publicDirectory = path.join(settings.build.output, "public");
 

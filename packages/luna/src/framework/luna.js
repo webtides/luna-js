@@ -11,6 +11,7 @@ import PagesLoader from "./loaders/pages-loader";
 import DocumentRenderer from "./engine/document-renderer";
 import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
+import Server from "./http/server";
 
 /**
  * The luna base class. Also provides a simple service
@@ -33,6 +34,8 @@ class LunaContainer extends LunaBase {
 
         /* SPECIAL (needs refactoring) */
         PagesLoader,
+
+        Server,
     ];
 
     initialize() {
@@ -77,9 +80,9 @@ const initializeLuna = async () => {
  *
  * @returns {Promise<boolean>}
  */
-const prepareLuna = async () => {
+const prepareLuna = async ({ config } = {}) => {
     // First we load all settings.
-    if (!(await loadSettings())) {
+    if (!(await loadSettings({ config }))) {
         return false;
     }
 
