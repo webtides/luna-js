@@ -1,5 +1,5 @@
 import "@webtides/luna-js/lib/framework/bootstrap";
-import { prepareLuna } from "@webtides/luna-js/lib/framework/luna";
+import { prepareLuna } from "@webtides/luna-js/lib/framework";
 import {startLuna} from "@webtides/luna-js/lib/framework";
 
 import {checkRequirements} from "./tasks/prepare";
