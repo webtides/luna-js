@@ -1,9 +1,3 @@
-require("../../../packages/luna/lib/framework/bootstrap");
-
-const { DocumentRenderer } = require("../../../packages/luna/lib/framework/engine/document-renderer");
-
-const {LunaService, Inject} = require("../../../packages/luna/lib/server");
-const {prepareLuna} = require("../../../packages/luna/lib/framework/luna");
 const { chai, sleep } = require("../../helpers");
 const fs = require("fs");
 
@@ -35,6 +29,9 @@ describe("Luna decorators test", function() {
 
     describe("Service decorators test", () => {
         it("adds metadata to the annotated service class", () => {
+            require("../../../packages/luna/lib/framework/bootstrap");
+            const {LunaService} = require("../../../packages/luna/lib/server");
+
             @LunaService({
                 name: 'TestService'
             })
