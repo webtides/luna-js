@@ -12,16 +12,14 @@ describe("Luna routes test", function() {
         const { startLuna } = require("../../../packages/luna/lib/framework");
         await startLuna();
 
-        global.lunaServer = luna.get('LunaServer');
-
         await sleep(600);
 
         console.log("STARTED THE SERVER");
     });
 
     after(async function() {
-        originalConsoleLog("LUNA SERVER", global.lunaServer);
-        await global.lunaServer.stop();
+        const { stopLuna } = require("../../../packages/luna/lib/framework");
+        await stopLuna();
 
         console.log = global.originalConsoleLog;
     });

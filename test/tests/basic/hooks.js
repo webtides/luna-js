@@ -20,7 +20,7 @@ describe("Luna hooks test", function () {
         it("should call the startup hooks in the right order", function (done) {
             const calledHooks = [];
 
-            const {startLuna} = require("../../../packages/luna/lib/framework");
+            const {startLuna, stopLuna} = require("../../../packages/luna/lib/framework");
 
             const assertHooks = () => {
                 chai.assert.deepEqual(calledHooks, [
@@ -33,11 +33,9 @@ describe("Luna hooks test", function () {
                     'HOOKS.SERVER_STARTED'
                 ]);
 
-                global.lunaServer
-                    .stop()
-                    .then(() => {
-                        done()
-                    });
+                stopLuna().then(() => {
+                    done()
+                });
             }
 
             console.log = (text) => {
@@ -46,6 +44,7 @@ describe("Luna hooks test", function () {
                 }
 
                 if (text.indexOf("HOOKS.") === 0) {
+                    originalConsoleLog(text);
                     calledHooks.push(text.trim());
                 }
 
@@ -54,33 +53,28 @@ describe("Luna hooks test", function () {
                         assertHooks();
                     }, 1000);
                 }
-
-                originalConsoleLog(text);
             };
 
-            startLuna()
-                .then(() => {
-                    console.log("LUNA SERVER");
-                    console.log(luna.get('LunaServer'));
-                    global.lunaServer = luna.get('LunaServer');
-                })
+            startLuna().then(() => {
+            })
         });
 
         it('should call the request hook', function (done) {
+            const {startLuna, stopLuna} = require("../../../packages/luna/lib/framework");
 
             console.log = text => {
                 if (text === 'HOOKS.REQUEST_RECEIVED') {
-                    global.lunaServer.stop()
-                        .then(() => done());
+                    setTimeout(() => {
+                        stopLuna().then(() => done());
+                    }, 100);
                 }
 
                 originalConsoleLog(text);
             };
 
-            global.lunaServer
-                .start()
+            startLuna()
                 .then(() => sleep(300))
-                .then(() =>  chai.request('http://localhost:3010').get('/').send());
+                .then(() => chai.request('http://localhost:3010').get('/').send());
         });
     });
 
