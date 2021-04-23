@@ -15,10 +15,10 @@ describe("Luna element test", function() {
     });
 
     after(async function() {
-        const Server = require("../../../packages/luna/lib/framework/http/server");
+        const { stopLuna } = require("../../../packages/luna/lib/framework");
+        await stopLuna();
 
         console.log = global.originalConsoleLog;
-        await luna.get(Server).stop;
     });
 
     describe("Basic component tests", function() {

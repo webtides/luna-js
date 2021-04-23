@@ -27,4 +27,9 @@ const startLuna = async ({ config } = {}) => {
     await server.start();
 };
 
-export { startLuna };
+const stopLuna = async () => {
+    const server = luna.get(Server);
+    await server.stop();
+}
+
+export { startLuna, stopLuna };
