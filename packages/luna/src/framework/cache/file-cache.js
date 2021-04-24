@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto"
-import LunaCache from "./luna-cache";
-import {LunaService} from "../../decorators/service";
+import LunaCache from "./luna-cache.js";
+import {LunaService} from "../../decorators/service.js";
 
 /**
  * A simple file cache implementation. Saves the files in the

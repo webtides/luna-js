@@ -1,11 +1,15 @@
-import {StyledElement} from '@webtides/element-js/src/StyledElement';
+import "../../framework/bootstrap.js";
 
 import { render, html } from "lit-html";
-import { unsafeHTML } from "lit-html/directives/unsafe-html";
-import { guard } from "lit-html/directives/guard";
-import {until} from "lit-html/directives/until";
+import { hydrate } from "lit-html/experimental-hydrate.js";
 
-export {html, unsafeHTML, guard, until};
+import { StyledElement } from "@webtides/element-js/src/StyledElement.js";
+
+import { until } from "lit-html/directives/until.js";
+import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
+import { guard } from "lit-html/directives/guard.js";
+
+export {render, html, unsafeHTML, guard, until};
 
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
@@ -28,6 +32,7 @@ export default class LunaElement extends StyledElement {
             ...options,
         });
         this._template = this._options.template;
+        this._firstRender = true;
 
         if (!isOnServer() && this._options.shadowRender) {
             this.attachShadow({mode: 'open'});
@@ -81,6 +86,17 @@ export default class LunaElement extends StyledElement {
             this.getRoot().innerHTML = `${template}`;
         } else {
             // render via lit-html
+
+            if (this._firstRender) {
+                hydrate(template, this.getRoot(), {
+                    scopeName: this.localName,
+                    eventContext: this
+                });
+
+                this._firstRender = false;
+                return;
+            }
+
             render(template, this.getRoot(), {
                 scopeName: this.localName,
                 eventContext: this,

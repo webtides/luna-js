@@ -1,7 +1,7 @@
-import {loadManifest, loadSettings} from "../config";
-import {registerHook} from "../hooks";
+import {loadManifest, loadSettings} from "../config.js";
+import {registerHook} from "../hooks/index.js";
 import path from "path";
-import {LunaService} from "../../decorators/service";
+import {LunaService} from "../../decorators/service.js";
 
 @LunaService({
     name: 'HooksLoader'

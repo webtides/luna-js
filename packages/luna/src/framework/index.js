@@ -1,12 +1,15 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import './bootstrap.js';
 
-import {getSerializableConfig, loadSettings} from "./config";
-import {callHook} from "./hooks";
-import {HOOKS} from "./hooks/definitions";
+import {getSerializableConfig, loadSettings} from "./config.js";
+import {callHook} from "./hooks/index.js";
+import {HOOKS} from "./hooks/definitions.js";
 
-import ComponentLoader from "./loaders/component-loader";
-import Server from "./http/server";
-import LunaContainer from "./luna";
+import ComponentLoader from "./loaders/component-loader.js";
+import Server from "./http/server.js";
+import LunaContainer from "./luna.js";
 
 /**
  * This methods should be called before anything else.
@@ -45,19 +48,19 @@ const startLuna = async ({ config } = {}) => {
 
     await callHook(HOOKS.HOOKS_LOADED);
 
-    const componentLoader = luna.get(ComponentLoader);
+    const componentLoader = global.luna.get(ComponentLoader);
     await componentLoader.registerAvailableComponents();
 
     await callHook(HOOKS.COMPONENTS_LOADED, {
         components: componentLoader.getAvailableComponents()
     });
 
-    const server = luna.get(Server);
+    const server = global.luna.get(Server);
     await server.start();
 };
 
 const stopLuna = async () => {
-    const server = luna.get(Server);
+    const server = global.luna.get(Server);
     await server.stop();
 }
 

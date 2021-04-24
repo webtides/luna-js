@@ -2,6 +2,7 @@ const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 const del = require("rollup-plugin-delete");
+const commonjs = require("@rollup/plugin-commonjs");
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const { getSettings } = require("@webtides/luna-js/lib/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
@@ -28,6 +29,9 @@ const bundle = {
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
             babelHelpers: "bundled"
+        }),
+        commonjs({
+            ignoreDynamicRequires: true
         }),
         json(),
         require("../plugins/rollup-plugin-manifest")({

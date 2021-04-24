@@ -1,4 +1,4 @@
-import { html } from '@popeindustries/lit-html-server';
+import { html } from '../../../lib/server.js';
 
 /**
  * @deprecated Legacy scripts are now automatically injected by the document-renderer.

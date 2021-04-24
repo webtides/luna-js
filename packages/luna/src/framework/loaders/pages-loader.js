@@ -1,16 +1,15 @@
 import path from "path";
 
-import {html, renderToString} from "@popeindustries/lit-html-server";
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
+import {html, render, unsafeHTML} from "../../../lib/server.js";
 
 import baseLayoutFactory from "../../client/layouts/base.js";
 
 import {loadManifest, loadSettings} from '../config.js';
-import {parseMiddleware} from "../http/middleware";
-import {Inject, LunaService} from "../../decorators/service";
-import ComponentLoader from "./component-loader";
-import ElementRenderer from "../engine/element-renderer";
-import LunaCache from "../cache/luna-cache";
+import {parseMiddleware} from "../http/middleware/index.js";
+import {Inject, LunaService} from "../../decorators/service.js";
+import ComponentLoader from "./component-loader.js";
+import ElementRenderer from "../engine/element-renderer.js";
+import LunaCache from "../cache/luna-cache.js";
 
 @LunaService({
     name: 'PagesLoader'
@@ -34,7 +33,7 @@ export default class PagesLoader {
      * @returns {Promise<string>}
      */
     async applyLayout(factory, page) {
-        return renderToString(await factory(page));
+        return render(await factory(page));
     }
 
     /**
@@ -77,7 +76,7 @@ export default class PagesLoader {
         const {page, layout} = module;
 
         if (!markup) {
-            markup = await renderToString(page());
+            markup = await render(page());
             await this.cache.set(route, markup, 'pages');
         }
 
@@ -131,9 +130,7 @@ export default class PagesLoader {
             ? await this.loadAnonymousPage({module, route})
             : await this.loadComponentPage({module, request, response});
 
-
-        const page = html`${unsafeHTML(result.markup)}`
-
+        const page = unsafeHTML(result.markup);
         const pageHTML = await this.applyLayout(result.layoutFactory || (page => baseLayoutFactory(page)), page);
 
         return {

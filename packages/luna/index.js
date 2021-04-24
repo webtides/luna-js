@@ -1,10 +1,10 @@
-import LunaElement, { html, unsafeHTML, guard, until } from "./src/client/elements/luna-element.js";
-import LunaMarkdownElement from "./src/client/elements/luna-markdown-element";
-import { apiRequest } from "./src/client/functions/network";
-import {BaseElement} from "@webtides/element-js/src/BaseElement";
-import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
-import { HideFromClient } from "./src/decorators/visibility";
-import { LunaService, Inject } from "./src/decorators/service";
+import LunaElement, { render, html, unsafeHTML, guard, until } from "./src/client/elements/luna-element.js";
+
+import LunaMarkdownElement from "./src/client/elements/luna-markdown-element.js";
+import { apiRequest } from "./src/client/functions/network.js";
+import {BaseElement} from "@webtides/element-js/src/BaseElement.js";
+import { HideFromClient } from "./src/decorators/visibility.js";
+import { LunaService, Inject } from "./src/decorators/service.js";
 
 export {
     LunaElement,
@@ -16,7 +16,6 @@ export {
 
     // element-js
     BaseElement,
-    TemplateElement,
 
     apiRequest,
 
@@ -25,4 +24,5 @@ export {
     unsafeHTML,
     guard,
     until,
+    render
 }

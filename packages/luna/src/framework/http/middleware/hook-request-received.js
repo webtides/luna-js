@@ -1,5 +1,5 @@
-import {callHook} from "../../hooks";
-import {HOOKS} from "../../hooks/definitions";
+import {callHook} from "../../hooks/index.js";
+import {HOOKS} from "../../hooks/definitions.js";
 
 /**
  * Registers a middleware that calls the REQUEST_RECEIVED hook.

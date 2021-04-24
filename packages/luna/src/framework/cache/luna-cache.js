@@ -2,7 +2,7 @@
  * The luna cache base class which includes the method stubs and
  * clears the require cache.
  */
-import {LunaService} from "../../decorators/service";
+import {LunaService} from "../../decorators/service.js";
 
 @LunaService({
     name: 'Cache'

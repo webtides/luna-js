@@ -1,8 +1,8 @@
 import path from "path";
 import fs from "fs";
 import deepmerge from "deepmerge";
-import defaultSettings from "./config/default.config";
-import {normalizeDomainAndContext} from "./helpers/normalize";
+import defaultSettings from "./config/default.config.js";
+import {normalizeDomainAndContext} from "./helpers/normalize.js";
 
 let settings = false;
 

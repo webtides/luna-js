@@ -1,7 +1,7 @@
-import {renderToString} from "@popeindustries/lit-html-server";
+import {render} from "../../../lib/server.js";
 import {paramCase} from "param-case";
-import {Inject, LunaService} from "../../decorators/service";
-import LunaCache from "../cache/luna-cache";
+import {Inject, LunaService} from "../../decorators/service.js";
+import LunaCache from "../cache/luna-cache.js";
 
 @LunaService({
     name: 'ElementRenderer'
@@ -72,14 +72,13 @@ export default class ElementRenderer {
             attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
         });
 
-        const markup = await renderToString(element.template());
+        const markup = await render(element.template());
 
         const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
 
         if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
             await this.cache.set(this.getComponentCacheKey(component, attributes), {markup, element, dependencies}, group);
         }
-
 
         return {markup, element, dependencies};
     };

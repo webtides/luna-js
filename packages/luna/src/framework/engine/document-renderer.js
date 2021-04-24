@@ -1,10 +1,9 @@
-import {loadManifest, loadSettings, getSerializableConfig} from "../config";
+import {loadManifest, loadSettings, getSerializableConfig} from "../config.js";
 import {paramCase} from "param-case";
 
-import { JSDOM } from "jsdom";
-import {Inject, LunaService} from "../../decorators/service";
-import ComponentLoader from "../loaders/component-loader";
-import ElementRenderer from "./element-renderer";
+import {Inject, LunaService} from "../../decorators/service.js";
+import ComponentLoader from "../loaders/component-loader.js";
+import ElementRenderer from "./element-renderer.js";
 
 @LunaService({
     name: 'DocumentRenderer'
@@ -190,6 +189,7 @@ export default class DocumentRenderer {
      * @returns {Promise<string>}
      */
     async render(htmlDocument, {request, response}) {
+        const { JSDOM } = await import("jsdom");
         const dom = new JSDOM(htmlDocument);
 
         const upgradedElements = {};

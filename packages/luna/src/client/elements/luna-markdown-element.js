@@ -1,4 +1,4 @@
-import LunaElement from "./luna-element";
+import LunaElement from "./luna-element.js";
 
 export default class LunaMarkdownElement extends LunaElement {
 

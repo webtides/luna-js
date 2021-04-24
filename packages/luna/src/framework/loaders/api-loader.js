@@ -1,7 +1,7 @@
-import {getSettings, loadManifest} from "../config";
+import {getSettings, loadManifest} from "../config.js";
 import path from "path";
-import {parseMiddleware} from "../http/middleware";
-import {LunaService} from "../../decorators/service";
+import {parseMiddleware} from "../http/middleware/index.js";
+import {LunaService} from "../../decorators/service.js";
 
 @LunaService({
     name: 'ApiLoader'

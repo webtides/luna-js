@@ -1,6 +1,6 @@
-import hookMiddleware from "./hook-request-received";
-import {callHook} from "../../hooks";
-import {HOOKS} from "../../hooks/definitions";
+import hookMiddleware from "./hook-request-received.js";
+import {callHook} from "../../hooks/index.js";
+import {HOOKS} from "../../hooks/definitions.js";
 
 const registerMiddleware = async ({ app }) => {
     await callHook(HOOKS.MIDDLEWARE_REGISTER, {

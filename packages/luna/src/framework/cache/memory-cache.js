@@ -1,5 +1,5 @@
-import LunaCache from "./luna-cache";
-import {LunaService} from "../../decorators/service";
+import LunaCache from "./luna-cache.js";
+import {LunaService} from "../../decorators/service.js";
 
 /**
  * A simple memory cache implementation. Saves the cache inside a class property. Not

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const { execute } = require("../lib");
 const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
@@ -13,5 +12,7 @@ global.lunaCli = {
     isExporting: !!argv.export,
     documentInject: ''
 }
+
+const { execute } = require("../lib");
 
 execute(argv);

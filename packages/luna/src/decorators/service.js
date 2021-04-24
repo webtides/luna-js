@@ -25,7 +25,7 @@ const Inject = (service) => {
 
         descriptor.set = function() {};
         descriptor.get = function() {
-            return luna.get(service);
+            return global.luna.get(service);
         };
     }
 }
