@@ -1,4 +1,4 @@
-import { html } from '../../../lib/server.js';
+import { html } from '@webtides/luna-js/renderer.js';
 
 /**
  * @deprecated Legacy scripts are now automatically injected by the document-renderer.

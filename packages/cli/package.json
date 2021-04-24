@@ -8,7 +8,7 @@
   },
   "scripts": {
     "prepublish": "npm run compile",
-    "compile": "npx babel src --out-dir lib --source-maps inline"
+    "compile": "rollup -c rollup.config.prepublish.js"
   },
   "bin": {
     "luna": ".bin/luna.js"
@@ -37,6 +37,7 @@
     "chokidar": "^3.5.1",
     "core-js": "^3.8.3",
     "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
     "glob-all": "^3.2.1",
     "inquirer": "^7.3.3",
     "marked": "^2.0.1",

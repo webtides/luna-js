@@ -2,6 +2,7 @@ const path = require("path");
 
 const {nodeResolve} = require('@rollup/plugin-node-resolve');
 const json = require('@rollup/plugin-json');
+const replace = require("@rollup/plugin-replace");
 const {babel} = require('@rollup/plugin-babel');
 
 const changeLitVersion = function () {
@@ -17,8 +18,6 @@ const changeLitVersion = function () {
             }
 
             switch (id) {
-                case 'lit-html':
-                    return 'lit-html';
                 case 'lit-html/experimental-hydrate.js':
                     return 'luna-lit-hydrate';
             }
@@ -29,30 +28,6 @@ const changeLitVersion = function () {
                 return `
                     const createRequire = () => require;
                     export { createRequire };
-                `;
-            }
-
-            if (id === 'lit-html') {
-                return `
-                    import { render as originalRender } from '@lit-labs/ssr/lib/render-with-global-dom-shim.js';
-                    import { html } from "lit-html";
-                    import { Readable } from 'stream';
-                    
-                    const streamToString = stream => {
-                        const chunks = [];
-                        return new Promise((resolve, reject) => {
-                            stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-                            stream.on('error', (err) => reject(err));
-                            stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-                        });
-                    }
-                    
-                    const render = (template) => {
-                        const stream = Readable.from(originalRender(template));
-                        return streamToString(stream);
-                    };
-
-                    export { render, html };
                 `;
             }
 
@@ -101,6 +76,26 @@ const clientBundle = {
     ]
 };
 
+const rendererBundle = {
+    input: "server.js",
+    output: {
+        dir: settings.buildDirectory,
+        entryFileNames: 'renderer.js',
+        sourcemap: true,
+        format: 'cjs'
+    },
+    plugins: [
+        nodeResolve({
+            preferBuiltins: true,
+            dedupe: [ 'lit-html' ]
+        }),
+        babel({
+            configFile: path.resolve(__dirname, "../..", 'babel.config.js')
+        }),
+        json()
+    ]
+};
+
 const serverBundle = {
     input: "index.js",
     output: {
@@ -113,6 +108,8 @@ const serverBundle = {
         changeLitVersion({ context: 'server' }),
         nodeResolve({
             // preferBuiltins: true,
+            dedupe: [ 'lit-html' ],
+            resolveOnly: [ '@webtides/element-js' ]
         }),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js')
@@ -121,4 +118,4 @@ const serverBundle = {
     ]
 };
 
-module.exports = [clientBundle, serverBundle];
+module.exports = [ clientBundle, serverBundle, rendererBundle ];

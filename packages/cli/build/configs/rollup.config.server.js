@@ -12,6 +12,18 @@ const { basePaths, files } = generateBasePathsFromLunaConfig(settings);
 
 const production = process.env.NODE_ENV === "production";
 
+const changeLitVersion = function () {
+    return {
+        name: 'luna-set-lit',
+        resolveId(id, importer) {
+            switch (id) {
+                case 'luna-renderer':
+                    return require.resolve('@webtides/luna-js/lib/renderer.js');
+            }
+        },
+    }
+};
+
 const bundle = {
     input: files,
     output: {
@@ -22,10 +34,9 @@ const bundle = {
         exports: "auto"
     },
     plugins: [
+        changeLitVersion(),
         require("../plugins/rollup-plugin-switch-renderer")({ context: 'server' }),
-        nodeResolve({
-            resolveOnly: [ '@webtides/luna-js' ]
-        }),
+
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
             babelHelpers: "bundled"

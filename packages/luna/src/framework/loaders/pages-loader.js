@@ -1,7 +1,5 @@
 import path from "path";
 
-import {html, render, unsafeHTML} from "../../../lib/server.js";
-
 import baseLayoutFactory from "../../client/layouts/base.js";
 
 import {loadManifest, loadSettings} from '../config.js';
@@ -19,7 +17,7 @@ export default class PagesLoader {
     @Inject(ComponentLoader) componentLoader;
     @Inject(ElementRenderer) elementRenderer;
 
-    constructor() {}
+    constructor() { }
 
     /**
      * Takes a page and a layout factory and wraps the pages
@@ -33,6 +31,7 @@ export default class PagesLoader {
      * @returns {Promise<string>}
      */
     async applyLayout(factory, page) {
+        const {render} = await import('luna-renderer');
         return render(await factory(page));
     }
 
@@ -69,14 +68,14 @@ export default class PagesLoader {
      * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
      * @param route string  The route where the page should be registered. Used for the cache.
      *
-     * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
+     * @returns {Promise<{markup: *, layoutFactory: *, element: *}>}
      */
     async loadAnonymousPage({module, route = ''}) {
         let markup = await this.cache.get(route, 'pages');
         const {page, layout} = module;
 
         if (!markup) {
-            markup = await render(page());
+            markup = page(); // await render(page());
             await this.cache.set(route, markup, 'pages');
         }
 
@@ -104,7 +103,9 @@ export default class PagesLoader {
             element: page,
         };
 
-        const result = (await this.elementRenderer.renderComponent({component, attributes: {}, group: 'pages', request, response}));
+        const result = (await this.elementRenderer.buildElementForTemplate(
+            {component, attributes: {}, group: 'pages', request, response}
+        ));
 
         // Create a stub for the async layout factory to get them in the same
         // format as the anonymous layout factory. Use the element as context.
@@ -130,7 +131,7 @@ export default class PagesLoader {
             ? await this.loadAnonymousPage({module, route})
             : await this.loadComponentPage({module, request, response});
 
-        const page = unsafeHTML(result.markup);
+        const page = result.element.template();
         const pageHTML = await this.applyLayout(result.layoutFactory || (page => baseLayoutFactory(page)), page);
 
         return {
@@ -160,7 +161,7 @@ export default class PagesLoader {
             if (page.fallback ?? false) {
                 fallback = {module, route};
             } else {
-                pages.push({ module, route });
+                pages.push({module, route});
             }
         }
 

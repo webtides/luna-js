@@ -1,19 +1,10 @@
-import "../../framework/bootstrap.js";
-
-import { render, html } from "lit-html";
-import { hydrate } from "lit-html/experimental-hydrate.js";
-
-import { StyledElement } from "@webtides/element-js/src/StyledElement.js";
-
-import { until } from "lit-html/directives/until.js";
-import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
-import { guard } from "lit-html/directives/guard.js";
-
-export {render, html, unsafeHTML, guard, until};
+import { html, render, hydrate, unsafeHTML, guard, until } from 'luna-renderer';
 
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
 }
+
+export { html, render, hydrate, unsafeHTML, guard, until };
 
 /**
  * The main class from which server rendered elements should inherit.
