@@ -12,6 +12,7 @@ import DocumentRenderer from "./engine/document-renderer";
 import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
 import Server from "./http/server";
+import Renderer from "./engine/renderer";
 
 /**
  * The luna base class. Also provides a simple service
@@ -29,6 +30,7 @@ export default class LunaContainer extends LunaBase {
         HooksLoader,
 
         /* RENDERERS */
+        Renderer,
         ElementRenderer,
         DocumentRenderer,
 

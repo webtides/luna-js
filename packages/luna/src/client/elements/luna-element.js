@@ -1,10 +1,6 @@
-import {StyledElement} from '@webtides/element-js/src/StyledElement';
+import {BaseElement} from '@webtides/element-js/src/BaseElement';
 
-import { render, html } from "lit-html";
-import { unsafeHTML } from "lit-html/directives/unsafe-html";
-import { guard } from "lit-html/directives/guard";
-import {until} from "lit-html/directives/until";
-
+import { render, html, unsafeHTML, guard, until } from "@webtides/luna-renderer";
 export {html, unsafeHTML, guard, until};
 
 const isOnServer = () => {
@@ -14,7 +10,7 @@ const isOnServer = () => {
 /**
  * The main class from which server rendered elements should inherit.
  */
-export default class LunaElement extends StyledElement {
+export default class LunaElement extends BaseElement {
 
     constructor(options) {
         super({

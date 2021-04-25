@@ -17,6 +17,7 @@ export default class Server {
     baseMiddleware = [
         bodyParser.urlencoded(),
         bodyParser.json(),
+        express.static('.build/public')
     ];
 
     async prepare() {
