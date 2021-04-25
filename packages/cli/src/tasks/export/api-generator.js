@@ -79,7 +79,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
         global.serverlessApiBuild = true;
     }
 
-    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
+    await startRollup(path.join(global.lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
 
 
     if (withStaticSite) {

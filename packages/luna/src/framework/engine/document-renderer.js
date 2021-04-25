@@ -1,10 +1,12 @@
+import { Readable } from 'stream';
 import {loadManifest, loadSettings, getSerializableConfig} from "../config";
 import {paramCase} from "param-case";
 
-import { JSDOM } from "jsdom";
 import {Inject, LunaService} from "../../decorators/service";
 import ComponentLoader from "../loaders/component-loader";
 import ElementRenderer from "./element-renderer";
+import Renderer from "./renderer";
+import {renderLight} from "@webtides/luna-renderer/lib/server.js";
 
 @LunaService({
     name: 'DocumentRenderer'
@@ -12,6 +14,8 @@ import ElementRenderer from "./element-renderer";
 export default class DocumentRenderer {
     @Inject(ComponentLoader) componentLoader;
     @Inject(ElementRenderer) elementRenderer;
+
+    @Inject(Renderer) renderer;
 
     async addDependenciesToUpgradedElements(dependencies, upgradedElements) {
         dependencies = [ dependencies ].flat();
@@ -187,16 +191,14 @@ export default class DocumentRenderer {
      * @param htmlDocument
      * @param request
      * @param response
-     * @returns {Promise<string>}
+     * @returns {Promise<Readable>}
      */
     async render(htmlDocument, {request, response}) {
-        const dom = new JSDOM(htmlDocument);
+        const { createElementRenderer } = await import('../engine/luna-element-renderer.js');
+        const LunaElementRenderer = createElementRenderer({ request, response });
 
-        const upgradedElements = {};
-        await this.parseHtmlDocument(dom.window.document, upgradedElements, {request, response});
-
-        await this.appendUpgradedElementsToDocument(dom, upgradedElements);
-
-        return dom.serialize();
+        return Readable.from(await this.renderer.render(htmlDocument, {
+            elementRenderers: [ LunaElementRenderer ], customElementHostStack: [], customElementInstanceStack: []
+        }));
     }
 }

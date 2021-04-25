@@ -33,7 +33,7 @@ export default class PagesLoader {
      * @returns {Promise<string>}
      */
     async applyLayout(factory, page) {
-        return this.renderer.render(await factory(page));
+        return factory(page);
     }
 
     /**

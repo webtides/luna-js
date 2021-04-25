@@ -1,11 +1,5 @@
 import { html } from '@popeindustries/lit-html-server';
 
-/**
- * @deprecated Legacy scripts are now automatically injected by the document-renderer.
- * @returns {TemplateResult}
- */
-const scripts = () => { return html``; }
-
 const template = (page, context = {}) => {
     return html`
         <!doctype html>
@@ -22,9 +16,5 @@ const template = (page, context = {}) => {
         </html>
     `;
 };
-
-export {
-    scripts
-}
 
 export default template;

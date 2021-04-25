@@ -4,8 +4,15 @@ import {LunaService} from "../../decorators/service";
     name: 'Renderer'
 })
 export default class Renderer {
-    async render(template) {
+    /**
+     *
+     * @param template
+     * @param renderInfo
+     *
+     * @returns {Promise<Generator<any|string|*|any|any, void, any>>}
+     */
+    async render(template, renderInfo) {
         const { render } = (await import('@webtides/luna-renderer/lib/server.js'));
-        return render(template);
+        return render(template, renderInfo);
     }
 }

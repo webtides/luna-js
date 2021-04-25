@@ -36,11 +36,11 @@ const registerRoute = ({ router, route, middleware = [] }, { get = null, post = 
 const routes = async ({router}) => {
     currentRouter = router;
 
-    const pagesLoader = luna.get(PagesLoader);
-    const documentRenderer = luna.get(DocumentRenderer);
+    const pagesLoader = global.luna.get(PagesLoader);
+    const documentRenderer = global.luna.get(DocumentRenderer);
 
     const {pages, fallbackPage} = await pagesLoader.loadPages();
-    const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
+    const {apis, fallbackApi} = await global.luna.get(ApiLoader).loadApis();
 
     const registerPageRoute = async ({module, route}) => {
         const callback = async ({ request, response }) => {
@@ -51,7 +51,10 @@ const routes = async ({router}) => {
                 request.luna.cachedResponse = result;
             }
 
-            return response.send(result);
+            response.setHeader('Content-Type', 'text/html; charset=utf-8');
+
+            result.on('end', () => response.end());
+            result.pipe(response);
         };
 
         registerRoute({ router, route, middleware: module.middleware }, {

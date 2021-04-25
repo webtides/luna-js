@@ -67,6 +67,7 @@ export default class ElementRenderer {
      * Fetches all dynamic properties for the component & loads
      * the static properties.
      *
+     *
      * @param component ({ element: * })
      * @param attributes
      * @param request

@@ -45,19 +45,19 @@ const startLuna = async ({ config } = {}) => {
 
     await callHook(HOOKS.HOOKS_LOADED);
 
-    const componentLoader = luna.get(ComponentLoader);
+    const componentLoader = global.luna.get(ComponentLoader);
     await componentLoader.registerAvailableComponents();
 
     await callHook(HOOKS.COMPONENTS_LOADED, {
         components: componentLoader.getAvailableComponents()
     });
 
-    const server = luna.get(Server);
+    const server = global.luna.get(Server);
     await server.start();
 };
 
 const stopLuna = async () => {
-    const server = luna.get(Server);
+    const server = global.luna.get(Server);
     await server.stop();
 }
 

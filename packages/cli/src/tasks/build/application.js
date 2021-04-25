@@ -8,11 +8,11 @@ import chokidar from "chokidar";
 const buildComponentsForApplication = async () => {
     const settings = getSettings();
 
-    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.application.js"));
+    await startRollup(path.join(global.lunaCli.currentDirectory, "build/configs/rollup.config.application.js"));
 
     if (settings.build.legacy) {
         await prepareLegacyBuild();
-        await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
+        await startRollup(path.join(global.lunaCli.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
     }
 };
 

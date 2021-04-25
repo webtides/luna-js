@@ -12,6 +12,15 @@ module.exports = function ({ context = 'server' } = {}) {
                         return path.resolve(process.cwd(), "node_modules/@webtides/luna-js", "lib/server.js");
                 }
             }
+
+            if (id === '@webtides/luna-renderer') {
+                switch (context) {
+                    case 'client':
+                        return path.resolve(process.cwd(), "node_modules/@webtides/luna-renderer", "lib/client.js");
+                    default:
+                        return path.resolve(process.cwd(), "node_modules/@webtides/luna-renderer", "lib/server.js");
+                }
+            }
         }
     }
 }

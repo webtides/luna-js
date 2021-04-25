@@ -38,7 +38,7 @@ const isRequestCacheable = request => {
  */
 const cacheMiddleware = () => async (request, response, next) => {
     if (isRequestCacheable(request)) {
-        const cache = luna.get(LunaCache);
+        const cache = global.luna.get(LunaCache);
 
         const cacheKey = `${request.path}.${JSON.stringify(request.query)}`;
 

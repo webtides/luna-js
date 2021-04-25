@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@lit-labs/ssr": "^1.0.0-rc.1",
-    "lit-html": "^2.0.0-rc.2"
+    "lit-html": "^2.0.0-rc.2",
+    "param-case": "^3.0.4"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.2.1",

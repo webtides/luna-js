@@ -83,6 +83,8 @@ export default class ComponentLoader {
 
             console.log("Register component", tagName);
 
+            customElements.define(tagName, element);
+
             this.allAvailableComponents[tagName] = {
                 element,
                 tagName,
@@ -106,7 +108,7 @@ export default class ComponentLoader {
      *
      * @param tagName string
      *
-     * @returns {Promise<boolean|{
+     * @returns {boolean|{
      *  element: LunaElement,
      *  tagName: string,
      *  hasStaticProperties: boolean,
@@ -117,9 +119,9 @@ export default class ComponentLoader {
      *  directory: string,
      *  outputDirectory: string,
      *  children: []
-     * }>}
+     * }}
      */
-    async loadSingleComponentByTagName(tagName) {
+    loadSingleComponentByTagName(tagName) {
         tagName = tagName.toLowerCase();
 
         const components = this.allAvailableComponents;

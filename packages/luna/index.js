@@ -2,7 +2,6 @@ import LunaElement, { html, unsafeHTML, guard, until } from "./src/client/elemen
 import LunaMarkdownElement from "./src/client/elements/luna-markdown-element";
 import { apiRequest } from "./src/client/functions/network";
 import {BaseElement} from "@webtides/element-js/src/BaseElement";
-import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
 import { HideFromClient } from "./src/decorators/visibility";
 import { LunaService, Inject } from "./src/decorators/service";
 
@@ -16,7 +15,6 @@ export {
 
     // element-js
     BaseElement,
-    TemplateElement,
 
     apiRequest,
 

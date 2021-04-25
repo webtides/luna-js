@@ -1,6 +1,6 @@
 import {BaseElement} from '@webtides/element-js/src/BaseElement';
 
-import { render, html, unsafeHTML, guard, until } from "@webtides/luna-renderer";
+import { render, html, unsafeHTML, guard, until, renderLight } from "@webtides/luna-renderer";
 export {html, unsafeHTML, guard, until};
 
 const isOnServer = () => {
@@ -11,6 +11,7 @@ const isOnServer = () => {
  * The main class from which server rendered elements should inherit.
  */
 export default class LunaElement extends BaseElement {
+    $$luna = { };
 
     constructor(options) {
         super({
@@ -26,7 +27,7 @@ export default class LunaElement extends BaseElement {
         this._template = this._options.template;
 
         if (!isOnServer() && this._options.shadowRender) {
-            this.attachShadow({mode: 'open'});
+            // this.attachShadow({mode: 'open'});
         }
     }
 
@@ -62,7 +63,7 @@ export default class LunaElement extends BaseElement {
         this.renderTemplate();
 
         if (!isOnServer()) {
-            this.appendStyleSheets(this._styles);
+            // this.appendStyleSheets(this._styles);
 
             super.update(options);
         }
