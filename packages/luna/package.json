@@ -14,7 +14,6 @@
   "author": "webtides",
   "license": "MIT",
   "dependencies": {
-    "@popeindustries/lit-html-server": "^3.1.0",
     "@webtides/element-js": "0.3.1",
     "body-parser": "^1.19.0",
     "deepmerge": "^4.2.2",
@@ -22,7 +21,6 @@
     "express": "^4.17.1",
     "glob-all": "^3.2.1",
     "jsdom": "^16.4.0",
-    "lit-html": "^1.3.0",
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2"
   },
@@ -42,7 +40,7 @@
     "rollup-plugin-external-globals": "^0.6.1"
   },
   "directories": {
-    "lib": "../../lib"
+    "lib": "lib"
   },
   "repository": {
     "type": "git",

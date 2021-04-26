@@ -1,7 +1,6 @@
 import path from "path";
 
-import {html, renderToString} from "@popeindustries/lit-html-server";
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
+import {html, render} from "../../renderer";
 
 import baseLayoutFactory from "../../client/layouts/base.js";
 
@@ -34,7 +33,7 @@ export default class PagesLoader {
      * @returns {Promise<string>}
      */
     async applyLayout(factory, page) {
-        return renderToString(await factory(page));
+        return render(await factory(page));
     }
 
     /**
@@ -139,7 +138,7 @@ export default class PagesLoader {
             return { html: false };
         }
 
-        const page = html`${unsafeHTML(result.markup)}`
+        const page = result.markup;
 
         const pageHTML = await this.applyLayout(result.layoutFactory || (page => baseLayoutFactory(page)), page);
 

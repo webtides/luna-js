@@ -1,4 +1,4 @@
-import {renderToString} from "@popeindustries/lit-html-server";
+import {render} from "../../renderer";
 import {paramCase} from "param-case";
 import {Inject, LunaService} from "../../decorators/service";
 import LunaCache from "../cache/luna-cache";
@@ -32,7 +32,7 @@ export default class ElementRenderer {
 
         const cachedValue = await this.cache.get(this.getComponentCacheKey(component, attributes), group);
         if (cachedValue) {
-            return cachedValue;
+            // return cachedValue;
         }
 
         const element = new (component.element)();
@@ -72,7 +72,7 @@ export default class ElementRenderer {
             attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
         });
 
-        const markup = await renderToString(element.template());
+        const markup = render(element.template());
 
         const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
 

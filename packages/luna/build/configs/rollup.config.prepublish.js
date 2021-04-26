@@ -1,5 +1,4 @@
 const path = require("path");
-const externalGlobals = require("rollup-plugin-external-globals");
 
 const {nodeResolve} = require('@rollup/plugin-node-resolve');
 const json = require('@rollup/plugin-json');
@@ -23,7 +22,7 @@ const clientBundle = {
     plugins: [
         nodeResolve({
             preferBuiltins: true,
-            only: ['@webtides/element-js', "lit-html"]
+            only: ['@webtides/element-js']
         }),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js')
@@ -43,16 +42,9 @@ const serverBundle = {
         'glob', 'fs', 'path'
     ],
     plugins: [
-        externalGlobals(
-            {
-                'lit-html': 'serverLitHtml',
-                'lit-html/directives/unsafe-html': 'serverUnsafeHtml',
-                'lit-html/directives/guard': 'serverGuard',
-                'lit-html/directives/until': 'serverUntil',
-            }),
         nodeResolve({
             preferBuiltins: true,
-            only: ['@webtides/element-js', "@popeindustries/lit-html-server"]
+            only: ['@webtides/element-js']
         }),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js')
