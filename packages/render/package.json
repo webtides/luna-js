@@ -1,0 +1,16 @@
+{
+  "name": "@webtides/luna-render",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^2.45.2"
+  }
+}

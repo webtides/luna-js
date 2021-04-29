@@ -1,7 +1,7 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
 
-import { render, html } from "../../renderer";
-export {html};
+import { render, html, unsafeHTML } from "@webtides/luna-render";
+export {html, unsafeHTML};
 
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);

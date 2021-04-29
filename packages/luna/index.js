@@ -1,4 +1,4 @@
-import LunaElement, { html } from "./src/client/elements/luna-element.js";
+import LunaElement, { html, unsafeHTML } from "./src/client/elements/luna-element.js";
 import LunaMarkdownElement from "./src/client/elements/luna-markdown-element";
 import { apiRequest } from "./src/client/functions/network";
 import {BaseElement} from "@webtides/element-js/src/BaseElement";
@@ -20,9 +20,8 @@ export {
 
     apiRequest,
 
-    // LitHTML
     html,
-    // unsafeHTML,
+    unsafeHTML,
     // guard,
     // until,
 }

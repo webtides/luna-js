@@ -1,9 +1,14 @@
-import { html } from "./render";
+const COMMENT_DIVIDER = '$$element';
+
+const NODE_TYPE_COMMENT = 8;
+const NODE_TYPE_TEXT = 3;
+
 
 const convertStringToHTML = (templateString) => {
     const parser = new DOMParser();
-    const document = parser.parseFromString(templateString, 'text/html');
-    return document.body;
+    // Wrap the template in a "node" for root siblings.
+    const document = parser.parseFromString(`<node>${templateString}</node>`, 'text/html');
+    return document.body.childNodes.item(0);
 };
 
 /**
@@ -22,22 +27,37 @@ const getAttributes = function (attributes) {
 
 /**
  * Create a DOM Tree Map for an element
- * @param  {Node}    element The element to map
- * @param  {Boolean} isSVG   If true, node is within an SVG
- * @return {Array}           A DOM tree map
+ *
+ * @param  {Node}    element    The element to map
+ * @param  {Boolean} isChild    If true, the node is not the root node.
+ * @param  {Boolean} isSVG      If true, thenode is within an SVG
+ * @return {Array}              A DOM tree map
  */
-const createDOMMap = function (element, isSVG = false) {
-    return Array.prototype.map.call(element.childNodes, function (node) {
-        const details = {
-            content: node.childNodes && node.childNodes.length > 0 ? null : node.textContent,
-            atts: node.nodeType !== 1 ? [] : getAttributes(node.attributes),
-            type: node.nodeType === 3 ? 'text' : node.nodeType === 8 ? 'comment' : node.tagName.toLowerCase(),
-            node: node,
-        };
-        details.isSVG = isSVG || details.type === 'svg';
-        details.children = createDOMMap(node, details.isSVG);
-        return details;
-    });
+const createDOMMap = function (element, isChild = false, isSVG = false) {
+    if (element.childNodes[0]?.nodeType === NODE_TYPE_COMMENT
+        && element.childNodes[0]?.textContent === COMMENT_DIVIDER) {
+        element.$$element = element.$$element ?? {};
+        element.$$element.hasOwnUpdateFlow = true;
+    }
+
+    return [...element.childNodes]
+        .filter(node => {
+            // Ignore empty lines or line breaks.
+            return !(node.nodeType === NODE_TYPE_TEXT
+                && node.textContent.replace(/(\r\n|\n|\r)/gm, '').trim().length === 0)
+        })
+        .map(node => {
+            const details = {
+                content: node.childNodes && node.childNodes.length > 0 ? null : node.textContent,
+                atts: node.nodeType !== 1 ? [] : getAttributes(node.attributes),
+                type: node.nodeType === 3 ? 'text' : node.nodeType === 8 ? 'comment' : node.tagName.toLowerCase(),
+                node: node,
+            };
+
+            details.isSVG = isSVG || details.type === 'svg';
+            details.children = isChild && hasOwnUpdateFlow({ node }) ? [] : createDOMMap(node, true, details.isSVG);
+            return details;
+        })
 };
 
 const getStyleMap = function (styles) {
@@ -174,12 +194,11 @@ const makeElem = function (elem) {
     } else if (elem.type !== 'text') {
         node.textContent = elem.content;
     }
-
     return node;
 };
 
-const isCustomElement = (element) => {
-    return element.node?.$$element?.hasOwnUpdateFlow ?? false;
+const hasOwnUpdateFlow = (element) => {
+    return element.node?.$$element?.hasOwnUpdateFlow ?? element.hasOwnUpdateFlow;
 };
 
 /**
@@ -187,10 +206,16 @@ const isCustomElement = (element) => {
  * @param  {Array} templateMap A DOM tree map of the template content
  * @param  {Array} domMap      A DOM tree map of the existing DOM node
  * @param  {Node}  elem        The element to render content into
+ * @param  {Node} rootNode
  */
-const diff = function (templateMap, domMap, elem) {
+const diff = function (templateMap, domMap, elem, rootNode) {
+    if (elem !== rootNode && elem?.$$element?.hasOwnUpdateFlow) {
+        return;
+    }
+
     // If extra elements in domMap, remove them
     let count = domMap.length - templateMap.length;
+
     if (count > 0) {
         for (; count > 0; count--) {
             domMap[domMap.length - count].node.parentNode.removeChild(domMap[domMap.length - count].node);
@@ -216,7 +241,7 @@ const diff = function (templateMap, domMap, elem) {
 
         // If content is different, update it
         if (templateMap[index].content !== domMap[index].content) {
-            if (!isCustomElement(domMap[index])) {
+            if (!hasOwnUpdateFlow(domMap[index])) {
                 // ignore custom elements.
                 domMap[index].node.textContent = templateMap[index].content;
             }
@@ -224,7 +249,7 @@ const diff = function (templateMap, domMap, elem) {
 
         // If target element should be empty, wipe it
         if (domMap[index].children.length > 0 && node.children.length < 1) {
-            if (!isCustomElement(domMap[index])) {
+            if (!hasOwnUpdateFlow(domMap[index])) {
                 // ignore custom elements.
                 domMap[index].node.innerHTML = '';
             }
@@ -234,29 +259,38 @@ const diff = function (templateMap, domMap, elem) {
         // If element is empty and shouldn't be, build it up
         // This uses a document fragment to minimize reflows
         if (domMap[index].children.length < 1 && node.children.length > 0) {
+            if (hasOwnUpdateFlow(domMap[index])) {
+                return;
+            }
+
             const fragment = document.createDocumentFragment();
-            diff(node.children, domMap[index].children, fragment);
+            diff(node.children, domMap[index].children, fragment, rootNode);
             elem.appendChild(fragment);
             return;
         }
 
         // If there are existing child elements that need to be modified, diff them
         if (node.children.length > 0) {
-            diff(node.children, domMap[index].children, domMap[index].node);
+            if (!hasOwnUpdateFlow(domMap[index])) {
+                diff(node.children, domMap[index].children, domMap[index].node, rootNode);
+            }
         }
     });
 };
 
 const render = (template, target = null) => {
     if (target === null) {
-        return template;
+        return `${template}`;
     }
 
-    diff(createDOMMap(convertStringToHTML(template)), createDOMMap(target), target);
+    const templateDOMMap = createDOMMap(convertStringToHTML(template));
+    const domMap = createDOMMap(target);
 
-    target.$$element = {
-        hasOwnUpdateFlow: true,
-    };
+    diff(templateDOMMap, domMap, target, target);
+
+    target.$$element = target.$$element ?? {};
+    target.$$element.hasOwnUpdateFlow = true;
 };
 
-export { html, render };
+export { render };
+

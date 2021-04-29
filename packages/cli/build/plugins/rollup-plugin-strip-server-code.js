@@ -6,6 +6,10 @@ module.exports = function () {
     return {
         name: 'luna-strip-server-code',
         async transform(code, id) {
+            if (!id.endsWith('.js') || id.indexOf('node_modules') !== -1) {
+                return;
+            }
+
             try {
                 const toRemove = [];
                 const toReplace = [];
