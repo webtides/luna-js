@@ -1,12 +1,16 @@
+import path from "path";
+
 import {getSettings} from "@webtides/luna-js/lib/framework/config";
+import rimraf from 'rimraf';
+import chokidar from "chokidar";
 
 import {startRollup, startRollupWatch} from "../build";
-import path from "path";
 import {prepareLegacyBuild} from "../legacy";
-import chokidar from "chokidar";
 
 const buildComponentsForApplication = async () => {
     const settings = getSettings();
+    // Clean the build directory before starting a new build.
+    rimraf.sync(settings.build.output);
 
     await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.application.js"));
 
@@ -18,6 +22,8 @@ const buildComponentsForApplication = async () => {
 
 const startApplicationDevelopmentBuild = async (callback = () => { }) => {
     const settings = getSettings();
+    // Clean the build directory before starting a new build.
+    rimraf.sync(settings.build.output);
 
     let watcher = await startRollupWatch(
         path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),

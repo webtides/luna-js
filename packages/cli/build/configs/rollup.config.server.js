@@ -1,7 +1,6 @@
 const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
-const del = require("rollup-plugin-delete");
 const { getSettings } = require("@webtides/luna-js/lib/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
 
@@ -34,13 +33,6 @@ const bundle = {
             ignore: true
         }),
         require("../plugins/rollup-plugin-markdown")(),
-        del({
-            targets: [
-                path.join(settings.publicDirectory, "*"),
-                path.join(settings._generated.applicationDirectory, "*")
-            ],
-            runOnce: true
-        })
     ]
 };
 

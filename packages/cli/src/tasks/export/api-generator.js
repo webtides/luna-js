@@ -1,10 +1,12 @@
-import {startRollup} from "../build";
 import path from "path";
 import fs from "fs";
+import rimraf from "rimraf";
 import {loadManifest, loadSettings} from "@webtides/luna-js/lib/framework/config";
+import {registerAvailableComponents} from "@webtides/luna-js/lib/framework/loaders/component-loader";
+
+import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
-import {registerAvailableComponents} from "@webtides/luna-js/lib/framework/loaders/component-loader";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const settings = await loadSettings();
@@ -69,6 +71,14 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
 
 
 const generateAPI = async ({ withStaticSite = false, serverless = false } = { }) => {
+    const settings = await loadSettings();
+
+    const outputDirectory = settings.export.api?.output?.directory ?? false;
+    if (outputDirectory) {
+        // Only clear the output directory if we specified a custom api output directory.
+        // The default output directory has already been cleared.
+        rimraf.sync(outputDirectory);
+    }
 
     await buildComponentsForApplication();
     console.log("Generate api entry file.");
@@ -81,15 +91,11 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
 
     await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
 
-
     if (withStaticSite) {
-        const settings = await loadSettings();
-
-        const outputDirectory = settings.export.api?.output?.directory ?? settings.export.output;
-
         await registerAvailableComponents();
         await generateStaticSite({
-            outputDirectory
+            outputDirectory,
+            clean: false
         });
     }
 };

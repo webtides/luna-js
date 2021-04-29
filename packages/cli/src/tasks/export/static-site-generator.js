@@ -1,11 +1,13 @@
-import {loadPages} from "@webtides/luna-js/lib/framework/loaders/pages-loader";
-import fetch from "node-fetch";
-import {getSettings} from "@webtides/luna-js/lib/framework/config";
-import {startServer, stopServer} from "@webtides/luna-js/lib/framework";
-
 import fs from "fs";
 import path from "path";
 import glob from "glob";
+
+import {loadPages} from "@webtides/luna-js/lib/framework/loaders/pages-loader";
+import {getSettings} from "@webtides/luna-js/lib/framework/config";
+import {startServer, stopServer} from "@webtides/luna-js/lib/framework";
+
+import fetch from "node-fetch";
+import rimraf from "rimraf";
 
 const getStaticSiteEntryPoints = async () => {
     const settings = getSettings();
@@ -35,10 +37,15 @@ const getStaticSiteEntryPoints = async () => {
         .map(page => normalizeRoute(page.route));
 };
 
-const generateStaticSite = async ({outputDirectory = false} = {}) => {
+const generateStaticSite = async ({outputDirectory = false, clean = true } = { outputDirectory: false, clean: true }) => {
     const settings = getSettings();
 
     outputDirectory = outputDirectory || settings.export.output;
+
+    if (clean) {
+        // Clean the export output directory before exporting again.
+        rimraf.sync(outputDirectory);
+    }
 
     const entryPoints = await getStaticSiteEntryPoints();
 
