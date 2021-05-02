@@ -11,7 +11,6 @@ const isOnServer = () => {
  * The main class from which server rendered elements should inherit.
  */
 export default class LunaElement extends StyledElement {
-
     constructor(options) {
         super({
             deferUpdate: false,
@@ -59,11 +58,15 @@ export default class LunaElement extends StyledElement {
     }
 
     update(options) {
-        this.renderTemplate();
-
         if (!isOnServer()) {
-            this.appendStyleSheets(this._styles);
 
+            if (this._firstRender || this.$$luna?.hydrateOnConnected) {
+                this.renderTemplate();
+            }
+
+            this._firstRender = true;
+
+            this.appendStyleSheets(this._styles);
             super.update(options);
         }
     }

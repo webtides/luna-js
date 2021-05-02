@@ -4,6 +4,7 @@ dotenv.config();
 // TODO: allow browser globals as externals
 
 global.SSR = true;
+process.env.SSR = true;
 global.HTMLElement = class {};
 
 global.window = {};

@@ -1,5 +1,4 @@
 import {loadManifest, loadSettings, getSerializableConfig} from "../config";
-import {paramCase} from "param-case";
 
 import { JSDOM } from "jsdom";
 import {Inject, LunaService} from "../../decorators/service";
@@ -147,7 +146,7 @@ export default class DocumentRenderer {
         
                         return `
                             import ${component.name} from "${importPath}";
-                            customElements.define("${paramCase(component.name)}", ${component.name});
+                            customElements.define("${component.tagName}", ${component.name});
                         `;
                     })
                     .join("\n")

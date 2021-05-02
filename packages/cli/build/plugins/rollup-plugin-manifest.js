@@ -1,7 +1,11 @@
-const { getSettings } = require("@webtides/luna-js/src/framework/config");
-
 const fs = require("fs");
 const path = require("path");
+
+const parser = require("@babel/parser");
+const traverse = require("@babel/traverse");
+const {paramCase} = require("param-case");
+
+const {getSettings} = require("@webtides/luna-js/lib/framework/config");
 
 const loadComponentChildren = contents => {
     const result = contents.match(/<(?:\w*-\w*)(?:-\w*)*/gm);
@@ -43,13 +47,18 @@ const sortRoutes = (routes) => {
     });
 };
 
-module.exports = function(options) {
-    const { config } = options;
+const getComponentName = () => {
+
+};
+
+module.exports = function (options) {
+    const loadedComponents = [];
+    const {config} = options;
     const entries = {
-        components: { },
-        pages: { },
-        apis: { },
-        hooks: { },
+        components: {},
+        pages: {},
+        apis: {},
+        hooks: {},
     };
 
     const getEntryType = (id) => {
@@ -57,7 +66,7 @@ module.exports = function(options) {
 
         Object.keys(config).map(type => {
             config[type].forEach(configRow => {
-                const { basePath } = configRow;
+                const {basePath} = configRow;
 
                 if (path.resolve(id).startsWith(path.resolve(basePath))) {
                     result = {
@@ -95,7 +104,7 @@ module.exports = function(options) {
                     return null;
                 }
 
-                const { type, basePath, settings } = entryType;
+                const {type, basePath, settings} = entryType;
 
                 const relativePath = id.substring(basePath.length);
                 const relativeBasePath = basePath.substring(process.cwd().length);
@@ -111,7 +120,7 @@ module.exports = function(options) {
                     const fallbackRoute = moonSettings.pages?.fallback ?? false;
                     const fallbackApiRoute = moonSettings.api?.fallback ?? false;
 
-                    const { context } = type === 'apis' ? moonSettings.api : moonSettings.pages;
+                    const {context} = type === 'apis' ? moonSettings.api : moonSettings.pages;
                     let route = getRouteName(relativePath.split(".js")[0]);
 
                     if (type === 'apis' && route === fallbackApiRoute || type === 'pages' && route === fallbackRoute) {
@@ -122,10 +131,33 @@ module.exports = function(options) {
                     }
                 }
 
+                if (type === 'components') {
+                    loadedComponents[path.resolve(id)] = true;
+                }
+
                 entries[type][path.resolve(id)] = entry;
             }
 
             return null;
+        },
+
+        async transform(code, id) {
+            if (loadedComponents[id] ?? false) {
+                traverse.default(parser.parse(code, {
+                    sourceType: "module",
+                    plugins: [
+                        "decorators-legacy",
+                        "classProperties"
+                    ]
+                }), {
+                    ClassDeclaration(path) {
+                        const {name} = path.node.id;
+
+                        entries['components'][id].tagName = paramCase(name);
+                        entries['components'][id].name = name;
+                    }
+                });
+            }
         },
 
         async renderChunk(code, chunk, options) {
@@ -143,14 +175,14 @@ module.exports = function(options) {
 
         generateBundle() {
             const settings = getSettings();
-            const { manifest } = settings._generated;
+            const {manifest} = settings._generated;
 
             const directory = path.dirname(manifest);
             if (!fs.existsSync(directory)) {
-                fs.mkdirSync(directory, { recursive: true });
+                fs.mkdirSync(directory, {recursive: true});
             }
 
-            const pagesManifest = { };
+            const pagesManifest = {};
 
             Object.keys(entries).forEach(type => {
                 pagesManifest[type] = Object.keys(entries[type]).map(key => entries[type][key]);
@@ -159,7 +191,7 @@ module.exports = function(options) {
             pagesManifest['pages'] = sortRoutes(pagesManifest['pages']);
             pagesManifest['apis'] = sortRoutes(pagesManifest['apis']);
 
-            fs.writeFileSync(manifest, JSON.stringify(pagesManifest), { encoding: "utf-8" });
+            fs.writeFileSync(manifest, JSON.stringify(pagesManifest), {encoding: "utf-8"});
         },
     }
 }

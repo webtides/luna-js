@@ -1,6 +1,5 @@
 import {loadManifest, loadSettings} from "../config.js";
 import path from "path";
-import {paramCase} from "param-case";
 import {LunaService} from "../../decorators/service";
 
 @LunaService({
@@ -67,7 +66,7 @@ export default class ComponentLoader {
         const basePath = settings._generated.applicationDirectory;
 
         for (const component of manifest.components) {
-            const {file, directory, relativePath, settings, children} = component;
+            const {file, directory, relativePath, settings, children, name} = component;
             const absolutePath = path.join(basePath, file);
 
             const element = require(path.resolve(absolutePath));
@@ -76,10 +75,11 @@ export default class ComponentLoader {
                 return;
             }
 
+            const tagName = element?.$$luna?.tagName ?? component.tagName;
+
             element.staticProperties = await this.loadStaticProperties(element);
 
             const hasDynamicProperties = this.isDynamicElement(element);
-            const tagName = paramCase(element.name);
 
             console.log("Register component", tagName);
 
@@ -88,7 +88,7 @@ export default class ComponentLoader {
                 tagName,
                 hasStaticProperties: typeof element.staticProperties !== "undefined",
                 hasDynamicProperties,
-                name: element.name,
+                name,
                 file,
                 relativePath,
                 directory,

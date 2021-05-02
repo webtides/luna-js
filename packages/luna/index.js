@@ -5,6 +5,7 @@ import {BaseElement} from "@webtides/element-js/src/BaseElement";
 import {TemplateElement} from "@webtides/element-js/src/TemplateElement";
 import { HideFromClient } from "./src/decorators/visibility";
 import { LunaService, Inject } from "./src/decorators/service";
+import { HydrateOnConnected, TagName } from "./src/decorators/client";
 
 export {
     LunaElement,
@@ -13,6 +14,8 @@ export {
     LunaService,
     Inject,
     HideFromClient,
+    HydrateOnConnected,
+    TagName,
 
     // element-js
     BaseElement,
