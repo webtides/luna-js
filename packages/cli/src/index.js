@@ -31,6 +31,8 @@ const execute = async (argv) => {
     await prepareLuna();
 
     if (argv.dev) {
+        await buildComponentsForApplication();
+
         console.log("Starting luna in development mode.");
 
         await startLuna();
