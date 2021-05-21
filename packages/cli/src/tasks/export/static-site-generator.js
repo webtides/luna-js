@@ -7,6 +7,8 @@ import fs from "fs";
 import path from "path";
 import glob from "glob";
 
+import rimraf from "rimraf";
+
 const getStaticSiteEntryPoints = async () => {
     const settings = getSettings();
 
@@ -48,12 +50,16 @@ const groupEntryPoints = (entryPoints) => {
     return chunks;
 };
 
-const generateStaticSite = async ({outputDirectory = false} = {}) => {
+const generateStaticSite = async ({outputDirectory = false, clean = true } = { outputDirectory: false, clean: true }) => {
     const settings = getSettings();
 
     outputDirectory = outputDirectory || settings.export.output;
 
     const entryChunks = groupEntryPoints(await getStaticSiteEntryPoints());
+    if (clean) {
+        // Clean the export output directory before exporting again.
+        rimraf.sync(outputDirectory);
+    }
 
     await luna.get(Server).start();
 
@@ -80,9 +86,11 @@ const generateStaticSite = async ({outputDirectory = false} = {}) => {
     const directoriesToCopy = [
         ...(settings.export?.api?.include ?? [])
     ].map(directory => {
-        return {
-            input: path.posix.join(settings.build.output, directory),
-            output: path.posix.join(outputDirectory, directory)
+        const inputPath = path.posix.join(settings.build.output, directory);
+            return {
+                input: inputPath,
+            output: path.posix.join(outputDirectory, directory),
+                isFile: fs.lstatSync(inputPath).isFile(),
         }
     });
 
@@ -92,17 +100,19 @@ const generateStaticSite = async ({outputDirectory = false} = {}) => {
     });
 
     for (const directory of directoriesToCopy) {
-        await Promise.all(glob.sync(path.join(directory.input, "**/*")).map((file) => {
+        const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
+
+            filesToCopy.forEach((file) => {
             if (fs.lstatSync(file).isDirectory()) {
                 return;
             }
 
-            const relativePath = file.substring(directory.input.length);
+            const relativePath = directory.isFile ? '.' : file.substring(directory.input.length);
             const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
 
             fs.mkdirSync(publicAssetDirectory, {recursive: true});
             fs.copyFileSync(file, path.join(directory.output, relativePath));
-        }));
+        });
     }
 
     await luna.get(Server).stop();

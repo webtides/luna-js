@@ -3,9 +3,9 @@ const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
 const json = require('@rollup/plugin-json');
-const del = require("rollup-plugin-delete");
 
 const { getSettings } = require('@webtides/luna-js/lib/framework/config');
+
 const settings = getSettings();
 
 const outputDirectory = settings.export?.api?.output?.directory ?? settings.export.output;
@@ -27,13 +27,6 @@ module.exports = {
         ...externals
     ],
     plugins: [
-        del({
-            targets: [
-                path.join(outputDirectory, "public/assets"),
-                path.join(outputDirectory, "*"),
-            ],
-            runOnce: true,
-        }),
         require("../plugins/rollup-plugin-markdown.js")(),
         nodeResolve({
             resolveOnly: [ '@webtides/luna-js', '@webtides/luna-cli' ]

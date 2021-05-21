@@ -19,6 +19,17 @@
 ### Changed
  - Static export is now running in chunks for better performance
 
+## [0.7.5] CLI - 20.05.2021
+
+### Added
+ - Allow copying a single file in the static sources and export tasks
+
+## [0.7.3] CLI -
+
+### Added
+ - Clear the output/api directory before exporting
+ - Clear the build directory before exporting
+
 ## [0.7.2] CLI - 04.04.2021
 
 ### Added
