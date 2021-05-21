@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.7.3",
+  "version": "0.7.5",
   "description": "The cli for luna-js.",
   "main": "lib/index.js",
   "engines": {
@@ -43,7 +43,7 @@
     "node-fetch": "^2.6.1",
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2",
-    "postcss": "^8.2.2",
+    "postcss": "^8.2.10",
     "postcss-import": "^14.0.0",
     "postcss-preset-env": "^6.7.0",
     "regenerator-runtime": "^0.13.7",

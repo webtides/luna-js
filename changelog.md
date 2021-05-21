@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.5] CLI - 20.05.2021
+
+### Added
+ - Allow copying a single file in the static sources and export tasks
+
 ## [0.7.3] CLI -
 
 ### Added

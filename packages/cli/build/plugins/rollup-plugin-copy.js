@@ -3,6 +3,10 @@ const fs = require("fs");
 const path = require("path");
 
 const getPathRelativeToBasePath = (path, basePath) => {
+    if (basePath.length === 0) {
+        return '.';
+    }
+
     return path.substring(basePath.length - 1);
 };
 
@@ -15,9 +19,12 @@ module.exports = function(options) {
             sources.forEach(source => {
                 const { input, output } = source;
 
-                const basePath = input.replace(`**\\*`, '**/*').split("**/*")[0];
+                let basePath = '';
+                if (input.indexOf('**') !== -1) {
+                    basePath = input.replace(`**\\*`, '**/*').split("**/*")[0];
+                }
 
-                const files = glob.sync(input);
+                const files = basePath === '' ? [ input ] : glob.sync(input);
 
                 files.forEach(file => {
                     const target = path.join(

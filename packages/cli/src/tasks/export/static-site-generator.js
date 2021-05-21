@@ -71,9 +71,11 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
         const directoriesToCopy = [
             ...(settings.export?.api?.include ?? [])
         ].map(directory => {
+            const inputPath = path.posix.join(settings.build.output, directory);
             return {
-                input: path.posix.join(settings.build.output, directory),
-                output: path.posix.join(outputDirectory, directory)
+                input: inputPath,
+                output: path.posix.join(outputDirectory, directory),
+                isFile: fs.lstatSync(inputPath).isFile(),
             }
         });
 
@@ -83,17 +85,19 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
         });
 
         for (const directory of directoriesToCopy) {
-            await Promise.all(glob.sync(path.join(directory.input, "**/*")).map((file) => {
+            const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
+
+            filesToCopy.forEach((file) => {
                 if (fs.lstatSync(file).isDirectory()) {
                     return;
                 }
 
-                const relativePath = file.substring(directory.input.length);
+                const relativePath = directory.isFile ? '.' : file.substring(directory.input.length);
                 const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
 
                 fs.mkdirSync(publicAssetDirectory, {recursive: true});
                 fs.copyFileSync(file, path.join(directory.output, relativePath));
-            }));
+            });
         }
     }));
 
