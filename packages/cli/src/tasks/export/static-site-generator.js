@@ -55,12 +55,11 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
 
     outputDirectory = outputDirectory || settings.export.output;
 
+    const entryChunks = groupEntryPoints(await getStaticSiteEntryPoints());
     if (clean) {
         // Clean the export output directory before exporting again.
         rimraf.sync(outputDirectory);
     }
-
-    const entryChunks = groupEntryPoints(await getStaticSiteEntryPoints());
 
     await luna.get(Server).start();
 
