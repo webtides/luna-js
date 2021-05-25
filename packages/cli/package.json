@@ -6,10 +6,6 @@
   "engines": {
     "node": ">= 14.0.0"
   },
-  "scripts": {
-    "prepublish": "npm run compile",
-    "compile": "npx babel src --out-dir lib --source-maps inline"
-  },
   "bin": {
     "luna": ".bin/luna.js"
   },

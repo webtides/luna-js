@@ -1,6 +1,6 @@
 import path from "path";
 
-import {getSettings} from "@webtides/luna-js/lib/framework/config";
+import {getSettings} from "@webtides/luna-js/src/framework/config";
 import rimraf from 'rimraf';
 import chokidar from "chokidar";
 

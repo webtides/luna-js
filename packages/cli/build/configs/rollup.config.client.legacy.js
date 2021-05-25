@@ -9,7 +9,7 @@ const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
 const copy = require("../plugins/rollup-plugin-copy");
 
-const { getSettings } = require('@webtides/luna-js/lib/framework/config');
+const { getSettings } = require('@webtides/luna-js/src/framework/config');
 
 const production = process.env.NODE_ENV === "production";
 const settings = getSettings();

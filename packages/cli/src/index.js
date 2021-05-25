@@ -1,13 +1,13 @@
-import "@webtides/luna-js/lib/framework/bootstrap";
-import { prepareLuna } from "@webtides/luna-js/lib/framework";
-import {startLuna} from "@webtides/luna-js/lib/framework";
+import "@webtides/luna-js/src/framework/bootstrap";
+import LunaCache from "@webtides/luna-js/src/framework/cache/luna-cache";
+import { prepareLuna } from "@webtides/luna-js/src/framework";
+import {startLuna} from "@webtides/luna-js/src/framework";
 
 import {checkRequirements} from "./tasks/prepare";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
-import LunaCache from "@webtides/luna-js/lib/framework/cache/luna-cache";
 
 let moonJSStarting = false;
 

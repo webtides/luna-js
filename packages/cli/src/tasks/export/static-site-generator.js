@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
-import {getSettings} from "@webtides/luna-js/lib/framework/config";
-import PagesLoader from "@webtides/luna-js/lib/framework/loaders/pages-loader";
-import Server from "@webtides/luna-js/lib/framework/http/server";
+import {getSettings} from "@webtides/luna-js/src/framework/config";
+import PagesLoader from "@webtides/luna-js/src/framework/loaders/pages-loader";
+import Server from "@webtides/luna-js/src/framework/http/server";
 
 import fs from "fs";
 import path from "path";
