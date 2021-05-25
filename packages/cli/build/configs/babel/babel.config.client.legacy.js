@@ -12,6 +12,7 @@ module.exports = (api) => {
                         "safari": "11.1",
                         "ie": "11"
                     },
+                    "loose": true,
                     "useBuiltIns": "usage",
                     "corejs": 3,
                 }
