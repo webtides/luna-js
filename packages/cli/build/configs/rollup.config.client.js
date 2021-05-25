@@ -60,15 +60,15 @@ const componentBundles = (settings.components?.bundles?.flatMap(bundle => {
             format: 'es',
         },
         plugins: [
-            require("../plugins/rollup-plugin-strip-server-code")(),require("../plugins/rollup-plugin-switch-renderer")({context: 'client'}),
-            require("../plugins/rollup-plugin-client-manifest")({
-                config: bundle
-            }),
             require("../plugins/rollup-plugin-postcss")({
                 publicDirectory: settings.publicDirectory,
                 ...bundle.styles
             }),
             require("../plugins/rollup-plugin-markdown")(),
+            require("../plugins/rollup-plugin-strip-server-code")(),require("../plugins/rollup-plugin-switch-renderer")({context: 'client'}),
+            require("../plugins/rollup-plugin-client-manifest")({
+                config: bundle
+            }),
             json(),
             nodeResolve(),
             replace({

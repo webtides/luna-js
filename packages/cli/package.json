@@ -26,6 +26,7 @@
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@babel/preset-env": "^7.11.5",
+    "@babel/register": "^7.13.16",
     "@github-docs/frontmatter": "^1.3.1",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-commonjs": "^15.1.0",
