@@ -7,7 +7,7 @@ const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
 const replace = require("@rollup/plugin-replace");
 
-const {getSettings} = require('@webtides/luna-js/lib/framework/config');
+const {getSettings} = require('@webtides/luna-js/src/framework/config');
 
 const production = process.env.NODE_ENV === "production";
 const settings = getSettings();

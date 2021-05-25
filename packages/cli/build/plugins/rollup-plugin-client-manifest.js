@@ -1,4 +1,4 @@
-const { getSettings } = require("@webtides/luna-js/lib/framework/config");
+const { getSettings } = require("@webtides/luna-js/src/framework/config");
 
 const fs = require("fs");
 const path = require("path");

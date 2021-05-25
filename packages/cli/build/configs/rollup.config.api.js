@@ -4,7 +4,7 @@ const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
 const json = require('@rollup/plugin-json');
 
-const { getSettings } = require('@webtides/luna-js/lib/framework/config');
+const { getSettings } = require('@webtides/luna-js/src/framework/config');
 
 const settings = getSettings();
 

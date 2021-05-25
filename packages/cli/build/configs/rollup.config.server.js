@@ -2,7 +2,7 @@ const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const {getSettings} = require("@webtides/luna-js/lib/framework/config");
+const {getSettings} = require("@webtides/luna-js/src/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
 
 const settings = getSettings();

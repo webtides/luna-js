@@ -1,12 +1,12 @@
 import path from "path";
 import fs from "fs";
 import rimraf from "rimraf";
-import {loadManifest, loadSettings} from "@webtides/luna-js/lib/framework/config";
+import {loadManifest, loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
-import ComponentLoader from "@webtides/luna-js/lib/framework/loaders/component-loader";
+import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const settings = await loadSettings();
