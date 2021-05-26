@@ -11,11 +11,11 @@ describe("Legacy cli test", function () {
 
     describe("Fixture preparation", function() {
         it("should prepare the fixtures", function() {
-            execSync('cd ../../../packages/cli && npm install');
-            execSync('cd ../../../packages/luna && npm install');
+            execSync('cd ../../../packages/cli && yarn install --frozen-lockfile');
+            execSync('cd ../../../packages/luna && yarn install --frozen-lockfile');
 
-            execute('npm install --save-dev $(npm pack ../../../packages/cli | tail -1)');
-            execute('npm install --save $(npm pack ../../../packages/luna | tail -1)');
+            execute('yarn add --dev $(npm pack ../../../packages/cli | tail -1)');
+            execute('yarn add $(npm pack ../../../packages/luna | tail -1)');
         })
     })
 
