@@ -16,6 +16,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - run: npm install -g yarn
+      - run: npm install -g yarn@1.22.5
       - run: yarn install --frozen-lockfile
       - run: yarn run test
