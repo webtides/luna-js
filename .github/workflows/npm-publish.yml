@@ -13,8 +13,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - run: npm ci
-      - run: npm test
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn run test
   build_cli:
     needs: test
     runs-on: ubuntu-latest
@@ -26,8 +27,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - run: npm ci
-      - run: npm run compile
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn run test
   publish_cli:
     needs: build_cli
     runs-on: ubuntu-latest
@@ -53,8 +55,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - run: npm ci
-      - run: npm run compile
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn run test
   publish_luna:
     needs: build_luna
     runs-on: ubuntu-latest
