@@ -9,11 +9,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@webtides/luna-js": "file:webtides-luna-js-0.7.2.tgz"
-  },
-  "devDependencies": {
-    "@webtides/luna-cli": "file:webtides-luna-cli-0.7.2.tgz"
-  }
+  "license": "ISC"
 }
