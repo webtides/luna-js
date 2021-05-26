@@ -18,6 +18,10 @@
 
 ### Changed
  - Static export is now running in chunks for better performance
+ - Use yarn for local development for better linking functionality
+ 
+### Fixed
+ - Build does not crash anymore if a file is added / removed (#46)
 
 ## [0.7.5] CLI - 20.05.2021
 
