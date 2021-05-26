@@ -16,8 +16,8 @@ describe("Basic cli test", function () {
             execSync('cd ../../../packages/cli && yarn install --prod --frozen-lockfile');
             execSync('cd ../../../packages/luna && yarn install --frozen-lockfile');
 
-            execute('yarn add --dev $(npm pack ../../../packages/cli | tail -1)');
-            execute('yarn add $(npm pack ../../../packages/luna | tail -1)');
+            execute('yarn add --dev ../../../packages/cli');
+            execute('yarn add ../../../packages/luna');
         })
     })
 
