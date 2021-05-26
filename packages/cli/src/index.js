@@ -16,7 +16,7 @@ const restartLunaJS = async () => {
     moonJSStarting = true;
 
     const server = luna.get('LunaServer');
-    await server.restart();
+    await server.reset();
 
     moonJSStarting = false;
 };
@@ -40,6 +40,7 @@ const execute = async (argv) => {
         await startLivereloadServer();
         await startApplicationDevelopmentBuild(async () => {
             luna.get(LunaCache).clear();
+
             await restartLunaJS();
             await sendReloadMessage();
         });

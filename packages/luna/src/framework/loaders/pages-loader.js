@@ -70,11 +70,15 @@ export default class PagesLoader {
      * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
      * @param route string  The route where the page should be registered. Used for the cache.
      *
-     * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
+     * @returns {Promise<{markup: string, layoutFactory: *, element: *}|boolean>}
      */
     async loadAnonymousPage({module, route = ''}) {
         let markup = await this.cache.get(route, 'pages');
         const {page, layout} = module;
+
+        if (typeof page !== 'function') {
+            return false;
+        }
 
         if (!markup) {
             markup = await renderToString(page());
@@ -124,13 +128,16 @@ export default class PagesLoader {
      * @param request *     The express request object
      * @param response *    The express response object.
      *
-     * @returns {Promise<{html: string, element: *}>}
+     * @returns {Promise<{html: string|boolean, element: *}>}
      */
     async generatePageMarkup({module, route = '', request, response}) {
         const result = typeof module.page?.prototype?.connectedCallback === "undefined"
             ? await this.loadAnonymousPage({module, route})
             : await this.loadComponentPage({module, request, response});
 
+        if (!result) {
+            return { html: false };
+        }
 
         const page = html`${unsafeHTML(result.markup)}`
 

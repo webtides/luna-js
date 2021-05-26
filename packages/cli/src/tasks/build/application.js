@@ -1,14 +1,15 @@
 import path from "path";
-
-import {getSettings} from "@webtides/luna-js/src/framework/config";
 import rimraf from 'rimraf';
-import chokidar from "chokidar";
+import chokidar from 'chokidar';
+
+import {loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup, startRollupWatch} from "../build";
 import {prepareLegacyBuild} from "../legacy";
 
 const buildComponentsForApplication = async () => {
-    const settings = getSettings();
+    const settings = await loadSettings();
+
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
@@ -22,11 +23,14 @@ const buildComponentsForApplication = async () => {
 
 const startApplicationDevelopmentBuild = async (callback = () => {
 }) => {
-    const settings = getSettings();
+    const settings = await loadSettings();
+
+
+    // TODO reregister all routes and restart luna
+
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
-    let shouldRestart = false;
     let watcher;
 
     const initializeWatcher = async (restart = true) => {
@@ -36,38 +40,29 @@ const startApplicationDevelopmentBuild = async (callback = () => {
 
         watcher = await startRollupWatch(
             path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
-            callback
+            () => {
+                console.log("UPDATE APPLICATION");
+                callback();
+            },
+            () => {
+                watcher && watcher.close();
+            }
         );
 
-        watcher.on('close', async () => {
-            console.log("WATCHER CLOSED", shouldRestart);
-            await initializeWatcher(shouldRestart);
-            shouldRestart = false;
-        });
+        watcher.on('close', () => {
+            initializeWatcher(true);
+        })
     };
 
-    const componentDirectories = settings.components.bundles.map(bundle => bundle.input);
     chokidar.watch([
-        ...componentDirectories,
+        ...settings.components.bundles.map(bundle => bundle.input),
         ...settings.pages.input,
         ...settings.api.input,
         ...settings.hooks.input
-    ], {ignoreInitial: true})
+    ], { ignoreInitial: true })
         .on("add", async (event, filePath) => {
             console.log("File added. Restart watcher");
-
-            setTimeout(async () => {
-                shouldRestart = true;
-                watcher && watcher.close();
-            }, 20);
-        })
-        .on("unlink", async () => {
-            console.log("File removed. Restart watcher");
-
-            setTimeout(() => {
-                shouldRestart = true;
-                watcher && watcher.close();
-            }, 20);
+            watcher && watcher.close();
         });
 
     await initializeWatcher(true);
