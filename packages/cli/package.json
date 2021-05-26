@@ -56,8 +56,5 @@
   "bugs": {
     "url": "https://github.com/webtides/luna-cli/issues"
   },
-  "homepage": "https://github.com/webtides/luna-cli#readme",
-  "devDependencies": {
-    "@webtides/luna-js": "^0.7.1"
-  }
+  "homepage": "https://github.com/webtides/luna-cli#readme"
 }
