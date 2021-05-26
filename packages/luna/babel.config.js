@@ -2,7 +2,7 @@ module.exports = (api) => {
     api.cache(false);
 
     return {
-        presets: [["@babel/preset-env", { "targets": { "node": 12 } }]],
+        presets: [["@babel/preset-env", { "targets": { "node": 12 }, "loose": true }]],
         plugins: [
             "@babel/plugin-proposal-nullish-coalescing-operator",
             "@babel/plugin-proposal-optional-chaining",

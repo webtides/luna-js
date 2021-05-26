@@ -45,6 +45,11 @@ const routes = async ({router}) => {
     const registerPageRoute = async ({module, route}) => {
         const callback = async ({ request, response }) => {
             const {html} = await pagesLoader.generatePageMarkup({route, module, request, response});
+
+            if (!html) {
+                return response.status(404).send();
+            }
+
             const result = await documentRenderer.render(html, {request, response});
 
             if (request.luna?.isCacheable) {

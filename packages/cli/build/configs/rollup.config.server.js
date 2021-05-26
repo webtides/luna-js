@@ -2,17 +2,15 @@ const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const {getSettings} = require("@webtides/luna-js/src/framework/config");
+const {loadSettings} = require("@webtides/luna-js/src/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
 
-const settings = getSettings();
-const {basePaths, files} = generateBasePathsFromLunaConfig(settings);
+export default async () => {
+    const settings = await loadSettings();
+    const {basePaths, files} = generateBasePathsFromLunaConfig(settings);
 
-const production = process.env.NODE_ENV === "production";
+    const production = process.env.NODE_ENV === "production";
 
-if (!settings?._generated) {
-    module.exports = [];
-} else {
     const bundle = {
         input: files,
         output: {
@@ -43,5 +41,5 @@ if (!settings?._generated) {
         ]
     };
 
-    module.exports = [bundle];
-}
+    return [ bundle ];
+};

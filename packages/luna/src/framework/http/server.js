@@ -86,4 +86,9 @@ export default class Server {
         await this.stop();
         return this.start();
     }
+
+    async reset() {
+        this.app = null;
+        return this.restart();
+    }
 }

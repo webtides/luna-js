@@ -25,7 +25,7 @@ export default class ElementRenderer {
      * @param group string      The component cache group. Can be used to use different caches for
      *                          different types of components.
      *
-     * @returns {Promise<{markup: string, element: *}>}
+     * @returns {Promise<{markup: string, element: *, dependencies: []}|boolean>}
      */
     async renderComponent({component, attributes = {}, group = 'components', request, response}) {
         attributes["ssr"] = true;
