@@ -13,7 +13,7 @@ describe("Basic cli test", function () {
 
     describe("Fixture preparation", function () {
         it("should prepare the fixtures", function () {
-            execSync('cd ../../../packages/cli && yarn install --frozen-lockfile');
+            execSync('cd ../../../packages/cli && yarn install --prod --frozen-lockfile');
             execSync('cd ../../../packages/luna && yarn install --frozen-lockfile');
 
             execute('yarn add --dev $(npm pack ../../../packages/cli | tail -1)');
