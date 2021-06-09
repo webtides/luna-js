@@ -7,6 +7,7 @@
  - **BREAKING**: `startServer` is now `startLuna`
  - **BREAKING**: `stopServer` is now `stopLuna`
  - **BREAKING**: `prepareLuna` is now exported from `framework/index.js`
+ - Elements are marked as "defer update" per default
 
 ### Added
  - Really simple dependency injection container
