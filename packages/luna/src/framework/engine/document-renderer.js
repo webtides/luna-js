@@ -68,7 +68,11 @@ export default class DocumentRenderer {
         for (const attribute of $node.attributes) {
             const attributeValue = $node.getAttribute(attribute.name);
             if (attributeValue) {
-                attributes[attribute.name] = attributeValue;
+                const attributeName = attribute.name.startsWith('.') ? attribute.name.substring(1) : attribute.name;
+                attributes[attributeName] = attributeValue;
+
+                $node.removeAttribute(attribute.name);
+                $node.setAttribute(attributeName, attributeValue);
             }
         }
 

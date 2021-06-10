@@ -40,8 +40,7 @@ module.exports = {
         },
 
         static: {
-            sources: [ {
-            } ]
+            sources: [ ]
         }
     },
 
