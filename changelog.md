@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] CLI
+
+### Added
+- Allow `.attribute` notation for server rendered components
+
+### Fixed
+- Copy plugin does not crash if an empty object is provided
+
+
 ## [0.8.1] Luna - 22.01.2022
 
 ### Changed
@@ -10,7 +19,6 @@
 
 ### Changed
 - Upgraded packages
-
 
 ## [0.8.0] Luna - 10.06.2021
 
