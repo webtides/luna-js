@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] Luna
+## [0.8.0] Luna - 10.06.2021
 
 ### Changed
  - Core services are now class based and injectable (#50)
@@ -15,7 +15,7 @@
  - Decorators for dependency injection (#50)
  - You can pass an additional `config` object to lunas `startLuna`
 
-## [Unreleased] CLI
+## [0.8.0] CLI - 10.06.2021
 
 ### Changed
  - Static export is now running in chunks for better performance
