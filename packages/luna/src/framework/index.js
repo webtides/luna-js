@@ -1,107 +1,64 @@
 import './bootstrap.js';
 
-import express from 'express';
-import bodyParser from "body-parser";
-import {routes} from "./http/router/routes.js";
-import {getAvailableComponents, registerAvailableComponents} from "./loaders/component-loader.js";
+import {getSerializableConfig, loadSettings} from "./config";
 import {callHook} from "./hooks";
-import {loadHooks} from "./loaders/hooks-loader";
 import {HOOKS} from "./hooks/definitions";
-import {registerMiddleware} from "./http/middleware";
-import {getSettings} from "./config";
-import {initializeLuna} from "./luna";
-import {cacheMiddleware} from "./http/middleware/cache-middleware";
 
-let app;
-let server;
-let port;
+import ComponentLoader from "./loaders/component-loader";
+import Server from "./http/server";
+import LunaContainer from "./luna";
 
-let connections = [];
+/**
+ * This methods should be called before anything else.
+ * Performs checks for required files and loads the settings.
+ *
+ * @returns {Promise<boolean>}
+ */
+const prepareLuna = async ({ config } = {}) => {
+    // First we load all settings.
+    if (!(await loadSettings({ config }))) {
+        return false;
+    }
 
-const prepareServer = async () => {
-    if (!(await initializeLuna())) {
+    // Only initialize luna once.
+    if (!global.luna) {
+        const config = getSerializableConfig();
+        const luna = new LunaContainer(config);
+
+        luna.prepare();
+
+        global.luna = luna;
+    }
+
+    return true;
+};
+
+const startLuna = async ({ config } = {}) => {
+    global.luna = undefined;
+
+    if (!(await prepareLuna({ config }))) {
         console.log("Could not start luna-js. Have you created your luna.config.js?");
         return;
     }
 
-    // Load and register all available hooks.
-    await loadHooks();
-
-    global.luna = (await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna }))?.luna ?? global.luna;
-
-    const settings = getSettings();
+    await global.luna.initialize();
 
     await callHook(HOOKS.HOOKS_LOADED);
 
-    app = express();
-
-    app.use(bodyParser.urlencoded());
-    app.use(bodyParser.json());
-
-    app.use(express.static('.build/public'));
-
-    port = settings.port;
-
-    await registerAvailableComponents();
+    const componentLoader = luna.get(ComponentLoader);
+    await componentLoader.registerAvailableComponents();
 
     await callHook(HOOKS.COMPONENTS_LOADED, {
-        components: getAvailableComponents()
+        components: componentLoader.getAvailableComponents()
     });
 
-    await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {
-        router: app
-    });
-
-    await registerMiddleware({ app });
-
-    app.use(cacheMiddleware());
-
-    await routes({router: app});
-
-    await callHook(HOOKS.ROUTES_AFTER_REGISTER, {
-        router: app
-    });
-
-    return app;
-}
-
-const startServer = async () => {
-    return new Promise(async (resolve, reject) => {
-        console.log("Starting luna-js");
-
-        await prepareServer();
-
-        server = app.listen(port, async () => {
-            console.log(`luna-js listening at: http://localhost:${port}`)
-
-            await callHook(HOOKS.SERVER_STARTED, {
-                app
-            });
-
-            resolve();
-        });
-
-        server.on('connection', connection => {
-            connections.push(connection);
-            connection.on('close', () => connections = connections.filter(curr => curr !== connection));
-        });
-    });
+    const server = luna.get(Server);
+    await server.start();
 };
 
-const stopServer = async () => {
-    return new Promise((resolve, reject) => {
-        if (server) {
-            connections.forEach(connection => connection.destroy());
-            server.close(() => resolve());
-        } else {
-            resolve();
-        }
-    })
+const stopLuna = async () => {
+    const server = luna.get(Server);
+    await server.stop();
 }
 
-const restartServer = async () => {
-    await stopServer();
-    return startServer();
-}
-
-export { stopServer, startServer, restartServer, prepareServer };
+export { prepareLuna, startLuna, stopLuna };

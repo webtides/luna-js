@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import {getSettings} from "@webtides/luna-js/lib/framework/config";
+import {getSettings} from "@webtides/luna-js/src/framework/config";
 
 let livereloadServer = false;
 const livereloadConnections = [];

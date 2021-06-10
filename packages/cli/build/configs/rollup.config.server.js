@@ -1,39 +1,45 @@
 const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
-const { getSettings } = require("@webtides/luna-js/lib/framework/config");
+const {nodeResolve} = require("@rollup/plugin-node-resolve");
+const {loadSettings} = require("@webtides/luna-js/src/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
 
-const settings = getSettings();
+export default async () => {
+    const settings = await loadSettings();
+    const {basePaths, files} = generateBasePathsFromLunaConfig(settings);
 
-const { basePaths, files } = generateBasePathsFromLunaConfig(settings);
+    const production = process.env.NODE_ENV === "production";
 
-const production = process.env.NODE_ENV === "production";
+    const bundle = {
+        input: files,
+        output: {
+            dir: settings._generated.applicationDirectory,
+            entryFileNames: '[name].js',
+            sourcemap: !production,
+            format: 'cjs',
+            exports: "auto"
+        },
+        plugins: [
+            require("../plugins/rollup-plugin-postcss")({
+                ignore: true
+            }),
+            require("../plugins/rollup-plugin-markdown")(),
+            require("../plugins/rollup-plugin-switch-renderer")({ context: 'server'}),
+            nodeResolve({
+                resolveOnly: ['@webtides/luna-js']
+            }),
+            babel({
+                configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
+                babelHelpers: "bundled"
+            }),
+            json(),
+            require("../plugins/rollup-plugin-manifest")({
+                config: basePaths
+            }),
 
-const bundle = {
-    input: files,
-    output: {
-        dir: settings._generated.applicationDirectory,
-        entryFileNames: '[name].js',
-        sourcemap: !production,
-        format: 'cjs',
-        exports: "auto"
-    },
-    plugins: [
-        require("../plugins/rollup-plugin-switch-renderer")({ context: 'server' }),
-        babel({
-            configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
-            babelHelpers: "bundled"
-        }),
-        json(),
-        require("../plugins/rollup-plugin-manifest")({
-            config: basePaths
-        }),
-        require("../plugins/rollup-plugin-postcss")({
-            ignore: true
-        }),
-        require("../plugins/rollup-plugin-markdown")(),
-    ]
+        ]
+    };
+
+    return [ bundle ];
 };
-
-module.exports = [ bundle ];

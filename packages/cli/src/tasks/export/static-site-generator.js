@@ -1,12 +1,12 @@
+import fetch from "node-fetch";
+import {getSettings} from "@webtides/luna-js/src/framework/config";
+import PagesLoader from "@webtides/luna-js/src/framework/loaders/pages-loader";
+import Server from "@webtides/luna-js/src/framework/http/server";
+
 import fs from "fs";
 import path from "path";
 import glob from "glob";
 
-import {loadPages} from "@webtides/luna-js/lib/framework/loaders/pages-loader";
-import {getSettings} from "@webtides/luna-js/lib/framework/config";
-import {startServer, stopServer} from "@webtides/luna-js/lib/framework";
-
-import fetch from "node-fetch";
 import rimraf from "rimraf";
 
 const getStaticSiteEntryPoints = async () => {
@@ -31,10 +31,23 @@ const getStaticSiteEntryPoints = async () => {
             .map(route => normalizeRoute(route));
     }
 
-    const {pages} = await loadPages();
+    const {pages} = await luna.get(PagesLoader).loadPages();
     return pages
         .filter(page => !page.fallback)
         .map(page => normalizeRoute(page.route));
+};
+
+const groupEntryPoints = (entryPoints) => {
+    const chunkSize = 100;
+    let i, j;
+
+    const chunks = [];
+
+    for (i = 0, j = entryPoints.length; i < j; i += chunkSize) {
+        chunks.push(entryPoints.slice(i, i + chunkSize));
+    }
+
+    return chunks;
 };
 
 const generateStaticSite = async ({outputDirectory = false, clean = true } = { outputDirectory: false, clean: true }) => {
@@ -42,66 +55,67 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
 
     outputDirectory = outputDirectory || settings.export.output;
 
+    const entryChunks = groupEntryPoints(await getStaticSiteEntryPoints());
     if (clean) {
         // Clean the export output directory before exporting again.
         rimraf.sync(outputDirectory);
     }
 
-    const entryPoints = await getStaticSiteEntryPoints();
-
-    await startServer();
+    await luna.get(Server).start();
 
     const url = `http://localhost:${settings.port}`;
 
-    await Promise.all(entryPoints.map(async (route) => {
-        const response = await fetch(`${url}/${route}`);
-        const renderedPage = await response.text();
+    for (const entryChunk of entryChunks) {
+        await Promise.all(entryChunk.map(async (route) => {
+            const response = await fetch(`${url}/${route}`);
+            const renderedPage = await response.text();
 
-        let pageDirectory = path.join(outputDirectory, "public", route);
+            let pageDirectory = path.join(outputDirectory, "public", route);
 
-        try {
-            fs.mkdirSync(pageDirectory, {recursive: true});
-        } catch {
-        }
+            try {
+                fs.mkdirSync(pageDirectory, {recursive: true});
+            } catch {
+            }
 
-        fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
-            encoding: "UTF-8"
-        });
+            fs.writeFileSync(path.join(pageDirectory, "index.html"), renderedPage, {
+                encoding: "UTF-8"
+            });
+        }));
+    }
 
-        const directoriesToCopy = [
-            ...(settings.export?.api?.include ?? [])
-        ].map(directory => {
-            const inputPath = path.posix.join(settings.build.output, directory);
+    const directoriesToCopy = [
+        ...(settings.export?.api?.include ?? [])
+    ].map(directory => {
+        const inputPath = path.posix.join(settings.build.output, directory);
             return {
                 input: inputPath,
-                output: path.posix.join(outputDirectory, directory),
+            output: path.posix.join(outputDirectory, directory),
                 isFile: fs.lstatSync(inputPath).isFile(),
-            }
-        });
+        }
+    });
 
-        directoriesToCopy.push({
-            input: settings.publicDirectory,
-            output: path.posix.join(outputDirectory, 'public')
-        });
+    directoriesToCopy.push({
+        input: settings.publicDirectory,
+        output: path.posix.join(outputDirectory, 'public')
+    });
 
-        for (const directory of directoriesToCopy) {
-            const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
+    for (const directory of directoriesToCopy) {
+        const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
 
             filesToCopy.forEach((file) => {
-                if (fs.lstatSync(file).isDirectory()) {
-                    return;
-                }
+            if (fs.lstatSync(file).isDirectory()) {
+                return;
+            }
 
-                const relativePath = directory.isFile ? '.' : file.substring(directory.input.length);
-                const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
+            const relativePath = directory.isFile ? '.' : file.substring(directory.input.length);
+            const publicAssetDirectory = path.dirname(path.join(directory.output, relativePath));
 
-                fs.mkdirSync(publicAssetDirectory, {recursive: true});
-                fs.copyFileSync(file, path.join(directory.output, relativePath));
-            });
-        }
-    }));
+            fs.mkdirSync(publicAssetDirectory, {recursive: true});
+            fs.copyFileSync(file, path.join(directory.output, relativePath));
+        });
+    }
 
-    await stopServer();
+    await luna.get(Server).stop();
 };
 
 export {

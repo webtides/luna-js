@@ -18,7 +18,7 @@ export default class LunaElement extends StyledElement {
 
     constructor(options) {
         super({
-            deferUpdate: false,
+            deferUpdate: true,
             shadowRender: false,
             styles: [],
             adoptGlobalStyles: true,

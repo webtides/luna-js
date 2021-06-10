@@ -1,4 +1,4 @@
-import {loadManifest, loadSettings} from "@webtides/luna-js/lib/framework/config";
+import {loadManifest, loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import path from "path";
 import fs from "fs";

@@ -1,14 +1,15 @@
 import path from "path";
-
-import {getSettings} from "@webtides/luna-js/lib/framework/config";
 import rimraf from 'rimraf';
-import chokidar from "chokidar";
+import chokidar from 'chokidar';
+
+import {loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup, startRollupWatch} from "../build";
 import {prepareLegacyBuild} from "../legacy";
 
 const buildComponentsForApplication = async () => {
-    const settings = getSettings();
+    const settings = await loadSettings();
+
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
@@ -20,32 +21,51 @@ const buildComponentsForApplication = async () => {
     }
 };
 
-const startApplicationDevelopmentBuild = async (callback = () => { }) => {
-    const settings = getSettings();
+const startApplicationDevelopmentBuild = async (callback = () => {
+}) => {
+    const settings = await loadSettings();
+
+
+    // TODO reregister all routes and restart luna
+
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
-    let watcher = await startRollupWatch(
-        path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
-        callback
-    );
+    let watcher;
 
-    const componentDirectories = settings.components.bundles.map(bundle => bundle.input);
+    const initializeWatcher = async (restart = true) => {
+        if (!restart) {
+            return;
+        }
+
+        watcher = await startRollupWatch(
+            path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
+            () => {
+                console.log("UPDATE APPLICATION");
+                callback();
+            },
+            () => {
+                watcher && watcher.close();
+            }
+        );
+
+        watcher.on('close', () => {
+            initializeWatcher(true);
+        })
+    };
+
     chokidar.watch([
-        ...componentDirectories,
+        ...settings.components.bundles.map(bundle => bundle.input),
         ...settings.pages.input,
         ...settings.api.input,
         ...settings.hooks.input
     ], { ignoreInitial: true })
         .on("add", async (event, filePath) => {
             console.log("File added. Restart watcher");
-
             watcher && watcher.close();
-            watcher = await startRollupWatch(
-                path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
-                callback
-            );
         });
+
+    await initializeWatcher(true);
 };
 
 export {buildComponentsForApplication, startApplicationDevelopmentBuild};

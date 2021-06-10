@@ -41,6 +41,12 @@ export default {
         static: { }
     },
 
+    cache: {
+        file: {
+            directory: '.storage/cache'
+        }
+    },
+
     export: {
         output: '.export',
 
@@ -52,5 +58,5 @@ export default {
 
             excluded: []
         },
-    },
+    }
 }

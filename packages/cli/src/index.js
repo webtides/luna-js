@@ -1,21 +1,26 @@
-import "@webtides/luna-js/lib/framework/bootstrap";
-import {clearCache} from "@webtides/luna-js/lib/framework/cache/cache";
-import { restartServer } from "@webtides/luna-js/lib/framework";
-import { initializeLuna } from "@webtides/luna-js/lib/framework/luna";
+import "@webtides/luna-js/src/framework/bootstrap";
+import LunaCache from "@webtides/luna-js/src/framework/cache/luna-cache";
+import { prepareLuna } from "@webtides/luna-js/src/framework";
+import {startLuna} from "@webtides/luna-js/src/framework";
 
 import {checkRequirements} from "./tasks/prepare";
 import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
+import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
 
 let moonJSStarting = false;
 
-const startLunaJS = async () => {
+const restartLunaJS = async () => {
     if (moonJSStarting) return;
     moonJSStarting = true;
 
-    await restartServer();
+    luna.get(LunaCache).clear();
+    await luna.get(ComponentLoader).registerAvailableComponents();
+
+    const server = luna.get('LunaServer');
+    await server.reset();
 
     moonJSStarting = false;
 };
@@ -27,17 +32,20 @@ const execute = async (argv) => {
         return;
     }
 
-    await initializeLuna();
+    await prepareLuna();
 
     if (argv.dev) {
+        await buildComponentsForApplication();
+
         console.log("Starting luna in development mode.");
 
+        await startLuna();
+
         await startLivereloadServer();
+        await startApplicationDevelopmentBuild(async () => {
+            luna.get(LunaCache).clear();
 
-        startApplicationDevelopmentBuild(async () => {
-            clearCache();
-
-            await startLunaJS();
+            await restartLunaJS();
             await sendReloadMessage();
         });
 
@@ -50,7 +58,7 @@ const execute = async (argv) => {
     }
 
     if (argv.start) {
-        startLunaJS();
+        await startLuna();
         return;
     }
 

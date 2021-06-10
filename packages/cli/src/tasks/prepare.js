@@ -1,4 +1,4 @@
-import {getPathToConfigFile, loadSettings} from "@webtides/luna-js/lib/framework/config";
+import {getPathToConfigFile, loadSettings} from "@webtides/luna-js/src/framework/config";
 import fs from "fs";
 
 import inquirer from "inquirer";

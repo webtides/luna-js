@@ -1,47 +1,48 @@
 const path = require("path");
 const glob = require("glob-all");
 const json = require('@rollup/plugin-json');
-const { terser } = require("rollup-plugin-terser");
+const {terser} = require("rollup-plugin-terser");
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
+const replace = require("@rollup/plugin-replace");
 
-const { getSettings } = require('@webtides/luna-js/lib/framework/config');
+const {loadSettings} = require('@webtides/luna-js/src/framework/config');
 
-const production = process.env.NODE_ENV === "production";
-const settings = getSettings();
+export default async () => {
+    const production = process.env.NODE_ENV === "production";
+    const settings = await loadSettings();
 
-const configBundle = {
-    input: `@webtides/luna-js/src/client/functions/luna.js`,
-    output: {
-        dir: settings.publicDirectory
-    },
-    plugins: [
-        nodeResolve(),
-        babel({
-            configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
-        }),
-    ]
-}
-
-const styleBundles = settings.assets?.styles?.bundles?.map(bundle => {
-    return {
-        input: bundle.input,
+    const configBundle = {
+        input: `@webtides/luna-js/src/client/functions/luna.js`,
         output: {
-            dir: path.join(settings.publicDirectory, path.dirname(bundle.output)),
-            entryFileNames: 'empty.js'
+            dir: settings.publicDirectory
         },
         plugins: [
-            require("../plugins/rollup-plugin-postcss")({
-                publicDirectory: settings.publicDirectory,
-                ...bundle
-            })
+            nodeResolve(),
+            babel({
+                configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
+            }),
         ]
     }
-}) ?? [];
 
-const componentBundles = settings.components.bundles
-    .flatMap(bundle => {
+    const styleBundles = settings.assets?.styles?.bundles?.map(bundle => {
+        return {
+            input: bundle.input,
+            output: {
+                dir: path.join(settings.publicDirectory, path.dirname(bundle.output)),
+                entryFileNames: 'empty.js'
+            },
+            plugins: [
+                require("../plugins/rollup-plugin-postcss")({
+                    publicDirectory: settings.publicDirectory,
+                    ...bundle
+                })
+            ]
+        }
+    }) ?? [];
+
+    const componentBundles = (settings.components?.bundles?.flatMap(bundle => {
         const inputFiles = glob.sync([
             path.join(bundle.input, '**/*.js')
         ]);
@@ -60,39 +61,40 @@ const componentBundles = settings.components.bundles
                 format: 'es',
             },
             plugins: [
-                require("../plugins/rollup-plugin-switch-renderer")({ context: 'client' }),
-                require("../plugins/rollup-plugin-client-manifest")({
-                    config: bundle
-                }),
                 require("../plugins/rollup-plugin-postcss")({
                     publicDirectory: settings.publicDirectory,
                     ...bundle.styles
                 }),
                 require("../plugins/rollup-plugin-markdown")(),
+                require("../plugins/rollup-plugin-strip-server-code")(), require("../plugins/rollup-plugin-switch-renderer")({context: 'client'}),
+                require("../plugins/rollup-plugin-client-manifest")({
+                    config: bundle
+                }),
                 json(),
                 nodeResolve(),
-                commonjs({requireReturnsDefault: true}),
+                replace({
+                    'process.env.CLIENT_BUNDLE': true
+                }),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                 }),
-                require("../plugins/rollup-plugin-strip-server-code")(),
+                commonjs({requireReturnsDefault: true}),
                 require("../plugins/rollup-plugin-copy")({
                     publicDirectory: settings.publicDirectory,
                     sources: [
-                        { input: path.resolve(__dirname, "../../", 'src/client/**/*'), output: 'assets/dev' },
+                        {input: path.resolve(__dirname, "../../", 'src/client/**/*'), output: 'assets/dev'},
                         ...(settings?.assets?.static?.sources ?? [])
                     ]
                 }),
                 production ? terser() : undefined,
             ]
         }];
-    })
-    .filter(bundle => bundle !== false);
+    }) ?? [])
+        .filter(bundle => !!bundle);
 
-const bundles = [
-    configBundle,
-    ...styleBundles,
-    ...componentBundles,
-];
-
-module.exports = bundles;
+    return [
+        configBundle,
+        ...styleBundles,
+        ...componentBundles,
+    ];
+};

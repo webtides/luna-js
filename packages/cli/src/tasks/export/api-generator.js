@@ -1,12 +1,12 @@
 import path from "path";
 import fs from "fs";
 import rimraf from "rimraf";
-import {loadManifest, loadSettings} from "@webtides/luna-js/lib/framework/config";
-import {registerAvailableComponents} from "@webtides/luna-js/lib/framework/loaders/component-loader";
+import {loadManifest, loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
+import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const settings = await loadSettings();
@@ -92,7 +92,12 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
     await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
 
     if (withStaticSite) {
-        await registerAvailableComponents();
+        const settings = await loadSettings();
+
+        const outputDirectory = settings.export.api?.output?.directory ?? settings.export.output;
+
+        await luna.get(ComponentLoader).registerAvailableComponents();
+
         await generateStaticSite({
             outputDirectory,
             clean: false

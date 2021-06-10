@@ -6,9 +6,7 @@ const basePostcssPluginsBefore = [
     require("postcss-import"),
 ];
 
-const basePostcssPluginsAfter = [
-    require("postcss-preset-env")({ stage: 1 }),
-];
+const basePostcssPluginsAfter = [];
 
 module.exports =  function(options) {
     const importers = { };

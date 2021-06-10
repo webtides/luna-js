@@ -12,6 +12,7 @@ module.exports = (api) => {
                         "safari": "11.1",
                         "ie": "11"
                     },
+                    "loose": true,
                     "useBuiltIns": "usage",
                     "corejs": 3,
                 }
@@ -21,7 +22,8 @@ module.exports = (api) => {
         plugins: [
             "@babel/plugin-proposal-nullish-coalescing-operator",
             "@babel/plugin-proposal-optional-chaining",
-            "@babel/plugin-proposal-class-properties",
+            [ "@babel/plugin-proposal-decorators", { legacy: true } ],
+            [ "@babel/plugin-proposal-class-properties", { loose: true } ],
             "@babel/plugin-proposal-export-default-from",
         ],
 

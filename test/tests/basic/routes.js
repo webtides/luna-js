@@ -1,3 +1,4 @@
+
 const { chai, sleep } = require("../../helpers");
 
 describe("Luna routes test", function() {
@@ -8,8 +9,8 @@ describe("Luna routes test", function() {
 
         global.originalConsoleLog = console.log;
 
-        const { startServer } = require("../../../packages/luna/lib/framework");
-        await startServer();
+        const { startLuna } = require("../../../packages/luna/lib/framework");
+        await startLuna();
 
         await sleep(600);
 
@@ -17,8 +18,8 @@ describe("Luna routes test", function() {
     });
 
     after(async function() {
-        const { stopServer } = require("../../../packages/luna/lib/framework");
-        await stopServer();
+        const { stopLuna } = require("../../../packages/luna/lib/framework");
+        await stopLuna();
 
         console.log = global.originalConsoleLog;
     });
@@ -123,6 +124,19 @@ describe("Luna routes test", function() {
     });
 
     describe("Route cache", function() {
+        before(() => {
+            const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache").default;
+
+            class TestCache extends MemoryCache {
+                async get(key, group = 'default', defaultValue = false) {
+                    console.log('Cache hit', { group, key });
+                    return super.get(key, group, defaultValue);
+                }
+            }
+
+            luna.set('Cache', new TestCache());
+        });
+
         it('caches the route on the second request', async function() {
             let count = 0;
             console.log = (text, data) => {
@@ -131,9 +145,11 @@ describe("Luna routes test", function() {
                 }
             };
 
-            await chai.request(`http://localhost:3010`).get('/cache').send();
-            await chai.request(`http://localhost:3010`).get('/cache').send();
+            const response = await chai.request(`http://localhost:3010`).get('/cache').send();
+            const secondResponse = await chai.request(`http://localhost:3010`).get('/cache').send();
 
+            chai.expect(response.statusCode).to.be.equal(200);
+            chai.expect(secondResponse.statusCode).to.be.equal(200);
             chai.expect(count).to.equal(1);
         });
     })

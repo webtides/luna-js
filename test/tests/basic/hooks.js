@@ -4,6 +4,7 @@ describe("Luna hooks test", function () {
     this.timeout(10000);
 
     before(async function () {
+
         process.chdir(global.getCurrentWorkingDirectory('basic'));
 
         global.originalConsoleLog = console.log;
@@ -17,22 +18,24 @@ describe("Luna hooks test", function () {
         it("should call the startup hooks in the right order", function (done) {
             const calledHooks = [];
 
-            const {startServer, stopServer} = require("../../../packages/luna/lib/framework");
+            const {startLuna, stopLuna} = require("../../../packages/luna/lib/framework");
 
             const assertHooks = () => {
                 chai.assert.deepEqual(calledHooks, [
                     'HOOKS.LUNA_INITIALIZE',
                     'HOOKS.HOOKS_LOADED',
                     'HOOKS.COMPONENTS_LOADED',
-                    'HOOKS.ROUTES_BEFORE_REGISTER',
                     'HOOKS.MIDDLEWARE_REGISTER',
+                    'HOOKS.ROUTES_BEFORE_REGISTER',
                     'HOOKS.ROUTES_AFTER_REGISTER',
                     'HOOKS.SERVER_STARTED'
                 ]);
 
-                stopServer();
-
-                done();
+                stopLuna().then(() => {
+                    setTimeout(() => {
+                        done()
+                    }, 1000);
+                });
             }
 
             console.log = (text) => {
@@ -41,30 +44,37 @@ describe("Luna hooks test", function () {
                 }
 
                 if (text.indexOf("HOOKS.") === 0) {
+                    originalConsoleLog(text);
                     calledHooks.push(text.trim());
                 }
 
                 if (text.indexOf("HOOKS.SERVER_STARTED") === 0) {
-                    assertHooks();
+                    setTimeout(() => {
+                        assertHooks();
+                    }, 1000);
                 }
             };
 
-            startServer();
+            startLuna().then(() => {
+            })
         });
 
         it('should call the request hook', function (done) {
-            const {startServer, stopServer} = require("../../../packages/luna/lib/framework");
+            const {startLuna, stopLuna} = require("../../../packages/luna/lib/framework");
 
             console.log = text => {
                 if (text === 'HOOKS.REQUEST_RECEIVED') {
-                    stopServer();
-                    done();
+                    setTimeout(() => {
+                        stopLuna().then(() => done());
+                    }, 100);
                 }
+
+                originalConsoleLog(text);
             };
 
-            startServer()
+            startLuna()
                 .then(() => sleep(300))
-                .then(() =>  chai.request('http://localhost:3010').get('/').send());
+                .then(() => chai.request('http://localhost:3010').get('/').send());
         });
     });
 

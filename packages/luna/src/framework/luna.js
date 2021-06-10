@@ -1,37 +1,74 @@
-import {getSerializableConfig, loadSettings} from "./config";
-
-import lunaObject from "./shared/luna-object";
+import {getConfigValue, getSettings} from "./config";
+import LunaBase from "./shared/luna-base";
+import HooksLoader from "./loaders/hooks-loader";
+import {callHook} from "./hooks";
+import {HOOKS} from "./hooks/definitions";
+import MemoryCache from "./cache/memory-cache";
+import ServiceContainer from "./services/service-container";
+import ApiLoader from "./loaders/api-loader";
+import ComponentLoader from "./loaders/component-loader";
+import PagesLoader from "./loaders/pages-loader";
+import DocumentRenderer from "./engine/document-renderer";
+import ElementRenderer from "./engine/element-renderer";
+import LunaCache from "./cache/luna-cache";
+import Server from "./http/server";
 
 /**
- * The main initialization method of our luna js framework.
- * Here we load all settings, and initialize all required elements
- * on startup.
- *
- * Does not handle component/route registration.
- *
- * @returns {Promise<boolean>}
+ * The luna base class. Also provides a simple service
+ * container.
  */
-const initializeLuna = async () => {
-    // First we load all settings.
-    if (!(await loadSettings())) {
-        return false;
+export default class LunaContainer extends LunaBase {
+    serviceDefaults = [
+        /* CACHE */
+        LunaCache,
+        MemoryCache,
+
+        /* LOADERS */
+        ApiLoader,
+        ComponentLoader,
+        HooksLoader,
+
+        /* RENDERERS */
+        ElementRenderer,
+        DocumentRenderer,
+
+        /* SPECIAL (needs refactoring) */
+        PagesLoader,
+
+        Server,
+    ];
+
+    prepare() {
+        Object.keys(this.serviceDefaults).map(name => {
+            this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);
+        });
     }
 
-    const config = getSerializableConfig();
+    /**
+     * The main initialization method of our luna js framework.
+     *
+     * Does not handle component/route registration.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async initialize() {
+        await this.get(HooksLoader).loadHooks();
+        await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
+    }
 
-    initializeLunaObject(config);
-    return true;
-};
+    config(key = undefined, defaultValue = false) {
+        if (typeof key === 'undefined') {
+            return getSettings();
+        }
 
+        return getConfigValue(key, defaultValue);
+    }
 
-/**
- * Initialize the global luna object with a config that can be
- * shared between the server and client.
- *
- * @param config
- */
-const initializeLunaObject = (config) => {
-    global.luna = lunaObject(config);
-};
+    get(name) {
+        return ServiceContainer.get(name);
+    }
 
-export { initializeLuna };
+    set(name, implementation) {
+        ServiceContainer.set(name, implementation);
+    }
+}

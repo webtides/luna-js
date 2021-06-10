@@ -1,5 +1,29 @@
 # Changelog
 
+## [Unreleased] Luna
+
+### Changed
+ - Core services are now class based and injectable (#50)
+ - **BREAKING**: `startServer` is now `startLuna`
+ - **BREAKING**: `stopServer` is now `stopLuna`
+ - **BREAKING**: `prepareLuna` is now exported from `framework/index.js`
+ - Elements are marked as "defer update" per default
+
+### Added
+ - Really simple dependency injection container
+ - The ability to override the default cache provider (#47)
+ - Decorators for dependency injection (#50)
+ - You can pass an additional `config` object to lunas `startLuna`
+
+## [Unreleased] CLI
+
+### Changed
+ - Static export is now running in chunks for better performance
+ - Use yarn for local development for better linking functionality
+ 
+### Fixed
+ - Build does not crash anymore if a file is added / removed (#46)
+
 ## [0.7.5] CLI - 20.05.2021
 
 ### Added
@@ -13,10 +37,10 @@
 
 ## [0.7.2] CLI - 04.04.2021
 
-## Added
+### Added
  - Test for static copy task
 
-## Fixed
+### Fixed
  - Static copy task
 
 ## [0.7.1] - 03.04.2021
