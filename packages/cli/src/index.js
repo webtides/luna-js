@@ -8,12 +8,16 @@ import {buildComponentsForApplication, startApplicationDevelopmentBuild} from ".
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
+import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
 
 let moonJSStarting = false;
 
 const restartLunaJS = async () => {
     if (moonJSStarting) return;
     moonJSStarting = true;
+
+    luna.get(LunaCache).clear();
+    await luna.get(ComponentLoader).registerAvailableComponents();
 
     const server = luna.get('LunaServer');
     await server.reset();
