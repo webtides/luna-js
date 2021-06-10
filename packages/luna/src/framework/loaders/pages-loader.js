@@ -81,7 +81,9 @@ export default class PagesLoader {
         }
 
         if (!markup) {
-            markup = await renderToString(page());
+            markup = await renderToString(page(), {
+                serializePropertyAttributes: true,
+            });
             await this.cache.set(route, markup, 'pages');
         }
 

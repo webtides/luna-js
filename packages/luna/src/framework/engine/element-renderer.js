@@ -72,7 +72,9 @@ export default class ElementRenderer {
             attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
         });
 
-        const markup = await renderToString(element.template());
+        const markup = await renderToString(element.template(), {
+            serializePropertyAttributes: true,
+        });
 
         const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
 

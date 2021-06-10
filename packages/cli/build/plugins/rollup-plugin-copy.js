@@ -19,6 +19,10 @@ module.exports = function(options) {
             sources.forEach(source => {
                 const { input, output } = source;
 
+                if (!input || !output) {
+                    return;
+                }
+
                 let basePath = '';
                 if (input.indexOf('**') !== -1) {
                     basePath = input.replace(`**\\*`, '**/*').split("**/*")[0];
