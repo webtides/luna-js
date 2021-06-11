@@ -77,8 +77,8 @@ export default class DocumentRenderer {
                 ? rawAttributeName.substring(1)
                 : rawAttributeName;
 
-            attributes[attributeName] = node.attrs[rawAttributeName];
             delete attributes[rawAttributeName];
+            attributes[attributeName] = node.attrs[rawAttributeName];
         }
 
         node.attrs = {
@@ -88,7 +88,7 @@ export default class DocumentRenderer {
 
         const {markup, element, dependencies} = await this.elementRenderer.renderComponent({
             component,
-            attributes,
+            attributes: node.attrs,
             request: this.request,
             response: this.response,
         });
@@ -98,7 +98,7 @@ export default class DocumentRenderer {
         const innerDocument = await this.renderUsingPostHtml(markup, true);
 
         return {
-            attributes,
+            attributes: node.attrs,
             component,
             dependencies,
             innerHTML: !element._options.shadowRender ? innerDocument : ""
