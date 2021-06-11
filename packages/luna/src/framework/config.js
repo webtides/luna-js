@@ -157,6 +157,18 @@ const loadManifest = async (filename = "manifest.json") => {
     return false;
 };
 
+const getManifest = (filename = 'manifest.json') => {
+    const settings = getSettings();
+
+    const pathToManifest = path.join(settings._generated.baseDirectory, filename);
+
+    if (fs.existsSync(pathToManifest)) {
+        return JSON.parse(fs.readFileSync(pathToManifest, "utf-8"));
+    }
+
+    return false;
+};
+
 /**
  * Used to retrieve the path to the `luna.config.js`.
  *
@@ -266,4 +278,4 @@ const getSerializableConfig = () => {
     }
 };
 
-export { getPathToConfigFile, getSettings, getConfigValue, loadSettings, loadManifest, getSerializableConfig };
+export { getPathToConfigFile, getSettings, getManifest, getConfigValue, loadSettings, loadManifest, getSerializableConfig };
