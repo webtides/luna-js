@@ -1,6 +1,7 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
 
-import { render, html } from "lit-html";
+import { html } from "lit-html";
+import { render } from "lit-html/lib/shady-render";
 import { unsafeHTML } from "lit-html/directives/unsafe-html";
 import { guard } from "lit-html/directives/guard";
 import {until} from "lit-html/directives/until";
