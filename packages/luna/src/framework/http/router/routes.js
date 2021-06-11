@@ -1,6 +1,6 @@
 import PagesLoader from "../../loaders/pages-loader";
-import DocumentRenderer from "../../engine/document-renderer";
 import ApiLoader from "../../loaders/api-loader";
+import DocumentRenderer from "../../engine/document-renderer";
 
 let currentRouter;
 
@@ -37,7 +37,6 @@ const routes = async ({router}) => {
     currentRouter = router;
 
     const pagesLoader = luna.get(PagesLoader);
-    const documentRenderer = luna.get(DocumentRenderer);
 
     const {pages, fallbackPage} = await pagesLoader.loadPages();
     const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
@@ -50,7 +49,9 @@ const routes = async ({router}) => {
                 return response.status(404).send();
             }
 
-            const result = await documentRenderer.render(html, {request, response});
+            const documentRenderer = new DocumentRenderer({ request, response });
+
+            const result = await documentRenderer.render(html);
 
             if (request.luna?.isCacheable) {
                 request.luna.cachedResponse = result;
