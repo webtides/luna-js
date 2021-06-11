@@ -1,5 +1,4 @@
-import {loadManifest, loadSettings, getSerializableConfig, getSettings, getManifest} from "../config";
-import {paramCase} from "param-case";
+import {getSerializableConfig, getSettings, getManifest} from "../config";
 
 import posthtml from 'posthtml';
 import posthtmlInsertAt from 'posthtml-insert-at';
@@ -21,7 +20,7 @@ export default class DocumentRenderer {
         this.response = response;
     }
 
-    async addDependenciesToUpgradedElements(dependencies,) {
+    async addDependenciesToUpgradedElements(dependencies) {
         dependencies = [ dependencies ].flat();
 
         for (const dependency of dependencies) {
@@ -114,9 +113,9 @@ export default class DocumentRenderer {
         const modules = `
             <script type="module">
                 ${Object.keys(this.upgradedElements)
-                    .filter(key => !this.upgradedElements[key]?.component?.element?.disableCSR)
+                    .filter(key => !this.upgradedElements[key]?.element?.disableCSR)
                     .map(key => {
-                        const {component} = this.upgradedElements[key];
+                        const component = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
     
                         return `
@@ -169,11 +168,9 @@ export default class DocumentRenderer {
                 request: this.request,
                 response: this.response,
                 onCustomElementDomNode: async (node) => {
-                    const component =  await this.onCustomElementDomNode(node);
+                    const {component} = await this.onCustomElementDomNode(node);
 
-                    this.upgradedElements[node.tag] = component;
-                    
-                    await this.addDependenciesToUpgradedElements(component.dependencies);
+                    await this.addDependenciesToUpgradedElements(component.tagName);
 
                     return component;
                 }
