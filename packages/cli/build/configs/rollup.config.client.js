@@ -71,7 +71,9 @@ export default async () => {
                     config: bundle
                 }),
                 json(),
-                nodeResolve(),
+                nodeResolve({
+                    dedupe: ['lit-html', '@webtides/element-js']
+                }),
                 replace({
                     'process.env.CLIENT_BUNDLE': true
                 }),
