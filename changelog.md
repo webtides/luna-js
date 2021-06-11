@@ -1,9 +1,15 @@
 # Changelog
 
-## [Unreleased] CLI
+## [Unreleased] Luna 
+
+### Changed
+ - Use posthtml for building the server document instead of jsdom (better performance)
 
 ### Added
 - Allow `.attribute` notation for server rendered components
+
+## [Unreleased] CLI
+
 
 ### Fixed
 - Copy plugin does not crash if an empty object is provided

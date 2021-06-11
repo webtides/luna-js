@@ -1,23 +1,31 @@
-import {loadManifest, loadSettings, getSerializableConfig} from "../config";
+import {loadManifest, loadSettings, getSerializableConfig, getSettings, getManifest} from "../config";
 import {paramCase} from "param-case";
 
-import { JSDOM } from "jsdom";
-import {Inject, LunaService} from "../../decorators/service";
+import posthtml from 'posthtml';
+import posthtmlInsertAt from 'posthtml-insert-at';
+
+import {Inject} from "../../decorators/service";
 import ComponentLoader from "../loaders/component-loader";
 import ElementRenderer from "./element-renderer";
 
-@LunaService({
-    name: 'DocumentRenderer'
-})
+import ssr from './plugins/posthtml-plugin-custom-elements';
+
 export default class DocumentRenderer {
     @Inject(ComponentLoader) componentLoader;
     @Inject(ElementRenderer) elementRenderer;
 
-    async addDependenciesToUpgradedElements(dependencies, upgradedElements) {
+    upgradedElements = {};
+
+    constructor({ request, response }) {
+        this.request = request;
+        this.response = response;
+    }
+
+    async addDependenciesToUpgradedElements(dependencies,) {
         dependencies = [ dependencies ].flat();
 
         for (const dependency of dependencies) {
-            if (!upgradedElements[dependency]) {
+            if (!this.upgradedElements[dependency]) {
                 const component = await this.componentLoader.loadSingleComponentByTagName(dependency);
 
                 if (!component) {
@@ -31,9 +39,9 @@ export default class DocumentRenderer {
                     children.push(...element.dependencies());
                 }
 
-                await this.addDependenciesToUpgradedElements(children, upgradedElements);
+                await this.addDependenciesToUpgradedElements(children);
 
-                upgradedElements[dependency] = component;
+                this.upgradedElements[dependency] = component;
             }
         }
     }
@@ -42,14 +50,12 @@ export default class DocumentRenderer {
      * Takes a html-node and tries to match it with a custom element.
      * Recursively renders & upgrades all child elements.
      *
-     * @param $node
-     * @param upgradedElements *
-     * @param {*}
+     * @param node
      *
      * @returns {Promise<boolean|{component: ({file: string, relativePath: string, name: *, element: *}|boolean), innerHTML: (jQuery|string), attributes: (*|{})}>}
      */
-    async renderNodeAsCustomElement($node, upgradedElements, {request, response}) {
-        const tag = $node.tagName.toLowerCase();
+    async onCustomElementDomNode(node) {
+        const { tag } = node;
         const component = await this.componentLoader.loadSingleComponentByTagName(tag);
 
         if (!component) {
@@ -64,143 +70,116 @@ export default class DocumentRenderer {
             }
         }
 
-        const attributes = {};
-        for (const attribute of $node.attributes) {
-            const attributeValue = $node.getAttribute(attribute.name);
-            if (attributeValue) {
-                const attributeName = attribute.name.startsWith('.') ? attribute.name.substring(1) : attribute.name;
-                attributes[attributeName] = attributeValue;
+        node.attrs = node.attrs ?? {};
 
-                $node.removeAttribute(attribute.name);
-                $node.setAttribute(attributeName, attributeValue);
-            }
+        const attributes = {};
+        for (const rawAttributeName of Object.keys(node.attrs)) {
+            const attributeName = rawAttributeName.startsWith('.')
+                ? rawAttributeName.substring(1)
+                : rawAttributeName;
+
+            attributes[attributeName] = node.attrs[rawAttributeName];
+            delete attributes[rawAttributeName];
         }
 
-        const {markup, element, dependencies} = await this.elementRenderer.renderComponent({component, attributes, request, response});
+        node.attrs = {
+            ssr: true,
+            ...attributes
+        };
 
-        $node.innerHTML = markup;
-
-        // Upgrades all custom elements inside this custom element.
-        const innerDocument = await this.parseHtmlDocument($node, upgradedElements, {
-            request,
-            response
+        const {markup, element, dependencies} = await this.elementRenderer.renderComponent({
+            component,
+            attributes,
+            request: this.request,
+            response: this.response,
         });
+
+        node.content = markup;
+
+        const innerDocument = await this.renderUsingPostHtml(markup, true);
 
         return {
             attributes,
             component,
             dependencies,
-            innerHTML: !element._options.shadowRender ? innerDocument.innerHTML : ""
+            innerHTML: !element._options.shadowRender ? innerDocument : ""
         };
-    }
+    };
 
-    /**
-     * Takes a html node and tries to renders all available custom elements.
-     *
-     * @param document
-     * @param upgradedElements
-     * @param {*}
-     *
-     * @returns {Promise<*>}
-     */
-    async parseHtmlDocument(document, upgradedElements, {request, response}) {
-        await Promise.all([...document.querySelectorAll("*")].map(async ($node, index) => {
-            if ($node.tagName.includes("-")) {
-                // This is potentially a custom element.
-                const result = await this.renderNodeAsCustomElement($node, upgradedElements, {request, response});
+    parseUpgradedElements() {
+        const settings = getSettings();
+        const manifest = getManifest("manifest.client.json");
+        const config = JSON.stringify(getSerializableConfig());
 
-                if (!result) {
-                    return;
-                }
-
-                const { component, dependencies } = result;
-
-                await this.addDependenciesToUpgradedElements([...component.children, ...dependencies ], upgradedElements);
-
-                if (result.noSSR) {
-                    upgradedElements[$node.tagName.toLowerCase()] = result.component;
-                    return;
-                }
-
-                const {attributes, innerHTML} = result;
-
-                $node.innerHTML = innerHTML;
-
-                attributes && Object.keys(attributes).forEach(key => $node.setAttribute(key, attributes[key]));
-
-                upgradedElements[$node.tagName.toLowerCase()] = component;
-            }
-        }));
-
-        return document;
-    }
-
-    async appendUpgradedElementsToDocument(dom, upgradedElements) {
-        const settings = await loadSettings();
-        const manifest = await loadManifest("manifest.client.json");
-
-        dom.window.document.querySelector("body")
-            .innerHTML += `
-                <script type="module">
-                    ${Object.keys(upgradedElements)
-                    .filter(key => !upgradedElements[key].element.disableCSR)
+        const modules = `
+            <script type="module">
+                ${Object.keys(this.upgradedElements)
+                    .filter(key => !this.upgradedElements[key]?.component?.element?.disableCSR)
                     .map(key => {
-                        const component = upgradedElements[key];
-        
+                        const {component} = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
-        
+    
                         return `
                             import ${component.name} from "${importPath}";
-                            customElements.define("${paramCase(component.name)}", ${component.name});
+                            customElements.define("${component.tagName}", ${component.name});
                         `;
                     })
                     .join("\n")
                 }
-                </script>
+            </script>`;
+
+        const scripts = `
+            ${settings.build.legacy ? `
+                <script src="${luna.asset("/libraries/webcomponents-bundle.js")}" nomodule></script>
+                <script src="${luna.asset("/libraries/runtime.js")}" nomodule></script>
+                <script src="${luna.asset("/assets/bundle.legacy.js")}" nomodule></script>
+            ` : ``}
+        
+            <script type="text/javascript">
+                window.lunaConfig = JSON.parse('${config}');
+            </script>
+            <script type="text/javascript" src="${luna.asset('/luna.js')}" />
+            
+            ${global.lunaCli?.documentInject ?? ``}
         `;
 
-        if (settings.build.legacy) {
-            dom.window.document.querySelector("body")
-                .innerHTML += `
-                    <script src="${luna.asset("/libraries/webcomponents-bundle.js")}" nomodule></script>
-                    <script src="${luna.asset("/libraries/runtime.js")}" nomodule></script>
-                    <script src="${luna.asset("/assets/bundle.legacy.js")}" nomodule></script>
-                `;
-        }
-
-        const config = JSON.stringify(getSerializableConfig());
-
-        dom.window.document.querySelector("body")
-            .innerHTML += `
-                <script type="text/javascript">
-                    window.lunaConfig = JSON.parse('${config}');
-                </script>
-                <script type="text/javascript" src="${luna.asset('/luna.js')}" />
-            `;
-
-        // TODO: find some kind of plugin system to "connect" the cli and luna
-        if (global.lunaCli?.documentInject) {
-            dom.window.document.querySelector("body")
-                .innerHTML += global.lunaCli.documentInject;
-        }
-    };
+        return [ modules, scripts ].join('');
+    }
 
     /**
      * Takes a whole html document and renders all custom elements
      *
      * @param htmlDocument
-     * @param request
-     * @param response
      * @returns {Promise<string>}
      */
-    async render(htmlDocument, {request, response}) {
-        const dom = new JSDOM(htmlDocument);
+    async render(htmlDocument) {
+        const html = await this.renderUsingPostHtml(htmlDocument);
 
-        const upgradedElements = {};
-        await this.parseHtmlDocument(dom.window.document, upgradedElements, {request, response});
+        return (await posthtml([
+            posthtmlInsertAt({
+                selector: 'html',
+                append: this.parseUpgradedElements(),
+            })
+        ]).process(html)).html;
+    }
 
-        await this.appendUpgradedElementsToDocument(dom, upgradedElements);
+    async renderUsingPostHtml(htmlDocument, subroutine = false) {
+        const plugins = [
+            ssr({
+                request: this.request,
+                response: this.response,
+                onCustomElementDomNode: async (node) => {
+                    const component =  await this.onCustomElementDomNode(node);
 
-        return dom.serialize();
+                    this.upgradedElements[node.tag] = component;
+                    
+                    await this.addDependenciesToUpgradedElements(component.dependencies);
+
+                    return component;
+                }
+            }),
+        ];
+
+        return (await posthtml(plugins).process(htmlDocument)).html;
     }
 }

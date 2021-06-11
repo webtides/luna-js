@@ -30,7 +30,6 @@ export default class LunaContainer extends LunaBase {
 
         /* RENDERERS */
         ElementRenderer,
-        DocumentRenderer,
 
         /* SPECIAL (needs refactoring) */
         PagesLoader,
