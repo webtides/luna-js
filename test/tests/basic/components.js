@@ -6,7 +6,7 @@ describe("Luna element test", function() {
     before(async function() {
         process.chdir(global.getCurrentWorkingDirectory('basic'));
 
-        const { startLuna } = require("../../../packages/luna/lib/framework");
+        const { startLuna } = require("../../../packages/luna/src/framework");
 
         global.originalConsoleLog = console.log;
         await startLuna();
@@ -15,7 +15,7 @@ describe("Luna element test", function() {
     });
 
     after(async function() {
-        const { stopLuna } = require("../../../packages/luna/lib/framework");
+        const { stopLuna } = require("../../../packages/luna/src/framework");
         await stopLuna();
 
         console.log = global.originalConsoleLog;
