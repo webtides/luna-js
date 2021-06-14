@@ -93,9 +93,9 @@ export default class DocumentRenderer {
             response: this.response,
         });
 
-        node.content = markup;
-
         const innerDocument = await this.renderUsingPostHtml(markup, true);
+
+        node.content = innerDocument;
 
         return {
             attributes: node.attrs,
