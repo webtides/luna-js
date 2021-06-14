@@ -4,6 +4,7 @@
 
 ### Changed
  - Use posthtml for building the server document instead of jsdom (better performance)
+ - Removed prepublish step
 
 ### Added
 - Allow `.attribute` notation for server rendered components

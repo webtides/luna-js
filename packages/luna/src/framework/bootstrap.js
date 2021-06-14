@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-x// TODO: allow browser globals as externals
+// TODO: allow browser globals as externals
 
 global.SSR = true;
 global.HTMLElement = class {};
