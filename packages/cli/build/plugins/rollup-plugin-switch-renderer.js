@@ -1,11 +1,8 @@
 const path = require('path');
 
 const importsToResolve = [
-    'lit-html',
-    'lit-html/directives/unsafe-html',
-    'lit-html/directives/unsafe-html.js',
-    'lit-html/lib/shady-render',
-    'lit-html/lib/shady-render.js'
+    '@webtides/luna-renderer',
+    '@webtides/luna-renderer/lit'
 ];
 
 module.exports = function ({ context = 'server' } = {}) {
@@ -14,8 +11,10 @@ module.exports = function ({ context = 'server' } = {}) {
         resolveId(id) {
             if (importsToResolve.includes(id)) {
                 switch (context) {
-                    case 'server':
-                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-js/render.js');
+                    case 'client':
+                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-renderer/lit/client/index.js');
+                    default:
+                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-renderer/lit/server/index.js');
                 }
             }
         }

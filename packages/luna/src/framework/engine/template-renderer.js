@@ -1,14 +1,13 @@
-import {renderToString} from "@popeindustries/lit-html-server";
+import { render } from '@webtides/luna-renderer'
+
 import {LunaService} from "../../decorators/service";
 
 @LunaService({
     name: 'TemplateRenderer'
 })
 class TemplateRenderer {
-    async renderToString(template) {
-        return renderToString(template, {
-            serializePropertyAttributes: true,
-        });
+    renderToString(template) {
+        return render(template);
     }
 }
 
