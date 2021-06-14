@@ -72,7 +72,6 @@ export default class PagesLoader {
      * @returns {Promise<{markup: string, layoutFactory: *, element: *}|boolean>}
      */
     async loadAnonymousPage({module, route = ''}) {
-        let markup = await this.cache.get(route, 'pages');
         const {page, layout} = module;
 
         if (typeof page !== 'function') {

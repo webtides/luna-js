@@ -2,14 +2,10 @@
   "name": "@webtides/luna-js",
   "version": "0.8.0",
   "description": "Static Site Generation & SSR framework for custom-elements.",
-  "main": "lib/client.js",
+  "main": "index.js",
   "module": "index.js",
   "engines": {
     "node": ">= 14.0.0"
-  },
-  "scripts": {
-    "prepublish": "npm run compile",
-    "compile": "npx babel src --out-dir lib --source-maps inline && rollup --config build/configs/rollup.config.prepublish.js"
   },
   "author": "webtides",
   "license": "MIT",
@@ -26,21 +22,6 @@
     "pascal-case": "^3.1.2",
     "posthtml": "^0.16.3",
     "posthtml-insert-at": "^0.2.7"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/plugin-proposal-decorators": "^7.13.15",
-    "@babel/plugin-proposal-export-default-from": "^7.10.4",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
-    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
-    "@babel/preset-env": "^7.11.5",
-    "@rollup/plugin-babel": "^5.2.2",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^11.1.0",
-    "rollup": "^2.35.1",
-    "rollup-plugin-external-globals": "^0.6.1"
   },
   "directories": {
     "lib": "../../lib"
