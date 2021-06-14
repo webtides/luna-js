@@ -1,8 +1,8 @@
 {
-  "name": "@webtides/renderer",
-  "version": "0.0.1",
+  "name": "@webtides/luna-renderer",
+  "version": "0.0.1-0.1",
   "description": "",
-  "main": "lit/client.js",
+  "main": "lit/index.js",
   "scripts": {},
   "keywords": [],
   "author": "",
