@@ -1,8 +1,5 @@
 import path from "path";
 
-import {html, renderToString} from "@popeindustries/lit-html-server";
-import {unsafeHTML} from "@popeindustries/lit-html-server/directives/unsafe-html";
-
 import baseLayoutFactory from "../../client/layouts/base.js";
 
 import {loadManifest, loadSettings} from '../config.js';
@@ -11,6 +8,7 @@ import {Inject, LunaService} from "../../decorators/service";
 import ComponentLoader from "./component-loader";
 import ElementRenderer from "../engine/element-renderer";
 import LunaCache from "../cache/luna-cache";
+import TemplateRenderer from "../engine/template-renderer";
 
 @LunaService({
     name: 'PagesLoader'
@@ -19,6 +17,7 @@ export default class PagesLoader {
     @Inject(LunaCache) cache;
     @Inject(ComponentLoader) componentLoader;
     @Inject(ElementRenderer) elementRenderer;
+    @Inject(TemplateRenderer) renderer;
 
     constructor() {}
 
@@ -34,7 +33,7 @@ export default class PagesLoader {
      * @returns {Promise<string>}
      */
     async applyLayout(factory, page) {
-        return renderToString(await factory(page));
+        return this.renderer.renderToString(await factory(page));
     }
 
     /**
@@ -80,15 +79,8 @@ export default class PagesLoader {
             return false;
         }
 
-        if (!markup) {
-            markup = await renderToString(page(), {
-                serializePropertyAttributes: true,
-            });
-            await this.cache.set(route, markup, 'pages');
-        }
-
         return {
-            markup,
+            markup: page(),
             element: page,
             layoutFactory: layout
         };
@@ -111,11 +103,18 @@ export default class PagesLoader {
             element: page,
         };
 
-        const result = (await this.elementRenderer.renderComponent({component, attributes: {}, group: 'pages', request, response}));
+        const { element } = (await this.elementRenderer.buildElement({
+            component, attributes: {}, group: 'pages', request, response
+        }));
+
+        const result = {
+            element,
+            markup: element.template()
+        };
 
         // Create a stub for the async layout factory to get them in the same
         // format as the anonymous layout factory. Use the element as context.
-        result.layoutFactory = layout ? async page => layout(page, result.element) : false;
+        result.layoutFactory = layout ? async page => layout(page, element.template()) : false;
 
         return result;
     }
@@ -141,7 +140,7 @@ export default class PagesLoader {
             return { html: false };
         }
 
-        const page = html`${unsafeHTML(result.markup)}`
+        const page = result.markup;
 
         const pageHTML = await this.applyLayout(result.layoutFactory || (page => baseLayoutFactory(page)), page);
 
