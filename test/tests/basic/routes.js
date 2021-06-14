@@ -9,7 +9,7 @@ describe("Luna routes test", function() {
 
         global.originalConsoleLog = console.log;
 
-        const { startLuna } = require("../../../packages/luna/lib/framework");
+        const { startLuna } = require("../../../packages/luna/src/framework");
         await startLuna();
 
         await sleep(600);
@@ -18,7 +18,7 @@ describe("Luna routes test", function() {
     });
 
     after(async function() {
-        const { stopLuna } = require("../../../packages/luna/lib/framework");
+        const { stopLuna } = require("../../../packages/luna/src/framework");
         await stopLuna();
 
         console.log = global.originalConsoleLog;
@@ -125,7 +125,7 @@ describe("Luna routes test", function() {
 
     describe("Route cache", function() {
         before(() => {
-            const MemoryCache = require("../../../packages/luna/lib/framework/cache/memory-cache").default;
+            const MemoryCache = require("../../../packages/luna/src/framework/cache/memory-cache").default;
 
             class TestCache extends MemoryCache {
                 async get(key, group = 'default', defaultValue = false) {
