@@ -1,6 +1,5 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
-
-import { render } from "lit-html/lib/shady-render";
+import { render } from '@webtides/renderer';
 
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
