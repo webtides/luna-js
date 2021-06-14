@@ -14,6 +14,8 @@
 ### Fixed
 - Copy plugin does not crash if an empty object is provided
 
+### Added
+ - Simple component example
 
 ## [0.8.1] Luna - 22.01.2022
 

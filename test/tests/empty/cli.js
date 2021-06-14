@@ -28,6 +28,14 @@ describe("Empty cli test", function () {
         it("has generated the luna.config.js", async function () {
             chai.expect('luna.config.js').to.be.a.file().and.not.empty;
         });
+
+        it("has generated the index page", async function () {
+            chai.expect('views/pages/index.js').to.be.a.file().and.not.empty;
+        });
+
+        it("has generated the example component", async function () {
+            chai.expect('views/components/example-component.js').to.be.a.file().and.not.empty;
+        });
     });
 
     describe("Static export test", function () {

@@ -12,5 +12,7 @@ export { layout }
 export default () => {
     return html`
         <h1>Welcome to luna-js</h1>
+        
+        <example-component></example-component>
     `;
 };
