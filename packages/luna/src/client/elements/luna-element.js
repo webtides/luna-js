@@ -1,5 +1,5 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
-import { render } from '@webtides/renderer';
+import { render } from '@webtides/luna-renderer';
 
 const isOnServer = () => {
     return (typeof global !== "undefined" && global.SSR);
