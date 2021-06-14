@@ -113,7 +113,7 @@ export default class PagesLoader {
 
         // Create a stub for the async layout factory to get them in the same
         // format as the anonymous layout factory. Use the element as context.
-        result.layoutFactory = layout ? async page => layout(page, element.template()) : false;
+        result.layoutFactory = layout ? async page => layout(page, element) : false;
 
         return result;
     }
