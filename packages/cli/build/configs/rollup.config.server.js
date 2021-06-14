@@ -27,7 +27,7 @@ export default async () => {
             require("../plugins/rollup-plugin-markdown")(),
             require("../plugins/rollup-plugin-switch-renderer")({ context: 'server'}),
             nodeResolve({
-                resolveOnly: ['@webtides/luna-js']
+                resolveOnly: ['@webtides/luna-js', '@webtides/element-js', '@popeindustries/lit-html-server']
             }),
             babel({
                 configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
