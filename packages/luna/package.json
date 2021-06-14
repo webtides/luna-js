@@ -21,7 +21,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "glob-all": "^3.2.1",
-    "lit-html": "^1.4.1",
+    "lit-html": "1.4.1",
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2",
     "posthtml": "^0.16.3",

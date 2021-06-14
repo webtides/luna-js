@@ -1,39 +1,21 @@
-import {renderToString} from "@popeindustries/lit-html-server";
 import {paramCase} from "param-case";
 import {Inject, LunaService} from "../../decorators/service";
 import LunaCache from "../cache/luna-cache";
+import TemplateRenderer from "./template-renderer";
 
 @LunaService({
     name: 'ElementRenderer'
 })
 export default class ElementRenderer {
     @Inject(LunaCache) cache;
+    @Inject(TemplateRenderer) renderer;
 
     getComponentCacheKey(component, attributes = {}) {
         return `${component.element.name}.${JSON.stringify(attributes)};`
     }
 
-    /**
-     * Takes a single component object and renders the element.
-     * Fetches all dynamic properties for the component & loads
-     * the static properties.
-     *
-     * @param component ({ element: * })
-     * @param attributes
-     * @param request
-     * @param response
-     * @param group string      The component cache group. Can be used to use different caches for
-     *                          different types of components.
-     *
-     * @returns {Promise<{markup: string, element: *, dependencies: []}|boolean>}
-     */
-    async renderComponent({component, attributes = {}, group = 'components', request, response}) {
+    async buildElement({ component, attributes = {}, group = 'components', request, response }) {
         attributes["ssr"] = true;
-
-        const cachedValue = await this.cache.get(this.getComponentCacheKey(component, attributes), group);
-        if (cachedValue) {
-            return cachedValue;
-        }
 
         const element = new (component.element)();
 
@@ -72,16 +54,38 @@ export default class ElementRenderer {
             attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
         });
 
-        const markup = await renderToString(element.template(), {
-            serializePropertyAttributes: true,
+        return {
+            element,
+            dynamicProperties
+        };
+    }
+
+    /**
+     * Takes a single component object and renders the element.
+     * Fetches all dynamic properties for the component & loads
+     * the static properties.
+     *
+     * @param component ({ element: * })
+     * @param attributes
+     * @param request
+     * @param response
+     * @param group string      The component cache group. Can be used to use different caches for
+     *                          different types of components.
+     *
+     * @returns {Promise<{markup: string, element: *, dependencies: []}|boolean>}
+     */
+    async renderComponent({component, attributes = {}, group = 'components', request, response}) {
+        const { element, dynamicProperties } = await this.buildElement({
+            component, attributes, group, request, response,
         });
+
+        const markup = await this.renderer.renderToString(element.template());
 
         const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
 
         if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
             await this.cache.set(this.getComponentCacheKey(component, attributes), {markup, element, dependencies}, group);
         }
-
 
         return {markup, element, dependencies};
     };
