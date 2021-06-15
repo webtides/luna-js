@@ -1,8 +1,8 @@
 const path = require('path');
 
 const importsToResolve = [
-    '@webtides/luna-renderer',
-    '@webtides/luna-renderer/lit'
+    '@webtides/luna-js/src/renderer',
+    '@webtides/luna-js/src/renderer/index.js'
 ];
 
 module.exports = function ({ context = 'server' } = {}) {
@@ -12,9 +12,9 @@ module.exports = function ({ context = 'server' } = {}) {
             if (importsToResolve.includes(id)) {
                 switch (context) {
                     case 'client':
-                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-renderer/lit/client/index.js');
+                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-js/src/renderer/lit/client.js');
                     default:
-                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-renderer/lit/server/index.js');
+                        return path.resolve(process.cwd(), 'node_modules', '@webtides/luna-js/src/renderer/lit/server.js');
                 }
             }
         }
