@@ -5,6 +5,8 @@ import { apiRequest } from "./src/client/functions/network";
 import { HideFromClient } from "./src/decorators/visibility";
 import { LunaService, Inject } from "./src/decorators/service";
 
+import { html, unsafeHTML } from './src/renderer';
+
 export {
     LunaElement,
     LunaMarkdownElement,
@@ -14,4 +16,7 @@ export {
     HideFromClient,
 
     apiRequest,
+
+    html,
+    unsafeHTML
 }
