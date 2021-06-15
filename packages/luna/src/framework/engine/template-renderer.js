@@ -1,5 +1,4 @@
-import { render } from '@webtides/luna-renderer'
-
+import { render } from '../../renderer'
 import {LunaService} from "../../decorators/service";
 
 @LunaService({
