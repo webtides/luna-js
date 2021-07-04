@@ -2,7 +2,9 @@ const path = require('path');
 
 const importsToResolve = [
     '@webtides/luna-js/src/renderer',
-    '@webtides/luna-js/src/renderer/index.js'
+    '@webtides/luna-js/src/renderer/index.js',
+    '../../renderer',
+    './src/renderer'
 ];
 
 module.exports = function ({ context = 'server' } = {}) {

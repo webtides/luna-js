@@ -7,6 +7,10 @@ import {loadSettings} from "@webtides/luna-js/src/framework/config";
 import {startRollup, startRollupWatch} from "../build";
 import {prepareLegacyBuild} from "../legacy";
 
+const buildEntryPointForProduction = async () => {
+    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.start.js"));
+};
+
 const buildComponentsForApplication = async () => {
     const settings = await loadSettings();
 
@@ -68,4 +72,4 @@ const startApplicationDevelopmentBuild = async (callback = () => {
     await initializeWatcher(true);
 };
 
-export {buildComponentsForApplication, startApplicationDevelopmentBuild};
+export {buildEntryPointForProduction, buildComponentsForApplication, startApplicationDevelopmentBuild};
