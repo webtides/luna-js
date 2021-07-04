@@ -8,7 +8,6 @@ import ServiceContainer from "./services/service-container";
 import ApiLoader from "./loaders/api-loader";
 import ComponentLoader from "./loaders/component-loader";
 import PagesLoader from "./loaders/pages-loader";
-import DocumentRenderer from "./engine/document-renderer";
 import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
 import Server from "./http/server";

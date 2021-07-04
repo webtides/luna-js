@@ -1,11 +1,10 @@
-import commonjs from "@rollup/plugin-commonjs";
-
 const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
 const {loadSettings} = require("@webtides/luna-js/src/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
+
 
 export default async () => {
     const settings = await loadSettings();
@@ -14,19 +13,17 @@ export default async () => {
     const production = process.env.NODE_ENV === "production";
 
     const bundle = {
-        input: files,
+        input: '@webtides/luna-js/start.js',
         output: {
-            dir: settings._generated.applicationDirectory,
-            entryFileNames: '[name].js',
+            dir: settings._generated.baseDirectory,
+            entryFileNames: 'start.js',
             sourcemap: !production,
             format: 'cjs',
-            exports: "auto"
         },
         plugins: [
             require("../plugins/rollup-plugin-postcss")({
                 ignore: true
             }),
-            require("../plugins/rollup-plugin-markdown")(),
             require("../plugins/rollup-plugin-switch-renderer")({ context: 'server'}),
             nodeResolve({
                 resolveOnly: ['@webtides/luna-js',  '@webtides/element-js' ]
@@ -36,13 +33,6 @@ export default async () => {
                 babelHelpers: "bundled"
             }),
             json(),
-            require("../plugins/rollup-plugin-manifest")({
-                config: basePaths
-            }),
-            commonjs({
-                requireReturnsDefault: true,
-                transformMixedEsModules: true,
-            }),
         ]
     };
 
