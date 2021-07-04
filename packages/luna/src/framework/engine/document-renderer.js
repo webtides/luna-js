@@ -170,7 +170,9 @@ export default class DocumentRenderer {
                 onCustomElementDomNode: async (node) => {
                     const {component} = await this.onCustomElementDomNode(node);
 
-                    await this.addDependenciesToUpgradedElements(component.tagName);
+                    if (component) {
+                        await this.addDependenciesToUpgradedElements(component.tagName);
+                    }
 
                     return component;
                 }

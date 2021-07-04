@@ -1,6 +1,6 @@
 /**
- * Imports the startServer method from the build folders. Only works
- * after luna-js has been transpiled.
+ * Imports the startServer method for bundling luna so that the
+ * cli is not required on the server.
  */
-const { startLuna } = require("./lib/framework");
+import { startLuna } from "./src/framework";
 startLuna();

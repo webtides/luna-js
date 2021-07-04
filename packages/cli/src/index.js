@@ -4,7 +4,11 @@ import { prepareLuna } from "@webtides/luna-js/src/framework";
 import {startLuna} from "@webtides/luna-js/src/framework";
 
 import {checkRequirements} from "./tasks/prepare";
-import {buildComponentsForApplication, startApplicationDevelopmentBuild} from "./tasks/build/application";
+import {
+    buildComponentsForApplication,
+    buildEntryPointForProduction,
+    startApplicationDevelopmentBuild
+} from "./tasks/build/application";
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
@@ -54,6 +58,7 @@ const execute = async (argv) => {
 
     if (argv.build) {
         await buildComponentsForApplication();
+        await buildEntryPointForProduction();
         return;
     }
 

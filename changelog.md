@@ -10,11 +10,15 @@
 ### Added
 - Allow `.attribute` notation for server rendered components
 
+### Fixed
+ - Renderer path replacements
+
 ## [Unreleased] CLI
 
 
 ### Fixed
 - Copy plugin does not crash if an empty object is provided
+ - Entry point for using in production
 
 ### Added
  - Simple component example
