@@ -79,7 +79,7 @@ export default class ComponentLoader {
             element.staticProperties = await this.loadStaticProperties(element);
 
             const hasDynamicProperties = this.isDynamicElement(element);
-            const tagName = paramCase(element.name);
+            const tagName = element.$$luna?.selector ?? paramCase(element.name);
 
             console.log("Register component", tagName);
 

@@ -7,7 +7,7 @@ import { render } from '../../renderer';
 export default class LunaElement extends StyledElement {
     constructor(options) {
         super({
-            deferUpdate: true,
+            deferUpdate: (options?.deferUpdate ?? true),
             shadowRender: false,
             styles: [],
             adoptGlobalStyles: true,
@@ -118,7 +118,6 @@ export default class LunaElement extends StyledElement {
         return false;
     }
 
-
     /**
      * These properties will be loaded once as the server starts up, or if
      * we want to statically export our site.
@@ -131,22 +130,6 @@ export default class LunaElement extends StyledElement {
     static async loadStaticProperties() {
         return false;
     }
-
-    /**
-     * Sets the element to be client side only. It won't be rendered on the server.
-     * But it will be included, so all imports should be compatible with a node enironment.
-     *
-     * @returns {boolean}
-     */
-    static get disableSSR() { return false; }
-
-    /**
-     * The element will only be rendered on the server. The generated javascript won't be passed
-     * to the client. Useful for elements which are not interactive.
-     *
-     * @returns {boolean}
-     */
-    static get disableCSR() { return false; }
 
     /**
      * Sets the dynamic properties to be cacheable. Normally the dynamic properties will be reloaded
