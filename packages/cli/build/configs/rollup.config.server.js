@@ -4,6 +4,8 @@ const path = require("path");
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
+const replace = require("@rollup/plugin-replace");
+
 const {loadSettings} = require("@webtides/luna-js/src/framework/config");
 const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
 
@@ -30,6 +32,10 @@ export default async () => {
             require("../plugins/rollup-plugin-switch-renderer")({ context: 'server'}),
             nodeResolve({
                 resolveOnly: ['@webtides/luna-js',  '@webtides/element-js' ]
+            }),
+            replace({
+                'process.env.CLIENT_BUNDLE': false,
+                'process.env.SERVER_BUNDLE': true,
             }),
             babel({
                 configFile: path.resolve(__dirname, "../..", 'babel.config.js'),

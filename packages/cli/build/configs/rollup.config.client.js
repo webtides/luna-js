@@ -75,7 +75,8 @@ export default async () => {
                     dedupe: ['lit-html', '@webtides/element-js']
                 }),
                 replace({
-                    'process.env.CLIENT_BUNDLE': true
+                    'process.env.CLIENT_BUNDLE': true,
+                    'process.env.SERVER_BUNDLE': false,
                 }),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
