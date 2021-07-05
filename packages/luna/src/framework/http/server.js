@@ -6,6 +6,7 @@ import {callHook} from "../hooks";
 import {HOOKS} from "../hooks/definitions";
 import {registerMiddleware} from "./middleware";
 import {cacheMiddleware} from "./middleware/cache-middleware";
+import {upgradeRequestMiddleware} from "./middleware/upgrade-request-middleware";
 import {routes} from "./router/routes";
 
 @LunaService({
@@ -15,6 +16,7 @@ export default class Server {
     connections = [];
 
     baseMiddleware = [
+        upgradeRequestMiddleware(),
         bodyParser.urlencoded(),
         bodyParser.json(),
         express.static('.build/public'),

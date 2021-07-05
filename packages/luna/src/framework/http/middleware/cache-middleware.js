@@ -50,12 +50,12 @@ const cacheMiddleware = () => async (request, response, next) => {
             return;
         }
 
-        request.luna = request.luna ?? {};
-        request.luna.isCacheable = true;
+        request.$$luna = request.$$luna ?? {};
+        request.$$luna.isCacheable = true;
 
         response.on('finish', () => {
-            if (request.luna?.cachedResponse) {
-                cache.set(cacheKey, request.luna.cachedResponse, 'routes');
+            if (request.$$luna?.cachedResponse) {
+                cache.set(cacheKey, request.$$luna.cachedResponse, 'routes');
             }
         });
     }
