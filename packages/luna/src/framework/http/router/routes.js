@@ -53,8 +53,8 @@ const routes = async ({router}) => {
 
             const result = await documentRenderer.render(html);
 
-            if (request.luna?.isCacheable) {
-                request.luna.cachedResponse = result;
+            if (request.$$luna?.isCacheable) {
+                request.$$luna.cachedResponse = result;
             }
 
             return response.send(result);

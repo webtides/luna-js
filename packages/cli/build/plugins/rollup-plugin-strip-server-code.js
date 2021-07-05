@@ -1,6 +1,12 @@
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse");
 
+const decoratorsToHideFromClient = [
+    'HideFromClient',
+    'CurrentRequest',
+    'Inject'
+];
+
 module.exports = function () {
 
     return {
@@ -26,7 +32,7 @@ module.exports = function () {
 
                         let shouldHideFromClient = false;
                         for (const decorator of node.decorators) {
-                            if (decorator?.expression?.name === 'HideFromClient') {
+                            if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '')) {
                                 shouldHideFromClient = true;
                                 break;
                             }
@@ -54,7 +60,7 @@ module.exports = function () {
 
                         if (node.decorators) {
                             for (const decorator of node.decorators) {
-                                if (decorator?.expression?.name === 'HideFromClient') {
+                                if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '')) {
                                     toRemove.push(code.substring(node.decorators[0].start, node.end));
                                     break;
                                 }
@@ -71,7 +77,7 @@ module.exports = function () {
 
                         if (node.decorators) {
                             for (const decorator of node.decorators) {
-                                if (decorator?.expression?.name === 'HideFromClient') {
+                                if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '')) {
                                     toRemove.push(code.substring(node.decorators[0].start, node.end));
                                 }
                             }
