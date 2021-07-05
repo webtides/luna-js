@@ -17,7 +17,7 @@ export default class ElementRenderer {
     async buildElement({ component, attributes = {}, group = 'components', request, response }) {
         attributes["ssr"] = true;
 
-        const element = new (component.element)();
+        const element = new (component.element)({ request, response });
 
         // Here we are defining the standard properties.
         element.defineProperties();
@@ -27,8 +27,7 @@ export default class ElementRenderer {
             let attributeToDefine = attributes[key];
             try {
                 attributeToDefine = JSON.parse(attributes[key]);
-            } catch {
-            }
+            } catch {}
 
             element.defineProperty(paramCase(key), attributeToDefine);
         });

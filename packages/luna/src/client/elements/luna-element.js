@@ -1,14 +1,13 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
 import { render } from '../../renderer';
-
-const isOnServer = () => {
-    return (typeof global !== "undefined" && global.SSR);
-}
+import {HideFromClient} from "../../decorators/visibility";
 
 /**
  * The main class from which server rendered elements should inherit.
  */
 export default class LunaElement extends StyledElement {
+    @HideFromClient
+    $$luna = {};
 
     constructor(options) {
         super({
@@ -23,8 +22,16 @@ export default class LunaElement extends StyledElement {
         });
         this._template = this._options.template;
 
-        if (!isOnServer() && this._options.shadowRender) {
+        if (process.env.CLIENT_BUNDLE && this._options.shadowRender) {
             this.attachShadow({mode: 'open'});
+        }
+
+        if (process.env.SERVER_BUNDLE) {
+            this.$$luna = {
+                ...this.$$luna,
+                request: options?.request,
+                response: options?.response,
+            };
         }
     }
 
@@ -49,7 +56,7 @@ export default class LunaElement extends StyledElement {
     }
 
     defineProperty(property, value, reflectAttribute = false) {
-        if (!isOnServer()) {
+        if (process.env.CLIENT_BUNDLE) {
             return super.defineProperty(property, value, reflectAttribute);
         } else {
             this[property] = value;
@@ -59,9 +66,8 @@ export default class LunaElement extends StyledElement {
     update(options) {
         this.renderTemplate();
 
-        if (!isOnServer()) {
+        if (process.env.CLIENT_BUNDLE) {
             this.appendStyleSheets(this._styles);
-
             super.update(options);
         }
     }
@@ -154,5 +160,3 @@ export default class LunaElement extends StyledElement {
      */
     static get dynamicPropertiesCacheable() { return false; }
 }
-
-export { isOnServer };
