@@ -36,6 +36,15 @@ module.exports = function () {
                                 shouldHideFromClient = true;
                                 break;
                             }
+
+                            // Remove the component decorator from the client code
+                            if (decorator?.expression?.callee?.name === 'Component' ||
+                                decorator?.expression?.name === 'Component') {
+                                toReplace.push({
+                                    from: code.substring(decorator.start, decorator.end),
+                                    to: '',
+                                });
+                            }
                         }
 
                         let replaceWith = `export default null`;
