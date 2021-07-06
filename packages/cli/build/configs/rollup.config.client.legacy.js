@@ -1,12 +1,9 @@
 const path = require("path");
-const glob = require("glob-all");
 const { terser } = require("rollup-plugin-terser");
 const {babel} = require('@rollup/plugin-babel');
 const multi = require("@rollup/plugin-multi-entry");
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const commonjs = require("@rollup/plugin-commonjs");
 const postcss = require('../plugins/rollup-plugin-postcss');
-const strip = require("../plugins/rollup-plugin-strip-server-code");
 const copy = require("../plugins/rollup-plugin-copy");
 const replace = require("@rollup/plugin-replace");
 const json = require('@rollup/plugin-json');
@@ -47,7 +44,6 @@ const legacyComponentBundles = settings.components.bundles
                     babelHelpers: "bundled"
                 }),
                 multi({entryFileName: "bundle.legacy.js"}),
-                strip(),
                 copy({
                     publicDirectory: settings.publicDirectory,
                     sources: [ {
