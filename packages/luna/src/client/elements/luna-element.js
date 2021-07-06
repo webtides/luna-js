@@ -1,14 +1,10 @@
 import {StyledElement} from '@webtides/element-js/src/StyledElement';
 import { render } from '../../renderer';
-import {HideFromClient} from "../../decorators/visibility";
 
 /**
  * The main class from which server rendered elements should inherit.
  */
 export default class LunaElement extends StyledElement {
-    @HideFromClient
-    $$luna = {};
-
     constructor(options) {
         super({
             deferUpdate: true,
