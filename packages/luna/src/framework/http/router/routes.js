@@ -1,6 +1,7 @@
 import PagesLoader from "../../loaders/pages-loader";
 import ApiLoader from "../../loaders/api-loader";
 import DocumentRenderer from "../../engine/document-renderer";
+import ServiceContext from "../../services/service-context";
 
 let currentRouter;
 
@@ -13,7 +14,19 @@ let currentRouter;
  */
 const registerRoute = ({ router, route, middleware = [] }, { get = null, post = null }) => {
     const normalizeRoute = (method) => {
-        return (request, response) => method({ request, response });
+        return (request, response) => {
+
+            // Create a new service context for better dependency injection
+            // for api routes.
+            const container = new ServiceContext({
+                $$luna: {
+                    request,
+                    response
+                }
+            });
+
+            return method({ request, response, container });
+        }
     };
 
     get && (
