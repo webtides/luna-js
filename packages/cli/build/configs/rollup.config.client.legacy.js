@@ -8,6 +8,8 @@ const commonjs = require("@rollup/plugin-commonjs");
 const postcss = require('../plugins/rollup-plugin-postcss');
 const strip = require("../plugins/rollup-plugin-strip-server-code");
 const copy = require("../plugins/rollup-plugin-copy");
+const replace = require("@rollup/plugin-replace");
+const json = require('@rollup/plugin-json');
 
 const { getSettings } = require('@webtides/luna-js/src/framework/config');
 
@@ -30,14 +32,22 @@ const legacyComponentBundles = settings.components.bundles
                 postcss({
                     ignore: true
                 }),
-                nodeResolve(),
-                commonjs({ requireReturnsDefault: true }),
-                multi({entryFileName: "bundle.legacy.js"}),
-                strip(),
+                require("../plugins/rollup-plugin-markdown")(),
+                require("../plugins/rollup-plugin-strip-server-code")(), require("../plugins/rollup-plugin-switch-renderer")({context: 'client'}),
+                json(),
+                nodeResolve({
+                    dedupe: ['lit-html', '@webtides/element-js']
+                }),
+                replace({
+                    'process.env.CLIENT_BUNDLE': true,
+                    'process.env.SERVER_BUNDLE': false,
+                }),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.legacy.js'),
                     babelHelpers: "bundled"
                 }),
+                multi({entryFileName: "bundle.legacy.js"}),
+                strip(),
                 copy({
                     publicDirectory: settings.publicDirectory,
                     sources: [ {
