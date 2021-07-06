@@ -1,10 +1,4 @@
 const CurrentRequest = (target, name, descriptor) => {
-    if (process.env.CLIENT_BUNDLE) {
-        // Injectables currently only work in server context.
-        descriptor.initializer = () => null;
-        return;
-    }
-
     delete descriptor.writable;
     delete descriptor.initializer;
 
