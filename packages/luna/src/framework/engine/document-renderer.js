@@ -31,16 +31,7 @@ export default class DocumentRenderer {
                     continue;
                 }
 
-                const element = new (component.element)();
-
-                const children = component.children;
-                if (typeof element.dependencies === "function") {
-                    children.push(...element.dependencies());
-                }
-
-                await this.addDependenciesToUpgradedElements(children);
-
-                this.upgradedElements[dependency] = component;
+                // TODO: use component decorator for dependencies
             }
         }
     }

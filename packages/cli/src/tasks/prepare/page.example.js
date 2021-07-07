@@ -1,4 +1,3 @@
-import { html } from "@webtides/luna-js";
 import factory from "../layouts/base.js"
 
 const layout = async page => {
@@ -10,9 +9,9 @@ const layout = async page => {
 export { layout }
 
 export default () => {
-    return html`
+    return `
         <h1>Welcome to luna-js</h1>
         
-        <example-component></example-component>
+        <example-component name="webtides"></example-component>
     `;
 };
