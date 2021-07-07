@@ -18,7 +18,7 @@ export default class ComponentLoader {
      * @returns {boolean}
      */
     isDynamicElement(element) {
-        const instance = new element();
+        const instance = Object.create(element.prototype);
         const availableProperties = Object.getOwnPropertyNames(Object.getPrototypeOf(instance));
 
         return availableProperties.includes("loadDynamicProperties");

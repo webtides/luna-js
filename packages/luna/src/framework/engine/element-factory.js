@@ -5,7 +5,7 @@ import {LunaService} from "../../decorators/service";
 })
 export default class ElementFactory {
     async buildElement({ component, attributes }) {
-        const element = new (component.element)({ attributes });
+        const element = new (component.element)(attributes);
         return {element};
     }
 

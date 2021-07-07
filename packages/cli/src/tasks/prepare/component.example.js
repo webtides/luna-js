@@ -1,15 +1,13 @@
-import { html, LunaElement } from '@webtides/luna-js';
+export default class ExampleComponent extends HTMLElement {
 
-export default class ExampleComponent extends LunaElement {
+    constructor(attributes) {
+        super();
 
-    properties() {
-        return {
-            name: 'webtides'
-        };
+        this.name = attributes.name;
     }
 
     template() {
-        return html`
+        return `
             Provided to you by ${this.name}.
         `;
     }
