@@ -1,4 +1,4 @@
-module.exports = function ({ stubs }) {
+module.exports = function ({ stubs } = {}) {
 
     const resolvedStubs = {};
 
@@ -6,6 +6,10 @@ module.exports = function ({ stubs }) {
         name: 'luna-strip-client-code',
 
         async resolveId(source) {
+            if (!stubs) {
+                return null;
+            }
+
             for (const { stub, sources } of stubs) {
                 if (sources.includes(source)) {
                     resolvedStubs[source] = stub;
