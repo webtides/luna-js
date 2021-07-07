@@ -25,16 +25,13 @@ const legacyComponentBundles = settings.components.bundles
                 strict: false
             },
             plugins: [
-                require("../plugins/rollup-plugin-switch-renderer.js")({ context: 'client' }),
                 postcss({
                     ignore: true
                 }),
                 require("../plugins/rollup-plugin-markdown")(),
-                require("../plugins/rollup-plugin-strip-server-code")(), require("../plugins/rollup-plugin-switch-renderer")({context: 'client'}),
+                require("../plugins/rollup-plugin-strip-server-code")(),
                 json(),
-                nodeResolve({
-                    dedupe: ['lit-html', '@webtides/element-js']
-                }),
+                nodeResolve(),
                 replace({
                     'process.env.CLIENT_BUNDLE': true,
                     'process.env.SERVER_BUNDLE': false,

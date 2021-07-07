@@ -8,7 +8,6 @@ const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
 
 export default async () => {
     const settings = await loadSettings();
-    const {basePaths, files} = generateBasePathsFromLunaConfig(settings);
 
     const production = process.env.NODE_ENV === "production";
 
@@ -24,9 +23,8 @@ export default async () => {
             require("../plugins/rollup-plugin-postcss")({
                 ignore: true
             }),
-            require("../plugins/rollup-plugin-switch-renderer")({ context: 'server'}),
             nodeResolve({
-                resolveOnly: ['@webtides/luna-js',  '@webtides/element-js' ]
+                resolveOnly: ['@webtides/luna-js']
             }),
             babel({
                 configFile: path.resolve(__dirname, "../..", 'babel.config.js'),

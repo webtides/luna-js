@@ -1,7 +1,5 @@
 import path from "path";
 
-import baseLayoutFactory from "../../client/layouts/base.js";
-
 import {loadManifest, loadSettings} from '../config.js';
 import {parseMiddleware} from "../http/middleware";
 import {Inject, LunaService} from "../../decorators/service";
@@ -33,7 +31,8 @@ export default class PagesLoader {
      * @returns {Promise<string>}
      */
     async applyLayout(factory, page) {
-        return this.renderer.renderToString(await factory(page));
+        const factoryResult = await factory(page);
+        return this.renderer.renderToString(factoryResult);
     }
 
     /**
@@ -90,7 +89,7 @@ export default class PagesLoader {
      * can pass the request and response objects to the page.
      *
      * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
-     * @param request *     The express request object.
+     * @param request *     The express request object.ö
      * @param response *    The express response object.
      *
      * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
@@ -108,7 +107,7 @@ export default class PagesLoader {
 
         const result = {
             element,
-            markup: element.template()
+            markup: await this.elementRenderer.template(),
         };
 
         // Create a stub for the async layout factory to get them in the same
@@ -141,7 +140,11 @@ export default class PagesLoader {
 
         const page = result.markup;
 
-        const pageHTML = await this.applyLayout(result.layoutFactory || (page => baseLayoutFactory(page)), page);
+        if (!result.layoutFactory) {
+            throw new Error('You need to define a "LayoutFactory".')
+        }
+
+        const pageHTML = await this.applyLayout(result.layoutFactory, page);
 
         return {
             html: pageHTML,

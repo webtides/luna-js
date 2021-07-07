@@ -25,13 +25,13 @@ export default async () => {
             exports: "auto"
         },
         plugins: [
+            require("../plugins/rollup-plugin-strip-client-code")(settings.renderer),
             require("../plugins/rollup-plugin-postcss")({
                 ignore: true
             }),
             require("../plugins/rollup-plugin-markdown")(),
-            require("../plugins/rollup-plugin-switch-renderer")({ context: 'server'}),
             nodeResolve({
-                resolveOnly: ['@webtides/luna-js',  '@webtides/element-js' ]
+                resolveOnly: ['@webtides/luna-js' ]
             }),
             replace({
                 'process.env.CLIENT_BUNDLE': false,

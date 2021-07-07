@@ -61,11 +61,10 @@ export default class DocumentRenderer {
             return false;
         }
 
-        if (typeof component.element.loadStaticProperties === "undefined" || component.element.disableSSR) {
+        if (!(component.element?.$$luna?.ssr ?? true)) {
             return {
                 component,
                 noSSR: true,
-                dependencies: []
             }
         }
 
@@ -86,7 +85,7 @@ export default class DocumentRenderer {
             ...attributes
         };
 
-        const {markup, element, dependencies} = await this.elementRenderer.renderComponent({
+        const {markup} = await this.elementRenderer.renderComponent({
             component,
             attributes: node.attrs,
             request: this.request,
@@ -100,8 +99,7 @@ export default class DocumentRenderer {
         return {
             attributes: node.attrs,
             component,
-            dependencies,
-            innerHTML: !element._options.shadowRender ? innerDocument : ""
+            innerHTML: innerDocument,
         };
     };
 
@@ -113,7 +111,7 @@ export default class DocumentRenderer {
         const modules = `
             <script type="module">
                 ${Object.keys(this.upgradedElements)
-                    .filter(key => !this.upgradedElements[key]?.element?.disableCSR)
+                    .filter(key => this.upgradedElements[key]?.element?.$$luna?.csr ?? false)
                     .map(key => {
                         const component = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
