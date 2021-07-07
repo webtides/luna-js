@@ -66,14 +66,11 @@ export default async () => {
                     ...bundle.styles
                 }),
                 require("../plugins/rollup-plugin-markdown")(),
-                require("../plugins/rollup-plugin-strip-server-code")(), require("../plugins/rollup-plugin-switch-renderer")({context: 'client'}),
                 require("../plugins/rollup-plugin-client-manifest")({
                     config: bundle
                 }),
                 json(),
-                nodeResolve({
-                    dedupe: ['lit-html', '@webtides/element-js']
-                }),
+                nodeResolve(),
                 replace({
                     'process.env.CLIENT_BUNDLE': true,
                     'process.env.SERVER_BUNDLE': false,
