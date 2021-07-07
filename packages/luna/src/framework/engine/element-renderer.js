@@ -49,6 +49,6 @@ export default class ElementRenderer {
         const template = await this.elementFactory.template(result);
         const markup = await this.templateRenderer.renderToString(template);
 
-        return {markup, element: result.element };
+        return {markup, element: result.element};
     };
 }
