@@ -1,4 +1,3 @@
-import { render } from '../../renderer'
 import {LunaService} from "../../decorators/service";
 
 @LunaService({
@@ -6,7 +5,7 @@ import {LunaService} from "../../decorators/service";
 })
 class TemplateRenderer {
     renderToString(template) {
-        return render(template);
+        return template;
     }
 }
 

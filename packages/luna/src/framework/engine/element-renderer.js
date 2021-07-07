@@ -1,62 +1,30 @@
-import {paramCase} from "param-case";
 import {Inject, LunaService} from "../../decorators/service";
-import LunaCache from "../cache/luna-cache";
+import ElementFactory from "./element-factory";
 import TemplateRenderer from "./template-renderer";
 
 @LunaService({
     name: 'ElementRenderer'
 })
 export default class ElementRenderer {
-    @Inject(LunaCache) cache;
-    @Inject(TemplateRenderer) renderer;
-
-    getComponentCacheKey(component, attributes = {}) {
-        return `${component.element.name}.${JSON.stringify(attributes)};`
-    }
+    @Inject(TemplateRenderer) templateRenderer;
+    @Inject(ElementFactory) elementFactory;
 
     async buildElement({ component, attributes = {}, group = 'components', request, response }) {
-        attributes["ssr"] = true;
+        // Create an instance of a dynamic element factory class which can be overridden by the developer.
+        const result = await this.elementFactory.buildElement({ component, attributes, request, response });
 
-        const element = new (component.element)({ request, response });
+        // Inject the current luna instance into the element.
+        if (!result.element) {
+            throw new Error('The "ElementFactory" needs to at least return an element to inject the current request.')
+        }
 
-        // Here we are defining the standard properties.
-        element.defineProperties();
-
-        // Then we are defining the attributes from the element as properties.
-        Object.keys(attributes).forEach(key => {
-            let attributeToDefine = attributes[key];
-            try {
-                attributeToDefine = JSON.parse(attributes[key]);
-            } catch {}
-
-            element.defineProperty(paramCase(key), attributeToDefine);
-        });
-
-        const dynamicProperties = await element.loadDynamicProperties({request, response});
-
-        const properties = {
-            ...(component.element.staticProperties ?? {}),
-            ...(dynamicProperties ? dynamicProperties : {})
+        result.element.$$luna = {
+            ...(result.element.$$luna ?? {}),
+            request,
+            response,
         };
 
-        // At last we are defining external properties.
-        Object.keys(properties).forEach(key => {
-            element.defineProperty(key, properties[key]);
-        });
-
-        // Write the element properties back to attributes.
-        Object.keys(element.properties()).forEach(key => {
-            if (typeof properties[key] === "undefined") {
-                return;
-            }
-
-            attributes[paramCase(key)] = typeof properties[key] === "string" ? properties[key] : JSON.stringify(properties[key]);
-        });
-
-        return {
-            element,
-            dynamicProperties
-        };
+        return result;
     }
 
     /**
@@ -71,21 +39,16 @@ export default class ElementRenderer {
      * @param group string      The component cache group. Can be used to use different caches for
      *                          different types of components.
      *
-     * @returns {Promise<{markup: string, element: *, dependencies: []}|boolean>}
+     * @returns {Promise<{markup: string, element: *}>}
      */
     async renderComponent({component, attributes = {}, group = 'components', request, response}) {
-        const { element, dynamicProperties } = await this.buildElement({
+        const result = await this.buildElement({
             component, attributes, group, request, response,
         });
 
-        const markup = await this.renderer.renderToString(element.template());
+        const template = await this.elementFactory.template(result);
+        const markup = await this.templateRenderer.renderToString(template);
 
-        const dependencies = typeof element.dependencies === "function" ? element.dependencies() : [];
-
-        if (!dynamicProperties || component.element.dynamicPropertiesCacheable) {
-            await this.cache.set(this.getComponentCacheKey(component, attributes), {markup, element, dependencies}, group);
-        }
-
-        return {markup, element, dependencies};
+        return {markup, element: result.element };
     };
 }

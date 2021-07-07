@@ -72,10 +72,15 @@ export default class ComponentLoader {
 
             const element = require(path.resolve(absolutePath));
 
-            if (typeof element?.prototype?.connectedCallback === "undefined") {
-                return;
+            if (!element.$$luna) {
+                // The element hasn't been decorated, set some sensible defaults.
+                element.$$luna = {
+                    ssr: true,
+                    csr: false,
+                };
             }
 
+            // TODO not nice :(
             element.staticProperties = await this.loadStaticProperties(element);
 
             const hasDynamicProperties = this.isDynamicElement(element);
@@ -86,6 +91,7 @@ export default class ComponentLoader {
             this.allAvailableComponents[tagName] = {
                 element,
                 tagName,
+                // TODO: not nice
                 hasStaticProperties: typeof element.staticProperties !== "undefined",
                 hasDynamicProperties,
                 name: element.name,

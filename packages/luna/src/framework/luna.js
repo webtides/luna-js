@@ -12,6 +12,7 @@ import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
 import Server from "./http/server";
 import TemplateRenderer from "./engine/template-renderer";
+import ElementFactory from "./engine/element-factory";
 
 /**
  * The luna base class. Also provides a simple service
@@ -27,6 +28,8 @@ export default class LunaContainer extends LunaBase {
         ApiLoader,
         ComponentLoader,
         HooksLoader,
+
+        ElementFactory,
 
         /* RENDERERS */
         ElementRenderer,
@@ -54,6 +57,12 @@ export default class LunaContainer extends LunaBase {
     async initialize() {
         await this.get(HooksLoader).loadHooks();
         await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
+
+        const settings = getSettings();
+        if (settings.renderer) {
+            luna.set(TemplateRenderer, new settings.renderer.TemplateRenderer());
+            luna.set(ElementFactory, new settings.renderer.ElementFactory());
+        }
     }
 
     config(key = undefined, defaultValue = false) {
