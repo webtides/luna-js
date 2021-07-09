@@ -6,8 +6,8 @@ import {Component} from "@webtides/luna-js";
 })
 export default class NoSsrComponent {
 
-    template() {
-        return html`
+    get template() {
+        return `
             NO SSR COMPONENT
             
             <client-component></client-component>

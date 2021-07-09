@@ -1,7 +1,7 @@
 export default class PropertyComponent {
     foo = "bar";
 
-    template() {
+    get template() {
         return `
             PROPERTY COMPONENT ${this.foo}
         `;
