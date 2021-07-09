@@ -23,7 +23,7 @@ export default class ElementFactory {
     }
 
     async buildElement() {
-        const element = new (this.component.element)();
+        const element = new (this.component.element)(this.attributes);
         
         Object.keys(this.attributes).forEach(key => element[key] = this.attributes[key]);
 
