@@ -49,23 +49,6 @@ describe("Luna routes test", function() {
         });
     });
 
-    describe("Component page", function() {
-        it('registers a component page', async function() {
-            const response = await chai.request(`http://localhost:3010`).get('/component').send();
-            chai.expect(response.status).to.be.equal(200);
-        });
-
-        it('loads static properties', async function() {
-            const response = await chai.request(`http://localhost:3010`).get('/component').send();
-            chai.expect(response.text).to.contain("MOCHA STATIC PROPERTY");
-        });
-
-        it('loads dynamic properties', async function() {
-            const response = await chai.request(`http://localhost:3010`).get('/component').send();
-            chai.expect(response.text).to.contain("MOCHA DYNAMIC PROPERTY");
-        });
-    })
-
     describe("Page with parameters", function() {
        it('registers a route with a parameter', async function() {
            const response = await chai.request(`http://localhost:3010`).get('/params/test').send();
@@ -102,11 +85,6 @@ describe("Luna routes test", function() {
         it('uses the context in the layout', async function() {
             let response = await chai.request(`http://localhost:3010`).get('/layout').send();
             chai.expect(response.text).to.include(`MOCHA CONTEXT`);
-        });
-
-        it('uses the component as context in the layout', async function() {
-            let response = await chai.request(`http://localhost:3010`).get('/layout/component').send();
-            chai.expect(response.text).to.include(`MOCHA COMPONENT CONTEXT`);
         });
     });
 
