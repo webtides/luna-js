@@ -1,4 +1,5 @@
-import {html} from "@webtides/luna-js";
+import layout from "../../layouts/base";
+export { layout };
 
 const middleware = [
     (request, response, next) => {
@@ -10,5 +11,5 @@ const middleware = [
 export { middleware };
 
 export default async () => {
-    return html``;
+    return ``;
 }

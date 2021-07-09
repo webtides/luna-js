@@ -1,5 +1,3 @@
-import {html} from "@webtides/luna-js";
-
 import factory from "../../layouts/base";
 
 const layout = async (page) => {
@@ -11,5 +9,5 @@ const layout = async (page) => {
 export { layout };
 
 export default async () => {
-  return html``;
+  return ``;
 };

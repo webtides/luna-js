@@ -6,7 +6,6 @@ import {Inject, LunaService} from "../../decorators/service";
 import ComponentLoader from "./component-loader";
 import ElementRenderer from "../engine/element-renderer";
 import LunaCache from "../cache/luna-cache";
-import TemplateRenderer from "../engine/template-renderer";
 
 @LunaService({
     name: 'PagesLoader'
@@ -15,7 +14,6 @@ export default class PagesLoader {
     @Inject(LunaCache) cache;
     @Inject(ComponentLoader) componentLoader;
     @Inject(ElementRenderer) elementRenderer;
-    @Inject(TemplateRenderer) renderer;
 
     constructor() {}
 
@@ -32,7 +30,9 @@ export default class PagesLoader {
      */
     async applyLayout(factory, page) {
         const factoryResult = await factory(page);
-        return this.renderer.renderToString(factoryResult);
+        console.log(luna.getDefaultElementFactory());
+
+        return luna.getDefaultElementFactory().renderer().renderToString(factoryResult);
     }
 
     /**
@@ -78,43 +78,10 @@ export default class PagesLoader {
         }
 
         return {
-            markup: page(),
+            markup: await page(),
             element: page,
             layoutFactory: layout
         };
-    }
-
-    /**
-     * Loads the content of a content page. Content pages can be dynamic, so we
-     * can pass the request and response objects to the page.
-     *
-     * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
-     * @param request *     The express request object.ö
-     * @param response *    The express response object.
-     *
-     * @returns {Promise<{markup: string, layoutFactory: *, element: *}>}
-     */
-    async loadComponentPage({module, request, response}) {
-        const {page, layout} = module;
-
-        const component = {
-            element: page,
-        };
-
-        const { element } = (await this.elementRenderer.buildElement({
-            component, attributes: {}, group: 'pages', request, response
-        }));
-
-        const result = {
-            element,
-            markup: await this.elementRenderer.template(),
-        };
-
-        // Create a stub for the async layout factory to get them in the same
-        // format as the anonymous layout factory. Use the element as context.
-        result.layoutFactory = layout ? async page => layout(page, element) : false;
-
-        return result;
     }
 
     /**
@@ -130,9 +97,7 @@ export default class PagesLoader {
      * @returns {Promise<{html: string|boolean, element: *}>}
      */
     async generatePageMarkup({module, route = '', request, response}) {
-        const result = typeof module.page?.prototype?.connectedCallback === "undefined"
-            ? await this.loadAnonymousPage({module, route})
-            : await this.loadComponentPage({module, request, response});
+        const result = await this.loadAnonymousPage({module, route, request, response})
 
         if (!result) {
             return { html: false };

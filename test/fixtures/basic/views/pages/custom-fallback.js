@@ -1,5 +1,6 @@
-import {html} from "@webtides/luna-js";
+import layout from "../layouts/base";
+export { layout };
 
 export default async () => {
-    return html`MOCHA FALLBACK PAGE`;
+    return `MOCHA FALLBACK PAGE`;
 }

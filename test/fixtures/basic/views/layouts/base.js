@@ -1,12 +1,10 @@
-import { html } from "@webtides/luna-js";
-
 const layout = (page, context = { }) => {
     context.head = [
-        html`<meta charset="UTF-8" />`,
-        html`<meta name="viewport" content="width=device-width, initial-scale=1">`
-    ];
+        `<meta charset="UTF-8" />`,
+        `<meta name="viewport" content="width=device-width, initial-scale=1">`
+    ].join('');
 
-    return html`
+    return `
         <!doctype html>
         <html lang="">
             <head>
