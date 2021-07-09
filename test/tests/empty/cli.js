@@ -22,7 +22,7 @@ describe("Empty cli test", function () {
 
     describe("Build test", function () {
         before(function() {
-            execSync(`${BUILD_SCRIPT} --build`);
+            execSync(`${BUILD_SCRIPT} --setup --build`);
         });
 
         it("has generated the luna.config.js", async function () {
