@@ -6,7 +6,7 @@ export default class ExampleComponent extends HTMLElement {
         this.name = attributes.name;
     }
 
-    template() {
+    get template() {
         return `
             Provided to you by ${this.name}.
         `;

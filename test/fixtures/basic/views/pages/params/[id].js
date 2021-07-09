@@ -1,17 +1,7 @@
 import layout from "../../layouts/base";
 export { layout };
 
-export default class ParamPage {
 
-    async loadDynamicProperties({ request }) {
-        return {
-            id: request.params.id
-        }
-    }
-
-    template() {
-        return `
-            ID: ${this.id}
-        `;
-    }
-}
+export default async ({ request }) => {
+    return `ID: ${request.params.id}`;
+};
