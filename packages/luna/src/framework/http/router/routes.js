@@ -55,8 +55,8 @@ const routes = async ({router}) => {
     const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
 
     const registerPageRoute = async ({module, route}) => {
-        const callback = async ({ request, response }) => {
-            const {html} = await pagesLoader.generatePageMarkup({route, module, request, response});
+        const callback = async ({ request, response, container }) => {
+            const {html} = await pagesLoader.generatePageMarkup({route, module, request, response, container});
 
             if (!html) {
                 return response.status(404).send();

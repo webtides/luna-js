@@ -81,6 +81,10 @@ export default class LunaContainer extends LunaBase {
     }
 
     getDefaultElementFactory() {
+        if (this.elementFactories.length === 0) {
+            this.setElementFactories();
+        }
+
         return this.elementFactories[0].factory;
     }
 

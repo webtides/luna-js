@@ -2,7 +2,7 @@ import TemplateRenderer from "./template-renderer";
 
 export default class ElementFactory {
     static renderer() {
-        return TemplateRenderer;
+        return new TemplateRenderer();
     }
 
     /**

@@ -30,8 +30,6 @@ export default class PagesLoader {
      */
     async applyLayout(factory, page) {
         const factoryResult = await factory(page);
-        console.log(luna.getDefaultElementFactory());
-
         return luna.getDefaultElementFactory().renderer().renderToString(factoryResult);
     }
 
@@ -49,10 +47,6 @@ export default class PagesLoader {
         const module = await import(path.resolve(file));
         const page = module.default;
 
-        if (typeof page?.prototype?.connectedCallback !== "undefined") {
-            page.staticProperties = await this.componentLoader.loadStaticProperties(page);
-        }
-
         return {
             module,
             page,
@@ -67,10 +61,13 @@ export default class PagesLoader {
      *
      * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
      * @param route string  The route where the page should be registered. Used for the cache.
+     * @param request *     The express request object
+     * @param response *    The express response object.
+     * @param container ServiceContext
      *
      * @returns {Promise<{markup: string, layoutFactory: *, element: *}|boolean>}
      */
-    async loadAnonymousPage({module, route = ''}) {
+    async loadAnonymousPage({module, route = '', request, response, container}) {
         const {page, layout} = module;
 
         if (typeof page !== 'function') {
@@ -78,7 +75,7 @@ export default class PagesLoader {
         }
 
         return {
-            markup: await page(),
+            markup: await page({ request, response, container }),
             element: page,
             layoutFactory: layout
         };
@@ -93,11 +90,12 @@ export default class PagesLoader {
      * @param route string  The route under which the page should be registered.
      * @param request *     The express request object
      * @param response *    The express response object.
+     * @param container ServiceContext
      *
      * @returns {Promise<{html: string|boolean, element: *}>}
      */
-    async generatePageMarkup({module, route = '', request, response}) {
-        const result = await this.loadAnonymousPage({module, route, request, response})
+    async generatePageMarkup({module, route = '', request, response, container}) {
+        const result = await this.loadAnonymousPage({module, route, request, response, container})
 
         if (!result) {
             return { html: false };

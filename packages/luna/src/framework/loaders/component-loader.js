@@ -21,7 +21,7 @@ export default class ComponentLoader {
         }
 
         // Return the first factory as default.
-        return elementFactories[0];
+        return elementFactories[0].factory;
     }
 
     /**
