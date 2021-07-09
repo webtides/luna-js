@@ -1,7 +1,8 @@
-import {html} from "@webtides/luna-js";
+import layout from "../../layouts/base";
+export { layout };
 
 export default async () => {
-    return html`
+    return `
         <example-component></example-component>
         <no-ssr-component></no-ssr-component>
     `;

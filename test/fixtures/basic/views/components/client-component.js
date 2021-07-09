@@ -1,14 +1,13 @@
-import {html, LunaElement} from "@webtides/luna-js";
+import {Component} from "@webtides/luna-js";
 
-export default class ClientComponent extends LunaElement {
+@Component({
+    csr: true,
+})
+export default class ClientComponent {
 
     template() {
-        return html`
+        return `
             CLIENT COMPONENT
         `;
-    }
-
-    static get disableSSR() {
-        return true;
     }
 }

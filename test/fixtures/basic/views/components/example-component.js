@@ -1,9 +1,7 @@
-import {html, LunaElement} from "@webtides/luna-js";
-
-export default class ExampleComponent extends LunaElement {
+export default class ExampleComponent {
 
     template() {
-        return html`
+        return `
             MOCHA COMPONENT
         `;
     }

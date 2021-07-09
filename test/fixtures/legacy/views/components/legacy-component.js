@@ -1,9 +1,7 @@
-import {LunaElement, html} from "@webtides/luna-js";
-
-export default class LegacyComponent extends LunaElement {
+export default class LegacyComponent {
 
     template() {
-        return html`
+        return `
             LEGACY COMPONENT
         `;
     }

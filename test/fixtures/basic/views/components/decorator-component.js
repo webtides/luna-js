@@ -1,4 +1,4 @@
-import {HideFromClient, html, LunaElement} from "@webtides/luna-js";
+import {HideFromClient} from "@webtides/luna-js";
 import SecretService from "../../app/secret-service";
 
 @HideFromClient
@@ -8,7 +8,7 @@ class SecretClass {
     }
 }
 
-export default class DecoratorComponent extends LunaElement {
+export default class DecoratorComponent{
     publicMethod() {
         console.log(SecretClass, SecretService);
     }
@@ -19,6 +19,6 @@ export default class DecoratorComponent extends LunaElement {
     }
 
     template() {
-        return html``;
+        return ``;
     }
 }

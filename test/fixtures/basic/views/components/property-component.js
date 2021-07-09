@@ -1,15 +1,8 @@
-import {html, LunaElement} from "@webtides/luna-js";
-
-export default class PropertyComponent extends LunaElement {
-
-    properties() {
-        return {
-            foo: "bar"
-        }
-    }
+export default class PropertyComponent {
+    foo = "bar";
 
     template() {
-        return html`
+        return `
             PROPERTY COMPONENT ${this.foo}
         `;
     }
