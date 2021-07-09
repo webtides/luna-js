@@ -2,6 +2,7 @@ import {loadManifest, loadSettings} from "../config.js";
 import path from "path";
 import {paramCase} from "param-case";
 import {LunaService} from "../../decorators/service";
+import ElementFactory from "../engine/element-factory";
 
 @LunaService({
     name: 'ComponentLoader'
@@ -20,8 +21,8 @@ export default class ComponentLoader {
             }
         }
 
-        // Return the first factory as default.
-        return elementFactories[0].factory;
+        // Return the first factory as default, or if not available the default element factory..
+        return elementFactories[0]?.factory ?? ElementFactory;
     }
 
     /**
