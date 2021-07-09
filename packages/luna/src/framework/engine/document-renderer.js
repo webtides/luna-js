@@ -20,22 +20,6 @@ export default class DocumentRenderer {
         this.response = response;
     }
 
-    async addDependenciesToUpgradedElements(dependencies) {
-        dependencies = [ dependencies ].flat();
-
-        for (const dependency of dependencies) {
-            if (!this.upgradedElements[dependency]) {
-                const component = await this.componentLoader.loadSingleComponentByTagName(dependency);
-
-                if (!component) {
-                    continue;
-                }
-
-                // TODO: use component decorator for dependencies
-            }
-        }
-    }
-
     /**
      * Takes a html-node and tries to match it with a custom element.
      * Recursively renders & upgrades all child elements.
@@ -61,27 +45,19 @@ export default class DocumentRenderer {
 
         node.attrs = node.attrs ?? {};
 
-        const attributes = {};
-        for (const rawAttributeName of Object.keys(node.attrs)) {
-            const attributeName = rawAttributeName.startsWith('.')
-                ? rawAttributeName.substring(1)
-                : rawAttributeName;
+        node.attrs['ssr'] = true;
 
-            delete attributes[rawAttributeName];
-            attributes[attributeName] = node.attrs[rawAttributeName];
-        }
-
-        node.attrs = {
-            ssr: true,
-            ...attributes
-        };
-
-        const {markup} = await this.elementRenderer.renderComponent({
+        const result = await this.elementRenderer.renderComponent({
             component,
             attributes: node.attrs,
             request: this.request,
             response: this.response,
         });
+
+        const { markup } = result;
+
+        // Set the final attributes from the render process to the node.
+        node.attrs = result.finalAttributes;
 
         const innerDocument = await this.renderUsingPostHtml(markup, true);
 
@@ -160,7 +136,7 @@ export default class DocumentRenderer {
                     const {component} = await this.onCustomElementDomNode(node);
 
                     if (component) {
-                        await this.addDependenciesToUpgradedElements(component.tagName);
+                        this.upgradedElements[component.tagName] = component;
                     }
 
                     return component;

@@ -1,6 +1,7 @@
-import {html, LunaElement} from "@webtides/luna-js";
+import layout from "../../layouts/base";
+export { layout };
 
-export default class ParamPage extends LunaElement {
+export default class ParamPage {
 
     async loadDynamicProperties({ request }) {
         return {
@@ -9,7 +10,7 @@ export default class ParamPage extends LunaElement {
     }
 
     template() {
-        return html`
+        return `
             ID: ${this.id}
         `;
     }
