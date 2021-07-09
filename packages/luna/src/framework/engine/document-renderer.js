@@ -20,6 +20,23 @@ export default class DocumentRenderer {
         this.response = response;
     }
 
+    async addDependenciesToUpgradedElements(dependencies) {
+        dependencies = [ dependencies ].flat();
+
+        for (const dependency of dependencies) {
+            if (!this.upgradedElements[dependency]) {
+                const component = await this.componentLoader.loadSingleComponentByTagName(dependency);
+
+                if (!component) {
+                    continue;
+                }
+
+                await this.addDependenciesToUpgradedElements(component.children);
+                this.upgradedElements[dependency] = component;
+            }
+        }
+    }
+
     /**
      * Takes a html-node and tries to match it with a custom element.
      * Recursively renders & upgrades all child elements.
@@ -136,7 +153,7 @@ export default class DocumentRenderer {
                     const {component} = await this.onCustomElementDomNode(node);
 
                     if (component) {
-                        this.upgradedElements[component.tagName] = component;
+                        await this.addDependenciesToUpgradedElements(component.tagName);
                     }
 
                     return component;

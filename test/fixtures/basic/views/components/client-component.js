@@ -5,7 +5,7 @@ import {Component} from "@webtides/luna-js";
 })
 export default class ClientComponent {
 
-    template() {
+    get template() {
         return `
             CLIENT COMPONENT
         `;

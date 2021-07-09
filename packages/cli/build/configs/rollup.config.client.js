@@ -66,6 +66,7 @@ export default async () => {
                     ...bundle.styles
                 }),
                 require("../plugins/rollup-plugin-markdown")(),
+                require("../plugins/rollup-plugin-strip-server-code")(),
                 require("../plugins/rollup-plugin-client-manifest")({
                     config: bundle
                 }),

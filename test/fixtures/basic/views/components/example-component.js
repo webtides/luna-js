@@ -1,6 +1,6 @@
 export default class ExampleComponent {
 
-    template() {
+    get template() {
         return `
             MOCHA COMPONENT
         `;
