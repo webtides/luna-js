@@ -30,10 +30,22 @@ module.exports = function () {
                             return;
                         }
 
-                        let shouldHideFromClient = false;
                         for (const decorator of node.decorators) {
-                            if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '')) {
-                                shouldHideFromClient = true;
+                            if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '') ||
+                                decoratorsToHideFromClient.includes(decorator?.expression?.callee?.name ?? '')) {
+
+                                let replaceWith = `export default null`;
+
+                                const classDeclaration = code.substring(node.start, node.id.start);
+                                if (classDeclaration.indexOf('export default') === -1) {
+                                    replaceWith = ``
+                                }
+
+                                toReplace.push({
+                                    from: code.substring(node.decorators[0].start, node.end),
+                                    to: replaceWith
+                                });
+
                                 break;
                             }
 
@@ -46,18 +58,6 @@ module.exports = function () {
                                 });
                             }
                         }
-
-                        let replaceWith = `export default null`;
-
-                        const classDeclaration = code.substring(node.start, node.id.start);
-                        if (classDeclaration.indexOf('export default') === -1) {
-                            replaceWith = ``
-                        }
-
-                        toReplace.push({
-                            from: code.substring(node.decorators[0].start, node.end),
-                            to: replaceWith
-                        });
                     },
 
                     ClassProperty(path) {
@@ -101,13 +101,14 @@ module.exports = function () {
                     }
                 })
 
+                for (const partToReplace of toReplace) {
+                    code = code.split(partToReplace.from).join(partToReplace.to);
+                }
+
                 for (const partToRemove of toRemove) {
                     code = code.split(partToRemove).join("");
                 }
 
-                for (const partToReplace of toReplace) {
-                    code = code.split(partToReplace.from).join(partToReplace.to);
-                }
             } catch (error) {
                 console.error(error);
             }

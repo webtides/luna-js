@@ -18,7 +18,7 @@ export default class DecoratorComponent{
         console.log("PSST. Secret Message.");
     }
 
-    template() {
+    get template() {
         return ``;
     }
 }
