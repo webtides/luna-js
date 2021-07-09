@@ -1,6 +1,10 @@
-import {html, LunaElement} from "@webtides/luna-js";
+import {Component} from "@webtides/luna-js";
 
-export default class NoSsrComponent extends LunaElement {
+@Component({
+    ssr: false,
+    csr: true,
+})
+export default class NoSsrComponent {
 
     template() {
         return html`
@@ -8,9 +12,5 @@ export default class NoSsrComponent extends LunaElement {
             
             <client-component></client-component>
         `;
-    }
-
-    static get disableSSR() {
-        return true;
     }
 }

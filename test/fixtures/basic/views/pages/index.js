@@ -1,7 +1,8 @@
-import {html} from "@webtides/luna-js";
+import layout from "../layouts/base";
+export { layout };
 
 export default () => {
-    return html`
+    return `
         HELLO MOCHA
     `;
 }

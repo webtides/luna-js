@@ -11,7 +11,6 @@ import PagesLoader from "./loaders/pages-loader";
 import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
 import Server from "./http/server";
-import TemplateRenderer from "./engine/template-renderer";
 import ElementFactory from "./engine/element-factory";
 
 /**
@@ -29,11 +28,8 @@ export default class LunaContainer extends LunaBase {
         ComponentLoader,
         HooksLoader,
 
-        ElementFactory,
-
         /* RENDERERS */
         ElementRenderer,
-        TemplateRenderer,
 
         /* SPECIAL (needs refactoring) */
         PagesLoader,
@@ -41,6 +37,12 @@ export default class LunaContainer extends LunaBase {
         Server,
     ];
 
+    /**
+     * A list of all available element factories which can be used to render custom elements
+     * on the server.
+     */
+    elementFactories = []
+    
     prepare() {
         Object.keys(this.serviceDefaults).map(name => {
             this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);
@@ -58,11 +60,28 @@ export default class LunaContainer extends LunaBase {
         await this.get(HooksLoader).loadHooks();
         await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
 
+        this.setElementFactories();
+    }
+
+    setElementFactories() {
         const settings = getSettings();
-        if (settings.renderer) {
-            luna.set(TemplateRenderer, new settings.renderer.TemplateRenderer());
-            luna.set(ElementFactory, new settings.renderer.ElementFactory());
+        if (settings.renderers) {
+            this.elementFactories = settings.renderers.map(({ match, renderer }) => {
+                return {
+                    match: match ?? (() => true),
+                    factory: renderer.ElementFactory,
+                }
+            });
+        } else {
+            this.elementFactories = [ {
+                match: () => true,
+                factory: ElementFactory,
+            } ]
         }
+    }
+
+    getDefaultElementFactory() {
+        return this.elementFactories[0].factory;
     }
 
     config(key = undefined, defaultValue = false) {

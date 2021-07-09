@@ -1,6 +1,7 @@
-import {html, LunaElement} from "@webtides/luna-js";
+import layout from "../layouts/base";
+export { layout };
 
-export default class ComponentPage extends LunaElement {
+export default class ComponentPage {
 
     async loadDynamicProperties() {
         return {
@@ -15,7 +16,7 @@ export default class ComponentPage extends LunaElement {
     }
 
     template() {
-        return html`
+        return `
             ${this.staticProperty}    
             ${this.dynamicProperty}    
         `;
