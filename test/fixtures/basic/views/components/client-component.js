@@ -1,7 +1,7 @@
 import {Component} from "@webtides/luna-js";
 
 @Component({
-    csr: true,
+    client: true,
 })
 export default class ClientComponent {
 

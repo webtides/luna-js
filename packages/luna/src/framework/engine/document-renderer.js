@@ -53,7 +53,7 @@ export default class DocumentRenderer {
             return false;
         }
 
-        if (!(component.element?.$$luna?.ssr ?? true)) {
+        if (!(component.element?.$$luna?.server ?? true)) {
             return {
                 component,
                 noSSR: true,
@@ -95,7 +95,8 @@ export default class DocumentRenderer {
         const modules = `
             <script type="module">
                 ${Object.keys(this.upgradedElements)
-                    .filter(key => this.upgradedElements[key]?.element?.$$luna?.csr ?? false)
+                    // Filter out all elements that should not be rendered on the client.
+                    .filter(key => this.upgradedElements[key]?.element?.$$luna?.client ?? false)
                     .map(key => {
                         const component = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
