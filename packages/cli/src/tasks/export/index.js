@@ -4,6 +4,5 @@ import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-l
 
 export default async () => {
     await buildComponentsForApplication();
-    await luna.get(ComponentLoader).registerAvailableComponents();
     await generateStaticSite();
 };
