@@ -5,16 +5,21 @@
 ### Changed
  - Use posthtml for building the server document instead of jsdom (better performance)
  - Removed prepublish step
- - Lay the groundwork to allow a different template renderer
+ - **BREAKING**: remove all dependencies to `element-js` and `lit-html` from the luna project and made the 
+   template and element renderer exchangeable
+ - **BREAKING**: removed `LunaElement`, `LunaMarkdownElement`, `html` and `unsafeHTML`
+ - **BREAKING**: Elements are now server only per default, and the developer needs to opt-in to client rendering
 
 ### Added
  - Allow `.attribute` notation for server rendered components
+ - Several Decorators (`Component`, `Inject`, `LunaService`, `HideFromClient`, `CurrentRequest`)
+ - `ElementFactory` for defining how an element should be rendered on the server
 
 ### Fixed
  - Renderer path replacements
+ - Luna lifecycle for 
 
 ## [Unreleased] CLI
-
 
 ### Fixed 
  - Copy plugin does not crash if an empty object is provided
@@ -22,6 +27,12 @@
 
 ### Added
  - Simple component example
+
+## [Unreleased] Renderer
+
+### Added
+ - A package in which multiple template renderers and element factories for different base classes could
+  be developed
 
 ## [0.8.0] Luna - 10.06.2021
 
