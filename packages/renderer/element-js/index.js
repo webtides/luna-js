@@ -8,6 +8,12 @@ const stubs = [{
         class TemplateElement {}
         export { TemplateElement, html }
     `
+}, {
+    sources: ['lit-html/directives/unsafe-html'],
+    stub: `
+        import { unsafeHTML } from '@popeindustries/lit-html-server/directives/unsafe-html';
+        export { unsafeHTML }
+    `
 }];
 
 export {ElementFactory, TemplateRenderer, stubs};

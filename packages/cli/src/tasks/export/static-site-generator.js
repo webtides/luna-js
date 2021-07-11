@@ -8,6 +8,7 @@ import path from "path";
 import glob from "glob";
 
 import rimraf from "rimraf";
+import {startLuna} from "@webtides/luna-js/src/framework";
 
 const getStaticSiteEntryPoints = async () => {
     const settings = getSettings();
@@ -61,7 +62,7 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
         rimraf.sync(outputDirectory);
     }
 
-    await luna.get(Server).start();
+    await startLuna();
 
     const url = `http://localhost:${settings.port}`;
 
