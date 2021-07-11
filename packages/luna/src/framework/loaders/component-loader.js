@@ -46,12 +46,12 @@ export default class ComponentLoader {
             if (!element.$$luna) {
                 // The element hasn't been decorated, set some sensible defaults.
                 element.$$luna = {
-                    ssr: true,
-                    csr: false,
+                    server: true,
+                    client: false,
                 };
             }
 
-            element.staticProperties = element?.$$luna?.ssr && typeof element.loadStaticProperties === 'function'
+            element.staticProperties = element?.$$luna?.server && typeof element.loadStaticProperties === 'function'
                 ? (await element.loadStaticProperties()) ?? {}
                 : {};
 
