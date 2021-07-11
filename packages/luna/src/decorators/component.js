@@ -1,10 +1,10 @@
-const Component = ({ selector, ssr = true, csr = false } = {}) => {
+const Component = ({ selector, server = true, client = false } = {}) => {
     return function decorator(Class) {
         Class.$$luna = {
             ...(Class.$$luna ?? {}),
             selector,
-            csr,
-            ssr,
+            server,
+            client,
         };
 
         return Class;
