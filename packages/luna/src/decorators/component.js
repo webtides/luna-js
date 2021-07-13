@@ -3,7 +3,7 @@ const Component = ({ selector, target } = {}) => {
         Class.$$luna = {
             ...(Class.$$luna ?? {}),
             selector,
-            target,
+            target: target ?? Component.TARGET_SERVER,
         };
 
         return Class;
