@@ -1,9 +1,9 @@
-const Component = ({ selector, server = true, client = false } = {}) => {
+const Component = ({ selector, target } = {}) => {
     return function decorator(Class) {
         Class.$$luna = {
             ...(Class.$$luna ?? {}),
             selector,
-            target: Component.TARGET_SERVER,
+            target,
         };
 
         return Class;
