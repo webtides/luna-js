@@ -30,7 +30,7 @@ export default class PagesLoader {
      */
     async applyLayout(factory, page) {
         const factoryResult = await factory(page);
-        return luna.getDefaultElementFactory().renderer().renderToString(factoryResult);
+        return (await luna.getDefaultElementFactory()).renderer().renderToString(factoryResult);
     }
 
     /**
