@@ -3,12 +3,15 @@ const Component = ({ selector, server = true, client = false } = {}) => {
         Class.$$luna = {
             ...(Class.$$luna ?? {}),
             selector,
-            server,
-            client,
+            target: Component.TARGET_SERVER,
         };
 
         return Class;
     }
 };
+
+Component.TARGET_SERVER = 'server';
+Component.TARGET_CLIENT = 'client';
+Component.TARGET_BOTH = 'both';
 
 export { Component };

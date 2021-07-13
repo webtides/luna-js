@@ -1,7 +1,7 @@
 import {Component} from "@webtides/luna-js";
 
 @Component({
-    client: true,
+    target: Component.TARGET_BOTH,
 })
 export default class ClientComponent {
 

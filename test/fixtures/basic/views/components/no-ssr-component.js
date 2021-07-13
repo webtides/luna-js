@@ -1,8 +1,7 @@
 import {Component} from "@webtides/luna-js";
 
 @Component({
-    server: false,
-    client: true,
+    target: Component.TARGET_CLIENT,
 })
 export default class NoSsrComponent {
 

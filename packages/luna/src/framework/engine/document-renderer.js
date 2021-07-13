@@ -8,6 +8,7 @@ import ComponentLoader from "../loaders/component-loader";
 import ElementRenderer from "./element-renderer";
 
 import ssr from './plugins/posthtml-plugin-custom-elements';
+import {Component} from "../../decorators/component";
 
 export default class DocumentRenderer {
     @Inject(ComponentLoader) componentLoader;
@@ -53,7 +54,8 @@ export default class DocumentRenderer {
             return false;
         }
 
-        if (!(component.element?.$$luna?.server ?? true)) {
+        // The element should only be rendered on the client.
+        if (component.element?.$$luna?.target === Component.TARGET_CLIENT ?? false) {
             return {
                 component,
                 noSSR: true,
@@ -96,7 +98,10 @@ export default class DocumentRenderer {
             <script type="module">
                 ${Object.keys(this.upgradedElements)
                     // Filter out all elements that should not be rendered on the client.
-                    .filter(key => this.upgradedElements[key]?.element?.$$luna?.client ?? false)
+                    .filter(key => {
+                        const target = this.upgradedElements[key]?.element?.$$luna?.target ?? Component.TARGET_SERVER;
+                        return target !== Component.TARGET_SERVER;
+                    })
                     .map(key => {
                         const component = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
