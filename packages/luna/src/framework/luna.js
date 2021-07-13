@@ -60,18 +60,18 @@ export default class LunaContainer extends LunaBase {
         await this.get(HooksLoader).loadHooks();
         await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
 
-        this.setElementFactories();
+        await this.setElementFactories();
     }
 
-    setElementFactories() {
+    async setElementFactories() {
         const settings = getSettings();
         if (settings.renderers) {
-            this.elementFactories = settings.renderers.map(({ match, renderer }) => {
+            this.elementFactories = await Promise.all(settings.renderers.map(async ({ match, renderer }) => {
                 return {
                     match: match ?? (() => true),
-                    factory: renderer.ElementFactory,
+                    factory: (await renderer()).ElementFactory,
                 }
-            });
+            }));
         } else {
             this.elementFactories = [ {
                 match: () => true,
@@ -80,9 +80,9 @@ export default class LunaContainer extends LunaBase {
         }
     }
 
-    getDefaultElementFactory() {
+    async getDefaultElementFactory() {
         if (this.elementFactories.length === 0) {
-            this.setElementFactories();
+            await this.setElementFactories();
         }
 
         return this.elementFactories[0].factory;
