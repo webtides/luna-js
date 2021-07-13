@@ -6,7 +6,9 @@ const stubs = [{
     stub: `
         import { html } from '@popeindustries/lit-html-server';
         class TemplateElement {}
-        export { TemplateElement, html }
+        class StyledElement {}
+        class BaseElement {}
+        export { TemplateElement, StyledElement, BaseElement, html }
     `
 }, {
     sources: ['lit-html/directives/unsafe-html'],

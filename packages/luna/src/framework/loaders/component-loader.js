@@ -3,6 +3,7 @@ import path from "path";
 import {paramCase} from "param-case";
 import {LunaService} from "../../decorators/service";
 import ElementFactory from "../engine/element-factory";
+import {Component} from "../../decorators/component";
 
 @LunaService({
     name: 'ComponentLoader'
@@ -11,10 +12,10 @@ export default class ComponentLoader {
     allAvailableComponents = {};
 
     findAppropriateElementFactory(component) {
-        const { elementFactories } = luna;
+        const {elementFactories} = luna;
 
         for (let i = 0; i < elementFactories.length; i++) {
-            const { match, factory } = elementFactories[i];
+            const {match, factory} = elementFactories[i];
 
             if (match(component)) {
                 return factory;
@@ -51,9 +52,11 @@ export default class ComponentLoader {
                 };
             }
 
-            element.staticProperties = element?.$$luna?.server && typeof element.loadStaticProperties === 'function'
-                ? (await element.loadStaticProperties()) ?? {}
-                : {};
+            // Don't load static properties if the element should only be loaded in the client
+            element.staticProperties = (element?.$$luna?.target !== Component.TARGET_CLIENT)
+                && typeof element.loadStaticProperties === 'function'
+                    ? (await element.loadStaticProperties()) ?? {}
+                    : {};
 
             const tagName = element.$$luna?.selector ?? paramCase(element.name);
 
