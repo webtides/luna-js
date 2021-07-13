@@ -47,8 +47,7 @@ export default class ComponentLoader {
             if (!element.$$luna) {
                 // The element hasn't been decorated, set some sensible defaults.
                 element.$$luna = {
-                    server: true,
-                    client: false,
+                    target: Component.TARGET_SERVER,
                 };
             }
 
