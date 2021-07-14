@@ -18,7 +18,8 @@
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2",
     "posthtml": "^0.16.3",
-    "posthtml-insert-at": "^0.2.7"
+    "posthtml-insert-at": "^0.2.7",
+    "simple-dom": "^1.4.0"
   },
   "directories": {
     "lib": "../../lib"

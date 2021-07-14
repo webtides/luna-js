@@ -5,11 +5,20 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@lit-labs/ssr": "^1.0.0-rc.1",
     "@popeindustries/lit-html-server": "^3.1.0",
     "@webtides/element-js": "^0.3.2",
-    "param-case": "^3.0.4"
+    "param-case": "^3.0.4",
+    "simple-dom": "^1.4.0"
   },
   "peerDependencies": {
     "@webtides/luna-js": "0.9.0-0.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^18.1.0",
+    "@rollup/plugin-node-resolve": "^11.1.0",
+    "rollup": "^2.53.1",
+    "rollup-plugin-copy": "^3.4.0"
   }
 }
