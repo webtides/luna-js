@@ -1,6 +1,6 @@
-import commonjs from "@rollup/plugin-commonjs";
-
 const path = require("path");
+
+import commonjs from "@rollup/plugin-commonjs";
 const json = require('@rollup/plugin-json');
 const {babel} = require('@rollup/plugin-babel');
 const {nodeResolve} = require("@rollup/plugin-node-resolve");
