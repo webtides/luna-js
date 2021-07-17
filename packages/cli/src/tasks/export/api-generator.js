@@ -7,13 +7,14 @@ import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
 import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
+import {getConfig} from "../../config";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
     const settings = await loadSettings();
     const manifest = await loadManifest();
 
     const pathToEntry = path.join(
-        lunaCli.currentDirectory,
+        getConfig().currentDirectory,
         serverless ? "build/entries/api.serverless.js" : "build/entries/api.js"
     );
     let entryBlueprint = fs.readFileSync(pathToEntry, { encoding: "utf-8" });
@@ -89,7 +90,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
         global.serverlessApiBuild = true;
     }
 
-    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.api.js"));
+    await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.api.js"));
 
     if (withStaticSite) {
         const settings = await loadSettings();

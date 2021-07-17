@@ -1,3 +1,5 @@
+import path from 'path';
+
 import "@webtides/luna-js/src/framework/bootstrap";
 import LunaCache from "@webtides/luna-js/src/framework/cache/luna-cache";
 import { prepareLuna } from "@webtides/luna-js/src/framework";
@@ -13,6 +15,7 @@ import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {sendReloadMessage, startLivereloadServer} from "./tasks/build/livereload";
 import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
+import {setConfig} from "./config";
 
 let moonJSStarting = false;
 
@@ -30,6 +33,13 @@ const restartLunaJS = async () => {
 };
 
 const execute = async (argv) => {
+    setConfig({
+        currentWorkingDirectory: process.cwd(),
+        currentDirectory: path.dirname(__dirname),
+        isExporting: !!argv.export,
+        documentInject: ''
+    });
+
     const meetsRequirements = await checkRequirements({ setup: argv.setup });
 
     if (!meetsRequirements) {

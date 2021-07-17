@@ -31,7 +31,7 @@ export default async () => {
             }),
             require("../plugins/rollup-plugin-markdown")(),
             nodeResolve({
-                resolveOnly: [ '@webtides/luna-js' ]
+                resolveOnly: [ '@webtides/luna-js', 'lit-html' ]
             }),
             replace({
                 'process.env.CLIENT_BUNDLE': false,
@@ -48,6 +48,7 @@ export default async () => {
             commonjs({
                 requireReturnsDefault: true,
                 transformMixedEsModules: true,
+                ignoreGlobal: true,
             }),
         ]
     };
