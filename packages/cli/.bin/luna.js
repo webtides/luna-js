@@ -29,11 +29,5 @@ const { hideBin } = require("yargs/helpers");
 
 const argv = yargs(hideBin(process.argv)).argv;
 
-global.lunaCli = {
-    currentWorkingDirectory: process.cwd(),
-    currentDirectory: path.dirname(__dirname),
-    isExporting: !!argv.export,
-    documentInject: ''
-}
 
 execute(argv);
