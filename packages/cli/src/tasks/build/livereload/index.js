@@ -5,14 +5,14 @@ let livereloadServer = false;
 const livereloadConnections = [];
 
 const startLivereloadServer = async () => {
-    const { port, build } = getSettings();
+    const {port, build} = getSettings();
 
     if (!build.livereload) {
         return;
     }
 
     const livereloadPort = port + 1;
-    livereloadServer = new WebSocket.Server({ port: livereloadPort });
+    livereloadServer = new WebSocket.Server({port: livereloadPort});
 
     livereloadServer.on('connection', (clientSocket) => {
         console.log('Livereload server: new connection');
@@ -27,7 +27,11 @@ const startLivereloadServer = async () => {
         });
     });
 
-    global.lunaCli.documentInject += `<script type="text/javascript" src="/assets/dev/livereload.js"></script>`;
+    luna.set(
+        'documentInject',
+        `${luna.get('documentInject') ?? ''}<script type="text/javascript" src="/assets/dev/livereload.js"></script>`
+    );
+
     console.log(`Livereload server started on port ${livereloadPort}.`);
 };
 

@@ -14,6 +14,8 @@ export default class DocumentRenderer {
     @Inject(ComponentLoader) componentLoader;
     @Inject(ElementRenderer) elementRenderer;
 
+    @Inject('documentInject') documentInject;
+
     upgradedElements = {};
 
     constructor({ request, response }) {
@@ -127,7 +129,7 @@ export default class DocumentRenderer {
             </script>
             <script type="text/javascript" src="${luna.asset('/luna.js')}" />
             
-            ${global.lunaCli?.documentInject ?? ``}
+            ${this.documentInject ?? ``}
         `;
 
         return [ modules, scripts ].join('');
