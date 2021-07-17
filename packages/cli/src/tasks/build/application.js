@@ -6,9 +6,11 @@ import {loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup, startRollupWatch} from "../build";
 import {prepareLegacyBuild} from "../legacy";
+import {getConfig} from "../../config";
+
 
 const buildEntryPointForProduction = async () => {
-    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.start.js"));
+    await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.start.js"));
 };
 
 const buildComponentsForApplication = async () => {
@@ -17,11 +19,11 @@ const buildComponentsForApplication = async () => {
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
-    await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.application.js"));
+    await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.application.js"));
 
     if (settings.build.legacy) {
         await prepareLegacyBuild();
-        await startRollup(path.join(lunaCli.currentDirectory, "build/configs/rollup.config.client.legacy.js"));
+        await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.client.legacy.js"));
     }
 };
 
@@ -43,7 +45,7 @@ const startApplicationDevelopmentBuild = async (callback = () => {
         }
 
         watcher = await startRollupWatch(
-            path.join(global.lunaCli.currentDirectory, "build/configs", "rollup.config.application.js"),
+            path.join(getConfig().currentDirectory, "build/configs", "rollup.config.application.js"),
             () => {
                 console.log("UPDATE APPLICATION");
                 callback();
