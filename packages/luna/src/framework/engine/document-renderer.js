@@ -9,6 +9,7 @@ import ElementRenderer from "./element-renderer";
 
 import ssr from './plugins/posthtml-plugin-custom-elements';
 import {Component} from "../../decorators/component";
+import ElementFactory from "./element-factory";
 
 export default class DocumentRenderer {
     @Inject(ComponentLoader) componentLoader;
@@ -107,11 +108,12 @@ export default class DocumentRenderer {
                     .map(key => {
                         const component = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
-    
-                        return `
-                            import ${component.name} from "${importPath}";
-                            customElements.define("${component.tagName}", ${component.name});
-                        `;
+                        
+                        const elementFactory = new (component.ElementFactory ?? ElementFactory)({
+                            component
+                        });
+                        
+                        return elementFactory.define({ importPath });
                     })
                     .join("\n")
                 }

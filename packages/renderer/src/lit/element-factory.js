@@ -73,8 +73,4 @@ export default class ElementFactory extends BaseElementFactory {
     async template(element) {
         return element.render();
     }
-
-    define(element) {
-        // TODO: define element in dom
-    }
 }
