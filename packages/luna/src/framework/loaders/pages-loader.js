@@ -4,7 +4,6 @@ import {loadManifest, loadSettings} from '../config.js';
 import {parseMiddleware} from "../http/middleware";
 import {Inject, LunaService} from "../../decorators/service";
 import ComponentLoader from "./component-loader";
-import ElementRenderer from "../engine/element-renderer";
 import LunaCache from "../cache/luna-cache";
 
 @LunaService({
@@ -13,7 +12,6 @@ import LunaCache from "../cache/luna-cache";
 export default class PagesLoader {
     @Inject(LunaCache) cache;
     @Inject(ComponentLoader) componentLoader;
-    @Inject(ElementRenderer) elementRenderer;
 
     constructor() {}
 

@@ -1,40 +1,69 @@
-import path from "path";
+import glob from 'glob';
 
 import commonjs from "@rollup/plugin-commonjs";
 import {nodeResolve} from "@rollup/plugin-node-resolve";
 
-import copy from "rollup-plugin-copy";
-
-import dynamicRequire from './build/rollup-plugin-dynamic-require';
+function metaImportUrl() {
+    return {
+        name: 'luna-meta-import-url',
+        resolveImportMeta(prop, {moduleId}) {
+            return `new (require('u' + 'rl').URL)('file:' + __filename).href`;
+        },
+    };
+}
 
 const bundles = [
-    { name: 'element-js' },
-    { name: 'lit', resolve: [ /@lit.*/, /lit.*/, 'lit-html' ] }
+    {name: 'element-js'},
+    {name: 'lit'}
 ];
 
 
+const bundleConfigs = bundles.map(bundle => ({
+    input: `./src/${bundle.name}/index.js`,
+    output: {
+        file: `./lib/${bundle.name}/index.js`,
+        format: 'cjs',
+        exports: "auto",
+        inlineDynamicImports: true,
+    },
+    plugins: [
+        metaImportUrl(),
+        nodeResolve({
+            resolveOnly: bundle.resolve ?? [],
+        }),
+        commonjs({
+            requireReturnsDefault: true,
+            transformMixedEsModules: true,
+        }),
+    ],
+}));
 
-export default bundles.map(bundle => ({
-        input: `./src/${bundle.name}/index.js`,
-        output: {
-            file: `./lib/${bundle.name}/index.js`,
-            format: 'cjs',
-            exports: "auto",
-            inlineDynamicImports: true,
-        },
-        plugins: [
-            dynamicRequire(),
-            nodeResolve({
-                resolveOnly: bundle.resolve ?? [],
-            }),
-            commonjs({
-                requireReturnsDefault: true,
-                transformMixedEsModules: true,
-            }),
-            copy({
-                targets: [
-                    { src: `./src/${bundle.name}/stubs`, dest: `./lib/${bundle.name}`}
-                ]
-            })
-        ],
-    }));
+const stubConfigs = bundles
+    .flatMap(bundle => {
+        return glob.sync(`./src/${bundle.name}/stubs/*`)
+    })
+    .filter(stub => !!stub)
+    .map(stub => {
+        return {
+            input: stub,
+            output: {
+                file: stub.split('/src/').join('/lib/'),
+                format: 'es',
+                exports: 'auto',
+            },
+            plugins: [
+                metaImportUrl(),
+                nodeResolve(),
+                commonjs({
+                    requireReturnsDefault: true,
+                    transformMixedEsModules: true,
+                }),
+            ]
+        };
+    });
+
+
+export default [
+    ...bundleConfigs,
+    ...stubConfigs,
+]

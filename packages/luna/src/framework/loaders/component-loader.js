@@ -11,8 +11,8 @@ import {Component} from "../../decorators/component";
 export default class ComponentLoader {
     allAvailableComponents = {};
 
-    findAppropriateElementFactory(component) {
-        const {elementFactories} = luna;
+    async findAppropriateElementFactory(component) {
+        const elementFactories = await luna.getElementFactories();
 
         for (let i = 0; i < elementFactories.length; i++) {
             const {match, factory} = elementFactories[i];
@@ -73,7 +73,7 @@ export default class ComponentLoader {
             };
 
             // Load the appropriate element factory for a component once at startup.
-            component.ElementFactory = this.findAppropriateElementFactory(component);
+            component.ElementFactory = await this.findAppropriateElementFactory(component);
 
             this.allAvailableComponents[tagName] = component;
         }

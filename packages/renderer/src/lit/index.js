@@ -4,7 +4,7 @@ const stubs = async () => [{
     sources: ['lit'],
     stub: require.resolve('./stubs/index.js'),
 }, {
-    sources: ['lit/decorators'],
+    sources: ['lit/decorators', 'lit/decorators.js'],
     stub: require.resolve('./stubs/decorators.js'),
 }];
 

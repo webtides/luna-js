@@ -127,7 +127,7 @@ export default class DocumentRenderer {
             <script type="text/javascript">
                 window.lunaConfig = JSON.parse('${config}');
             </script>
-            <script type="text/javascript" src="${luna.asset('/luna.js')}" />
+            <script type="text/javascript" src="${luna.asset('/luna.js')}"></script>
             
             ${this.documentInject ?? ``}
         `;

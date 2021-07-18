@@ -41,7 +41,7 @@ export default class LunaContainer extends LunaBase {
      * A list of all available element factories which can be used to render custom elements
      * on the server.
      */
-    elementFactories = []
+    elementFactories = null;
     
     prepare() {
         Object.keys(this.serviceDefaults).map(name => {
@@ -59,33 +59,33 @@ export default class LunaContainer extends LunaBase {
     async initialize() {
         await this.get(HooksLoader).loadHooks();
         await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
-
-        await this.setElementFactories();
     }
 
-    async setElementFactories() {
-        const settings = getSettings();
-        if (settings.renderers) {
-            this.elementFactories = await Promise.all(settings.renderers.map(async ({ match, renderer }) => {
-                return {
-                    match: match ?? (() => true),
-                    factory: (await renderer()).ElementFactory,
-                }
-            }));
-        } else {
-            this.elementFactories = [ {
-                match: () => true,
-                factory: ElementFactory,
-            } ]
+    async getElementFactories() {
+        if (!this.elementFactories) {
+            const settings = getSettings();
+            if (settings.renderers) {
+                this.elementFactories = await Promise.all(settings.renderers.map(async ({match, renderer}) => {
+                    return {
+                        match: match ?? (() => true),
+                        factory: (await renderer()).ElementFactory,
+                    }
+                }));
+            } else {
+                this.elementFactories = [{
+                    match: () => true,
+                    factory: ElementFactory,
+                }]
+            }
         }
+
+        return this.elementFactories;
     }
 
     async getDefaultElementFactory() {
-        if (this.elementFactories.length === 0) {
-            await this.setElementFactories();
-        }
-
-        return this.elementFactories[0].factory;
+        // For pages and layout, we will always use the
+        // default element factory, which is just a string.
+        return ElementFactory;
     }
 
     config(key = undefined, defaultValue = false) {
