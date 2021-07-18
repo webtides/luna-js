@@ -18,7 +18,7 @@ export default class ServiceContext {
         const serviceInstance = luna.get(service);
 
         // Inject the current request into the service.
-        if (serviceInstance) {
+        if (serviceInstance && typeof serviceInstance.prototype !== 'undefined') {
             serviceInstance.$$luna = {
                 ...(serviceInstance.$$luna ?? {}),
                 request: this.context?.$$luna?.request,

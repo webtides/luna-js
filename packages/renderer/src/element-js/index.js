@@ -6,7 +6,7 @@ const stubs = async () => [{
     stub: require.resolve('./stubs/index.js'),
 }, {
     sources: ['lit-html/directives/unsafe-html'],
-    stub: require.resolve('./stubs/directives/unsafe-html.js'),
+    stub: require.resolve('./stubs/unsafe-html.js'),
 }];
 
 export {ElementFactory, TemplateRenderer, stubs};

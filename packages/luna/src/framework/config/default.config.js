@@ -4,7 +4,11 @@ export default {
     build: {
         output: '.build',
         legacy: false,
-        livereload: true
+        livereload: true,
+
+        server: {
+            resolveNodeModules: [],
+        }
     },
 
     pages: {
