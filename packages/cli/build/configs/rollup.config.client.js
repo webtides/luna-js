@@ -79,7 +79,7 @@ export default async () => {
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                 }),
-                commonjs({requireReturnsDefault: true}),
+                commonjs({requireReturnsDefault: true, transformMixedEsModules: true }),
                 require("../plugins/rollup-plugin-copy")({
                     publicDirectory: settings.publicDirectory,
                     sources: [

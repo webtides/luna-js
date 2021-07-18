@@ -15,8 +15,10 @@ export default class TemplateRenderer {
         // We need a dynamic import here, because we need to force rollup to
         // import the render function after loading the additional imports defined
         // in this renderer.
+        const stream = Readable.from(render(await template, { elementRenderers: [ ], customElementHostStack: [], customElementInstanceStack: [] }));
+        const result = await streamToString(stream);
 
-        const stream = Readable.from(render(template, { elementRenderers: [ ], customElementHostStack: [], customElementInstanceStack: [] }));
-        return streamToString(stream);
+        // Match the default behaviour of lit and render the result inside the shadow dom.
+        return `<template shadowroot="open">${result}</template>`;
     }
 }
