@@ -43,4 +43,11 @@ export default class ElementFactory {
     async template(element) {
         return element.template;
     }
+
+    define({ importPath }) {
+        return `
+            import ${this.component.name} from "${importPath}";
+            customElements.define("${this.component.tagName}", ${this.component.name});
+        `;
+    }
 }
