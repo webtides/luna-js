@@ -29,7 +29,7 @@ const startLivereloadServer = async () => {
 
     luna.set(
         'documentInject',
-        `${luna.get('documentInject') ?? ''}<script type="text/javascript" src="/assets/dev/livereload.js"></script>`
+        `${luna.get('documentInject') || ''}<script type="text/javascript" src="/assets/dev/livereload.js"></script>`
     );
 
     console.log(`Livereload server started on port ${livereloadPort}.`);

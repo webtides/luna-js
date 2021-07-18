@@ -13,6 +13,8 @@ export default async () => {
     const settings = await loadSettings();
     const {basePaths, files} = generateBasePathsFromLunaConfig(settings);
 
+    const { resolveNodeModules } = settings.build.server;
+
     const production = process.env.NODE_ENV === "production";
 
     const bundle = {
@@ -31,7 +33,7 @@ export default async () => {
             }),
             require("../plugins/rollup-plugin-markdown")(),
             nodeResolve({
-                resolveOnly: [ '@webtides/luna-js', 'lit-html' ]
+                resolveOnly: [ '@webtides/luna-js', ...resolveNodeModules ]
             }),
             replace({
                 'process.env.CLIENT_BUNDLE': false,
