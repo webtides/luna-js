@@ -7,6 +7,7 @@ import ElementFactory from "./element-factory";
 export default class ElementRenderer {
     async buildElement({ component, attributes = {}, request, response }) {
         component.element.prototype.$$luna = {
+            ...(component.element.prototype?.$$luna ?? {}),
             request,
             response,
         };
