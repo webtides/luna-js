@@ -14,6 +14,7 @@
 - Allow `.attribute` notation for server rendered components
  - Several Decorators (`Component`, `Inject`, `LunaService`, `HideFromClient`, `CurrentRequest`)
  - `ElementFactory` for defining how an element should be rendered on the server
+ - Allow the developer to define a default target foreach component bundle
 
 ### Fixed
  - Renderer path replacements

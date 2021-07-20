@@ -39,7 +39,7 @@ export default class ComponentLoader {
         const basePath = settings._generated.applicationDirectory;
 
         for (const componentModule of manifest.components) {
-            const {file, directory, relativePath, settings, children} = componentModule;
+            const {file, relativePath, settings, children} = componentModule;
             const absolutePath = path.join(basePath, file);
 
             const element = require(path.resolve(absolutePath));
@@ -47,7 +47,7 @@ export default class ComponentLoader {
             if (!element.$$luna) {
                 // The element hasn't been decorated, set some sensible defaults.
                 element.$$luna = {
-                    target: Component.TARGET_SERVER,
+                    target: settings.defaultTarget ?? Component.TARGET_SERVER,
                 };
             }
 
@@ -67,7 +67,6 @@ export default class ComponentLoader {
                 name: element.name,
                 file,
                 relativePath,
-                directory,
                 outputDirectory: settings.outputDirectory,
                 children
             };
