@@ -23,11 +23,14 @@ export default class PagesLoader {
      *
      * @param factory (page) => *   The layout factory which should be used
      * @param page *                The html page fragment.
+     * @param request *
+     * @param response
+     * @param container             The luna service container.
      *
      * @returns {Promise<string>}
      */
-    async applyLayout(factory, page) {
-        const factoryResult = await factory(page);
+    async applyLayout(factory, page, { request, response, container }) {
+        const factoryResult = await factory(page, { request, response, container });
         return (await luna.getDefaultElementFactory()).renderer().renderToString(factoryResult);
     }
 
@@ -81,7 +84,7 @@ export default class PagesLoader {
 
     /**
      * Takes a loaded page module and generates the markup. Checks if the page is an anonymous
-     * page or a component page and uses {@link loadAnonymousPage} or {@link loadComponentPage} respectively to
+     * page or a component page and uses {@link loadAnonymousPage} to
      * generate the markup.
      *
      * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
@@ -105,7 +108,7 @@ export default class PagesLoader {
             throw new Error('You need to define a "LayoutFactory".')
         }
 
-        const pageHTML = await this.applyLayout(result.layoutFactory, page);
+        const pageHTML = await this.applyLayout(result.layoutFactory, page, { request, response, container });
 
         return {
             html: pageHTML,
