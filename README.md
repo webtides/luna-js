@@ -1,13 +1,12 @@
 # luna-js
 
-## Static Site Generation & SSR framework for custom-elements.
+## Static Site Generation & SSR framework for customElements.
 
 ### Why?
 
-The idea behind `luna-js` is to allow developers to rapidly create a full fledged
- web application using custom-elements with support for server side rendering.  
-Under the hood it uses [@webtides/element-js](https://github.com/webtides/element-js), which is based
-on the WebComponents standard.
+The idea behind `luna-js` is to allow developers to rapidly create a fully fledged
+ web application using customElements with support for server side rendering.  
+
 
 ## Installation
 
@@ -24,11 +23,7 @@ dependency as well:
 
  After installing `luna-js` and the `luna-cli` as a dependency, you can simply run `luna --dev`
 to start your application in development mode. If this is the first time you have started `luna-js`, you will be asked
-if `luna-js` should generate a config-file and a basic directory structure for you.
-
-## element-js concepts
-
-You can read all about `element-js` here: [@webtides/element-js](https://github.com/webtides/element-js).
+if `luna-js` should generate a config file and a basic directory structure for you.
 
 ## luna-js concepts
 
