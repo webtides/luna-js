@@ -87,7 +87,7 @@ module.exports = function(options) {
         resolveId(id, importer) {
             // A entry route.
             if (importer === undefined) {
-                const moonSettings = getSettings();
+                const lunaSettings = getSettings();
 
                 const entryType = getEntryType(id);
 
@@ -107,11 +107,15 @@ module.exports = function(options) {
                     basePath: relativeBasePath.split('\\').join('/')
                 };
 
-                if (type === 'apis' || type === 'pages') {
-                    const fallbackRoute = moonSettings.pages?.fallback ?? false;
-                    const fallbackApiRoute = moonSettings.api?.fallback ?? false;
+                if (type === 'components') {
+                    console.log(entry);
+                }
 
-                    const { context } = type === 'apis' ? moonSettings.api : moonSettings.pages;
+                if (type === 'apis' || type === 'pages') {
+                    const fallbackRoute = lunaSettings.pages?.fallback ?? false;
+                    const fallbackApiRoute = lunaSettings.api?.fallback ?? false;
+
+                    const { context } = type === 'apis' ? lunaSettings.api : lunaSettings.pages;
                     let route = getRouteName(relativePath.split(".js")[0]);
 
                     if (type === 'apis' && route === fallbackApiRoute || type === 'pages' && route === fallbackRoute) {
