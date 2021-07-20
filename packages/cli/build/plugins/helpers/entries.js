@@ -35,6 +35,7 @@ const generateBasePathsFromLunaConfig = settings => {
             basePath: component.input,
             settings: {
                 outputDirectory: component.output,
+                defaultTarget: component.defaultTarget,
             }
         });
         return glob.sync(path.join(component.input, "**/*.js"))
