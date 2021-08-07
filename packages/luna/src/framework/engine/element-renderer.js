@@ -16,19 +16,22 @@ export default class ElementRenderer {
 
         const element = await factory.buildElement();
 
+        if (!element) {
+            throw new Error('The "ElementFactory" needs to at least return an element to inject the current request.')
+        }
+
         const dynamicProperties = typeof element.loadDynamicProperties === 'function'
             ? await element.loadDynamicProperties({request, response})
             : {};
 
         const properties = {
+            // First we define the static properties as they have the least priority
             ...component.element.staticProperties,
+            // Then the attributes, as they are somewhat dynamic
+            ...attributes,
+            // The highest priority have dynamic properties.
             ...dynamicProperties,
         };
-
-        // At last we are defining external properties.
-        Object.keys(properties).forEach(key => {
-            element[key] = properties[key];
-        });
 
         const finalAttributes = await factory.mirrorPropertiesToAttributes({
             element,
@@ -36,13 +39,10 @@ export default class ElementRenderer {
             staticProperties: (component.element.staticProperties ?? {}),
         });
 
-        // Create an instance of a dynamic element factory class which can be overridden by the developer.
-        // const result = await factory.buildElement();
-
-        // Inject the current luna instance into the element.
-        if (!element) {
-            throw new Error('The "ElementFactory" needs to at least return an element to inject the current request.')
-        }
+        // At last we are defining external properties.
+        Object.keys(properties).forEach(key => {
+            element[key] = properties[key];
+        });
 
         return { factory, element, finalAttributes };
     }
