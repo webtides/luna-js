@@ -13,10 +13,9 @@ function metaImportUrl() {
 }
 
 const bundles = [
-    {name: 'element-js'},
+    {name: 'element-js', resolve: [ ]},
     {name: 'lit'}
 ];
-
 
 const bundleConfigs = bundles.map(bundle => ({
     input: `./src/${bundle.name}/index.js`,
@@ -52,8 +51,8 @@ const stubConfigs = bundles
                 exports: 'auto',
             },
             plugins: [
-                metaImportUrl(),
                 nodeResolve(),
+                metaImportUrl(),
                 commonjs({
                     requireReturnsDefault: true,
                     transformMixedEsModules: true,

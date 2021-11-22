@@ -129,7 +129,7 @@ export default class DocumentRenderer {
             </script>
             <script type="text/javascript" src="${luna.asset('/luna.js')}"></script>
             
-            ${this.documentInject ?? ``}
+            ${this.documentInject ? this.documentInject : ``}
         `;
 
         return [ scripts, modules ].join('');

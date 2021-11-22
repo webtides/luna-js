@@ -138,9 +138,9 @@
   resolved "https://registry.npmjs.org/@lit/reactive-element/-/reactive-element-1.0.0-rc.2.tgz"
   integrity sha512-cujeIl5Ei8FC7UHf4/4Q3bRJOtdTe1vpJV/JEBYCggedmQ+2P8A2oz7eE+Vxi6OJ4nc0X+KZxXnBoH4QrEbmEQ==
 
-"@popeindustries/lit-html-server@3.1.0":
+"@popeindustries/lit-html-server@^3.1.0":
   version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@popeindustries/lit-html-server/-/lit-html-server-3.1.0.tgz#80224a284d5e0cb5374cef695b5be1d1e6df302b"
+  resolved "https://registry.npmjs.org/@popeindustries/lit-html-server/-/lit-html-server-3.1.0.tgz"
   integrity sha512-OuVxzjN17fIoCGcZFCmF6//rQ86dfevp0703SC2W8S0G257mvjuVBHdRomyVYYFqBjpr9naRz2oFdLjPvCG8bw==
 
 "@rollup/plugin-babel@^5.3.0":
@@ -184,6 +184,37 @@
     "@types/estree" "0.0.39"
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
+
+"@simple-dom/document@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@simple-dom/document/-/document-1.4.0.tgz"
+  integrity sha512-/RUeVH4kuD3rzo5/91+h4Z1meLSLP66eXqpVAw/4aZmYozkeqUkMprq0znL4psX/adEed5cBgiNJcfMz/eKZLg==
+  dependencies:
+    "@simple-dom/interface" "^1.4.0"
+
+"@simple-dom/interface@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@simple-dom/interface/-/interface-1.4.0.tgz"
+  integrity sha512-l5qumKFWU0S+4ZzMaLXFU8tQZsicHEMEyAxI5kDFGhJsRqDwe0a7/iPA/GdxlGyDKseQQAgIz5kzU7eXTrlSpA==
+
+"@simple-dom/parser@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@simple-dom/parser/-/parser-1.4.0.tgz"
+  integrity sha512-TNjDkOehueRIKr1df416qk9ELj+qWuVVJNIT25y1aZg3pQvxv4UPGrgaDFte7dsWBTbF3V8NYPNQ5FDUZQ8Wlg==
+  dependencies:
+    "@simple-dom/interface" "^1.4.0"
+
+"@simple-dom/serializer@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@simple-dom/serializer/-/serializer-1.4.0.tgz"
+  integrity sha512-mI1yRahsVs8atXLiQksineDsFEFqeG7RHwnnBTDOK6inbzl4tZQgjR+Z7edjgIJq5j5RhZvwPI6EuCji9B3eQw==
+  dependencies:
+    "@simple-dom/interface" "^1.4.0"
+
+"@simple-dom/void-map@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@simple-dom/void-map/-/void-map-1.4.0.tgz"
+  integrity sha512-VDhLEyVCbuhOBBgHol9ShzIv9O8UCzdXeH4FoXu2DOcu/nnvTjLTck+BgXsCLv5ynDiUdoqsREEVFnoyPpFKVw==
 
 "@types/babel__generator@^7.6.1":
   version "7.6.3"
@@ -229,10 +260,9 @@
   resolved "https://registry.npmjs.org/@webcomponents/template-shadowroot/-/template-shadowroot-0.1.0.tgz"
   integrity sha512-ry84Vft6xtRBbd4M/ptRodbOLodV5AD15TYhyRghCRgIcJJKmYmJ2v2BaaWxygENwh6Uq3zTfGPmlckKT/GXsQ==
 
-"@webtides/element-js@^0.3.2":
+"@webtides/element-js@git+https://github.com/webtides/element-js#feature/use-custom-renderer":
   version "0.3.2"
-  resolved "https://registry.npmjs.org/@webtides/element-js/-/element-js-0.3.2.tgz"
-  integrity sha512-mzp+LAu5A1nQnFyclu0mzvrgcDbJ9TbA2GyZuRdLe8SoPEW0nN4Fw/2kmFUptCVlHhY2KZAcYQKwrDCWhZMUHg==
+  resolved "git+https://github.com/webtides/element-js#8fb625255d0907f112c7bd313ace622e2cd82574"
   dependencies:
     lit-html "^1.2.1"
 
@@ -281,6 +311,14 @@ cache-content-type@^1.0.0:
   dependencies:
     mime-types "^2.1.18"
     ylru "^1.2.0"
+
+camel-case@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/camel-case/-/camel-case-4.1.2.tgz#9728072a954f805228225a6deea6b38461e1bd5a"
+  integrity sha512-gxGWBrTT1JuMx6R+o5PTXMmUnhnVzLQ9SNutD4YqKtI6ap897t3tKECYla6gCWEkplXnlNybEkZg9GEGxKFCgw==
+  dependencies:
+    pascal-case "^3.1.2"
+    tslib "^2.0.3"
 
 chalk@^2.0.0:
   version "2.4.2"
@@ -806,6 +844,14 @@ parseurl@^1.3.2:
   resolved "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz"
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
 
+pascal-case@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/pascal-case/-/pascal-case-3.1.2.tgz#b48e0ef2b98e205e7c1dae747d0b1508237660eb"
+  integrity sha512-uWlGT3YSnK9x3BQJaOdcZwrnV6hPpd8jFH1/ucpiLRPh/2zCVJKS19E4GvYHvaCcACn3foXZ0cLB9Wrx1KGe5g==
+  dependencies:
+    no-case "^3.0.4"
+    tslib "^2.0.3"
+
 path-is-absolute@1.0.1, path-is-absolute@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz"
@@ -871,6 +917,17 @@ setprototypeof@1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz"
   integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
+
+simple-dom@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/simple-dom/-/simple-dom-1.4.0.tgz"
+  integrity sha512-TnBPkmOyjdaOqyBMb4ick+n8c0Xv9Iwg1PykFV7hz9Se3UCiacTbRb+25cPmvozFNJLBUNvUzX/KsPfXF14ivA==
+  dependencies:
+    "@simple-dom/document" "^1.4.0"
+    "@simple-dom/interface" "^1.4.0"
+    "@simple-dom/parser" "^1.4.0"
+    "@simple-dom/serializer" "^1.4.0"
+    "@simple-dom/void-map" "^1.4.0"
 
 source-map@^0.5.0:
   version "0.5.7"
