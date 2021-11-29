@@ -19,6 +19,7 @@
 ### Fixed
  - Renderer path replacements
  - Luna lifecycle for 
+ - Attribute and property parsing (#65)
 
 ## [Unreleased] CLI
 
@@ -34,6 +35,9 @@
 ### Added
  - A package in which multiple template renderers and element factories for different base classes could
   be developed
+   
+### Changed
+ - Use more shared logic from the BaseLayoutFactory (#65)
 
 ## [0.8.0] Luna - 10.06.2021
 
