@@ -1,50 +1,36 @@
-import {Inject, LunaService} from "../../decorators/service";
-import ElementFactory from "./element-factory";
+import {LunaService} from "../../decorators/service";
+import {paramCase} from "param-case";
 
+
+/**
+ * The element renderer is the "interface" between luna and other custom element factories.
+ * It takes a dom node with attributes, builds the corresponding custom element and renders
+ * it's contents by using the custom element factories.
+ */
 @LunaService({
     name: 'ElementRenderer'
 })
 export default class ElementRenderer {
-    async buildElement({ component, attributes = {}, request, response }) {
+    async createElementFactory({ component, attributes = {}, request, response }) {
+        // "Inject" the current request and response into the $$luna meta
+        // object of the element instance. This allows us to use decorated
+        // class members to load the current request and response objects.
         component.element.prototype.$$luna = {
             ...(component.element.prototype?.$$luna ?? {}),
             request,
             response,
         };
 
-        const factory = new (component.ElementFactory)({ component, attributes, request, response });
-
-        const element = await factory.buildElement();
-
-        if (!element) {
-            throw new Error('The "ElementFactory" needs to at least return an element to inject the current request.')
-        }
-
-        const dynamicProperties = typeof element.loadDynamicProperties === 'function'
-            ? await element.loadDynamicProperties({request, response})
-            : {};
-
-        const properties = {
-            // First we define the static properties as they have the least priority
-            ...component.element.staticProperties,
-            // Then the attributes, as they are somewhat dynamic
-            ...attributes,
-            // The highest priority have dynamic properties.
-            ...dynamicProperties,
-        };
-
-        const finalAttributes = await factory.mirrorPropertiesToAttributes({
-            element,
-            dynamicProperties,
-            staticProperties: (component.element.staticProperties ?? {}),
+        const factory = new (component.ElementFactory)({
+            component,
+            attributes,
+            request,
+            response
         });
 
-        // At last we are defining external properties.
-        Object.keys(properties).forEach(key => {
-            element[key] = properties[key];
-        });
+        await factory.build();
 
-        return { factory, element, finalAttributes };
+        return factory;
     }
 
     /**
@@ -62,13 +48,19 @@ export default class ElementRenderer {
      * @returns {Promise<{markup: string, element: *}>}
      */
     async renderComponent({component, attributes = {}, group = 'components', request, response}) {
-        const { factory, element, finalAttributes } = await this.buildElement({
+        const factory = await this.createElementFactory({
             component, attributes, group, request, response,
         });
 
-        const template = factory.template(element);
+        const template = factory.template();
         const markup = await component.ElementFactory.renderer().renderToString(template);
 
-        return { markup, element, finalAttributes };
+        const finalAttributes = await factory.mirrorPropertiesToAttributes();
+
+        return {
+            markup,
+            element: factory.element,
+            finalAttributes,
+        };
     };
 }
