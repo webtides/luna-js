@@ -45,7 +45,7 @@ export default class ElementFactory {
     }
 
     async buildElement() {
-        return new (this.component.element)();
+        return new (this.component.element)(this.attributes);
     }
 
     async template() {
