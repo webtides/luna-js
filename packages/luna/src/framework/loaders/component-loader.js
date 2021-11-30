@@ -1,9 +1,11 @@
-import {loadManifest, loadSettings} from "../config.js";
 import path from "path";
+
 import {paramCase} from "param-case";
+
+import {loadManifest, loadSettings} from "../config.js";
 import {LunaService} from "../../decorators/service";
-import ElementFactory from "../engine/element-factory";
 import {Component} from "../../decorators/component";
+import {importDynamically} from "../helpers/dynamic-import";
 
 @LunaService({
     name: 'ComponentLoader'
@@ -11,19 +13,42 @@ import {Component} from "../../decorators/component";
 export default class ComponentLoader {
     allAvailableComponents = {};
 
-    async findAppropriateElementFactory(component) {
-        const elementFactories = await luna.getElementFactories();
+    async loadSingleComponent({absolutePath, file, relativePath, children, settings }) {
+        const element = require(path.resolve(absolutePath));
 
-        for (let i = 0; i < elementFactories.length; i++) {
-            const {match, factory} = elementFactories[i];
-
-            if (match(component)) {
-                return factory;
-            }
+        if (!element.$$luna) {
+            // The element hasn't been decorated, set some sensible defaults.
+            element.$$luna = {
+                target: settings.defaultTarget ?? Component.TARGET_SERVER,
+            };
         }
 
-        // Return the first factory as default, or if not available the default element factory..
-        return elementFactories[0]?.factory ?? ElementFactory;
+        // Don't load static properties if the element should only be loaded in the client
+        element.staticProperties = (element?.$$luna?.target !== Component.TARGET_CLIENT)
+            && typeof element.loadStaticProperties === 'function'
+                ? (await element.loadStaticProperties()) ?? {}
+                : {};
+
+        const tagName = element.$$luna?.selector ?? paramCase(element.name);
+
+        console.log("Register component", tagName);
+
+        const component = {
+            element,
+            tagName,
+            name: element.name,
+            file,
+            relativePath,
+            outputDirectory: settings.outputDirectory,
+            children
+        };
+
+        // Load the appropriate element factory for a component once at startup.
+        component.ElementFactory = settings.factory
+            ? await importDynamically(settings.factory)
+            : await luna.getDefaultElementFactory();
+
+        return component;
     }
 
     /**
@@ -42,39 +67,11 @@ export default class ComponentLoader {
             const {file, relativePath, settings, children} = componentModule;
             const absolutePath = path.join(basePath, file);
 
-            const element = require(path.resolve(absolutePath));
+            const component = await this.loadSingleComponent({
+                absolutePath, file, relativePath, settings, children
+            });
 
-            if (!element.$$luna) {
-                // The element hasn't been decorated, set some sensible defaults.
-                element.$$luna = {
-                    target: settings.defaultTarget ?? Component.TARGET_SERVER,
-                };
-            }
-
-            // Don't load static properties if the element should only be loaded in the client
-            element.staticProperties = (element?.$$luna?.target !== Component.TARGET_CLIENT)
-                && typeof element.loadStaticProperties === 'function'
-                    ? (await element.loadStaticProperties()) ?? {}
-                    : {};
-
-            const tagName = element.$$luna?.selector ?? paramCase(element.name);
-
-            console.log("Register component", tagName);
-
-            const component = {
-                element,
-                tagName,
-                name: element.name,
-                file,
-                relativePath,
-                outputDirectory: settings.outputDirectory,
-                children
-            };
-
-            // Load the appropriate element factory for a component once at startup.
-            component.ElementFactory = await this.findAppropriateElementFactory(component);
-
-            this.allAvailableComponents[tagName] = component;
+            this.allAvailableComponents[component.tagName] = component;
         }
 
         return this.allAvailableComponents;

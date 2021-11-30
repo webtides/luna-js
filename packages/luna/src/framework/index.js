@@ -7,6 +7,7 @@ import {HOOKS} from "./hooks/definitions";
 import ComponentLoader from "./loaders/component-loader";
 import Server from "./http/server";
 import LunaContainer from "./luna";
+import LayoutsLoader from "./loaders/layouts-loader";
 
 /**
  * This methods should be called before anything else.
@@ -51,6 +52,9 @@ const startLuna = async ({ config } = {}) => {
     await callHook(HOOKS.COMPONENTS_LOADED, {
         components: componentLoader.getAvailableComponents()
     });
+
+    const layoutsLoader = luna.get(LayoutsLoader);
+    await layoutsLoader.registerAvailableLayouts();
 
     const server = luna.get(Server);
     await server.start();

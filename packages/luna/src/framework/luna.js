@@ -12,6 +12,8 @@ import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
 import Server from "./http/server";
 import ElementFactory from "./engine/element-factory";
+import PagesRenderer from "./engine/pages-renderer";
+import LayoutsLoader from "./loaders/layouts-loader";
 
 /**
  * The luna base class. Also provides a simple service
@@ -27,21 +29,15 @@ export default class LunaContainer extends LunaBase {
         ApiLoader,
         ComponentLoader,
         HooksLoader,
+        LayoutsLoader,
+        PagesLoader,
 
         /* RENDERERS */
         ElementRenderer,
-
-        /* SPECIAL (needs refactoring) */
-        PagesLoader,
+        PagesRenderer,
 
         Server,
     ];
-
-    /**
-     * A list of all available element factories which can be used to render custom elements
-     * on the server.
-     */
-    elementFactories = null;
     
     prepare() {
         Object.keys(this.serviceDefaults).map(name => {
@@ -59,27 +55,6 @@ export default class LunaContainer extends LunaBase {
     async initialize() {
         await this.get(HooksLoader).loadHooks();
         await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
-    }
-
-    async getElementFactories() {
-        if (!this.elementFactories) {
-            const settings = getSettings();
-            if (settings.renderers) {
-                this.elementFactories = await Promise.all(settings.renderers.map(async ({match, renderer}) => {
-                    return {
-                        match: match ?? (() => true),
-                        factory: (await renderer()).ElementFactory,
-                    }
-                }));
-            } else {
-                this.elementFactories = [{
-                    match: () => true,
-                    factory: ElementFactory,
-                }]
-            }
-        }
-
-        return this.elementFactories;
     }
 
     async getDefaultElementFactory() {
