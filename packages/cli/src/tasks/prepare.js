@@ -5,7 +5,7 @@ import inquirer from "inquirer";
 import path from "path";
 import {getConfig} from "../config";
 
-const copyEmptyMoonConfig = async () => {
+const copyEmptyLunaConfig = async () => {
     fs.copyFileSync(path.join(getConfig().currentDirectory, "src/tasks/prepare", "luna.config.example.js"), getPathToConfigFile(getConfig().currentWorkingDirectory));
 
     const settings = await loadSettings();
@@ -53,7 +53,7 @@ const checkRequirements = async ({ setup } = { setup: false }) => {
         }
 
         if (setup || result?.createConfig) {
-            await copyEmptyMoonConfig();
+            await copyEmptyLunaConfig();
             return true;
         }
 

@@ -12,6 +12,10 @@ module.exports = {
         input: [path.join(__dirname, "views/pages")]
     },
 
+    layouts: {
+        input: [path.join(__dirname, "views/layouts")],
+    },
+
     components: {
         bundles: [{
             input: path.join(__dirname, "views/components"),
