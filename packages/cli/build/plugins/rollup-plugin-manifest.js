@@ -2,6 +2,7 @@ const { getSettings } = require("@webtides/luna-js/src/framework/config");
 
 const fs = require("fs");
 const path = require("path");
+const {getEntryType} = require("./helpers/entries");
 
 const loadComponentChildren = contents => {
     const result = contents.match(/<(?:\w*-\w*)(?:-\w*)*/gm);
@@ -48,28 +49,9 @@ module.exports = function(options) {
     const entries = {
         components: { },
         pages: { },
+        layouts: { },
         apis: { },
         hooks: { },
-    };
-
-    const getEntryType = (id) => {
-        let result = null;
-
-        Object.keys(config).map(type => {
-            config[type].forEach(configRow => {
-                const { basePath } = configRow;
-
-                if (path.resolve(id).startsWith(path.resolve(basePath))) {
-                    result = {
-                        type,
-                        basePath: path.resolve(basePath),
-                        settings: configRow.settings
-                    }
-                }
-            })
-        });
-
-        return result;
     };
 
     const hasRegisteredEntry = id => {
@@ -89,7 +71,7 @@ module.exports = function(options) {
             if (importer === undefined) {
                 const lunaSettings = getSettings();
 
-                const entryType = getEntryType(id);
+                const entryType = getEntryType(id, config);
 
                 if (entryType === null) {
                     return null;
@@ -107,8 +89,8 @@ module.exports = function(options) {
                     basePath: relativeBasePath.split('\\').join('/')
                 };
 
-                if (type === 'components') {
-                    console.log(entry);
+                if (type === 'layouts') {
+                    entry.name = relativePath.split(".js")[0].substring(1);
                 }
 
                 if (type === 'apis' || type === 'pages') {
@@ -134,7 +116,7 @@ module.exports = function(options) {
 
         async renderChunk(code, chunk, options) {
             if (chunk.facadeModuleId !== null && hasRegisteredEntry(path.resolve(chunk.facadeModuleId))) {
-                const type = getEntryType(chunk.facadeModuleId).type;
+                const type = getEntryType(chunk.facadeModuleId, config).type;
                 entries[type][path.resolve(chunk.facadeModuleId)].file = chunk.fileName;
 
                 if (type === "components") {

@@ -2,6 +2,7 @@ import PagesLoader from "../../loaders/pages-loader";
 import ApiLoader from "../../loaders/api-loader";
 import DocumentRenderer from "../../engine/document-renderer";
 import ServiceContext from "../../services/service-context";
+import PagesRenderer from "../../engine/pages-renderer";
 
 let currentRouter;
 
@@ -50,21 +51,22 @@ const routes = async ({router}) => {
     currentRouter = router;
 
     const pagesLoader = luna.get(PagesLoader);
+    const pagesRenderer = luna.get(PagesRenderer);
 
     const {pages, fallbackPage} = await pagesLoader.loadPages();
     const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
 
     const registerPageRoute = async ({module, route}) => {
         const callback = async ({ request, response, container }) => {
-            const {html} = await pagesLoader.generatePageMarkup({route, module, request, response, container});
+            const pageMarkup = await pagesRenderer.generatePageMarkup({route, module, request, response, container});
 
-            if (!html) {
+            if (!pageMarkup) {
                 return response.status(404).send();
             }
 
             const documentRenderer = new DocumentRenderer({ request, response });
 
-            const result = await documentRenderer.render(html);
+            const result = await documentRenderer.render(pageMarkup);
 
             if (request.$$luna?.isCacheable) {
                 request.$$luna.cachedResponse = result;
