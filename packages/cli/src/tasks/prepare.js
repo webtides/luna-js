@@ -23,7 +23,7 @@ const copyEmptyMoonConfig = async () => {
     const filesToCopy = [
         { from: "src/tasks/prepare/page.example.js", to: path.join(settings.pages.input[0], "index.js") },
         { from: "src/tasks/prepare/component.example.js", to: path.join(settings.components.bundles[0].input, "example-component.js") },
-        { from: "src/tasks/prepare/layout.example.js", to: path.join(getConfig().currentWorkingDirectory, "views/layouts", "base.js") },
+        { from: "src/tasks/prepare/layout.example.js", to: path.join(getConfig().currentWorkingDirectory, "views/layouts", "default.js") },
         { from: "src/tasks/prepare/assets/main.example.css", to: path.join(getConfig().currentWorkingDirectory, "assets/css", "main.css") },
     ]
 

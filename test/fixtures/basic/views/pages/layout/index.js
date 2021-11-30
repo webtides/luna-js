@@ -1,12 +1,10 @@
-import factory from "../../layouts/base";
-
-const layout = async (page) => {
-    return factory(page, {
+const context = () => {
+    return {
         text: 'MOCHA CONTEXT'
-    });
-};
+    }
+}
 
-export { layout };
+export { context };
 
 export default async () => {
   return ``;

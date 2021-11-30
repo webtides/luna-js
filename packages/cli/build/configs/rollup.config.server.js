@@ -27,7 +27,9 @@ export default async () => {
             exports: "auto"
         },
         plugins: [
-            require("../plugins/rollup-plugin-strip-client-code")(settings.renderers ?? []),
+            require("../plugins/rollup-plugin-strip-client-code")({
+                basePaths,
+            }),
             require("../plugins/rollup-plugin-postcss")({
                 ignore: true
             }),
