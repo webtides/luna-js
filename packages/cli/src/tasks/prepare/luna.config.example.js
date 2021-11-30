@@ -9,6 +9,10 @@ module.exports = {
         input: [ path.join(__dirname, 'views/pages') ],
     },
 
+    layouts: {
+        input: [path.join(__dirname, "views/layouts")],
+    },
+
     api: {
         input: [ path.join(__dirname, 'api') ],
     },

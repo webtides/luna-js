@@ -12,6 +12,10 @@ module.exports = {
         fallback: '/custom-fallback'
     },
 
+    layouts: {
+        input: [path.join(__dirname, "views/layouts")],
+    },
+
     components: {
         bundles: [{
             input: path.join(__dirname, "views/components"),
