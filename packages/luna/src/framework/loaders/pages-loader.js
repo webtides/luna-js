@@ -2,36 +2,20 @@ import path from "path";
 
 import {loadManifest, loadSettings} from '../config.js';
 import {parseMiddleware} from "../http/middleware";
-import {Inject, LunaService} from "../../decorators/service";
-import ComponentLoader from "./component-loader";
-import LunaCache from "../cache/luna-cache";
+import {LunaService} from "../../decorators/service";
+import {importDynamically} from "../helpers/dynamic-import";
+import {Component} from "../../decorators/component";
 
 @LunaService({
     name: 'PagesLoader'
 })
 export default class PagesLoader {
-    @Inject(LunaCache) cache;
-    @Inject(ComponentLoader) componentLoader;
 
     constructor() {}
 
-    /**
-     * Takes a page and a layout factory and wraps the pages
-     * with the layout.
-     *
-     * Replaces the ${page} variable inside the layout.
-     *
-     * @param factory (page) => *   The layout factory which should be used
-     * @param page *                The html page fragment.
-     * @param request *
-     * @param response
-     * @param container             The luna service container.
-     *
-     * @returns {Promise<string>}
-     */
-    async applyLayout(factory, page, { request, response, container }) {
-        const factoryResult = await factory(page, { request, response, container });
-        return (await luna.getDefaultElementFactory()).renderer().renderToString(factoryResult);
+    async loadDefaultLayout() {
+        const layout = await importDynamically('./views/layouts/base.js');
+        return () => layout;
     }
 
     /**
@@ -41,79 +25,33 @@ export default class PagesLoader {
      * Extracts the middleware, module and page content.
      *
      * @param file string   The path to the page that should be loaded.
+     * @param settings *    The page settings loaded from the manifest
      *
      * @returns {Promise<{layout: *, module: *, page: *, middleware: *}>}
      */
-    async loadPageModule({file}) {
+    async loadPageModule({file, settings}) {
         const module = await import(path.resolve(file));
         const page = module.default;
+
+        const isComponentPage = page.prototype?.constructor?.toString().indexOf('class') === 0;
+
+        const ElementFactory = settings.factory
+            ? (await importDynamically(settings.factory)).ElementFactory
+            : await luna.getDefaultElementFactory();
+
+        if (isComponentPage) {
+            page.staticProperties =  typeof page.loadStaticProperties === 'function'
+                ? (await page.loadStaticProperties()) ?? {}
+                : {};
+        }
 
         return {
             module,
             page,
+            isComponentPage,
             middleware: await parseMiddleware({middleware: module.middleware}),
-            layout: module.layout
-        }
-    }
-
-    /**
-     * Loads the content of an anonymous page. Anonymous pages cannot be dynamic, so
-     * they can be cached.
-     *
-     * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
-     * @param route string  The route where the page should be registered. Used for the cache.
-     * @param request *     The express request object
-     * @param response *    The express response object.
-     * @param container ServiceContext
-     *
-     * @returns {Promise<{markup: string, layoutFactory: *, element: *}|boolean>}
-     */
-    async loadAnonymousPage({module, route = '', request, response, container}) {
-        const {page, layout} = module;
-
-        if (typeof page !== 'function') {
-            return false;
-        }
-
-        return {
-            markup: await page({ request, response, container }),
-            element: page,
-            layoutFactory: layout
+            ElementFactory
         };
-    }
-
-    /**
-     * Takes a loaded page module and generates the markup. Checks if the page is an anonymous
-     * page or a component page and uses {@link loadAnonymousPage} to
-     * generate the markup.
-     *
-     * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
-     * @param route string  The route under which the page should be registered.
-     * @param request *     The express request object
-     * @param response *    The express response object.
-     * @param container ServiceContext
-     *
-     * @returns {Promise<{html: string|boolean, element: *}>}
-     */
-    async generatePageMarkup({module, route = '', request, response, container}) {
-        const result = await this.loadAnonymousPage({module, route, request, response, container})
-
-        if (!result) {
-            return { html: false };
-        }
-
-        const page = result.markup;
-
-        if (!result.layoutFactory) {
-            throw new Error('You need to define a "LayoutFactory".')
-        }
-
-        const pageHTML = await this.applyLayout(result.layoutFactory, page, { request, response, container });
-
-        return {
-            html: pageHTML,
-            element: result.element
-        }
     }
 
     /**
@@ -123,19 +61,22 @@ export default class PagesLoader {
      */
     async loadPages() {
         const settings = await loadSettings();
-
         const manifest = await loadManifest();
+
         const basePath = settings._generated.applicationDirectory;
 
         const pages = [];
         let fallback = false;
 
         for (const page of manifest.pages) {
-            const {file, route} = page;
-            const module = await this.loadPageModule({file: path.join(basePath, file)});
+            const {file, route, settings } = page;
+            const module = await this.loadPageModule({
+                file: path.join(basePath, file),
+                settings,
+            });
 
             if (page.fallback ?? false) {
-                fallback = {module, route};
+                fallback = { module, route };
             } else {
                 pages.push({ module, route });
             }
