@@ -52,7 +52,7 @@ const startLunaJS = async () => {
     });
 };
 
-const stopLunaJS = async () => {
+const stopLunaJS = () => {
     if (currentLunaProcess !== null) {
         currentLunaProcess.kill();
         currentLunaProcess = null;
