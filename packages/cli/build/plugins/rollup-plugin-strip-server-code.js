@@ -1,28 +1,36 @@
-const parser = require("@babel/parser");
 const traverse = require("@babel/traverse");
+const recast = require("recast");
 
-const decoratorsToHideFromClient = [
+const decoratorsWhichRemoveFunctions = [
     'HideFromClient',
     'CurrentRequest',
     'Inject'
 ];
 
 module.exports = function () {
-
     return {
         name: 'luna-strip-server-code',
-        async transform(code, id) {
-            try {
-                const toRemove = [];
-                const toReplace = [];
 
-                traverse.default(parser.parse(code, {
+        async transform(code, id, okay, what) {
+            try {
+                if (id.indexOf('node_modules') !== -1 || id === '\x00rollupPluginBabelHelpers.js') {
+                    // We don't need to go through all node_modules
+                    // and parse the code.
+                    return { code, map: null };
+                }
+
+                const ast = recast.parse(code, {
+                    sourceFileName: id,
+                    parser: require('recast/parsers/babel'),
+
                     sourceType: "module",
                     plugins: [
                         "decorators-legacy",
                         "classProperties"
                     ]
-                }), {
+                });
+
+                traverse.default(ast, {
                     ClassDeclaration(path) {
                         const { node } = path;
 
@@ -30,32 +38,12 @@ module.exports = function () {
                             return;
                         }
 
+                        // Remove the whole class declaration.
                         for (const decorator of node.decorators) {
-                            if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '') ||
-                                decoratorsToHideFromClient.includes(decorator?.expression?.callee?.name ?? '')) {
-
-                                let replaceWith = `export default null`;
-
-                                const classDeclaration = code.substring(node.start, node.id.start);
-                                if (classDeclaration.indexOf('export default') === -1) {
-                                    replaceWith = ``
-                                }
-
-                                toReplace.push({
-                                    from: code.substring(node.decorators[0].start, node.end),
-                                    to: replaceWith
-                                });
-
+                            if (decoratorsWhichRemoveFunctions.includes(decorator?.expression?.name ?? '') ||
+                                decoratorsWhichRemoveFunctions.includes(decorator?.expression?.callee?.name ?? '')) {
+                                path.remove();
                                 break;
-                            }
-
-                            // Remove the component decorator from the client code
-                            if (decorator?.expression?.callee?.name === 'Component' ||
-                                decorator?.expression?.name === 'Component') {
-                                toReplace.push({
-                                    from: code.substring(decorator.start, decorator.end),
-                                    to: '',
-                                });
                             }
                         }
                     },
@@ -63,16 +51,15 @@ module.exports = function () {
                     ClassProperty(path) {
                         const { node } = path;
 
-                        if (!node.key) {
+                        if (!node.key || !node.decorators) {
                             return;
                         }
 
-                        if (node.decorators) {
-                            for (const decorator of node.decorators) {
-                                if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '')) {
-                                    toRemove.push(code.substring(node.decorators[0].start, node.end));
-                                    break;
-                                }
+                        // Remove the whole property and not just the decorator.
+                        for (const decorator of node.decorators) {
+                            if (decoratorsWhichRemoveFunctions.includes(decorator?.expression?.name ?? '')) {
+                                path.remove();
+                                break;
                             }
                         }
                     },
@@ -84,36 +71,40 @@ module.exports = function () {
                             return;
                         }
 
-                        if (node.decorators) {
-                            for (const decorator of node.decorators) {
-                                if (decoratorsToHideFromClient.includes(decorator?.expression?.name ?? '')) {
-                                    toRemove.push(code.substring(node.decorators[0].start, node.end));
-                                }
+                        for (const decorator of (node.decorators ?? [])) {
+                            if (decoratorsWhichRemoveFunctions.includes(decorator?.expression?.name ?? '')) {
+                                path.remove();
                             }
                         }
 
                         switch (node.key.name) {
                             case "loadDynamicProperties":
                             case "loadStaticProperties":
-                                toRemove.push(code.substring(node.start, node.end));
+                                path.remove();
                                 break;
                         }
+                    },
+
+                    Decorator(path) {
+                        if (path.node?.expression?.callee?.name === 'Component') {
+                            path.remove();
+                        }
                     }
-                })
+                });
 
-                for (const partToReplace of toReplace) {
-                    code = code.split(partToReplace.from).join(partToReplace.to);
-                }
+                const result = recast.print(ast, { sourceMapName: id.replace('.js', '.js.map') });
 
-                for (const partToRemove of toRemove) {
-                    code = code.split(partToRemove).join("");
-                }
+                return {
+                    code: result.code,
+                    // Rollup only needs the mappings to work with the source map.
+                    map: { mappings: result.map.mappings }
+                };
 
             } catch (error) {
                 console.error(error);
             }
 
-            return { code };
+            return { code, map: null };
         },
     }
 }

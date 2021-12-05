@@ -22,7 +22,7 @@ export default async () => {
         output: {
             dir: settings._generated.applicationDirectory,
             entryFileNames: '[name].js',
-            sourcemap: !production,
+            sourcemap: production ? false : 'inline',
             format: 'cjs',
             exports: "auto"
         },
