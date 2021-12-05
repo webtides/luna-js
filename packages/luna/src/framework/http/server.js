@@ -17,7 +17,7 @@ export default class Server {
 
     baseMiddleware = [
         upgradeRequestMiddleware(),
-        bodyParser.urlencoded(),
+        bodyParser.urlencoded({ extended: true }),
         bodyParser.json(),
         express.static('.build/public'),
     ];

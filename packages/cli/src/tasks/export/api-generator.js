@@ -82,7 +82,7 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
     }
 
     await buildComponentsForApplication();
-    console.log("Generate api entry file.");
+    console.log("Generate api entry file...");
     await generateApiEntry({ withStaticSite, serverless });
     console.log("Generate api...");
 
