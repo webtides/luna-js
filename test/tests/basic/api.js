@@ -7,18 +7,18 @@ describe("Luna api test", function() {
 
     before(async function() {
         process.chdir(global.getCurrentWorkingDirectory('basic'));
-        const {startLunaJS} = require("../../../packages/cli/src/run");
+        const { startLuna } = require("../../../packages/luna/src/framework");
 
         global.originalConsoleLog = console.log;
-        await startLunaJS();
+        await startLuna();
 
         await sleep(600);
     });
 
     after(async function() {
         console.log = global.originalConsoleLog;
-        const {stopLunaJS} = require("../../../packages/cli/src/run");
-        await stopLunaJS();
+        const { stopLuna } = require("../../../packages/luna/src/framework");
+        await stopLuna();
     });
 
     describe("Basic api tests", function() {

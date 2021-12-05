@@ -3,11 +3,11 @@ import path from "path";
 import glob from "glob";
 
 import fetch from "node-fetch";
-import {getSettings} from "@webtides/luna-js/src/framework/config";
-import Server from "@webtides/luna-js/src/framework/http/server";
-
 import rimraf from "rimraf";
-import {startLuna} from "@webtides/luna-js/src/framework";
+
+import {getSettings} from "@webtides/luna-js/src/framework/config";
+
+import {startLunaJS, stopLunaJS} from "../../run";
 
 const getStaticSiteEntryPoints = async () => {
     const settings = getSettings();
@@ -62,7 +62,7 @@ const generateStaticSite = async ({outputDirectory = false, clean = true} = {out
         rimraf.sync(outputDirectory);
     }
 
-    await startLuna();
+    await startLunaJS();
 
     const url = `http://localhost:${settings.port}`;
 
@@ -116,7 +116,7 @@ const generateStaticSite = async ({outputDirectory = false, clean = true} = {out
         });
     }
 
-    await luna.get(Server).stop();
+    await stopLunaJS();
 };
 
 export {

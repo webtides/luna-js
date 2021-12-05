@@ -3,7 +3,6 @@ import path from 'path';
 import {checkRequirements} from "./tasks/prepare";
 import {
     buildComponentsForApplication,
-    buildEntryPoint,
     startApplicationDevelopmentBuild
 } from "./tasks/build/application";
 import exportStaticSite from "./tasks/export";
