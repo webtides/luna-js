@@ -8,12 +8,7 @@ import {
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {setConfig} from "./config";
-import {startLunaJS, stopLunaJS} from "./run";
-
-// Add a "kill" listener to remove any running child processes.
-process.on('exit', (code) => {
-    stopLunaJS();
-})
+import {startLunaJS} from "./run";
 
 const execute = async (argv) => {
     setConfig({
