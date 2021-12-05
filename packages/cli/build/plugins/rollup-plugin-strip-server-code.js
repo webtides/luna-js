@@ -1,4 +1,5 @@
 const traverse = require("@babel/traverse");
+const types = require("@babel/types");
 const recast = require("recast");
 
 const decoratorsWhichRemoveFunctions = [
@@ -11,7 +12,7 @@ module.exports = function () {
     return {
         name: 'luna-strip-server-code',
 
-        async transform(code, id, okay, what) {
+        async transform(code, id) {
             try {
                 if (id.indexOf('node_modules') !== -1 || id === '\x00rollupPluginBabelHelpers.js') {
                     // We don't need to go through all node_modules
@@ -32,6 +33,7 @@ module.exports = function () {
 
                 traverse.default(ast, {
                     ClassDeclaration(path) {
+
                         const { node } = path;
 
                         if (!node.id || !node.decorators) {
@@ -42,7 +44,7 @@ module.exports = function () {
                         for (const decorator of node.decorators) {
                             if (decoratorsWhichRemoveFunctions.includes(decorator?.expression?.name ?? '') ||
                                 decoratorsWhichRemoveFunctions.includes(decorator?.expression?.callee?.name ?? '')) {
-                                path.remove();
+                                path.replaceWith(types.classDeclaration(types.identifier('__hidden__'), null, types.classBody([]), null));
                                 break;
                             }
                         }
