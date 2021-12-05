@@ -6,7 +6,6 @@ import {loadManifest, loadSettings} from "@webtides/luna-js/src/framework/config
 import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
-import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader";
 import {getConfig} from "../../config";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
@@ -71,6 +70,12 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
 };
 
 
+/**
+ * @deprecated
+ * @param withStaticSite
+ * @param serverless
+ * @returns {Promise<void>}
+ */
 const generateAPI = async ({ withStaticSite = false, serverless = false } = { }) => {
     const settings = await loadSettings();
 
@@ -96,8 +101,6 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
         const settings = await loadSettings();
 
         const outputDirectory = settings.export.api?.output?.directory ?? settings.export.output;
-
-        await luna.get(ComponentLoader).registerAvailableComponents();
 
         await generateStaticSite({
             outputDirectory,

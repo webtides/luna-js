@@ -32,10 +32,6 @@ const startLunaJS = async () => {
     child.stdin.pipe(process.stdin);
     child.stderr.pipe(process.stderr);
 
-    child.stdout.on('data', (data) => {
-        console.log(new String(data));
-    });
-
     waitForProcessToBeKilled = new Promise((resolve) => {
         child.on('close', () => {
             resolve();
@@ -43,6 +39,17 @@ const startLunaJS = async () => {
     });
 
     currentLunaProcess = child;
+
+    return new Promise((resolve) => {
+        let _resolved = false;
+
+        child.stdout.on('data', (data) => {
+            if (!_resolved && new String(data).indexOf('luna-js listening at port') === 0) {
+                _resolved = true;
+                resolve();
+            }
+        });
+    });
 };
 
 const stopLunaJS = async () => {
