@@ -17,7 +17,7 @@ describe("Luna hooks test", function () {
         it("should call the startup hooks in the right order", function (done) {
             const calledHooks = [];
 
-            const {startLunaJS, stopLunaJS} = require("../../../packages/cli/src/run");
+            const {startLuna, stopLuna} = require("../../../packages/luna/src/framework");
 
             const assertHooks = () => {
                 chai.assert.deepEqual(calledHooks, [
@@ -30,7 +30,7 @@ describe("Luna hooks test", function () {
                     'HOOKS.SERVER_STARTED'
                 ]);
 
-                stopLunaJS().then(() => {
+                stopLuna().then(() => {
                     setTimeout(() => {
                         done()
                     }, 1000);
@@ -54,24 +54,24 @@ describe("Luna hooks test", function () {
                 }
             };
 
-            startLunaJS().then(() => {
+            startLuna().then(() => {
             })
         });
 
         it('should call the request hook', function (done) {
-            const {startLunaJS, stopLunaJS} = require("../../../packages/cli/src/run");
+            const {startLuna, stopLuna} = require("../../../packages/luna/src/framework");
 
             console.log = text => {
                 if (text === 'HOOKS.REQUEST_RECEIVED') {
                     setTimeout(() => {
-                        stopLunaJS().then(() => done());
+                        stopLuna().then(() => done());
                     }, 100);
                 }
 
                 originalConsoleLog(text);
             };
 
-            startLunaJS()
+            startLuna()
                 .then(() => sleep(300))
                 .then(() => chai.request('http://localhost:3010').get('/').send());
         });
