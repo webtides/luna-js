@@ -19,7 +19,6 @@ require("@babel/register")({
         [ "@babel/plugin-proposal-decorators", { legacy: true } ],
         [ "@babel/plugin-proposal-class-properties", { loose: true } ],
         "@babel/plugin-proposal-export-default-from",
-        'source-map-support'
     ],
     sourceMaps: true,
     ignore: [
