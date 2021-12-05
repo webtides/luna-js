@@ -4,7 +4,6 @@ describe("Luna hooks test", function () {
     this.timeout(10000);
 
     before(async function () {
-
         process.chdir(global.getCurrentWorkingDirectory('basic'));
 
         global.originalConsoleLog = console.log;
@@ -18,7 +17,7 @@ describe("Luna hooks test", function () {
         it("should call the startup hooks in the right order", function (done) {
             const calledHooks = [];
 
-            const {startLuna, stopLuna} = require("../../../packages/luna/src/framework");
+            const {startLunaJS, stopLunaJS} = require("../../../packages/cli/src/run");
 
             const assertHooks = () => {
                 chai.assert.deepEqual(calledHooks, [
@@ -31,7 +30,7 @@ describe("Luna hooks test", function () {
                     'HOOKS.SERVER_STARTED'
                 ]);
 
-                stopLuna().then(() => {
+                stopLunaJS().then(() => {
                     setTimeout(() => {
                         done()
                     }, 1000);
@@ -55,24 +54,24 @@ describe("Luna hooks test", function () {
                 }
             };
 
-            startLuna().then(() => {
+            startLunaJS().then(() => {
             })
         });
 
         it('should call the request hook', function (done) {
-            const {startLuna, stopLuna} = require("../../../packages/luna/src/framework");
+            const {startLunaJS, stopLunaJS} = require("../../../packages/cli/src/run");
 
             console.log = text => {
                 if (text === 'HOOKS.REQUEST_RECEIVED') {
                     setTimeout(() => {
-                        stopLuna().then(() => done());
+                        stopLunaJS().then(() => done());
                     }, 100);
                 }
 
                 originalConsoleLog(text);
             };
 
-            startLuna()
+            startLunaJS()
                 .then(() => sleep(300))
                 .then(() => chai.request('http://localhost:3010').get('/').send());
         });

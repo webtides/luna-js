@@ -8,8 +8,8 @@ describe("Luna legacy routes test", function() {
 
         global.originalConsoleLog = console.log;
 
-        const { startLuna } = require("../../../packages/luna/src/framework");
-        await startLuna();
+        const {startLunaJS} = require("../../../packages/cli/src/run");
+        await startLunaJS();
 
         await sleep(600);
 
@@ -17,8 +17,8 @@ describe("Luna legacy routes test", function() {
     });
 
     after(async function() {
-        const { stopLuna } = require("../../../packages/luna/src/framework");
-        await stopLuna();
+        const {stopLunaJS} = require("../../../packages/cli/src/run");
+        await stopLunaJS();
 
         console.log = global.originalConsoleLog;
     });
