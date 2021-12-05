@@ -16,9 +16,6 @@ const startLunaJS = async () => {
 
         currentLunaProcess.kill();
         currentLunaProcess = null;
-
-        // currentLunaProcess.stdin.write('restart');
-        // console.log("Restarting current luna process...");
         return;
     }
 
