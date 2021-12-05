@@ -1,3 +1,5 @@
+import {startLuna} from "../../../packages/luna/src/framework";
+
 const { chai, sleep } = require("../../helpers");
 
 describe("Luna element test", function() {
@@ -6,17 +8,17 @@ describe("Luna element test", function() {
     before(async function() {
         process.chdir(global.getCurrentWorkingDirectory('basic'));
 
-        const { startLuna } = require("../../../packages/luna/src/framework");
+        const {startLunaJS, stopLunaJS} = require("../../../packages/cli/src/run");
 
         global.originalConsoleLog = console.log;
-        await startLuna();
+        await startLunaJS();
 
         await sleep(600);
     });
 
     after(async function() {
-        const { stopLuna } = require("../../../packages/luna/src/framework");
-        await stopLuna();
+        const {startLunaJS, stopLunaJS} = require("../../../packages/cli/src/run");
+        await stopLunaJS();
 
         console.log = global.originalConsoleLog;
     });

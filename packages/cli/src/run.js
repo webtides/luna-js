@@ -1,8 +1,6 @@
 import { spawn } from 'child_process';
 import path from "path";
 
-import chalk from "chalk";
-
 import {loadSettings} from "@webtides/luna-js/src/framework/config";
 import {getConfig} from "./config";
 
@@ -47,4 +45,11 @@ const startLunaJS = async () => {
     currentLunaProcess = child;
 };
 
-export { startLunaJS };
+const stopLunaJS = async () => {
+    if (currentLunaProcess !== null) {
+        currentLunaProcess.kill();
+        currentLunaProcess = null;
+    }
+};
+
+export { startLunaJS, stopLunaJS };
