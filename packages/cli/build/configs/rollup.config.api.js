@@ -19,7 +19,7 @@ module.exports = {
     input: path.join(settings._generated.baseDirectory, "entry.apis.js"),
     output: {
         dir: outputDirectory,
-        sourcemap: !production,
+        sourcemap: production ? false : 'inline',
         entryFileNames,
         format: 'cjs',
     },

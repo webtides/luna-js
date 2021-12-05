@@ -1,5 +1,3 @@
-import path from "path";
-
 let config = {};
 
 const setConfig = (_config) => {
