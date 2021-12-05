@@ -57,7 +57,7 @@ export default async () => {
             output: {
                 dir: path.join(settings.publicDirectory, bundle.output),
                 entryFileNames: production ? '[name]-[hash].js' : '[name].js',
-                sourcemap: !production,
+                sourcemap: production ? false : 'inline',
                 format: 'es',
             },
             plugins: [

@@ -24,6 +24,7 @@ module.exports = (api) => {
             "@babel/plugin-proposal-export-default-from",
         ],
 
-        sourceMaps: true
+        sourceMaps: "inline",
+        inputSourceMap: true,
     }
 }
