@@ -9,15 +9,32 @@ import {prepareLegacyBuild} from "../legacy";
 import {getConfig} from "../../config";
 
 
-const buildEntryPointForProduction = async () => {
+const buildEntryPoint = async () => {
+    console.log("Building entry point...");
+
     await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.start.js"));
+
+    console.log("Done building entry point.");
 };
 
+/**
+ * Builds the whole application once.
+ *
+ * - Deletes the old output folder
+ * - Builds the luna entrypoint
+ * - Builds the application
+ *
+ * @returns {Promise<void>}
+ */
 const buildComponentsForApplication = async () => {
     const settings = await loadSettings();
 
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
+
+    await buildEntryPoint();
+
+    console.log("Building application..");
 
     await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.application.js"));
 
@@ -25,29 +42,31 @@ const buildComponentsForApplication = async () => {
         await prepareLegacyBuild();
         await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.client.legacy.js"));
     }
+
+    console.log("Done building application.");
 };
 
 const startApplicationDevelopmentBuild = async (callback = () => {
 }) => {
     const settings = await loadSettings();
 
-
-    // TODO reregister all routes and restart luna
-
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
 
+    await buildEntryPoint();
+
+    console.log("Start application development build...");
+
     let watcher;
 
-    const initializeWatcher = async (restart = true) => {
+    const initializeServerWatcher = async (restart = true) => {
         if (!restart) {
             return;
         }
 
         watcher = await startRollupWatch(
-            path.join(getConfig().currentDirectory, "build/configs", "rollup.config.application.js"),
+            path.join(getConfig().currentDirectory, "build/configs", "rollup.config.server.js"),
             () => {
-                console.log("UPDATE APPLICATION");
                 callback();
             },
             () => {
@@ -56,7 +75,7 @@ const startApplicationDevelopmentBuild = async (callback = () => {
         );
 
         watcher.on('close', () => {
-            initializeWatcher(true);
+            initializeServerWatcher(true);
         })
     };
 
@@ -71,7 +90,8 @@ const startApplicationDevelopmentBuild = async (callback = () => {
             watcher && watcher.close();
         });
 
-    await initializeWatcher(true);
+    await initializeServerWatcher(true);
+    await startRollupWatch(path.join(getConfig().currentDirectory, "build/configs", "rollup.config.client.js"));
 };
 
-export {buildEntryPointForProduction, buildComponentsForApplication, startApplicationDevelopmentBuild};
+export {buildEntryPoint, buildComponentsForApplication, startApplicationDevelopmentBuild};

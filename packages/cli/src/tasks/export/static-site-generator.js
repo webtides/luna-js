@@ -1,11 +1,10 @@
-import fetch from "node-fetch";
-import {getSettings} from "@webtides/luna-js/src/framework/config";
-import PagesLoader from "@webtides/luna-js/src/framework/loaders/pages-loader";
-import Server from "@webtides/luna-js/src/framework/http/server";
-
 import fs from "fs";
 import path from "path";
 import glob from "glob";
+
+import fetch from "node-fetch";
+import {getSettings} from "@webtides/luna-js/src/framework/config";
+import Server from "@webtides/luna-js/src/framework/http/server";
 
 import rimraf from "rimraf";
 import {startLuna} from "@webtides/luna-js/src/framework";
@@ -32,7 +31,8 @@ const getStaticSiteEntryPoints = async () => {
             .map(route => normalizeRoute(route));
     }
 
-    const {pages} = await luna.get(PagesLoader).loadPages();
+    const pages = JSON.parse(fs.readFileSync(settings._generated.manifest, "UTF-8")).pages;
+
     return pages
         .filter(page => !page.fallback)
         .map(page => normalizeRoute(page.route));
@@ -51,7 +51,7 @@ const groupEntryPoints = (entryPoints) => {
     return chunks;
 };
 
-const generateStaticSite = async ({outputDirectory = false, clean = true } = { outputDirectory: false, clean: true }) => {
+const generateStaticSite = async ({outputDirectory = false, clean = true} = {outputDirectory: false, clean: true}) => {
     const settings = getSettings();
 
     outputDirectory = outputDirectory || settings.export.output;
@@ -88,10 +88,10 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
         ...(settings.export?.api?.include ?? [])
     ].map(directory => {
         const inputPath = path.posix.join(settings.build.output, directory);
-            return {
-                input: inputPath,
+        return {
+            input: inputPath,
             output: path.posix.join(outputDirectory, directory),
-                isFile: fs.lstatSync(inputPath).isFile(),
+            isFile: fs.lstatSync(inputPath).isFile(),
         }
     });
 
@@ -101,9 +101,9 @@ const generateStaticSite = async ({outputDirectory = false, clean = true } = { o
     });
 
     for (const directory of directoriesToCopy) {
-        const filesToCopy = directory.isFile ? [ directory.input ] : glob.sync(path.join(directory.input, "**/*"));
+        const filesToCopy = directory.isFile ? [directory.input] : glob.sync(path.join(directory.input, "**/*"));
 
-            filesToCopy.forEach((file) => {
+        filesToCopy.forEach((file) => {
             if (fs.lstatSync(file).isDirectory()) {
                 return;
             }
