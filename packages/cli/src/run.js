@@ -9,7 +9,6 @@ let waitForProcessToBeKilled = null;
 
 const startLunaJS = async () => {
     if (currentLunaProcess !== null) {
-
         waitForProcessToBeKilled.then(() => startLunaJS());
 
         currentLunaProcess.kill();

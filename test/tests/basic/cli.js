@@ -145,6 +145,10 @@ describe("Basic cli test", function () {
 
             let isDone = false;
 
+            child.stdout.pipe(process.stdout);
+            child.stdin.pipe(process.stdin);
+            process.stdin.pipe(child.stdin);
+
             child.stdout.on('data', (data) => {
                 if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
                     if (isDone) {
@@ -155,7 +159,6 @@ describe("Basic cli test", function () {
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
 
-                        child.stdin.pause();
                         child.kill();
 
                         await sleep(1000);
