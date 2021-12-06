@@ -14,7 +14,8 @@
  - Allow `.attribute` notation for server rendered components
  - Several Decorators (`Component`, `Inject`, `LunaService`, `HideFromClient`, `CurrentRequest`)
  - `ElementFactory` for defining how an element should be rendered on the server
- - Allow the developer to define a default target foreach component bundle
+ - Allow the developer to define a default target for each component bundle
+ - Support for sourcemaps and debugging in the browser and in node (#55)
 
 ### Fixed
  - Renderer path replacements
@@ -25,9 +26,14 @@
 ### Fixed 
  - Copy plugin does not crash if an empty object is provided
  - Entry point for using in production
+ - The entrypoint to start luna without the cli
 
 ### Added
  - Simple component example
+
+### Changed
+ - Component build won't run twice on each start
+ - The `--dev` build will now also use the generated entry point
 
 ## [Unreleased] Renderer
 

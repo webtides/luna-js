@@ -65,7 +65,7 @@ const startApplicationDevelopmentBuild = async (callback = () => {
         }
 
         watcher = await startRollupWatch(
-            path.join(getConfig().currentDirectory, "build/configs", "rollup.config.server.js"),
+            path.join(getConfig().currentDirectory, "build/configs", "rollup.config.application.js"),
             () => {
                 callback();
             },
@@ -91,7 +91,6 @@ const startApplicationDevelopmentBuild = async (callback = () => {
         });
 
     await initializeServerWatcher(true);
-    await startRollupWatch(path.join(getConfig().currentDirectory, "build/configs", "rollup.config.client.js"));
 };
 
 export {buildEntryPoint, buildComponentsForApplication, startApplicationDevelopmentBuild};
