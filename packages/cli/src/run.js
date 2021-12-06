@@ -28,7 +28,6 @@ const startLunaJS = async () => {
     const child = spawn('node', [ generatedStartScript ]);
 
     child.stdout.pipe(process.stdout);
-    child.stdin.pipe(process.stdin);
     child.stderr.pipe(process.stderr);
 
     waitForProcessToBeKilled = new Promise((resolve) => {
