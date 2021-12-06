@@ -22,6 +22,7 @@ export default async () => {
             nodeResolve(),
             babel({
                 configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
+                babelHelpers: 'bundled',
             }),
         ]
     }
@@ -78,6 +79,7 @@ export default async () => {
                 }),
                 babel({
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
+                    babelHelpers: 'bundled'
                 }),
                 commonjs({requireReturnsDefault: true, transformMixedEsModules: true }),
                 require("../plugins/rollup-plugin-copy")({
