@@ -143,27 +143,18 @@ describe("Basic cli test", function () {
         it("starts luna on port 3010", function (done) {
             const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
 
-            let isDone = false;
-
-            child.stdout.pipe(process.stdout);
-            child.stdin.pipe(process.stdin);
-            process.stdin.pipe(child.stdin);
-
             child.stdout.on('data', (data) => {
                 if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
-                    if (isDone) {
-                        return;
-                    }
-                    isDone = true;
-
                     setTimeout(async () => {
                         await chai.request('http://localhost:3010').get('/').send();
 
+                        // Wait for the child to be closed.
+                        child.on('close', () => {
+                            console.log("Run test: child process stopped.")
+                            done();
+                        });
+
                         child.kill();
-
-                        await sleep(1000);
-
-                        done();
                     }, 100);
                 }
             });
