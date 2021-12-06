@@ -141,7 +141,7 @@ describe("Basic cli test", function () {
 
     describe("Run test", function () {
         it("starts luna on port 3010", function (done) {
-            const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
+            const child = spawn(`node`, [getCurrentWorkingDirectory() + '/.build/generated/start.js']);
 
             child.stdout.on('data', (data) => {
                 if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
