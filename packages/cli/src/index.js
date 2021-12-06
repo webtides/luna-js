@@ -8,7 +8,16 @@ import {
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
 import {setConfig} from "./config";
-import {startLunaJS} from "./run";
+import {startLunaJS, stopLunaJS} from "./run";
+
+// This should actually be not needed, but in a test
+// environment the child process lingers around and obstructs
+// following tests.
+// Here we just manually kill the child process if the
+// current process exits.
+process.on("exit", () => {
+    stopLunaJS();
+});
 
 const execute = async (argv) => {
     setConfig({
