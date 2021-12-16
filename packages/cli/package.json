@@ -7,7 +7,7 @@
     "node": ">= 14.0.0"
   },
   "bin": {
-    "luna": ".bin/luna.js"
+    "luna": "./bin/luna.js"
   },
   "repository": {
     "type": "git",
