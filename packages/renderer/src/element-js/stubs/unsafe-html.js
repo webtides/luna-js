@@ -1,2 +1,2 @@
-import { unsafeHTML } from '@webtides/element-js/src/util/html';
+import { unsafeHTML } from '@popeindustries/lit-html-server/directives/unsafe-html';
 export { unsafeHTML }

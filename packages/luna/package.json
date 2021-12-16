@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-js",
-  "version": "0.9.1-0.3",
+  "version": "0.9.1-elementjs.0.7",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "index.js",
   "module": "index.js",
