@@ -52,8 +52,8 @@ export default class ElementRenderer {
             component, attributes, group, request, response,
         });
 
-        const template = factory.template();
-        const markup = await component.ElementFactory.renderer().renderToString(template);
+        const template = await factory.template();
+        const markup = await component.ElementFactory.renderer().renderToString(template, { factory });
 
         const finalAttributes = await factory.mirrorPropertiesToAttributes();
 
