@@ -5,5 +5,4 @@ global.getCurrentWorkingDirectory = fixture => {
 };
 
 require("./tests/basic.js");
-require("./tests/legacy.js");
 require("./tests/empty.js");
