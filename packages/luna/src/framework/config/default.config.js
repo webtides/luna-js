@@ -3,7 +3,6 @@ export default {
 
     build: {
         output: '.build',
-        legacy: false,
         livereload: true,
 
         server: {
