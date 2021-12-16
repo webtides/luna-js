@@ -10,6 +10,7 @@
  - **BREAKING**: removed `LunaElement`, `LunaMarkdownElement`, `html` and `unsafeHTML`
  - **BREAKING**: Elements are now server only per default, and the developer needs to opt-in to client rendering
  - **BREAKING**: Layouts can now be loaded by a string and has a fallback for a default (#68)
+ - **BREAKING**: Removed the legacy build (#71) 
 
 ### Added
 - Allow `.attribute` notation for server rendered components
