@@ -5,7 +5,6 @@ import chokidar from 'chokidar';
 import {loadSettings} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup, startRollupWatch} from "../build";
-import {prepareLegacyBuild} from "../legacy";
 import {getConfig} from "../../config";
 
 
@@ -37,11 +36,6 @@ const buildComponentsForApplication = async () => {
     console.log("Building application..");
 
     await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.application.js"));
-
-    if (settings.build.legacy) {
-        await prepareLegacyBuild();
-        await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.client.legacy.js"));
-    }
 
     console.log("Done building application.");
 };

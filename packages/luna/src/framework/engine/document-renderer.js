@@ -118,12 +118,6 @@ export default class DocumentRenderer {
             </script>`;
 
         const scripts = `
-            ${settings.build.legacy ? `
-                <script src="${luna.asset("/libraries/webcomponents-bundle.js")}" nomodule></script>
-                <script src="${luna.asset("/libraries/runtime.js")}" nomodule></script>
-                <script src="${luna.asset("/assets/bundle.legacy.js")}" nomodule></script>
-            ` : ``}
-        
             <script type="text/javascript">
                 window.lunaConfig = JSON.parse('${config}');
             </script>
