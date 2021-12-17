@@ -13,6 +13,21 @@ export default class ElementFactory extends BaseElementFactory {
         return new TemplateRenderer();
     }
 
+    async getAdditionalAttributes() {
+        return {
+            ...(await super.getAdditionalAttributes()),
+            'defer-update': true,
+        };
+    }
+
+    modifyAttributeBeforeFinalization(attributeName, attributeValue) {
+        if (attributeValue === true || attributeValue === false) {
+            attributeValue = `${attributeValue}`;
+        }
+
+        return super.modifyAttributeBeforeFinalization(attributeName, attributeValue);
+    }
+
     async getInitialProperties() {
         return typeof this.element.properties === 'function'
             ? this.element.properties()
