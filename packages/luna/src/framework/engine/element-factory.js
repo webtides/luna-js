@@ -18,13 +18,6 @@ export default class ElementFactory {
     }
 
     /**
-     * The properties the element itself has defined.
-     *
-     * @type {{}}
-     */
-    properties = {};
-
-    /**
      *
      * @type {*}    The element which is currently being built.
      */
@@ -63,18 +56,6 @@ export default class ElementFactory {
         return {};
     }
 
-    /**
-     * These are the properties which should be serialized and mirrored back to the
-     * attributes so that they can be passed to the client.
-     *
-     * @returns {Promise<{}>}
-     */
-    async getPropertiesToSerialize() {
-        return {
-            ...(await this.getInitialProperties()),
-        };
-    }
-
     async getStaticProperties() {
         return this.component.element.staticProperties ?? {}
     }
@@ -88,6 +69,43 @@ export default class ElementFactory {
             : {};
     }
 
+    async getAdditionalAttributes() {
+        return {
+            'ssr': true,
+        };
+    }
+
+    /**
+     * An array of property names which should be serialized and mirrored
+     * back to the client.
+     *
+     * Any other properties won't be serialized.
+     *
+     * @returns {Promise<[]>}
+     */
+    async getPropertiesToSerialize() {
+        return [
+            // Include the initial properties defined by the customElement.
+            // They can vary from element to element.
+            ...Object.keys(await this.getInitialProperties()),
+            // Include all attributes that have been written on the element instance
+            // so that they won't get lost.
+            ...Object.keys(this.parseAttributesToProperties(this.attributes))
+        ];
+    }
+
+    modifyAttributeBeforeFinalization(attributeName, attributeValue) {
+        // Allow for "." notation by just removing the "."
+        attributeName = attributeName.startsWith('.')
+            ? attributeName.substring(1)
+            : attributeName;
+
+        return [
+            attributeName,
+            attributeValue,
+        ];
+    }
+
     /**
      * Creates a new instance of the element and takes all attributes that are defined on the corresponding
      * DOM node and maps them to properties on the element.
@@ -96,46 +114,36 @@ export default class ElementFactory {
      */
     async build() {
         this.element = await this.buildElement();
-        await this.mirrorAttributesToProperties();
+        await this.loadAndDefineElementProperties();
     }
 
     async mirrorPropertiesToAttributes() {
-        const initialProperties = await this.getInitialProperties();
-        const dynamicProperties = await this.getDynamicProperties();
-        const staticProperties = await this.getStaticProperties();
-
-        const propertiesToSerialize = await this.getPropertiesToSerialize();
-
         const properties = {};
-        Object.keys(propertiesToSerialize).forEach(key => {
-            properties[key] = dynamicProperties[key]
-                ?? staticProperties[key]
-                ?? this.element[key]
-                ?? initialProperties[key]
-                ?? propertiesToSerialize[key];
+        (await this.getPropertiesToSerialize()).forEach((propertyKey) => {
+            properties[propertyKey] = this.element[propertyKey];
         });
-
-        const finalAttributes = {
-            ...this.attributes,
-            ...(this.parsePropertiesToAttributes(properties)),
-        };
-
-        /* Allow using the dot notation for defining attributes on the element */
-        for (const rawAttributeName of Object.keys(finalAttributes)) {
-            const attributeName = rawAttributeName.startsWith('.')
-                ? rawAttributeName.substring(1)
-                : rawAttributeName;
-
-            const attributeValue = finalAttributes[rawAttributeName];
-
-            delete finalAttributes[rawAttributeName];
-            finalAttributes[attributeName] = attributeValue;
-        }
-
-        return finalAttributes;
+        return this.parsePropertiesToAttributes(properties);
     }
 
-    async mirrorAttributesToProperties() {
+    async loadFinalAttributes() {
+        // This object contains all attributes that should be written to the element
+        // and have been derived from the properties.
+        const finalAttributes = {
+            ...(await this.mirrorPropertiesToAttributes()),
+            ...(await this.getAdditionalAttributes()),
+        };
+
+        return Object.fromEntries(
+            Object.entries(finalAttributes).map(([ attributeName, attributeValue ]) => {
+                return this.modifyAttributeBeforeFinalization(
+                    attributeName,
+                    attributeValue,
+                );
+            })
+        );
+    }
+
+    async loadAndDefineElementProperties() {
         // These are the properties that need to be defined on the element to
         // calculate the initial state.
         const properties = {
@@ -153,7 +161,6 @@ export default class ElementFactory {
         });
 
         // At last we are loading the dynamic properties from the element.
-
         const dynamicProperties = await this.getDynamicProperties();
         Object.keys(dynamicProperties).forEach((key) => {
             this.element[key] = dynamicProperties[key];
