@@ -67,8 +67,6 @@ export default class DocumentRenderer {
 
         node.attrs = node.attrs ?? {};
 
-        node.attrs['ssr'] = true;
-
         const result = await this.elementRenderer.renderComponent({
             component,
             attributes: node.attrs,
@@ -134,7 +132,7 @@ export default class DocumentRenderer {
             ${this.documentInject ?? ``}
         `;
 
-        return [ modules, scripts ].join('');
+        return [ scripts, modules ].join('');
     }
 
     /**

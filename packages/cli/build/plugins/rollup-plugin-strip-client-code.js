@@ -29,9 +29,6 @@ module.exports = function ({ basePaths }) {
         async resolveId(source, importer, options) {
             let entryType = getEntryType(importer, basePaths);
 
-            // This is probably pretty expensive. Is there a way with a smaller footprint?
-            const resolution = await this.resolve(source, importer, { skipSelf: true, ...options });
-
             if (entryType === null) {
                 // There is a chance we can are a child of the entry type.
                 entryType = availableEntryTypes[importer];
@@ -42,7 +39,10 @@ module.exports = function ({ basePaths }) {
 
                 const factoryModule = requireDynamically(factory);
 
-                if (path.isAbsolute(resolution.id)) {
+                // This is probably pretty expensive. Is there a way with a smaller footprint?
+                const resolution = await this.resolve(source, importer, { skipSelf: true, ...options });
+
+                if (resolution?.id && path.isAbsolute(resolution.id)) {
                     availableEntryTypes[resolution.id] = entryType;
                 }
 
