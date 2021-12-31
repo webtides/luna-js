@@ -95,10 +95,11 @@ export default class ElementFactory {
     }
 
     modifyAttributeBeforeFinalization(attributeName, attributeValue) {
-        // Allow for "." notation by just removing the "."
-        attributeName = attributeName.startsWith('.')
-            ? attributeName.substring(1)
-            : attributeName;
+        // Allow for "." notation by just removing the "." and parsing the value as json
+        if (attributeName.startsWith('.')) {
+            attributeName = attributeName.substring(1);
+            attributeValue = JSON.stringify(attributeValue);
+        }
 
         return [
             attributeName,
