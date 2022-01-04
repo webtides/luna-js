@@ -74,6 +74,12 @@ export default class DocumentRenderer {
             response: this.response,
         });
 
+        if (!result) {
+            // We did find a component, but the component should not or cannot be rendered
+            // on the server.
+            return false;
+        }
+
         const { markup } = result;
 
         // Set the final attributes from the render process to the node.

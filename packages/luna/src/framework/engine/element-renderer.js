@@ -45,12 +45,16 @@ export default class ElementRenderer {
      * @param group string      The component cache group. Can be used to use different caches for
      *                          different types of components.
      *
-     * @returns {Promise<{markup: string, element: *}>}
+     * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
      */
     async renderComponent({component, attributes = {}, group = 'components', request, response}) {
         const factory = await this.createElementFactory({
             component, attributes, group, request, response,
         });
+
+        if (!(await factory.shouldRender())) {
+            return false;
+        }
 
         const template = await factory.template();
         const markup = await component.ElementFactory.renderer().renderToString(template, { factory });
