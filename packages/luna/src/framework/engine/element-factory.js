@@ -41,6 +41,10 @@ export default class ElementFactory {
         return new (this.component.element)(this.attributes);
     }
 
+    async shouldRender() {
+        return typeof this.element.template !== 'undefined';
+    }
+
     async template() {
         return this.element.template;
     }
