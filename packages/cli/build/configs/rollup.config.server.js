@@ -31,7 +31,8 @@ export default async () => {
                 basePaths,
             }),
             require("../plugins/rollup-plugin-postcss")({
-                ignore: true
+                serverInclude: true,
+                basePaths,
             }),
             require("../plugins/rollup-plugin-markdown")(),
             nodeResolve({

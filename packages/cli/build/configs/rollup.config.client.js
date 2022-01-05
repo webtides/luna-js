@@ -62,12 +62,12 @@ export default async () => {
                 format: 'es',
             },
             plugins: [
+                require("../plugins/rollup-plugin-strip-server-code")(),
                 require("../plugins/rollup-plugin-postcss")({
                     publicDirectory: settings.publicDirectory,
                     ...bundle.styles
                 }),
                 require("../plugins/rollup-plugin-markdown")(),
-                require("../plugins/rollup-plugin-strip-server-code")(),
                 require("../plugins/rollup-plugin-client-manifest")({
                     config: bundle
                 }),
