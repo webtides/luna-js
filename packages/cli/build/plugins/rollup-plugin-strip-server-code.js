@@ -14,7 +14,10 @@ module.exports = function () {
 
         async transform(code, id) {
             try {
-                if (id.indexOf('node_modules') !== -1 || id === '\x00rollupPluginBabelHelpers.js') {
+                if (id.indexOf('node_modules') !== -1 ||
+                    id === '\x00rollupPluginBabelHelpers.js' ||
+                    id.indexOf('commonjs') !== -1 ||
+                    id.endsWith('.css')) {
                     // We don't need to go through all node_modules
                     // and parse the code.
                     return { code, map: null };
@@ -88,7 +91,8 @@ module.exports = function () {
                     },
 
                     Decorator(path) {
-                        if (path.node?.expression?.callee?.name === 'Component') {
+                        const calleeName = path.node?.expression?.callee?.name;
+                        if (calleeName === 'Component' || calleeName === 'Inject') {
                             path.remove();
                         }
                     }

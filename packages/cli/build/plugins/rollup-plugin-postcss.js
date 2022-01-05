@@ -1,6 +1,7 @@
 const postcss = require("postcss");
 const path = require("path");
 const fs = require("fs");
+const {getEntryType} = require("./helpers/entries");
 
 const basePostcssPluginsBefore = [
     require("postcss-import"),
@@ -8,6 +9,11 @@ const basePostcssPluginsBefore = [
 
 const basePostcssPluginsAfter = [];
 
+/**
+ *
+ * @param options {{ ignore: boolean, publicDirectory: string, output: string, serverInclude: boolean, plugins: function, basePaths: {} }}
+ * @returns {string|{transform(*=, *=): Promise<string|{code: string, map: SourceMapGenerator & {toJSON(): RawSourceMap}}|null>, writeBundle(): Promise<void>, name: string, resolveId(*=, *=): Promise<string|*|null>}|null|{code: string, map: SourceMap}|*}
+ */
 module.exports =  function(options) {
     const importers = { };
     const extractedCss = { };
@@ -19,10 +25,18 @@ module.exports =  function(options) {
         });
     };
 
+    const loadAppropriatePlugins = (id) => {
+        if (!options.serverInclude) {
+            return options.plugins ?? (() => []);
+        }
+
+        return getEntryType(id, options.basePaths)?.settings?.styles?.plugins ?? (() => []);
+    };
+
     const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
         const { css, map, messages } = await processCss({
             css: code,
-            plugins: options.plugins,
+            plugins: loadAppropriatePlugins(id),
             from: id
         });
 
@@ -87,7 +101,7 @@ module.exports =  function(options) {
             }
 
             if (idsToExtract.includes(id)) {
-                if (options.ignore) {
+                if (options.ignore || (options.serverInclude ?? false)) {
                     return "export default null";
                 }
 
@@ -99,7 +113,7 @@ module.exports =  function(options) {
         },
 
         async writeBundle() {
-            if (options.ignore) {
+            if (options.ignore || options.serverInclude) {
                 return;
             }
 
