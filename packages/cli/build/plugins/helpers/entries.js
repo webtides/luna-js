@@ -15,6 +15,7 @@ const generateBasePathsFromLunaConfig = settings => {
             basePath: page,
             settings: {
                 factory: settings.pages.factory ?? false,
+                styles: settings.pages.styles ?? null,
             }
         })
         return glob.sync(path.join(page, "**/*.js"));
@@ -48,6 +49,7 @@ const generateBasePathsFromLunaConfig = settings => {
                 outputDirectory: componentBundle.output,
                 defaultTarget: componentBundle.defaultTarget,
                 factory: componentBundle.factory ?? false,
+                styles: componentBundle.styles ?? null,
             },
         });
         return glob.sync(path.join(componentBundle.input, "**/*.js"))
