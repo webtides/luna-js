@@ -1,6 +1,6 @@
 {
   "name": "luna-js-monorepo",
-  "version": "0.9.1-elementjs.0.9",
+  "version": "0.9.1-elementjs.0.10",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "index.js",
   "scripts": {

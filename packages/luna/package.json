@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-js",
-  "version": "0.9.1-elementjs.0.9",
+  "version": "0.9.1-elementjs.0.10",
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "index.js",
   "module": "index.js",
@@ -20,9 +20,6 @@
     "posthtml": "^0.16.3",
     "posthtml-insert-at": "0.2.7",
     "simple-dom": "^1.4.0"
-  },
-  "directories": {
-    "lib": "../../lib"
   },
   "repository": {
     "type": "git",
