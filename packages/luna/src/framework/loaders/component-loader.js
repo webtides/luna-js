@@ -14,7 +14,10 @@ export default class ComponentLoader {
     allAvailableComponents = {};
 
     async loadSingleComponent({absolutePath, file, relativePath, children, settings }) {
-        const element = require(path.resolve(absolutePath));
+        const importedElement = await import(path.resolve(absolutePath));
+        // Only use the default export if available. Then we can export more from the file than
+        // just the element.
+        const element = importedElement.default ?? importedElement;
 
         if (!element.$$luna) {
             // The element hasn't been decorated, set some sensible defaults.

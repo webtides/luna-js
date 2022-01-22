@@ -1,3 +1,7 @@
+/**
+ * A luna base class to load configuration that can be shared between the
+ * server and the client.
+ */
 export default class LunaBase {
     constructor(config) {
         this.configuration = config;
