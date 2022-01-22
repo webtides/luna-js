@@ -7,7 +7,7 @@ import {
 } from "./tasks/build/application";
 import exportStaticSite from "./tasks/export";
 import {generateAPI} from "./tasks/export/api-generator";
-import {setConfig} from "./config";
+import {getConfig, setConfig} from "./config";
 import {startLunaJS, stopLunaJS} from "./run";
 
 // This should actually be not needed, but in a test
@@ -20,15 +20,11 @@ process.on("exit", () => {
 });
 
 const execute = async (argv) => {
-    const lunaConfig = await loadConfig();
-
     setConfig({
         currentWorkingDirectory: process.cwd(),
         currentDirectory: path.dirname(__dirname),
         isExporting: !!argv.export,
         documentInject: '',
-
-        settings: lunaConfig,
     });
 
     const meetsRequirements = await checkRequirements({ setup: argv.setup });
@@ -36,6 +32,12 @@ const execute = async (argv) => {
     if (!meetsRequirements) {
         return;
     }
+
+    const lunaConfig = await loadConfig();
+    setConfig({
+        ...getConfig(),
+        settings: lunaConfig,
+    })
 
     // Not the recommended way to start luna like this, as there
     // is a big overhead for using @babel/register and other
