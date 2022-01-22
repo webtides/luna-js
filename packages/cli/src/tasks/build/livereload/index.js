@@ -1,11 +1,12 @@
 import WebSocket from "ws";
-import {getSettings} from "@webtides/luna-js/src/framework/config";
+import {getConfig} from "../../../config";
 
 let livereloadServer = false;
 const livereloadConnections = [];
 
 const startLivereloadServer = async () => {
-    const {port, build} = getSettings();
+    const { settings } = getConfig();
+    const {port, build} = settings;
 
     if (!build.livereload) {
         return;

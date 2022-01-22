@@ -2,8 +2,6 @@ import path from "path";
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
 
-import {loadSettings} from "@webtides/luna-js/src/framework/config";
-
 import {startRollup, startRollupWatch} from "../build";
 import {getConfig} from "../../config";
 
@@ -26,7 +24,7 @@ const buildEntryPoint = async () => {
  * @returns {Promise<void>}
  */
 const buildComponentsForApplication = async () => {
-    const settings = await loadSettings();
+    const {settings} = getConfig();
 
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);
@@ -42,7 +40,7 @@ const buildComponentsForApplication = async () => {
 
 const startApplicationDevelopmentBuild = async (callback = () => {
 }) => {
-    const settings = await loadSettings();
+    const {settings} = getConfig();
 
     // Clean the build directory before starting a new build.
     rimraf.sync(settings.build.output);

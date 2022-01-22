@@ -1,17 +1,23 @@
-const path = require("path");
-const glob = require("glob-all");
-const json = require('@rollup/plugin-json');
-const {terser} = require("rollup-plugin-terser");
-const {babel} = require('@rollup/plugin-babel');
-const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const commonjs = require("@rollup/plugin-commonjs");
-const replace = require("@rollup/plugin-replace");
+import path from "path";
+import glob from "glob-all";
+import json from '@rollup/plugin-json';
+import {terser} from "rollup-plugin-terser";
+import {babel} from '@rollup/plugin-babel';
+import {nodeResolve} from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import replace from "@rollup/plugin-replace";
 
-const {loadSettings} = require('@webtides/luna-js/src/framework/config');
+import {getConfig} from "../../src/config";
+
+import { clientManifest } from '../plugins/rollup-plugin-client-manifest';
+import {rollupPluginCopy} from "../plugins/rollup-plugin-copy";
+import {rollupPluginMarkdown} from "../plugins/rollup-plugin-markdown";
+import {rollupPluginPostcss} from "../plugins/rollup-plugin-postcss";
+import {rollupPluginStripServerCode} from "../plugins/rollup-plugin-strip-server-code";
 
 export default async () => {
     const production = process.env.NODE_ENV === "production";
-    const settings = await loadSettings();
+    const {settings} = getConfig();
 
     const configBundle = {
         input: `@webtides/luna-js/src/client/functions/luna.js`,
@@ -35,7 +41,7 @@ export default async () => {
                 entryFileNames: 'empty.js'
             },
             plugins: [
-                require("../plugins/rollup-plugin-postcss")({
+                rollupPluginPostcss({
                     publicDirectory: settings.publicDirectory,
                     ...bundle
                 })
@@ -62,13 +68,13 @@ export default async () => {
                 format: 'es',
             },
             plugins: [
-                require("../plugins/rollup-plugin-strip-server-code")(),
-                require("../plugins/rollup-plugin-postcss")({
+                rollupPluginStripServerCode(),
+                rollupPluginPostcss({
                     publicDirectory: settings.publicDirectory,
                     ...bundle.styles
                 }),
-                require("../plugins/rollup-plugin-markdown")(),
-                require("../plugins/rollup-plugin-client-manifest")({
+                rollupPluginMarkdown(),
+                clientManifest({
                     config: bundle
                 }),
                 json(),
@@ -81,8 +87,8 @@ export default async () => {
                     configFile: path.resolve(__dirname, "babel", 'babel.config.client.js'),
                     babelHelpers: 'bundled'
                 }),
-                commonjs({requireReturnsDefault: true, transformMixedEsModules: true }),
-                require("../plugins/rollup-plugin-copy")({
+                commonjs({requireReturnsDefault: true, transformMixedEsModules: true}),
+                rollupPluginCopy({
                     publicDirectory: settings.publicDirectory,
                     sources: [
                         {input: path.resolve(__dirname, "../../", 'src/client/**/*'), output: 'assets/dev'},

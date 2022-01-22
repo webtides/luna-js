@@ -1,7 +1,7 @@
-const glob = require("glob-all");
-const path = require("path");
+import glob from "glob-all";
+import path from "path";
 
-const generateBasePathsFromLunaConfig = settings => {
+export const generateBasePathsFromLunaConfig = settings => {
     const basePaths = {
         pages: [],
         layouts: [],
@@ -55,7 +55,7 @@ const generateBasePathsFromLunaConfig = settings => {
         return glob.sync(path.join(componentBundle.input, "**/*.js"))
     }) ?? [];
 
-    const files = [...pages,...layouts, ...components, ...apis, ...hooks];
+    const files = [...pages, ...layouts, ...components, ...apis, ...hooks];
 
     return {
         files,
@@ -63,7 +63,7 @@ const generateBasePathsFromLunaConfig = settings => {
     }
 };
 
-const getEntryType = (id, basePaths) => {
+export const getEntryType = (id, basePaths) => {
     if (id === undefined) {
         return null;
     }
@@ -72,7 +72,7 @@ const getEntryType = (id, basePaths) => {
 
     Object.keys(basePaths).forEach(type => {
         basePaths[type].forEach((row) => {
-            const { basePath, settings } = row;
+            const {basePath, settings} = row;
 
             if (path.resolve(id).startsWith(path.resolve(basePath))) {
                 result = {
@@ -86,8 +86,3 @@ const getEntryType = (id, basePaths) => {
 
     return result;
 };
-
-module.exports = {
-    getEntryType,
-    generateBasePathsFromLunaConfig,
-}

@@ -97,7 +97,6 @@ export default class DocumentRenderer {
     };
 
     parseUpgradedElements() {
-        const settings = getSettings();
         const manifest = getManifest("manifest.client.json");
         const config = JSON.stringify(getSerializableConfig());
 

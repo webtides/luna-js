@@ -5,12 +5,11 @@ import glob from "glob";
 import fetch from "node-fetch";
 import rimraf from "rimraf";
 
-import {getSettings} from "@webtides/luna-js/src/framework/config";
-
 import {startLunaJS, stopLunaJS} from "../../run";
+import {getConfig} from "../../config";
 
 const getStaticSiteEntryPoints = async () => {
-    const settings = getSettings();
+    const { settings } = getConfig();
 
     const normalizeRoute = (route) => {
         if (route.length === 0 || route === '/') {
@@ -52,7 +51,7 @@ const groupEntryPoints = (entryPoints) => {
 };
 
 const generateStaticSite = async ({outputDirectory = false, clean = true} = {outputDirectory: false, clean: true}) => {
-    const settings = getSettings();
+    const { settings } = getConfig();
 
     outputDirectory = outputDirectory || settings.export.output;
 

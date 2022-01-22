@@ -1,6 +1,6 @@
 import './bootstrap.js';
 
-import {getSerializableConfig, loadSettings} from "./config";
+import {loadSettings} from "./config";
 import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 
@@ -23,9 +23,7 @@ const prepareLuna = async ({ config } = {}) => {
 
     // Only initialize luna once.
     if (!global.luna) {
-        const config = getSerializableConfig();
-        const luna = new LunaContainer(config);
-
+        const luna = new LunaContainer(loadSettings());
         luna.prepare();
 
         global.luna = luna;

@@ -1,11 +1,12 @@
-const path = require("path");
-const json = require('@rollup/plugin-json');
-const {babel} = require('@rollup/plugin-babel');
-const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const {loadSettings} = require("@webtides/luna-js/src/framework/config");
+import path from 'path';
+import json from '@rollup/plugin-json';
+import { babel } from '@rollup/plugin-babel';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+
+import {getConfig} from "../../src/config";
 
 export default async () => {
-    const settings = await loadSettings();
+    const { settings } = getConfig();
 
     const production = process.env.NODE_ENV === "production";
 
@@ -28,6 +29,7 @@ export default async () => {
             json(),
         ]
     };
+
 
     return [ bundle ];
 };

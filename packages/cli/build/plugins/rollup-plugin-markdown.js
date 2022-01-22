@@ -1,9 +1,9 @@
-const path = require("path");
-const fs = require("fs");
-const frontmatter = require("@github-docs/frontmatter");
-const marked = require("marked");
+import  path  from "path";
+import  fs  from "fs";
+import  frontmatter  from "@github-docs/frontmatter";
+import  marked  from "marked";
 
-module.exports =  function(options) {
+export const rollupPluginMarkdown = function(options) {
     const importers = { };
 
     return {
