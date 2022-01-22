@@ -4,7 +4,7 @@ import path from "path";
 import deepmerge from 'deepmerge';
 import inquirer from "inquirer";
 
-import {getConfig} from "../config";
+import {getConfig, setConfig} from "../config";
 import defaultSettings from "./prepare/luna.config.base";
 
 const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
@@ -51,7 +51,7 @@ const loadGeneratedSettingsFromConfig = (config) => {
 const copyEmptyLunaConfig = async () => {
     fs.copyFileSync(path.join(getConfig().currentDirectory, "src/tasks/prepare", "luna.config.example.js"), getPathToConfigFile(getConfig().currentWorkingDirectory));
 
-    const {settings} = getConfig();
+    const settings = await loadConfig();
 
     settings.pages?.input?.forEach(page => fs.mkdirSync(page, {recursive: true}));
     settings.hooks?.input?.forEach(hook => fs.mkdirSync(hook));
