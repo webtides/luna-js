@@ -4,8 +4,8 @@ const chai = require("chai");
 chai.use(require("chai-fs"));
 chai.use(require("chai-http"));
 
-const BUILD_SCRIPT = 'node node_modules/@webtides/luna-cli/.bin/luna.js'
-const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/.bin/luna.js'
+const BUILD_SCRIPT = 'node node_modules/@webtides/luna-cli/bin/luna.js'
+const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/bin/luna.js'
 
 const LUNA_START_SCRIPT = 'node_modules/@webtides/luna-js/start';
 
