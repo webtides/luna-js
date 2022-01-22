@@ -4,7 +4,6 @@ import {loadManifest, loadSettings} from '../config.js';
 import {parseMiddleware} from "../http/middleware";
 import {LunaService} from "../../decorators/service";
 import {importDynamically} from "../helpers/dynamic-import";
-import {Component} from "../../decorators/component";
 
 @LunaService({
     name: 'PagesLoader'

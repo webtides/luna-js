@@ -1,7 +1,7 @@
-const postcss = require("postcss");
-const path = require("path");
-const fs = require("fs");
-const {getEntryType} = require("./helpers/entries");
+import postcss from "postcss";
+import path from "path";
+import fs from "fs";
+import {getEntryType} from "./helpers/entries";
 
 const basePostcssPluginsBefore = [
     require("postcss-import"),
@@ -14,13 +14,13 @@ const basePostcssPluginsAfter = [];
  * @param options {{ ignore: boolean, publicDirectory: string, output: string, serverInclude: boolean, plugins: function, basePaths: {} }}
  * @returns {string|{transform(*=, *=): Promise<string|{code: string, map: SourceMapGenerator & {toJSON(): RawSourceMap}}|null>, writeBundle(): Promise<void>, name: string, resolveId(*=, *=): Promise<string|*|null>}|null|{code: string, map: SourceMap}|*}
  */
-module.exports =  function(options) {
-    const importers = { };
-    const extractedCss = { };
+export const rollupPluginPostcss = function (options) {
+    const importers = {};
+    const extractedCss = {};
     const idsToExtract = [];
 
-    const processCss = ({ css, plugins, from = process.cwd() }) => {
-        return postcss([ ...basePostcssPluginsBefore, ...(plugins()), ...basePostcssPluginsAfter ]).process(css, {
+    const processCss = ({css, plugins, from = process.cwd()}) => {
+        return postcss([...basePostcssPluginsBefore, ...(plugins()), ...basePostcssPluginsAfter]).process(css, {
             from
         });
     };
@@ -34,7 +34,7 @@ module.exports =  function(options) {
     };
 
     const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
-        const { css, map, messages } = await processCss({
+        const {css, map, messages} = await processCss({
             css: code,
             plugins: loadAppropriatePlugins(id),
             from: id
@@ -79,7 +79,7 @@ module.exports =  function(options) {
                     return "export default null";
                 }
 
-                const { css, map } = await processCssAndWatchDependencies(code, id, this.addWatchFile);
+                const {css, map} = await processCssAndWatchDependencies(code, id, this.addWatchFile);
 
                 const moduleInformation = this.getModuleInfo(importers[id]);
 
@@ -123,7 +123,7 @@ module.exports =  function(options) {
             const css = Object.values(extractedCss).join("\r\n");
 
             if (!fs.existsSync(outputDirectory)) {
-                fs.mkdirSync(outputDirectory, { recursive: true });
+                fs.mkdirSync(outputDirectory, {recursive: true});
             }
 
             console.log("Writing extracted css to", output);

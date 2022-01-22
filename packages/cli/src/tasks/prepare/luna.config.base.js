@@ -3,11 +3,10 @@ export default {
 
     build: {
         output: '.build',
-        livereload: true,
 
         server: {
             resolveNodeModules: [],
-        }
+        },
     },
 
     pages: {
@@ -18,7 +17,7 @@ export default {
     api: {
         input: [],
         context: '/api',
-        fallback: false
+        fallback: null
     },
 
     routes: {
@@ -34,8 +33,8 @@ export default {
     },
 
     assets: {
-        domain: false,
-        context: false,
+        domain: null,
+        context: null,
 
         styles: {
             bundles: []

@@ -1,25 +1,29 @@
-const path = require("path");
+import path from 'path';
 
-module.exports = {
+export default {
     build: {
         output: '.build',
+
+        server: {
+            resolveNodeModules: [],
+        }
     },
 
     pages: {
-        input: [ path.join(__dirname, 'views/pages') ],
+        input: [ path.join(process.cwd(), 'views/pages') ],
     },
 
     layouts: {
-        input: [path.join(__dirname, "views/layouts")],
+        input: [path.join(process.cwd(), "views/layouts")],
     },
 
     api: {
-        input: [ path.join(__dirname, 'api') ],
+        input: [ path.join(process.cwd(), 'api') ],
     },
 
     components: {
         bundles: [{
-            input: path.join(__dirname, 'views/components'),
+            input: path.join(process.cwd(), 'views/components'),
             output: 'assets',
 
             styles: {
@@ -30,13 +34,13 @@ module.exports = {
     },
 
     hooks: {
-        input: [ path.join(__dirname, 'hooks') ]
+        input: [ path.join(process.cwd(), 'hooks') ]
     },
 
     assets: {
         styles: {
             bundles: [{
-                input: [ path.join(__dirname, "assets/css/main.css") ],
+                input: [ path.join(process.cwd(), "assets/css/main.css") ],
 
                 output: "assets/css/main.css",
                 plugins: () => []

@@ -1,7 +1,7 @@
 import serverBundles from "./rollup.config.server";
 import clientBundles from "./rollup.config.client";
 
-module.exports = async () => [
+export default async () => [
     ...(await serverBundles()),
     ...(await clientBundles()),
 ];

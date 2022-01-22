@@ -1,8 +1,7 @@
-const { getSettings } = require("@webtides/luna-js/src/framework/config");
-
-const fs = require("fs");
-const path = require("path");
-const {getEntryType} = require("./helpers/entries");
+import fs from "fs";
+import path from "path";
+import {getEntryType} from "./helpers/entries";
+import {getConfig} from "../../src/config";
 
 const loadComponentChildren = contents => {
     const result = contents.match(/<(?:\w*-\w*)(?:-\w*)*/gm);
@@ -44,14 +43,14 @@ const sortRoutes = (routes) => {
     });
 };
 
-module.exports = function(options) {
-    const { config } = options;
+export const rollupPluginManifest = function (options) {
+    const {config} = options;
     const entries = {
-        components: { },
-        pages: { },
-        layouts: { },
-        apis: { },
-        hooks: { },
+        components: {},
+        pages: {},
+        layouts: {},
+        apis: {},
+        hooks: {},
     };
 
     const hasRegisteredEntry = id => {
@@ -69,7 +68,7 @@ module.exports = function(options) {
         resolveId(id, importer) {
             // A entry route.
             if (importer === undefined) {
-                const lunaSettings = getSettings();
+                const lunaSettings = getConfig().settings;
 
                 const entryType = getEntryType(id, config);
 
@@ -77,7 +76,7 @@ module.exports = function(options) {
                     return null;
                 }
 
-                const { type, basePath, settings } = entryType;
+                const {type, basePath, settings} = entryType;
 
                 const relativePath = id.substring(basePath.length);
                 const relativeBasePath = basePath.substring(process.cwd().length);
@@ -97,7 +96,7 @@ module.exports = function(options) {
                     const fallbackRoute = lunaSettings.pages?.fallback ?? false;
                     const fallbackApiRoute = lunaSettings.api?.fallback ?? false;
 
-                    const { context } = type === 'apis' ? lunaSettings.api : lunaSettings.pages;
+                    const {context} = type === 'apis' ? lunaSettings.api : lunaSettings.pages;
                     let route = getRouteName(relativePath.split(".js")[0]);
 
                     if (type === 'apis' && route === fallbackApiRoute || type === 'pages' && route === fallbackRoute) {
@@ -128,24 +127,42 @@ module.exports = function(options) {
         },
 
         generateBundle() {
-            const settings = getSettings();
-            const { manifest } = settings._generated;
+            const {settings} = getConfig();
+
+            const {manifest} = settings._generated;
 
             const directory = path.dirname(manifest);
             if (!fs.existsSync(directory)) {
-                fs.mkdirSync(directory, { recursive: true });
+                fs.mkdirSync(directory, {recursive: true});
             }
 
-            const pagesManifest = { };
+            const manifestData = {};
 
             Object.keys(entries).forEach(type => {
-                pagesManifest[type] = Object.keys(entries[type]).map(key => entries[type][key]);
+                manifestData[type] = Object.keys(entries[type]).map(key => entries[type][key]);
             });
 
-            pagesManifest['pages'] = sortRoutes(pagesManifest['pages']);
-            pagesManifest['apis'] = sortRoutes(pagesManifest['apis']);
+            manifestData['pages'] = sortRoutes(manifestData['pages']);
+            manifestData['apis'] = sortRoutes(manifestData['apis']);
 
-            fs.writeFileSync(manifest, JSON.stringify(pagesManifest), { encoding: "utf-8" });
+            manifestData['settings'] = {
+                port: settings.port,
+                build: settings.build,
+                routes: settings.routes,
+                cache: settings.cache,
+                export: settings.export,
+                assets: {
+                    domain: settings.assets.domain,
+                    context: settings.assets.context,
+                },
+                api: {
+                    domain: settings.api.domain,
+                    context: settings.api.context,
+                },
+                _generated: settings._generated
+            };
+
+            fs.writeFileSync(manifest, JSON.stringify(manifestData), {encoding: "utf-8"});
         },
     }
 }

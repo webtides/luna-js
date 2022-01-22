@@ -1,6 +1,6 @@
-const traverse = require("@babel/traverse");
-const types = require("@babel/types");
-const recast = require("recast");
+import * as traverse from "@babel/traverse";
+import * as types from "@babel/types";
+import recast from "recast";
 
 const decoratorsWhichRemoveFunctions = [
     'HideFromClient',
@@ -8,7 +8,7 @@ const decoratorsWhichRemoveFunctions = [
     'Inject'
 ];
 
-module.exports = function () {
+export const rollupPluginStripServerCode = function () {
     return {
         name: 'luna-strip-server-code',
 
@@ -20,7 +20,7 @@ module.exports = function () {
                     id.endsWith('.css')) {
                     // We don't need to go through all node_modules
                     // and parse the code.
-                    return { code, map: null };
+                    return {code, map: null};
                 }
 
                 const ast = recast.parse(code, {
@@ -37,7 +37,7 @@ module.exports = function () {
                 traverse.default(ast, {
                     ClassDeclaration(path) {
 
-                        const { node } = path;
+                        const {node} = path;
 
                         if (!node.id || !node.decorators) {
                             return;
@@ -54,7 +54,7 @@ module.exports = function () {
                     },
 
                     ClassProperty(path) {
-                        const { node } = path;
+                        const {node} = path;
 
                         if (!node.key || !node.decorators) {
                             return;
@@ -70,7 +70,7 @@ module.exports = function () {
                     },
 
                     ClassMethod(path) {
-                        const { node } = path;
+                        const {node} = path;
 
                         if (!node.key) {
                             return;
@@ -98,19 +98,19 @@ module.exports = function () {
                     }
                 });
 
-                const result = recast.print(ast, { sourceMapName: id.replace('.js', '.js.map') });
+                const result = recast.print(ast, {sourceMapName: id.replace('.js', '.js.map')});
 
                 return {
                     code: result.code,
                     // Rollup only needs the mappings to work with the source map.
-                    map: { mappings: result.map.mappings }
+                    map: {mappings: result.map.mappings}
                 };
 
             } catch (error) {
                 console.error(error);
             }
 
-            return { code, map: null };
+            return {code, map: null};
         },
     }
 }
