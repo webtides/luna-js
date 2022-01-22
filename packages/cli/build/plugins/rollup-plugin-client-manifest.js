@@ -1,9 +1,8 @@
-const { getSettings } = require("@webtides/luna-js/src/framework/config");
+import fs from "fs";
+import path from "path";
+import {getConfig} from "../../src/config";
 
-const fs = require("fs");
-const path = require("path");
-
-module.exports = function(options) {
+export const clientManifest = (options) => {
     const entries = {};
 
     const hasRegisteredEntry = id => {
@@ -34,14 +33,15 @@ module.exports = function(options) {
         },
 
         generateBundle() {
-            const settings = getSettings();
-            const { clientManifest } = settings._generated;
+            const { settings } = getConfig();
 
-            let manifest = { };
+            const {clientManifest} = settings._generated;
+
+            let manifest = {};
 
             const directory = path.dirname(clientManifest);
             if (!fs.existsSync(directory)) {
-                fs.mkdirSync(directory, { recursive: true });
+                fs.mkdirSync(directory, {recursive: true});
             } else if (fs.existsSync(clientManifest)) {
                 manifest = JSON.parse(fs.readFileSync(clientManifest, 'utf-8'));
             }

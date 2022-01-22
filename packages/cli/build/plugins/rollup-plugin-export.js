@@ -1,7 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-
-const { getSettings } = require("@webtides/luna-js/src/framework/config");
+import  fs  from "fs";
+import  path  from "path";
+import {getConfig} from "../../src/config";
 
 const minimalPackageJSON = {
     "name": "",
@@ -24,12 +23,12 @@ if (global.serverlessApiBuild) {
     additionalDependencies.push('serverless-http');
 }
 
-module.exports =  function({ externals, outputDirectory }) {
+export const rollupPluginApiExport = function({ externals, outputDirectory }) {
     return {
         name: 'luna-api-export',
 
         async writeBundle() {
-            const settings = getSettings();
+            const { settings } = getConfig();
 
             const currentPackageJSON = loadCurrentPackageJSON();
             const moonPackageJSON = loadMoonPackageJSON();

@@ -1,6 +1,6 @@
-const glob = require("glob");
-const fs = require("fs");
-const path = require("path");
+import glob from "glob";
+import fs from "fs";
+import path from "path";
 
 const getPathRelativeToBasePath = (path, basePath) => {
     if (basePath.length === 0) {
@@ -10,14 +10,14 @@ const getPathRelativeToBasePath = (path, basePath) => {
     return path.substring(basePath.length - 1);
 };
 
-module.exports = function(options) {
+export const rollupPluginCopy = function (options) {
     return {
         name: 'luna-copy',
         generateBundle() {
-            const { sources } = options;
+            const {sources} = options;
 
             sources.forEach(source => {
-                const { input, output } = source;
+                const {input, output} = source;
 
                 if (!input || !output) {
                     return;
@@ -28,7 +28,7 @@ module.exports = function(options) {
                     basePath = input.replace(`**\\*`, '**/*').split("**/*")[0];
                 }
 
-                const files = basePath === '' ? [ input ] : glob.sync(input);
+                const files = basePath === '' ? [input] : glob.sync(input);
 
                 files.forEach(file => {
                     const target = path.join(
@@ -38,12 +38,12 @@ module.exports = function(options) {
                     );
 
                     if (fs.lstatSync(file).isDirectory()) {
-                        fs.mkdirSync(target, { recursive: true });
+                        fs.mkdirSync(target, {recursive: true});
                         return;
                     }
 
                     if (!fs.existsSync(path.dirname(target))) {
-                        fs.mkdirSync(path.dirname(target), { recursive: true });
+                        fs.mkdirSync(path.dirname(target), {recursive: true});
                     }
 
                     fs.copyFileSync(file, target);

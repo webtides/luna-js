@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import path from "path";
 
-import {loadSettings} from "@webtides/luna-js/src/framework/config";
 import {getConfig} from "./config";
 
 let currentLunaProcess = null;
@@ -16,7 +15,7 @@ const startLunaJS = async () => {
         return;
     }
 
-    const settings = await loadSettings();
+    const {settings} = getConfig();
     const { baseDirectory } = settings._generated;
 
     const generatedStartScript = path.join(

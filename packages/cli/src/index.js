@@ -1,6 +1,6 @@
 import path from 'path';
 
-import {checkRequirements} from "./tasks/prepare";
+import {checkRequirements, loadConfig} from "./tasks/prepare";
 import {
     buildComponentsForApplication,
     startApplicationDevelopmentBuild
@@ -20,11 +20,15 @@ process.on("exit", () => {
 });
 
 const execute = async (argv) => {
+    const lunaConfig = await loadConfig();
+
     setConfig({
         currentWorkingDirectory: process.cwd(),
         currentDirectory: path.dirname(__dirname),
         isExporting: !!argv.export,
-        documentInject: ''
+        documentInject: '',
+
+        settings: lunaConfig,
     });
 
     const meetsRequirements = await checkRequirements({ setup: argv.setup });

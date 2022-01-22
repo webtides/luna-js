@@ -1,9 +1,7 @@
-let config = {};
-
 const setConfig = (_config) => {
-    config = { ..._config };
+    global.lunaCLIConfig = _config;
 }
 
-const getConfig = () => config;
+const getConfig = () => global.lunaCLIConfig;
 
 export { setConfig, getConfig };

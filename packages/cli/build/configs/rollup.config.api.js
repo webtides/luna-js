@@ -1,12 +1,14 @@
-const path = require("path");
-const {babel} = require('@rollup/plugin-babel');
-const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const commonjs = require("@rollup/plugin-commonjs");
-const json = require('@rollup/plugin-json');
+import path from "path";
+import {babel} from '@rollup/plugin-babel';
+import {nodeResolve} from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import json from '@rollup/plugin-json';
 
-const { getSettings } = require('@webtides/luna-js/src/framework/config');
+import {rollupPluginApiExport} from "../plugins/rollup-plugin-export";
+import {rollupPluginMarkdown} from "../plugins/rollup-plugin-markdown";
+import {getConfig} from "../../src/config";
 
-const settings = getSettings();
+const { settings } = getConfig();
 
 const outputDirectory = settings.export?.api?.output?.directory ?? settings.export.output;
 const externals = settings.export?.api?.externals ?? [];
@@ -15,7 +17,7 @@ const entryFileNames = settings.export?.api?.output.filename ?? 'api-server.js';
 
 const production = process.env.NODE_ENV === "production";
 
-module.exports = {
+export default {
     input: path.join(settings._generated.baseDirectory, "entry.apis.js"),
     output: {
         dir: outputDirectory,
@@ -27,16 +29,16 @@ module.exports = {
         ...externals
     ],
     plugins: [
-        require("../plugins/rollup-plugin-markdown.js")(),
+        rollupPluginMarkdown(),
         nodeResolve({
-            resolveOnly: [ '@webtides/luna-js', '@webtides/luna-cli' ]
+            resolveOnly: ['@webtides/luna-js', '@webtides/luna-cli']
         }),
-        commonjs({ requireReturnsDefault: true }),
+        commonjs({requireReturnsDefault: true}),
         babel({
             configFile: path.resolve(__dirname, "../..", 'babel.config.js'),
             babelHelpers: "bundled"
         }),
         json(),
-        require("../plugins/rollup-plugin-export")({ outputDirectory, externals })
+        rollupPluginApiExport({outputDirectory, externals})
     ]
 }

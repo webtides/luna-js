@@ -1,19 +1,25 @@
-const path = require("path");
+import path from "path";
 
 import commonjs from "@rollup/plugin-commonjs";
-const json = require('@rollup/plugin-json');
-const {babel} = require('@rollup/plugin-babel');
-const {nodeResolve} = require("@rollup/plugin-node-resolve");
-const replace = require("@rollup/plugin-replace");
+import json from '@rollup/plugin-json';
+import {babel} from '@rollup/plugin-babel';
+import {nodeResolve} from "@rollup/plugin-node-resolve";
+import replace from "@rollup/plugin-replace";
 
-const {loadSettings} = require("@webtides/luna-js/src/framework/config");
-const {generateBasePathsFromLunaConfig} = require("../plugins/helpers/entries");
+import {getConfig} from "../../src/config";
+
+import {generateBasePathsFromLunaConfig} from "../plugins/helpers/entries";
+import {rollupPluginManifest} from "../plugins/rollup-plugin-manifest";
+import {rollupPluginMarkdown} from "../plugins/rollup-plugin-markdown";
+import {rollupPluginPostcss} from "../plugins/rollup-plugin-postcss";
+import {rollupPluginStripClientCode} from "../plugins/rollup-plugin-strip-client-code";
 
 export default async () => {
-    const settings = await loadSettings();
+    const { settings } = getConfig();
+
     const {basePaths, files} = generateBasePathsFromLunaConfig(settings);
 
-    const { resolveNodeModules } = settings.build.server;
+    const {resolveNodeModules} = settings.build.server;
 
     const production = process.env.NODE_ENV === "production";
 
@@ -27,16 +33,16 @@ export default async () => {
             exports: "auto"
         },
         plugins: [
-            require("../plugins/rollup-plugin-strip-client-code")({
+            rollupPluginStripClientCode({
                 basePaths,
             }),
-            require("../plugins/rollup-plugin-postcss")({
+            rollupPluginPostcss({
                 serverInclude: true,
                 basePaths,
             }),
-            require("../plugins/rollup-plugin-markdown")(),
+            rollupPluginMarkdown(),
             nodeResolve({
-                resolveOnly: [ '@webtides/luna-js', ...resolveNodeModules ]
+                resolveOnly: ['@webtides/luna-js', ...resolveNodeModules]
             }),
             replace({
                 'process.env.CLIENT_BUNDLE': false,
@@ -47,7 +53,7 @@ export default async () => {
                 babelHelpers: "bundled"
             }),
             json(),
-            require("../plugins/rollup-plugin-manifest")({
+            rollupPluginManifest({
                 config: basePaths
             }),
             commonjs({

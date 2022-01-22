@@ -1,11 +1,7 @@
-const path = require('path');
+import path from 'path';
 
-const requireDynamically = (id) => {
+export const requireDynamically = (id) => {
     return id.startsWith('.')
         ? require(path.resolve(process.cwd(), id))
         : require(path.resolve(process.cwd(), `./node_modules/${id}`))
-};
-
-module.exports = {
-    requireDynamically
 };

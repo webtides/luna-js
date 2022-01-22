@@ -8,7 +8,7 @@ export default class LunaBase {
             path = "/" + path;
         }
 
-        return `${this.configuration.assets.domain || ""}${this.configuration.assets.context}${path}`;
+        return `${this.configuration.assets.domain ?? ""}${this.configuration.assets.context ?? ''}${path}`;
     }
 
     api(path) {
@@ -16,7 +16,7 @@ export default class LunaBase {
             path = "/" + path;
         }
 
-        return `${this.configuration.api.domain || ""}${this.configuration.api.context}${path}`;
+        return `${this.configuration.api.domain ?? ""}${this.configuration.api.context ?? ''}${path}`;
     }
 
     config(key = undefined, defaultValue = false) {
