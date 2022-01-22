@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.1] Luna - 22.01.2022
+
+### Changed
+ - Upgraded packages
+
+
+## [0.8.1] CLI - 22.01.2022
+
+### Changed
+- Upgraded packages
+
+
 ## [0.8.0] Luna - 10.06.2021
 
 ### Changed
