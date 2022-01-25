@@ -16,5 +16,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
+      - run: cd ./packages/luna && yarn && cd ../..
+      - run: cd ./packages/cli && yarn && cd ../..
+      - run: cd ./packages/renderer && yarn && cd ../..
       - run: npm install
       - run: npm run test
