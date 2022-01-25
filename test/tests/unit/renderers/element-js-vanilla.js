@@ -1,6 +1,6 @@
 import {TemplateElement, BaseElement, html} from "../../../../packages/renderer/lib/element-js/stubs/vanilla";
+import {ElementFactory} from "../../../../packages/renderer/lib/element-js";
 import ElementRenderer from "../../../../packages/luna/src/framework/engine/element-renderer";
-import {ElementFactory} from "../../../../packages/renderer/src/element-js";
 import ServiceContainer from "../../../../packages/luna/src/framework/services/service-container";
 
 import {chai} from '../../../helpers';
