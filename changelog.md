@@ -46,6 +46,7 @@
 ### Added
  - A package in which multiple template renderers and element factories for different base classes could
   be developed
+ - Support for element-js vanilla renderer (#76)
    
 ### Changed
  - Use more shared logic from the BaseLayoutFactory (#65)
