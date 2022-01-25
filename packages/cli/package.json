@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.9.0-0.2",
+  "version": "0.9.1-elementjs.0.10",
   "description": "The cli for luna-js.",
   "main": "lib/index.js",
   "engines": {
@@ -14,7 +14,7 @@
     "url": "git+https://github.com/webtides/luna-cli.git"
   },
   "peerDependencies": {
-    "@webtides/luna-js": "0.9.0-0.2"
+    "@webtides/luna-js": "0.9.1-elementjs.0.10"
   },
   "dependencies": {
     "@babel/cli": "^7.12.10",
