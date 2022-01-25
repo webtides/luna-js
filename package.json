@@ -4,7 +4,6 @@
   "description": "Static Site Generation & SSR framework for custom-elements.",
   "main": "index.js",
   "scripts": {
-    "pretest": "cd ./packages/renderer && yarn",
     "test": "mocha test/index.js --require @babel/register"
   },
   "repository": {
