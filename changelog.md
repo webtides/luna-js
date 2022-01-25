@@ -10,7 +10,8 @@
  - **BREAKING**: removed `LunaElement`, `LunaMarkdownElement`, `html` and `unsafeHTML`
  - **BREAKING**: Elements are now server only per default, and the developer needs to opt-in to client rendering
  - **BREAKING**: Layouts can now be loaded by a string and has a fallback for a default (#68)
- - **BREAKING**: Removed the legacy build (#71) 
+ - **BREAKING**: Removed the legacy build (#71)
+ - The `luna.config.js` can now be written in ES syntax
 
 ### Added
 - Allow `.attribute` notation for server rendered components
@@ -23,6 +24,7 @@
  - Renderer path replacements
  - Luna lifecycle for 
  - Attribute and property parsing (#65)
+ - You can now export additional functions in a component
 
 ## [Unreleased] CLI
 
