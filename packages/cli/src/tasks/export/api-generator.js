@@ -1,15 +1,16 @@
 import path from "path";
 import fs from "fs";
 import rimraf from "rimraf";
-import {loadManifest, loadSettings} from "@webtides/luna-js/src/framework/config";
+import {loadManifest} from "@webtides/luna-js/src/framework/config";
 
 import {startRollup} from "../build";
 import {buildComponentsForApplication} from "../build/application";
 import {generateStaticSite} from "./static-site-generator";
 import {getConfig} from "../../config";
+import {loadConfig} from "../prepare";
 
 const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
-    const settings = await loadSettings();
+    const settings = await loadConfig();
     const manifest = await loadManifest();
 
     const pathToEntry = path.join(
@@ -77,7 +78,7 @@ const generateApiEntry = async ({ withStaticSite, serverless } = { }) => {
  * @returns {Promise<void>}
  */
 const generateAPI = async ({ withStaticSite = false, serverless = false } = { }) => {
-    const settings = await loadSettings();
+    const settings = await loadConfig();
 
     const outputDirectory = settings.export.api?.output?.directory ?? false;
     if (outputDirectory) {
@@ -98,8 +99,6 @@ const generateAPI = async ({ withStaticSite = false, serverless = false } = { })
     await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.api.js"));
 
     if (withStaticSite) {
-        const settings = await loadSettings();
-
         const outputDirectory = settings.export.api?.output?.directory ?? settings.export.output;
 
         await generateStaticSite({
