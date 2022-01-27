@@ -17,7 +17,7 @@ export default class ElementFactory extends BaseElementFactory {
     }
 
     async shouldRender() {
-        return typeof this.element.render !== 'function';
+        return typeof this.element.render === 'function';
     }
 
     async template() {
