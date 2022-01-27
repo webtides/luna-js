@@ -6,6 +6,3 @@ global.getCurrentWorkingDirectory = fixture => {
 
 require("./tests/basic.js");
 require("./tests/empty.js");
-
-require('./tests/unit/renderers/lit.js');
-require('./tests/unit/services/service-container.js');
