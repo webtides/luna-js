@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webtides/moon-js.git"
+    "url": "git+https://github.com/webtides/luna-js.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/webtides/moon-js/issues"
+    "url": "https://github.com/webtides/luna-js/issues"
   },
-  "homepage": "https://github.com/webtides/moon-js#readme",
+  "homepage": "https://github.com/webtides/luna-js#readme",
   "private": true,
   "workspaces": [
     "packages/*"
