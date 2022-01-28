@@ -1,74 +1,60 @@
 name: NPM publish
 
 on:
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+      - main
   push:
-    tags:
-      - v*
+    branches:
+      - develop
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
         with:
           node-version: 14
       - run: npm install -g yarn@1.22.5
       - run: yarn install --frozen-lockfile
+      - run: yarn workspace renderer build
       - run: yarn run test
-  build_cli:
+
+  publish:
     needs: test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/cli
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
         with:
           node-version: 14
+          registry-url: "https://registry.npmjs.org"
       - run: npm install -g yarn@1.22.5
       - run: yarn install --frozen-lockfile
-      - run: yarn run test
-  publish_cli:
-    needs: build_cli
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/cli
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-  build_luna:
-    needs: test
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/luna
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - run: npm install -g yarn@1.22.5
-      - run: yarn install --frozen-lockfile
-      - run: yarn run test
-  publish_luna:
-    needs: build_luna
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/luna
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+
+      - name: "Configure Git User"
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
+
+      - name: "Lerna Version"
+        run: |
+          if [ ${{ github.ref }} = refs/heads/develop ]; then
+            yarn lerna version --conventional-commits --conventional-prerelease --preid dev --yes
+          else
+            yarn lerna version --conventional-commits --conventional-graduate --yes
+          fi
+
+      - name: "Lerna Publish"
+        run: yarn lerna publish from-package --yes
