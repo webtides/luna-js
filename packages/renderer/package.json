@@ -10,7 +10,7 @@
   "dependencies": {
     "@lit-labs/ssr": "1.0.0-rc.1",
     "@popeindustries/lit-html-server": "3.1.0",
-    "@webtides/element-js": "git+https://github.com/webtides/element-js#feature/use-custom-renderer",
+    "@webtides/element-js": "0.4.0",
     "@webtides/luna-js": "0.9.1-elementjs.0.10",
     "camel-case": "^4.1.2",
     "param-case": "^3.0.4"
