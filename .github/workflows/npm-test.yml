@@ -16,8 +16,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - run: cd ./packages/luna && yarn && cd ../..
+      - run: cd ./packages/luna && yarn && yarn link && cd ../..
       - run: cd ./packages/cli && yarn && cd ../..
-      - run: cd ./packages/renderer && yarn && yarn run build && cd ../..
+      - run: cd ./packages/renderer && yarn && yarn link "@webtides/luna-js" && yarn run build && cd ../..
       - run: npm install
       - run: npm run test
