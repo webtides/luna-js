@@ -46,7 +46,7 @@ export default class ElementFactory {
     }
 
     async template() {
-        return this.element.template;
+        return typeof this.element.template === 'function' ? this.element.template() : this.element.template;
     }
 
     define({ importPath }) {
@@ -175,7 +175,9 @@ export default class ElementFactory {
     parsePropertiesToAttributes(properties) {
         const attributes = {};
         Object.keys(properties).forEach(key => {
-            attributes[paramCase(key)] = properties[key];
+            attributes[paramCase(key)] = typeof properties[key] !== 'string'
+                ? JSON.stringify(properties[key])
+                : properties[key];
         });
         return attributes;
     }
