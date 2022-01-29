@@ -4,6 +4,9 @@ import ElementRenderer from "../../../../packages/luna/src/framework/engine/elem
 import ServiceContainer from "../../../../packages/luna/src/framework/services/service-container";
 
 import {chai} from '../../../helpers';
+import LunaContainer from "../../../../packages/luna/src/framework/luna";
+import ComponentLoader from "../../../../packages/luna/src/framework/loaders/component-loader";
+import DocumentRenderer from "../../../../packages/luna/src/framework/engine/document-renderer";
 
 describe("Element-js vanilla server renderer test", function () {
 
@@ -85,7 +88,7 @@ describe("Element-js vanilla server renderer test", function () {
         });
 
         chai.expect(result.markup).to.contain("<div>foo</div>");
-        chai.expect(result.finalAttributes.test.foo).to.equal("foo");
+        chai.expect(result.finalAttributes.test).to.equal('{"foo":"foo"}');
     });
 
     it('should parse boolean attributes to a string', async () => {
