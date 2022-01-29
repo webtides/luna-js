@@ -267,14 +267,13 @@
   dependencies:
     lit-html "^1.2.1"
 
-"@webtides/luna-js@0.9.1-elementjs.0.10":
-  version "0.9.1-elementjs.0.10"
-  resolved "https://registry.yarnpkg.com/@webtides/luna-js/-/luna-js-0.9.1-elementjs.0.10.tgz#5f2b59fe9594a930137ae9e9dc48bb0f1e665631"
-  integrity sha512-ohQAIEny0oC+Aeagoe6bZnjtyavgjwXM3RZkLnACugH8/hxmU7V6yZ4X7Ot84KFoAFcxBrJd/dGwV1ZZEfr3kg==
+"@webtides/luna-js@0.9.1-0.4":
+  version "0.9.1-0.4"
+  resolved "https://registry.yarnpkg.com/@webtides/luna-js/-/luna-js-0.9.1-0.4.tgz#c06fe7a226709639b7c67e99249db0d8f22da0e2"
+  integrity sha512-hqdVA9ar/9SvilUednmPvXYi70S+RaWDifg0zLqbb2+5sHj6ETggBNUZWC//I7W0F6RdIoaQ9YAmV2OBWLtEGw==
   dependencies:
     body-parser "^1.19.0"
     camel-case "^4.1.2"
-    deepmerge "^4.2.2"
     dotenv "^8.2.0"
     express "^4.17.1"
     glob-all "^3.2.1"
