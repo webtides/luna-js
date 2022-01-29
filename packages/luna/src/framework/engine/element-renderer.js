@@ -21,6 +21,11 @@ export default class ElementRenderer {
             response,
         };
 
+        if (!component.ElementFactory) {
+            console.error(`The component with the tag name "${component.tagName}" has no ElementFactory`);
+            return false;
+        }
+
         const factory = new (component.ElementFactory)({
             component,
             attributes,
@@ -52,7 +57,7 @@ export default class ElementRenderer {
             component, attributes, group, request, response,
         });
 
-        if (!(await factory.shouldRender())) {
+        if (!factory || !(await factory.shouldRender())) {
             return false;
         }
 
