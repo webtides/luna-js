@@ -7,14 +7,14 @@ import {CurrentRequest, LunaService} from "../../../../packages/luna";
 
 describe('Service container test', function() {
 
-    beforeEach(async () => {
+    before(async () => {
         const luna = new LunaContainer({});
         await luna.prepare();
 
         global.luna = luna;
     });
 
-    afterEach(() => {
+    after(() => {
         global.luna = null;
     });
 

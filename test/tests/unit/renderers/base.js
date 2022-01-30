@@ -15,14 +15,14 @@ class TestElementFactory extends ElementFactory {
 
 describe("Luna base renderer test", () => {
 
-    beforeEach(async () => {
+    before(async () => {
         const luna = new LunaContainer({});
         await luna.prepare();
 
         global.luna = luna;
     });
 
-    afterEach(() => {
+    after(() => {
         global.luna = null;
     });
 
