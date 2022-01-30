@@ -1,11 +1,11 @@
-import {TemplateElement, BaseElement, html} from "../../../../packages/renderer/lib/element-js/vanilla/stubs";
-import {ElementFactory} from "../../../../packages/renderer/lib/element-js/vanilla";
+import {TemplateElement, BaseElement, html} from "../../../../packages/renderer/lib/element-js/lit/stubs";
+import {ElementFactory} from "../../../../packages/renderer/lib/element-js/lit";
 import ElementRenderer from "../../../../packages/luna/src/framework/engine/element-renderer";
 import ServiceContainer from "../../../../packages/luna/src/framework/services/service-container";
 
 import {chai} from '../../../helpers';
 
-describe("Element-js vanilla server renderer test", function () {
+describe("Element-js server renderer test", function () {
 
     ServiceContainer.set(ElementRenderer, new ElementRenderer());
 

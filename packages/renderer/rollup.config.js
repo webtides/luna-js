@@ -13,7 +13,8 @@ function metaImportUrl() {
 }
 
 const bundles = [
-    {name: 'element-js', resolve: ['@webtides/luna-js' ]},
+    {name: 'element-js/lit', resolve: ['@webtides/luna-js' ]},
+    {name: 'element-js/vanilla', resolve: ['@webtides/luna-js' ]},
     {name: 'lit'}
 ];
 
