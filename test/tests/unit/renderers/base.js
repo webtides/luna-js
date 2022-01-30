@@ -38,7 +38,7 @@ describe("Luna base renderer test", () => {
             ElementFactory: TestElementFactory,
         };
 
-        luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
+        global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
         const documentRenderer = new DocumentRenderer({ request: null, response: null });
         const result = await documentRenderer.renderUsingPostHtml(`
@@ -71,8 +71,8 @@ describe("Luna base renderer test", () => {
             ElementFactory: TestElementFactory,
         };
 
-        luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
-        luna.get(ComponentLoader).allAvailableComponents[childComponent.tagName] = childComponent;
+        global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
+        global.luna.get(ComponentLoader).allAvailableComponents[childComponent.tagName] = childComponent;
 
         const documentRenderer = new DocumentRenderer({ request: null, response: null });
         const result = await documentRenderer.renderUsingPostHtml(`
@@ -95,7 +95,7 @@ describe("Luna base renderer test", () => {
             ElementFactory: TestElementFactory,
         };
 
-        luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
+        global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
         const documentRenderer = new DocumentRenderer({ request: null, response: null });
         const result = await documentRenderer.renderUsingPostHtml(`
@@ -138,7 +138,7 @@ describe("Luna base renderer test", () => {
             ElementFactory: TestElementFactory,
         };
 
-        luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
+        global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
         const documentRenderer = new DocumentRenderer({ request: null, response: null });
         const result = await documentRenderer.renderUsingPostHtml('<html><head></head><body><example-component></example-component></body></html>');

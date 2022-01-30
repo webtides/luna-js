@@ -24,7 +24,7 @@ describe('Service container test', function() {
         chai.expect(serviceDefinitions.length).to.be.gt(0);
 
         for (const serviceDefinition of serviceDefinitions) {
-            const service = luna.get(serviceDefinition);
+            const service = global.luna.get(serviceDefinition);
 
             chai.expect(service).to.not.equal(false);
             chai.expect(service).to.equal(ServiceContainer.get(serviceDefinition));
@@ -40,7 +40,7 @@ describe('Service container test', function() {
     it('should inject the $$luna context inside a service', () => {
         @LunaService({ name: 'exampleService' }) class ExampleService { }
 
-        luna.set(ExampleService, new ExampleService());
+        global.luna.set(ExampleService, new ExampleService());
 
         const serviceContext = new ServiceContext();
         const serviceInstance = serviceContext.get(ExampleService);
@@ -58,7 +58,7 @@ describe('Service container test', function() {
             }
         }
 
-        luna.set(ExampleService, new ExampleService());
+        global.luna.set(ExampleService, new ExampleService());
 
         const serviceContext = new ServiceContext({ $$luna: { request: 'mock' }});
         const serviceInstance = serviceContext.get(ExampleService);
