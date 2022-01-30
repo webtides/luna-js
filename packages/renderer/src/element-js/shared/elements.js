@@ -1,6 +1,3 @@
-import { html, spreadAttributes, unsafeHTML } from '@webtides/element-js/src/renderer/vanilla/util/html';
-import { toString } from "@webtides/element-js/src/util/toString";
-
 class BaseElement {
     constructor(options) {
         this._options = {
@@ -22,4 +19,4 @@ class StyledElement extends BaseElement {
 class TemplateElement extends StyledElement{
 }
 
-export { TemplateElement, StyledElement, BaseElement, html, unsafeHTML, spreadAttributes, toString }
+export { BaseElement, StyledElement, TemplateElement };
