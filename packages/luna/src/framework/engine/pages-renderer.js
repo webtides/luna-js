@@ -46,11 +46,11 @@ export default class PagesRenderer {
             return false;
         }
 
-        const layoutName = typeof module.module.layout === 'function'
+        const layoutName = module?.module && typeof module.module.layout === 'function'
             ? module.module.layout()
             : 'default';
 
-        const context = typeof module.module.context === 'function'
+        const context = module?.module && typeof module.module.context === 'function'
             ? await module.module.context()
             : {};
 
@@ -77,9 +77,9 @@ export default class PagesRenderer {
 
         const { markup, element } = await this.elementRenderer.renderComponent(componentData);
 
-        const layoutName = typeof element.layout === 'function'
+        const layoutName = element && typeof element.layout === 'function'
             ? element.layout()
-            : element.layout ?? 'default';
+            : element?.layout ?? 'default';
 
         return {
             markup,
