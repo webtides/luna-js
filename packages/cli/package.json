@@ -1,6 +1,6 @@
 {
   "name": "@webtides/luna-cli",
-  "version": "0.9.1-0.4",
+  "version": "0.10.0-dev.0",
   "description": "The cli for luna-js.",
   "main": "lib/index.js",
   "engines": {

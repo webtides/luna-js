@@ -1,3 +1,29 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [0.10.0-dev.0](https://github.com/webtides/luna-js/compare/v0.6.0...v0.10.0-dev.0) (2022-02-01)
+
+
+### Bug Fixes
+
+* Build renderer and clean working tree before publishing ([4e0121c](https://github.com/webtides/luna-js/commit/4e0121c876484498d8bb9ac0471764af0542368f))
+* **csr:** deferUpdate by default to prevent initial flickering ([445b65c](https://github.com/webtides/luna-js/commit/445b65cc479bf0a1ed0ea1b58ea842157f18bace))
+* don't crash if layout cannot be loaded ([e2a17c1](https://github.com/webtides/luna-js/commit/e2a17c15fd96b337e9aa54dde1bd5e8c298e5463))
+* Fixed the static copy task ([6e631f7](https://github.com/webtides/luna-js/commit/6e631f78f8a6e8d118847a139847f382862a4cc8))
+* Fixed the static copy task ([cadf1f6](https://github.com/webtides/luna-js/commit/cadf1f65e57b02f5252795441bc7f22203d99a21))
+* remove 'lib' from ignored foldres in renderer ([0700d69](https://github.com/webtides/luna-js/commit/0700d6900535fc623a8be773b439189396ecd36a))
+
+
+### Features
+
+* automate package releases and use yarn workspaces ([#78](https://github.com/webtides/luna-js/issues/78)) ([beb17ab](https://github.com/webtides/luna-js/commit/beb17ab65e0f606b9d54340821881a7beca6d40d))
+
+
+
+
+
 # Changelog
 
 ## [Unreleased] Luna 
