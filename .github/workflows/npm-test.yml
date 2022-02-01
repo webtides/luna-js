@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 14
       - run: yarn install --frozen-lockfile
+      - run: git reset --hard HEAD
       - run: git status
       - run: yarn workspace @webtides/luna-renderer build
       - run: git status
