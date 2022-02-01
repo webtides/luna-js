@@ -15,7 +15,7 @@ function metaImportUrl() {
 const bundles = [
     {name: 'element-js/lit', resolve: ['@webtides/luna-js' ]},
     {name: 'element-js/vanilla', resolve: ['@webtides/luna-js' ]},
-    {name: 'lit'}
+    {name: 'lit', resolve: ['@webtides/luna-js', 'lit-html', 'lit', 'lit-element', '@lit-labs/ssr', '@lit/reactive-element', '@lit-labs/ssr-client' ]}
 ];
 
 const bundleConfigs = bundles.map(bundle => ({
