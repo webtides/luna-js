@@ -56,4 +56,9 @@ jobs:
           fi
 
       - name: "Lerna Publish"
-        run: yarn lerna publish from-package --yes
+        run: |
+          if [ ${{ github.ref }} = refs/heads/develop ]; then
+            yarn lerna publish from-package --dist-tag dev --yes
+          else
+            yarn lerna publish from-package --yes
+          fi
