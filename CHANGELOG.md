@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0-dev.2](https://github.com/webtides/luna-js/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2022-02-02)
+
+
+### Bug Fixes
+
+* uses dist-tag dev for publishing from develop branch ([#84](https://github.com/webtides/luna-js/issues/84)) ([a835845](https://github.com/webtides/luna-js/commit/a8358453d073cacb5719c05764f3f59d73187b09))
+
+
+
+
+
 # [0.10.0-dev.1](https://github.com/webtides/luna-js/compare/v0.10.0-dev.0...v0.10.0-dev.1) (2022-02-02)
 
 **Note:** Version bump only for package luna-js-monorepo
