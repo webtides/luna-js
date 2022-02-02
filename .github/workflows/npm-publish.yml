@@ -41,8 +41,6 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: yarn install --frozen-lockfile
       - run: yarn workspace @webtides/luna-renderer build
-      - run: git reset --hard HEAD
-      - run: git status
 
       - name: "Configure Git User"
         run: |
