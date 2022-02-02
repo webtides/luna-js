@@ -2861,10 +2861,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz#aa58042711d6e3275dd37dc597e5d31e8c290a44"
   integrity sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==
 
-"@webtides/element-js@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@webtides/element-js/-/element-js-0.4.0.tgz#e3134b0c34123d485b507129b95cbf4a55344b83"
-  integrity sha512-zqwmU1Nn1CzBMYZiVR8WUfspk59j2xbmLKZx3KkB8cnVxnQkNrTlhexNHG9wSSwqIFyI3kZHeqtYFPVbvhZw+Q==
+"@webtides/element-js@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@webtides/element-js/-/element-js-0.4.1.tgz#0250cb11d07334ba39d1c584f15c40f8bb16d23e"
+  integrity sha512-jJEJlorm294imzKCBVDLtmYRHVDtp21ZXTLAp3u3E+GH5GgxolRwBZOY1Jr/XcPR5wx1TL/BLCBSzZ7zeGK9sQ==
   dependencies:
     lit-html "^1.2.1"
 
