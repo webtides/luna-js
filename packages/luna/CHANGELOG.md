@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1-dev.0](https://github.com/webtides/luna-js/compare/v0.10.0...v0.10.1-dev.0) (2022-02-07)
+
+
+### Bug Fixes
+
+* The 'false' text is not showing up on every page anymore ([#85](https://github.com/webtides/luna-js/issues/85)) ([24f08ab](https://github.com/webtides/luna-js/commit/24f08ab9c2996f2f4008e233bc2ab7911fe54a1f))
+
+
+
+
+
 # [0.10.0](https://github.com/webtides/luna-js/compare/v0.10.0-dev.2...v0.10.0) (2022-02-07)
 
 **Note:** Version bump only for package @webtides/luna-js
