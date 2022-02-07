@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/webtides/luna-js/compare/v0.6.0...v0.11.0) (2022-02-07)
+
+
+### Bug Fixes
+
+* **csr:** deferUpdate by default to prevent initial flickering ([445b65c](https://github.com/webtides/luna-js/commit/445b65cc479bf0a1ed0ea1b58ea842157f18bace))
+* don't crash if layout cannot be loaded ([19461a2](https://github.com/webtides/luna-js/commit/19461a2892ae45bdb84073e0cec8af912e7277c7))
+* Fixed the static copy task ([6e631f7](https://github.com/webtides/luna-js/commit/6e631f78f8a6e8d118847a139847f382862a4cc8))
+* Removed obsolete yarn.lock files ([350656b](https://github.com/webtides/luna-js/commit/350656b584f30f669e9ea7a1a35b817838b6d377))
+* The 'false' text is not showing up on every page anymore ([#85](https://github.com/webtides/luna-js/issues/85)) ([b4648ff](https://github.com/webtides/luna-js/commit/b4648ff97292be68d0c52f919621746e37f2d25f))
+
+
+
+
+
 # [0.11.0-dev.1](https://github.com/webtides/luna-js/compare/v0.11.0-dev.0...v0.11.0-dev.1) (2022-02-07)
 
 
