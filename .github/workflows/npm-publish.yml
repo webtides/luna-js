@@ -1,11 +1,6 @@
 name: NPM publish
 
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - develop
-      - main
   push:
     branches:
       - develop
