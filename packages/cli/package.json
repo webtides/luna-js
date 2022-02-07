@@ -39,7 +39,7 @@
     "dotenv": "^8.2.0",
     "glob-all": "^3.2.1",
     "inquirer": "^7.3.3",
-    "marked": "^2.0.1",
+    "marked": "^4.0.10",
     "node-fetch": "^2.6.1",
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2",
