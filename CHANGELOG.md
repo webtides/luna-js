@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/webtides/luna-js/compare/v0.10.0-dev.2...v0.10.0) (2022-02-07)
+
+
+### Bug Fixes
+
+* Removed the peerDependencies entry in the package.json ([#86](https://github.com/webtides/luna-js/issues/86)) ([dc7ae53](https://github.com/webtides/luna-js/commit/dc7ae53939197aac68ea4f617e4da649fd55bce4))
+
+
+
+
+
 # [0.10.0-dev.2](https://github.com/webtides/luna-js/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2022-02-02)
 
 
