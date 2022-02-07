@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.1](https://github.com/webtides/luna-js/compare/v0.11.0-dev.0...v0.11.0-dev.1) (2022-02-07)
+
+
+### Bug Fixes
+
+* Removed obsolete yarn.lock files ([01a4021](https://github.com/webtides/luna-js/commit/01a40210ab9fa7c6640c90dd2ba154a554cdfd6f))
+
+
+
+
+
 # [0.11.0-dev.0](https://github.com/webtides/luna-js/compare/v0.6.0...v0.11.0-dev.0) (2022-02-07)
 
 
