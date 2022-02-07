@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.2](https://github.com/webtides/luna-js/compare/v0.11.0-dev.1...v0.11.0-dev.2) (2022-02-07)
+
+**Note:** Version bump only for package luna-js-monorepo
+
+
+
+
+
 # [0.11.0-dev.1](https://github.com/webtides/luna-js/compare/v0.11.0-dev.0...v0.11.0-dev.1) (2022-02-07)
 
 
