@@ -100,6 +100,13 @@ describe("Luna routes test", function() {
         });
     });
 
+    describe("Page with markdown import", function() {
+        it('correctly loads the markdown import', async function() {
+            chai.expect(response.text).to.include(`SUCCESS`);
+            chai.expect(response.text).to.include(`I am a <strong>markdown</strong> text.`);
+        });
+    })
+
     describe("Route cache", function() {
         before(() => {
             const MemoryCache = require("../../../packages/luna/src/framework/cache/memory-cache").default;
