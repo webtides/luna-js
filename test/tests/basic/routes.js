@@ -102,6 +102,8 @@ describe("Luna routes test", function() {
 
     describe("Page with markdown import", function() {
         it('correctly loads the markdown import', async function() {
+            let response = await chai.request(`http://localhost:3010`).get('/markdown').send();
+
             chai.expect(response.text).to.include(`SUCCESS`);
             chai.expect(response.text).to.include(`I am a <strong>markdown</strong> text.`);
         });
