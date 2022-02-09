@@ -1,7 +1,7 @@
 import  path  from "path";
 import  fs  from "fs";
 import  frontmatter  from "@github-docs/frontmatter";
-import  marked  from "marked";
+import {marked}  from "marked";
 
 export const rollupPluginMarkdown = function(options) {
     const importers = { };
