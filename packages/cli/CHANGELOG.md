@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.4](https://github.com/webtides/luna-cli/compare/v0.11.0-dev.3...v0.11.0-dev.4) (2022-02-09)
+
+
+### Bug Fixes
+
+* Upated markdown plugin implemeted correctly & updated babel ([#99](https://github.com/webtides/luna-cli/issues/99)) ([cbb9a6e](https://github.com/webtides/luna-cli/commit/cbb9a6eec9841fd9db2a8930aa8496cb2e140a04))
+
+
+
+
+
 # [0.11.0-dev.3](https://github.com/webtides/luna-cli/compare/v0.6.0...v0.11.0-dev.3) (2022-02-09)
 
 
