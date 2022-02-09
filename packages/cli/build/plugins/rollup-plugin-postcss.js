@@ -1,9 +1,10 @@
+import path from "path";
+import fs from "fs";
+
 import postcss from "postcss";
 import postcssrc from "postcss-load-config";
 import postcssPluginImport from "postcss-import";
-
-import path from "path";
-import fs from "fs";
+import glob from "glob-all";
 
 import {getEntryType} from "./helpers/entries";
 
@@ -62,8 +63,19 @@ export const rollupPluginPostcss = function (options) {
         });
 
         messages.forEach(message => {
-            if (message.type === "dependency" && message.plugin === "postcss-import") {
+            if (message.type === "dependency") {
                 addWatchFile(message.file);
+            } else if (message.type === "dir-dependency") {
+                if (!message.dir) {
+                    return;
+                }
+
+                const messageGlob = message.glob ?? '**/*';
+
+                const files = glob.sync([ path.join(message.dir, messageGlob) ]);
+                if (files) {
+                    files.forEach(file => addWatchFile(file));
+                }
             }
         });
 
