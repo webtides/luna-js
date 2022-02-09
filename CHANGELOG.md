@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.3](https://github.com/webtides/luna-js/compare/v0.6.0...v0.11.0-dev.3) (2022-02-09)
+
+
+### Bug Fixes
+
+* Build renderer and clean working tree before publishing ([1c6dcf4](https://github.com/webtides/luna-js/commit/1c6dcf4f2fb07d8d95062e62d701fdecdb10b110))
+* **csr:** deferUpdate by default to prevent initial flickering ([445b65c](https://github.com/webtides/luna-js/commit/445b65cc479bf0a1ed0ea1b58ea842157f18bace))
+* don't crash if layout cannot be loaded ([19461a2](https://github.com/webtides/luna-js/commit/19461a2892ae45bdb84073e0cec8af912e7277c7))
+* Fixed the static copy task ([6e631f7](https://github.com/webtides/luna-js/commit/6e631f78f8a6e8d118847a139847f382862a4cc8))
+* Fixed the static copy task ([cadf1f6](https://github.com/webtides/luna-js/commit/cadf1f65e57b02f5252795441bc7f22203d99a21))
+* remove 'lib' from ignored foldres in renderer ([6c5f5bc](https://github.com/webtides/luna-js/commit/6c5f5bc39681a32dbe77d21e11ebdfb83a3dc02d))
+* Removed obsolete yarn.lock files ([350656b](https://github.com/webtides/luna-js/commit/350656b584f30f669e9ea7a1a35b817838b6d377))
+* Removed the peerDependencies entry in the package.json ([#86](https://github.com/webtides/luna-js/issues/86)) ([5962e36](https://github.com/webtides/luna-js/commit/5962e361e2efea652310acf480d9ff337c5bbfca))
+* run publish action only on push ([f87ddd0](https://github.com/webtides/luna-js/commit/f87ddd0f120f664452a7f28be2e14be78fe64112))
+* The 'false' text is not showing up on every page anymore ([#85](https://github.com/webtides/luna-js/issues/85)) ([b4648ff](https://github.com/webtides/luna-js/commit/b4648ff97292be68d0c52f919621746e37f2d25f))
+* uses dist-tag dev for publishing from develop branch ([#84](https://github.com/webtides/luna-js/issues/84)) ([3d5cc89](https://github.com/webtides/luna-js/commit/3d5cc894b39ee65191cba2f69d374fac67a8258f))
+
+
+### Features
+
+* automate package releases and use yarn workspaces ([#78](https://github.com/webtides/luna-js/issues/78)) ([d0163a0](https://github.com/webtides/luna-js/commit/d0163a06f78758dbf466b386541aca0427f8628b))
+* Load postcss config if available and added support for postcss 'dir-dependency' message ([#100](https://github.com/webtides/luna-js/issues/100)) ([0b7aa23](https://github.com/webtides/luna-js/commit/0b7aa2322c73d64990d3243f8eee2ee2c27f8c71))
+
+
+
+
+
 # [0.11.0-dev.2](https://github.com/webtides/luna-js/compare/v0.11.0-dev.1...v0.11.0-dev.2) (2022-02-07)
 
 **Note:** Version bump only for package luna-js-monorepo
