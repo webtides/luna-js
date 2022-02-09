@@ -24,11 +24,13 @@ export const rollupPluginPostcss = function (options) {
     const idsToExtract = [];
 
     const loadPostcssConfig = async () => {
+        let result = false;
+
         try {
-            return postcssrc();
-        } catch (error) {
-            return false;
-        }
+            result = await postcssrc();
+        } catch (error) { }
+
+        return result;
     };
 
     const processCss = async ({css, plugins, from = process.cwd()}) => {
