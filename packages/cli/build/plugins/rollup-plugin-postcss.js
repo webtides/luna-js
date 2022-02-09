@@ -1,10 +1,14 @@
 import postcss from "postcss";
+import postcssrc from "postcss-load-config";
+import postcssPluginImport from "postcss-import";
+
 import path from "path";
 import fs from "fs";
+
 import {getEntryType} from "./helpers/entries";
 
 const basePostcssPluginsBefore = [
-    require("postcss-import"),
+    postcssPluginImport,
 ];
 
 const basePostcssPluginsAfter = [];
@@ -19,8 +23,23 @@ export const rollupPluginPostcss = function (options) {
     const extractedCss = {};
     const idsToExtract = [];
 
-    const processCss = ({css, plugins, from = process.cwd()}) => {
-        return postcss([...basePostcssPluginsBefore, ...(plugins()), ...basePostcssPluginsAfter]).process(css, {
+    const loadPostcssConfig = async () => {
+        try {
+            return postcssrc();
+        } catch (error) {
+            return false;
+        }
+    };
+
+    const processCss = async ({css, plugins, from = process.cwd()}) => {
+        const loadedPostcssConfig = await loadPostcssConfig();
+
+        const pluginsToUse = loadedPostcssConfig ? loadedPostcssConfig.plugins : [
+            ...basePostcssPluginsBefore, ...(plugins()), ...basePostcssPluginsAfter
+        ];
+
+        return postcss(pluginsToUse).process(css, {
+            ...(loadedPostcssConfig ? loadedPostcssConfig.option : {}),
             from
         });
     };
