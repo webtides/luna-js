@@ -49,8 +49,10 @@ const prepareApiServer = async ({ hooks, apis, fallbackApiRoute, serveStaticSite
 
         const get = module.get || module.default;
         const post = module.post;
+        const remove = module.remove;
+        const put = module.put;
 
-        registerApiRoute(app, route, { get, post });
+        registerApiRoute(app, route, { get, post, remove, put });
     });
 
     await callHook(HOOKS.ROUTES_AFTER_REGISTER, {
@@ -60,7 +62,7 @@ const prepareApiServer = async ({ hooks, apis, fallbackApiRoute, serveStaticSite
     return app;
 };
 
-const registerApiRoute = (router, name, { get, post }) => {
+const registerApiRoute = (router, name, { get, post, put, remove }) => {
     get && router.get(`${name}`, (request, response) => {
         try {
             return get({request, response});
@@ -72,6 +74,22 @@ const registerApiRoute = (router, name, { get, post }) => {
     post && router.post(`${name}`, (request, response) => {
         try {
             return post({request, response});
+        } catch (error) {
+            return response.status(500);
+        }
+    });
+
+    post && router.put(`${name}`, (request, response) => {
+        try {
+            return put({request, response});
+        } catch (error) {
+            return response.status(500);
+        }
+    });
+
+    post && router.delete(`${name}`, (request, response) => {
+        try {
+            return remove({request, response});
         } catch (error) {
             return response.status(500);
         }
