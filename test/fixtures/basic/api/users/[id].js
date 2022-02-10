@@ -12,4 +12,19 @@ const post = async ({ request, response }) => {
     });
 };
 
-export { get, post };
+const remove = async ({ request, response }) => {
+    return response.json({
+        id: request.params.id,
+        delete: true
+    });
+};
+
+const put = async({ request, response }) => {
+    return response.json({
+        id: request.params.id,
+        put: true
+    });
+};
+
+
+export { get, post, put, remove };

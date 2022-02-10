@@ -16,7 +16,7 @@ const basic = () => {
         chai.expect(+response.body.id).to.be.equal(id);
     });
 
-    it('should be able to get and post to the same route', async function() {
+    it('should be able to get/post/put/delete to the same route', async function() {
         const id = Math.random() * 100;
         let response = await chai.request('http://localhost:3010').get(`/api/users/${id}`).send();
 
@@ -27,6 +27,16 @@ const basic = () => {
 
         chai.expect(+response.body.id).to.be.equal(id);
         chai.expect(response.body.post).to.be.true;
+
+        response = await chai.request('http://localhost:3010').put(`/api/users/${id}`).send();
+
+        chai.expect(+response.body.id).to.be.equal(id);
+        chai.expect(response.body.put).to.be.true;
+
+        response = await chai.request('http://localhost:3010').delete(`/api/users/${id}`).send();
+
+        chai.expect(+response.body.id).to.be.equal(id);
+        chai.expect(response.body.delete).to.be.true;
     });
 
     it("should use the fallback api route the /api/foo route", async function() {
