@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.5](https://github.com/webtides/luna-js/compare/v0.11.0-dev.4...v0.11.0-dev.5) (2022-02-11)
+
+
+### Features
+
+* Allow put/delete requests in api routes ([#101](https://github.com/webtides/luna-js/issues/101)) ([b4687cd](https://github.com/webtides/luna-js/commit/b4687cd12e5d938885772999780a171a4b9a0f62))
+
+
+
+
+
 # [0.11.0-dev.3](https://github.com/webtides/luna-js/compare/v0.6.0...v0.11.0-dev.3) (2022-02-09)
 
 

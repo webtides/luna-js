@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.5](https://github.com/webtides/luna-js/compare/v0.11.0-dev.4...v0.11.0-dev.5) (2022-02-11)
+
+**Note:** Version bump only for package @webtides/luna-renderer
+
+
+
+
+
 # [0.11.0-dev.3](https://github.com/webtides/luna-js/compare/v0.6.0...v0.11.0-dev.3) (2022-02-09)
 
 
