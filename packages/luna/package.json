@@ -14,11 +14,9 @@
     "camel-case": "^4.1.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "glob-all": "^3.2.1",
     "param-case": "^3.0.4",
     "posthtml": "^0.16.3",
-    "posthtml-insert-at": "0.2.7",
-    "simple-dom": "^1.4.0"
+    "posthtml-insert-at": "0.2.7"
   },
   "directories": {
     "lib": "../../lib"
