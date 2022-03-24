@@ -1,1 +1,1 @@
-require("./empty/cli");
+require('./empty/cli');

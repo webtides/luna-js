@@ -1,175 +1,168 @@
 // This import is needed that lit can set the global dom shim
-import {TemplateRenderer} from "../../../../packages/renderer/lib/lit";
+import { TemplateRenderer } from '../../../../packages/renderer/lib/lit';
 
-import {LitElement, html} from "../../../../packages/renderer/lib/lit/stubs";
-import {ElementFactory} from "../../../../packages/renderer/lib/lit";
-import {customElement, property} from "../../../../packages/renderer/lib/lit/stubs/decorators";
+import { LitElement, html } from '../../../../packages/renderer/lib/lit/stubs';
+import { ElementFactory } from '../../../../packages/renderer/lib/lit';
+import { customElement, property } from '../../../../packages/renderer/lib/lit/stubs/decorators';
 
-import ElementRenderer from "../../../../packages/luna/src/framework/engine/element-renderer";
-import ServiceContainer from "../../../../packages/luna/src/framework/services/service-container";
-import {chai} from '../../../helpers';
+import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer';
+import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container';
+import { chai } from '../../../helpers';
 
-describe("Lit server renderer test", function () {
+describe('Lit server renderer test', function () {
+	ServiceContainer.set(ElementRenderer, new ElementRenderer());
 
-    ServiceContainer.set(ElementRenderer, new ElementRenderer());
+	it('should render the component template as a string', async () => {
+		const component = {
+			element: class extends LitElement {
+				render() {
+					return html` <div>This should be rendered as a string.</div> `;
+				}
+			},
+			ElementFactory: ElementFactory,
+		};
 
-    it('should render the component template as a string', async () => {
-        const component = {
-            element: (class extends LitElement {
-                render() {
-                    return html`
-                        <div>This should be rendered as a string.</div>
-                    `;
-                }
-            }),
-            ElementFactory: ElementFactory,
-        };
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({component, attributes: {}, request: null, response: null});
+		chai.expect(result.markup).to.contain('<div>This should be rendered as a string.</div>');
+	});
 
-        chai.expect(result.markup).to.contain("<div>This should be rendered as a string.</div>");
-    });
+	it('ignore the lit decorators', async () => {
+		const component = {
+			element:
+				(
+					@customElement('my-element')
+					class extends LitElement {
+						@property()
+						foo = 'bar';
 
-    it('ignore the lit decorators', async () => {
-        const component = {
-            element: (
-                @customElement('my-element')
-                class extends LitElement {
+						render() {
+							return html` <div>This should be rendered as a string.</div> `;
+						}
+					}
+				),
+			ElementFactory: ElementFactory,
+		};
 
-                    @property()
-                    foo = 'bar';
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-                    render() {
-                        return html`
-                            <div>This should be rendered as a string.</div>
-                        `;
-                    }
-                }),
-            ElementFactory: ElementFactory,
-        };
+		chai.expect(result.markup).to.contain('<div>This should be rendered as a string.</div>');
+	});
 
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({component, attributes: {}, request: null, response: null});
+	it('should pass the attributes to the component', async () => {
+		const component = {
+			element: class extends LitElement {
+				properties() {
+					return {
+						text: 'no',
+					};
+				}
 
-        chai.expect(result.markup).to.contain("<div>This should be rendered as a string.</div>");
-    });
+				render() {
+					return html` <div>${this.text}</div> `;
+				}
+			},
+			ElementFactory: ElementFactory,
+		};
 
-    it('should pass the attributes to the component', async () => {
-        const component = {
-            element: (class extends LitElement {
-                properties() {
-                    return {
-                        text: 'no',
-                    };
-                }
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({
+			component,
+			attributes: { text: 'yes' },
+			request: null,
+			response: null,
+		});
 
-                render() {
-                    return html`
-                        <div>${this.text}</div>
-                    `;
-                }
-            }),
-            ElementFactory: ElementFactory,
-        };
+		chai.expect(result.markup).to.contain('<div><!--lit-part-->yes<!--/lit-part--></div>');
+	});
 
+	it('should parse dot-attributes as json', async () => {
+		const component = {
+			element: class extends LitElement {
+				properties() {
+					return {
+						test: { foo: 'bar' },
+					};
+				}
 
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({
-            component,
-            attributes: {text: 'yes'},
-            request: null,
-            response: null
-        });
+				render() {
+					return html` <div>${this.test.foo}</div> `;
+				}
+			},
+			ElementFactory: ElementFactory,
+		};
 
-        chai.expect(result.markup).to.contain("<div><!--lit-part-->yes<!--/lit-part--></div>");
-    });
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({
+			component,
+			attributes: { '.test': { foo: 'foo' } },
+			request: null,
+			response: null,
+		});
 
-    it('should parse dot-attributes as json', async () => {
-        const component = {
-            element: (class extends LitElement {
-                properties() {
-                    return {
-                        test: { foo: "bar" },
-                    };
-                }
+		chai.expect(result.markup).to.contain('<div><!--lit-part-->foo<!--/lit-part--></div>');
+		chai.expect(result.finalAttributes.test.foo).to.equal('foo');
+	});
 
-                render() {
-                    return html`
-                        <div>${this.test.foo}</div>
-                    `;
-                }
-            }),
-            ElementFactory: ElementFactory,
-        };
+	it('should not parse boolean attributes to a string', async () => {
+		const component = {
+			element: class extends LitElement {
+				render() {
+					return html``;
+				}
+			},
+			ElementFactory: ElementFactory,
+		};
 
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({
+			component,
+			attributes: { foo: false },
+			request: null,
+			response: null,
+		});
 
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({
-            component,
-            attributes: {".test": { foo: "foo" }},
-            request: null,
-            response: null
-        });
+		chai.expect(result.finalAttributes.foo).to.equal(false);
+	});
 
-        chai.expect(result.markup).to.contain("<div><!--lit-part-->foo<!--/lit-part--></div>");
-        chai.expect(result.finalAttributes.test.foo).to.equal("foo");
-    });
+	it('should set the "ssr" attributes', async () => {
+		const component = {
+			element: class extends LitElement {
+				render() {
+					return html``;
+				}
+			},
+			ElementFactory: ElementFactory,
+		};
 
-    it('should not parse boolean attributes to a string', async () => {
-        const component = {
-            element: (class extends LitElement {
-                render() {
-                    return html``;
-                }
-            }),
-            ElementFactory: ElementFactory,
-        };
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({component, attributes: { foo: false }, request: null, response: null});
+		chai.expect(result.finalAttributes.ssr).to.equal(true);
+	});
 
-        chai.expect(result.finalAttributes.foo).to.equal(false);
-    });
+	it('should not try to render the LitElement without render function', async () => {
+		const component = {
+			element: class extends LitElement {
+				properties() {
+					return {
+						test: 'no',
+					};
+				}
+			},
+			ElementFactory: ElementFactory,
+		};
 
-    it('should set the "ssr" attributes', async () => {
-        const component = {
-            element: (class extends LitElement {
-                render() {
-                    return html``;
-                }
-            }),
-            ElementFactory: ElementFactory,
-        };
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({
+			component,
+			attributes: { text: 'yes' },
+			request: null,
+			response: null,
+		});
 
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({component, attributes: {}, request: null, response: null});
-
-        chai.expect(result.finalAttributes.ssr).to.equal(true);
-    });
-
-    it('should not try to render the LitElement without render function', async () => {
-        const component = {
-            element: (class extends LitElement {
-                properties() {
-                    return {
-                        test: 'no',
-                    };
-                }
-            }),
-            ElementFactory: ElementFactory,
-        };
-
-
-        const renderer = ServiceContainer.get(ElementRenderer);
-        const result = await renderer.renderComponent({
-            component,
-            attributes: {text: 'yes'},
-            request: null,
-            response: null
-        });
-
-        chai.expect(result).to.equal(false);
-    });
-
+		chai.expect(result).to.equal(false);
+	});
 });

@@ -1,17 +1,16 @@
-import path from "path";
+import path from 'path';
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
 
-import {startRollup, startRollupWatch} from "../build";
-import {getConfig} from "../../config";
-
+import { startRollup, startRollupWatch } from '../build';
+import { getConfig } from '../../config';
 
 const buildEntryPoint = async () => {
-    console.log("Building entry point...");
+	console.log('Building entry point...');
 
-    await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.start.js"));
+	await startRollup(path.join(getConfig().currentDirectory, 'build/configs/rollup.config.start.js'));
 
-    console.log("Done building entry point.");
+	console.log('Done building entry point.');
 };
 
 /**
@@ -24,65 +23,68 @@ const buildEntryPoint = async () => {
  * @returns {Promise<void>}
  */
 const buildComponentsForApplication = async () => {
-    const {settings} = getConfig();
+	const { settings } = getConfig();
 
-    // Clean the build directory before starting a new build.
-    rimraf.sync(settings.build.output);
+	// Clean the build directory before starting a new build.
+	rimraf.sync(settings.build.output);
 
-    await buildEntryPoint();
+	await buildEntryPoint();
 
-    console.log("Building application..");
+	console.log('Building application..');
 
-    await startRollup(path.join(getConfig().currentDirectory, "build/configs/rollup.config.application.js"));
+	await startRollup(path.join(getConfig().currentDirectory, 'build/configs/rollup.config.application.js'));
 
-    console.log("Done building application.");
+	console.log('Done building application.');
 };
 
-const startApplicationDevelopmentBuild = async (callback = () => {
-}) => {
-    const {settings} = getConfig();
+const startApplicationDevelopmentBuild = async (callback = () => {}) => {
+	const { settings } = getConfig();
 
-    // Clean the build directory before starting a new build.
-    rimraf.sync(settings.build.output);
+	// Clean the build directory before starting a new build.
+	rimraf.sync(settings.build.output);
 
-    await buildEntryPoint();
+	await buildEntryPoint();
 
-    console.log("Start application development build...");
+	console.log('Start application development build...');
 
-    let watcher;
+	let watcher;
 
-    const initializeServerWatcher = async (restart = true) => {
-        if (!restart) {
-            return;
-        }
+	const initializeServerWatcher = async (restart = true) => {
+		if (!restart) {
+			return;
+		}
 
-        watcher = await startRollupWatch(
-            path.join(getConfig().currentDirectory, "build/configs", "rollup.config.application.js"),
-            () => {
-                callback();
-            },
-            () => {
-                watcher && watcher.close();
-            }
-        );
+		watcher = await startRollupWatch(
+			path.join(getConfig().currentDirectory, 'build/configs', 'rollup.config.application.js'),
+			() => {
+				callback();
+			},
+			() => {
+				watcher && watcher.close();
+			},
+		);
 
-        watcher.on('close', () => {
-            initializeServerWatcher(true);
-        })
-    };
+		watcher.on('close', () => {
+			initializeServerWatcher(true);
+		});
+	};
 
-    chokidar.watch([
-        ...settings.components.bundles.map(bundle => bundle.input),
-        ...settings.pages.input,
-        ...settings.api.input,
-        ...settings.hooks.input
-    ], { ignoreInitial: true })
-        .on("add", async (event, filePath) => {
-            console.log("File added. Restart watcher");
-            watcher && watcher.close();
-        });
+	chokidar
+		.watch(
+			[
+				...settings.components.bundles.map((bundle) => bundle.input),
+				...settings.pages.input,
+				...settings.api.input,
+				...settings.hooks.input,
+			],
+			{ ignoreInitial: true },
+		)
+		.on('add', async (event, filePath) => {
+			console.log('File added. Restart watcher');
+			watcher && watcher.close();
+		});
 
-    await initializeServerWatcher(true);
+	await initializeServerWatcher(true);
 };
 
-export {buildEntryPoint, buildComponentsForApplication, startApplicationDevelopmentBuild};
+export { buildEntryPoint, buildComponentsForApplication, startApplicationDevelopmentBuild };

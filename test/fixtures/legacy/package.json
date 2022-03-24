@@ -1,19 +1,19 @@
 {
-  "name": "legacy",
-  "version": "1.0.0",
-  "description": "",
-  "main": "luna.config.js",
-  "scripts": {
-    "build": "luna --build",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@webtides/luna-js": "file:webtides-luna-js-0.9.0-0.1.tgz"
-  },
-  "devDependencies": {
-    "@webtides/luna-cli": "file:webtides-luna-cli-0.9.0-0.1.tgz"
-  }
+	"name": "legacy",
+	"version": "1.0.0",
+	"description": "",
+	"main": "luna.config.js",
+	"scripts": {
+		"build": "luna --build",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@webtides/luna-js": "file:webtides-luna-js-0.9.0-0.1.tgz"
+	},
+	"devDependencies": {
+		"@webtides/luna-cli": "file:webtides-luna-cli-0.9.0-0.1.tgz"
+	}
 }

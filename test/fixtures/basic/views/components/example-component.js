@@ -1,8 +1,7 @@
 export default class ExampleComponent {
-
-    get template() {
-        return `
+	get template() {
+		return `
             MOCHA COMPONENT
         `;
-    }
+	}
 }

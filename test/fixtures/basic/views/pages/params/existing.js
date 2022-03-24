@@ -1,5 +1,5 @@
 export default async () => {
-    return `
+	return `
         NO PARAMETER
     `;
-}
+};

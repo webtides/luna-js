@@ -1,88 +1,92 @@
-import glob from "glob-all";
-import path from "path";
+import glob from 'glob-all';
+import path from 'path';
 
-export const generateBasePathsFromLunaConfig = settings => {
-    const basePaths = {
-        pages: [],
-        layouts: [],
-        components: [],
-        apis: [],
-        hooks: []
-    };
+export const generateBasePathsFromLunaConfig = (settings) => {
+	const basePaths = {
+		pages: [],
+		layouts: [],
+		components: [],
+		apis: [],
+		hooks: [],
+	};
 
-    const pages = settings.pages?.input?.flatMap(page => {
-        basePaths.pages.push({
-            basePath: page,
-            settings: {
-                factory: settings.pages.factory ?? false,
-                styles: settings.pages.styles ?? null,
-            }
-        })
-        return glob.sync(path.join(page, "**/*.js"));
-    }) ?? [];
+	const pages =
+		settings.pages?.input?.flatMap((page) => {
+			basePaths.pages.push({
+				basePath: page,
+				settings: {
+					factory: settings.pages.factory ?? false,
+					styles: settings.pages.styles ?? null,
+				},
+			});
+			return glob.sync(path.join(page, '**/*.js'));
+		}) ?? [];
 
-    const layouts = settings.layouts?.input?.flatMap(layout => {
-        basePaths.layouts.push({
-            basePath: layout,
-        });
-        return glob.sync(path.join(layout, "**/*.js"));
-    })
+	const layouts = settings.layouts?.input?.flatMap((layout) => {
+		basePaths.layouts.push({
+			basePath: layout,
+		});
+		return glob.sync(path.join(layout, '**/*.js'));
+	});
 
-    const apis = settings.api?.input?.flatMap(api => {
-        basePaths.apis.push({
-            basePath: api
-        });
-        return glob.sync(path.join(api, "**/*.js"));
-    }) ?? [];
+	const apis =
+		settings.api?.input?.flatMap((api) => {
+			basePaths.apis.push({
+				basePath: api,
+			});
+			return glob.sync(path.join(api, '**/*.js'));
+		}) ?? [];
 
-    const hooks = settings.hooks?.input?.flatMap(hook => {
-        basePaths.hooks.push({
-            basePath: hook
-        });
-        return glob.sync(path.join(hook, "**/*.js"));
-    }) ?? [];
+	const hooks =
+		settings.hooks?.input?.flatMap((hook) => {
+			basePaths.hooks.push({
+				basePath: hook,
+			});
+			return glob.sync(path.join(hook, '**/*.js'));
+		}) ?? [];
 
-    const components = settings.components?.bundles?.flatMap((componentBundle) => {
-        basePaths.components.push({
-            basePath: componentBundle.input,
-            settings: {
-                outputDirectory: componentBundle.output,
-                defaultTarget: componentBundle.defaultTarget,
-                factory: componentBundle.factory ?? false,
-                styles: componentBundle.styles ?? null,
-            },
-        });
-        return glob.sync(path.join(componentBundle.input, "**/*.js"))
-    }) ?? [];
+	const components =
+		settings.components?.bundles?.flatMap((componentBundle) => {
+			basePaths.components.push({
+				basePath: componentBundle.input,
+				settings: {
+					outputDirectory: componentBundle.output,
+					defaultTarget: componentBundle.defaultTarget,
+					factory: componentBundle.factory ?? false,
+					styles: componentBundle.styles ?? null,
+				},
+			});
+			return glob.sync(path.join(componentBundle.input, '**/*.js'));
+		}) ?? [];
 
-    const files = [...pages, ...layouts, ...components, ...apis, ...hooks];
+	const files = [...pages, ...layouts, ...components, ...apis, ...hooks];
 
-    return {
-        files,
-        basePaths
-    }
+	return {
+		files,
+		basePaths,
+	};
 };
 
 export const getEntryType = (id, basePaths) => {
-    if (id === undefined) {
-        return null;
-    }
+	if (id === undefined) {
+		return null;
+	}
 
-    let result = null;
+	let result = null;
 
-    Object.keys(basePaths).forEach(type => {
-        basePaths[type].forEach((row) => {
-            const {basePath, settings} = row;
+	Object.keys(basePaths).forEach((type) => {
+		basePaths[type].forEach((row) => {
+			const { basePath, settings } = row;
 
-            if (path.resolve(id).startsWith(path.resolve(basePath))) {
-                result = {
-                    type,
-                    basePath: path.resolve(basePath),
-                    settings,
-                }
-            }
-        })
-    });
+			if (path.resolve(id).startsWith(path.resolve(basePath))) {
+				result = {
+					type,
+					basePath: path.resolve(basePath),
+					settings,
+				};
+			}
+		});
+	});
 
-    return result;
+	return result;
 };
