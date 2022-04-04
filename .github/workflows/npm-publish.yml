@@ -33,16 +33,16 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
       - run: yarn install --frozen-lockfile
       - run: yarn workspace @webtides/luna-renderer build
 
-      - name: "Configure Git User"
+      - name: 'Configure Git User'
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
 
-      - name: "Lerna Version"
+      - name: 'Lerna Version'
         run: |
           if [ ${{ github.ref }} = refs/heads/develop ]; then
             yarn lerna version --conventional-commits --conventional-prerelease --preid dev --yes
@@ -50,7 +50,7 @@ jobs:
             yarn lerna version --conventional-commits --conventional-graduate --yes
           fi
 
-      - name: "Lerna Publish"
+      - name: 'Lerna Publish'
         run: |
           if [ ${{ github.ref }} = refs/heads/develop ]; then
             yarn lerna publish from-package --dist-tag dev --yes

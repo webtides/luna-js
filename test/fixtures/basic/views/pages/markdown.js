@@ -1,8 +1,8 @@
-import content, { data } from "../../app/data.md";
+import content, { data } from '../../app/data.md';
 
 export default () => {
-    return `
-        ${content} 
+	return `
+        ${content}
         ${data.config ? 'SUCCESS' : ''}
     `;
-}
+};

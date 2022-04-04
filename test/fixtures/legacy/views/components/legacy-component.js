@@ -1,8 +1,7 @@
 export default class LegacyComponent {
-
-    template() {
-        return `
+	template() {
+		return `
             LEGACY COMPONENT
         `;
-    }
+	}
 }

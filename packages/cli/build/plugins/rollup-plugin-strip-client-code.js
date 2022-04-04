@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import {requireDynamically} from "./helpers/dynamic-require";
+import { requireDynamically } from './helpers/dynamic-require';
 
-import {getEntryType} from "./helpers/entries";
+import { getEntryType } from './helpers/entries';
 
 // This is used so that we can have a chain of imports
 // an still load the appropriate stub
@@ -19,52 +19,51 @@ const availableEntryTypes = {};
  *
  * @returns {*}
  */
-export const rollupPluginStripClientCode = function ({basePaths}) {
+export const rollupPluginStripClientCode = function ({ basePaths }) {
+	const resolvedStubs = {};
 
-    const resolvedStubs = {};
+	return {
+		name: 'luna-strip-client-code',
 
-    return {
-        name: 'luna-strip-client-code',
+		async resolveId(source, importer, options) {
+			let entryType = getEntryType(importer, basePaths);
 
-        async resolveId(source, importer, options) {
-            let entryType = getEntryType(importer, basePaths);
+			if (entryType === null) {
+				// There is a chance we can are a child of the entry type.
+				entryType = availableEntryTypes[importer];
+			}
 
-            if (entryType === null) {
-                // There is a chance we can are a child of the entry type.
-                entryType = availableEntryTypes[importer];
-            }
+			if (entryType && typeof entryType.settings?.factory === 'string') {
+				const { factory } = entryType.settings;
 
-            if (entryType && typeof entryType.settings?.factory === 'string') {
-                const {factory} = entryType.settings;
+				const factoryModule = requireDynamically(factory);
 
-                const factoryModule = requireDynamically(factory);
+				// This is probably pretty expensive. Is there a way with a smaller footprint?
+				const resolution = await this.resolve(source, importer, { skipSelf: true, ...options });
 
-                // This is probably pretty expensive. Is there a way with a smaller footprint?
-                const resolution = await this.resolve(source, importer, {skipSelf: true, ...options});
+				if (resolution?.id && path.isAbsolute(resolution.id)) {
+					availableEntryTypes[resolution.id] = entryType;
+				}
 
-                if (resolution?.id && path.isAbsolute(resolution.id)) {
-                    availableEntryTypes[resolution.id] = entryType;
-                }
+				const stubs = await factoryModule.stubs();
+				for (const { sources, stub } of stubs) {
+					if (sources.includes(source)) {
+						resolvedStubs[source] = stub;
+						return source;
+					}
+				}
+			}
 
-                const stubs = await factoryModule.stubs();
-                for (const {sources, stub} of stubs) {
-                    if (sources.includes(source)) {
-                        resolvedStubs[source] = stub;
-                        return source;
-                    }
-                }
-            }
+			return null;
+		},
 
-            return null;
-        },
+		async load(id) {
+			if (resolvedStubs[id]) {
+				const stub = resolvedStubs[id];
+				return fs.readFileSync(stub, 'utf-8');
+			}
 
-        async load(id) {
-            if (resolvedStubs[id]) {
-                const stub = resolvedStubs[id];
-                return fs.readFileSync(stub, 'utf-8');
-            }
-
-            return null;
-        },
-    }
-}
+			return null;
+		},
+	};
+};

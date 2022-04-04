@@ -1,39 +1,55 @@
 {
-  "name": "luna-js-monorepo",
-  "version": "1.0.0",
-  "description": "Static Site Generation & SSR framework for custom-elements.",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha test/index.js --require @babel/register"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/webtides/luna-js.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/webtides/luna-js/issues"
-  },
-  "homepage": "https://github.com/webtides/luna-js#readme",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-proposal-decorators": "^7.13.15",
-    "@babel/preset-env": "^7.13.15",
-    "@babel/register": "^7.13.16",
-    "chai": "^4.3.4",
-    "chai-fs": "^2.0.0",
-    "chai-http": "^4.3.0",
-    "lerna": "^4.0.0",
-    "mocha": "^9.2.0",
-    "nyc": "^15.1.0"
-  },
-  "dependencies": {
-    "dotenv": "^10.0.0"
-  }
+	"name": "luna-js-monorepo",
+	"version": "1.0.0",
+	"description": "Static Site Generation & SSR framework for custom-elements.",
+	"main": "index.js",
+	"scripts": {
+		"test": "mocha test/index.js --require @babel/register"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/webtides/luna-js.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/webtides/luna-js/issues"
+	},
+	"homepage": "https://github.com/webtides/luna-js#readme",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"devDependencies": {
+		"@babel/plugin-proposal-class-properties": "^7.13.0",
+		"@babel/plugin-proposal-decorators": "^7.13.15",
+		"@babel/preset-env": "^7.13.15",
+		"@babel/register": "^7.13.16",
+		"chai": "^4.3.4",
+		"chai-fs": "^2.0.0",
+		"chai-http": "^4.3.0",
+		"eslint": "^8.11.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"husky": "^7.0.4",
+		"lerna": "^4.0.0",
+		"lint-staged": "^12.3.7",
+		"mocha": "^9.2.0",
+		"nyc": "^15.1.0",
+		"prettier": "^2.6.0"
+	},
+	"dependencies": {
+		"dotenv": "^10.0.0"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,json,yaml,yml,md}": [
+			"prettier --write"
+		]
+	}
 }

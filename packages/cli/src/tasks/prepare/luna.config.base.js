@@ -1,64 +1,64 @@
 export default {
-    port: 3005,
+	port: 3005,
 
-    build: {
-        output: '.build',
+	build: {
+		output: '.build',
 
-        server: {
-            resolveNodeModules: [],
-        },
-    },
+		server: {
+			resolveNodeModules: [],
+		},
+	},
 
-    pages: {
-        input: [],
-        fallback: false
-    },
+	pages: {
+		input: [],
+		fallback: false,
+	},
 
-    api: {
-        input: [],
-        context: '/api',
-        fallback: null
-    },
+	api: {
+		input: [],
+		context: '/api',
+		fallback: null,
+	},
 
-    routes: {
-        cacheable: []
-    },
+	routes: {
+		cacheable: [],
+	},
 
-    components: {
-        bundles: []
-    },
+	components: {
+		bundles: [],
+	},
 
-    hooks: {
-        input: []
-    },
+	hooks: {
+		input: [],
+	},
 
-    assets: {
-        domain: null,
-        context: null,
+	assets: {
+		domain: null,
+		context: null,
 
-        styles: {
-            bundles: []
-        },
+		styles: {
+			bundles: [],
+		},
 
-        static: { }
-    },
+		static: {},
+	},
 
-    cache: {
-        file: {
-            directory: '.storage/cache'
-        }
-    },
+	cache: {
+		file: {
+			directory: '.storage/cache',
+		},
+	},
 
-    export: {
-        output: '.export',
+	export: {
+		output: '.export',
 
-        api: {
-            output: {
-                directory: ".api",
-                filename: "api-server.js"
-            },
+		api: {
+			output: {
+				directory: '.api',
+				filename: 'api-server.js',
+			},
 
-            excluded: []
-        },
-    }
-}
+			excluded: [],
+		},
+	},
+};

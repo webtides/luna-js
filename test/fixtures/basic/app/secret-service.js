@@ -1,8 +1,8 @@
-import {HideFromClient} from "@webtides/luna-js";
+import { HideFromClient } from '@webtides/luna-js';
 
 @HideFromClient
 export default class SecretService {
-    getSecret() {
-        return "App secret";
-    }
+	getSecret() {
+		return 'App secret';
+	}
 }

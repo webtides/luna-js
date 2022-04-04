@@ -1,5 +1,5 @@
 export default async () => {
-    return `
+	return `
         <property-component foo="MOCHA"></property-component>
     `;
 };

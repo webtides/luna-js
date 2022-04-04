@@ -1,54 +1,54 @@
-import glob from "glob";
-import fs from "fs";
-import path from "path";
+import glob from 'glob';
+import fs from 'fs';
+import path from 'path';
 
 const getPathRelativeToBasePath = (path, basePath) => {
-    if (basePath.length === 0) {
-        return '.';
-    }
+	if (basePath.length === 0) {
+		return '.';
+	}
 
-    return path.substring(basePath.length - 1);
+	return path.substring(basePath.length - 1);
 };
 
 export const rollupPluginCopy = function (options) {
-    return {
-        name: 'luna-copy',
-        generateBundle() {
-            const {sources} = options;
+	return {
+		name: 'luna-copy',
+		generateBundle() {
+			const { sources } = options;
 
-            sources.forEach(source => {
-                const {input, output} = source;
+			sources.forEach((source) => {
+				const { input, output } = source;
 
-                if (!input || !output) {
-                    return;
-                }
+				if (!input || !output) {
+					return;
+				}
 
-                let basePath = '';
-                if (input.indexOf('**') !== -1) {
-                    basePath = input.replace(`**\\*`, '**/*').split("**/*")[0];
-                }
+				let basePath = '';
+				if (input.indexOf('**') !== -1) {
+					basePath = input.replace(`**\\*`, '**/*').split('**/*')[0];
+				}
 
-                const files = basePath === '' ? [input] : glob.sync(input);
+				const files = basePath === '' ? [input] : glob.sync(input);
 
-                files.forEach(file => {
-                    const target = path.join(
-                        options.publicDirectory,
-                        output,
-                        getPathRelativeToBasePath(file, basePath)
-                    );
+				files.forEach((file) => {
+					const target = path.join(
+						options.publicDirectory,
+						output,
+						getPathRelativeToBasePath(file, basePath),
+					);
 
-                    if (fs.lstatSync(file).isDirectory()) {
-                        fs.mkdirSync(target, {recursive: true});
-                        return;
-                    }
+					if (fs.lstatSync(file).isDirectory()) {
+						fs.mkdirSync(target, { recursive: true });
+						return;
+					}
 
-                    if (!fs.existsSync(path.dirname(target))) {
-                        fs.mkdirSync(path.dirname(target), {recursive: true});
-                    }
+					if (!fs.existsSync(path.dirname(target))) {
+						fs.mkdirSync(path.dirname(target), { recursive: true });
+					}
 
-                    fs.copyFileSync(file, target);
-                })
-            });
-        },
-    }
-}
+					fs.copyFileSync(file, target);
+				});
+			});
+		},
+	};
+};

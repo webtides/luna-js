@@ -1,16 +1,14 @@
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
 
-import postcss from "postcss";
-import postcssrc from "postcss-load-config";
-import postcssPluginImport from "postcss-import";
-import glob from "glob-all";
+import postcss from 'postcss';
+import postcssrc from 'postcss-load-config';
+import postcssPluginImport from 'postcss-import';
+import glob from 'glob-all';
 
-import {getEntryType} from "./helpers/entries";
+import { getEntryType } from './helpers/entries';
 
-const basePostcssPluginsBefore = [
-    postcssPluginImport,
-];
+const basePostcssPluginsBefore = [postcssPluginImport];
 
 const basePostcssPluginsAfter = [];
 
@@ -20,148 +18,148 @@ const basePostcssPluginsAfter = [];
  * @returns {string|{transform(*=, *=): Promise<string|{code: string, map: SourceMapGenerator & {toJSON(): RawSourceMap}}|null>, writeBundle(): Promise<void>, name: string, resolveId(*=, *=): Promise<string|*|null>}|null|{code: string, map: SourceMap}|*}
  */
 export const rollupPluginPostcss = function (options) {
-    const importers = {};
-    const extractedCss = {};
-    const idsToExtract = [];
+	const importers = {};
+	const extractedCss = {};
+	const idsToExtract = [];
 
-    const loadPostcssConfig = async () => {
-        let result = false;
+	const loadPostcssConfig = async () => {
+		let result = false;
 
-        try {
-            result = await postcssrc();
-        } catch (error) { }
+		try {
+			result = await postcssrc();
+		} catch (error) {}
 
-        return result;
-    };
+		return result;
+	};
 
-    const processCss = async ({css, plugins, from = process.cwd()}) => {
-        const loadedPostcssConfig = await loadPostcssConfig();
+	const processCss = async ({ css, plugins, from = process.cwd() }) => {
+		const loadedPostcssConfig = await loadPostcssConfig();
 
-        const pluginsToUse = loadedPostcssConfig ? loadedPostcssConfig.plugins : [
-            ...basePostcssPluginsBefore, ...(plugins()), ...basePostcssPluginsAfter
-        ];
+		const pluginsToUse = loadedPostcssConfig
+			? loadedPostcssConfig.plugins
+			: [...basePostcssPluginsBefore, ...plugins(), ...basePostcssPluginsAfter];
 
-        return postcss(pluginsToUse).process(css, {
-            ...(loadedPostcssConfig ? loadedPostcssConfig.option : {}),
-            from
-        });
-    };
+		return postcss(pluginsToUse).process(css, {
+			...(loadedPostcssConfig ? loadedPostcssConfig.option : {}),
+			from,
+		});
+	};
 
-    const loadAppropriatePlugins = (id) => {
-        if (!options.serverInclude) {
-            return options.plugins ?? (() => []);
-        }
+	const loadAppropriatePlugins = (id) => {
+		if (!options.serverInclude) {
+			return options.plugins ?? (() => []);
+		}
 
-        return getEntryType(id, options.basePaths)?.settings?.styles?.plugins ?? (() => []);
-    };
+		return getEntryType(id, options.basePaths)?.settings?.styles?.plugins ?? (() => []);
+	};
 
-    const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
-        const {css, map, messages} = await processCss({
-            css: code,
-            plugins: loadAppropriatePlugins(id),
-            from: id
-        });
+	const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
+		const { css, map, messages } = await processCss({
+			css: code,
+			plugins: loadAppropriatePlugins(id),
+			from: id,
+		});
 
-        messages.forEach(message => {
-            if (message.type === "dependency") {
-                addWatchFile(message.file);
-            } else if (message.type === "dir-dependency") {
-                if (!message.dir) {
-                    return;
-                }
+		messages.forEach((message) => {
+			if (message.type === 'dependency') {
+				addWatchFile(message.file);
+			} else if (message.type === 'dir-dependency') {
+				if (!message.dir) {
+					return;
+				}
 
-                const messageGlob = message.glob ?? '**/*';
+				const messageGlob = message.glob ?? '**/*';
 
-                const files = glob.sync([ path.join(message.dir, messageGlob) ]);
-                if (files) {
-                    files.forEach(file => addWatchFile(file));
-                }
-            }
-        });
+				const files = glob.sync([path.join(message.dir, messageGlob)]);
+				if (files) {
+					files.forEach((file) => addWatchFile(file));
+				}
+			}
+		});
 
-        return {css, map};
-    }
+		return { css, map };
+	};
 
-    return {
-        name: 'luna-postcss',
+	return {
+		name: 'luna-postcss',
 
-        async resolveId(source, importer) {
-            if (source.endsWith(".css")) {
+		async resolveId(source, importer) {
+			if (source.endsWith('.css')) {
+				if (!!importer) {
+					const importerDirectory = path.dirname(importer);
 
-                if (!!importer) {
-                    const importerDirectory = path.dirname(importer);
+					const id = path.join(importerDirectory, source);
+					importers[id] = importer;
 
-                    const id = path.join(importerDirectory, source);
-                    importers[id] = importer;
+					return id;
+				}
 
-                    return id;
-                }
+				// We have imported the css file directly.
+				idsToExtract.push(source);
+				return source;
+			}
 
-                // We have imported the css file directly.
-                idsToExtract.push(source);
-                return source;
-            }
+			return null;
+		},
 
-            return null;
-        },
+		async transform(code, id) {
+			if (id.endsWith('.css') && importers[id]) {
+				if (options.ignore) {
+					return 'export default null';
+				}
 
-        async transform(code, id) {
+				const { css, map } = await processCssAndWatchDependencies(code, id, this.addWatchFile);
 
-            if (id.endsWith(".css") && importers[id]) {
-                if (options.ignore) {
-                    return "export default null";
-                }
+				const moduleInformation = this.getModuleInfo(importers[id]);
 
-                const {css, map} = await processCssAndWatchDependencies(code, id, this.addWatchFile);
+				// Check if the imported css is assigned to a variable. If not, we should extract it.
+				moduleInformation.ast.body.map((node) => {
+					if (node.type === 'ImportDeclaration') {
+						if (
+							path.join(path.dirname(importers[id]), node.source.value) === id &&
+							node.specifiers.length === 0
+						) {
+							extractedCss[id] = css;
+						}
+					}
+				});
 
-                const moduleInformation = this.getModuleInfo(importers[id]);
+				// We can always export the css, because it will be removed if it is unused.
+				return {
+					code: `export default \`${css}\`;`,
+					map,
+				};
+			}
 
-                // Check if the imported css is assigned to a variable. If not, we should extract it.
-                moduleInformation.ast.body.map(node => {
-                    if (node.type === "ImportDeclaration") {
-                        if (path.join(path.dirname(importers[id]), node.source.value) === id
-                            && node.specifiers.length === 0) {
-                            extractedCss[id] = css;
-                        }
-                    }
-                })
+			if (idsToExtract.includes(id)) {
+				if (options.ignore || (options.serverInclude ?? false)) {
+					return 'export default null';
+				}
 
-                // We can always export the css, because it will be removed if it is unused.
-                return {
-                    code: `export default \`${css}\`;`,
-                    map
-                };
-            }
+				extractedCss[id] = (await processCssAndWatchDependencies(code, id, this.addWatchFile)).css;
+				return '';
+			}
 
-            if (idsToExtract.includes(id)) {
-                if (options.ignore || (options.serverInclude ?? false)) {
-                    return "export default null";
-                }
+			return null;
+		},
 
-                extractedCss[id] = (await processCssAndWatchDependencies(code, id, this.addWatchFile)).css;
-                return '';
-            }
+		async writeBundle() {
+			if (options.ignore || options.serverInclude) {
+				return;
+			}
 
-            return null;
-        },
+			const output = path.join(options.publicDirectory, options.output);
+			const outputDirectory = path.dirname(output);
 
-        async writeBundle() {
-            if (options.ignore || options.serverInclude) {
-                return;
-            }
+			const css = Object.values(extractedCss).join('\r\n');
 
-            const output = path.join(options.publicDirectory, options.output);
-            const outputDirectory = path.dirname(output);
+			if (!fs.existsSync(outputDirectory)) {
+				fs.mkdirSync(outputDirectory, { recursive: true });
+			}
 
-            const css = Object.values(extractedCss).join("\r\n");
+			console.log('Writing extracted css to', output);
 
-            if (!fs.existsSync(outputDirectory)) {
-                fs.mkdirSync(outputDirectory, {recursive: true});
-            }
-
-            console.log("Writing extracted css to", output);
-
-            fs.writeFileSync(output, css, 'utf-8');
-        }
-    }
-}
+			fs.writeFileSync(output, css, 'utf-8');
+		},
+	};
+};
