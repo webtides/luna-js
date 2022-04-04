@@ -27,8 +27,8 @@ const getStaticSiteEntryPoints = async () => {
 
 	const pages = JSON.parse(fs.readFileSync(settings._generated.manifest, 'UTF-8')).pages;
 
-	if (typeof settings.export?.entries === 'function') {
-		return (await settings.export.entries(pages.map((page) => page.route))).map((page) => normalizeRoute(page));
+	if (typeof settings.export?.pages === 'function') {
+		return (await settings.export.pages(pages.map((page) => page.route))).map((page) => normalizeRoute(page));
 	}
 
 	return pages.filter((page) => !page.fallback).map((page) => normalizeRoute(page.route));
