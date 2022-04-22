@@ -68,7 +68,7 @@ export default class ComponentLoader {
 
         for (const componentModule of manifest.components) {
             const {file, relativePath, settings, children} = componentModule;
-            const absolutePath = path.join(basePath, file);
+            const absolutePath = path.posix.join(basePath, file);
 
             const component = await this.loadSingleComponent({
                 absolutePath, file, relativePath, settings, children

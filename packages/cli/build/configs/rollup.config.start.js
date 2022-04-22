@@ -10,13 +10,14 @@ export default async () => {
 
 	const production = process.env.NODE_ENV === 'production';
 
-	const bundle = {
-		input: '@webtides/luna-js/start.js',
-		output: {
+	const entries = [ 'start', 'framework' ];
+	return entries.map((entry) => ({
+		input: `@webtides/luna-js/${entry}.js`,
+			output: {
 			dir: settings._generated.baseDirectory,
-			entryFileNames: 'start.js',
-			sourcemap: production ? false : 'inline',
-			format: 'cjs',
+				entryFileNames: `${entry}.js`,
+				sourcemap: production ? false : 'inline',
+				format: 'cjs',
 		},
 		plugins: [
 			nodeResolve({
@@ -28,7 +29,5 @@ export default async () => {
 			}),
 			json(),
 		],
-	};
-
-	return [bundle];
+	}));
 };
