@@ -61,7 +61,7 @@ module.exports = {
 			excluded: ['cors'],
 		},
 
-		entries: async () => {
+		pages: async () => {
 			return ['', '/fallback', '/params/export'];
 		},
 	},
