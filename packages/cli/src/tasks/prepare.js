@@ -1,11 +1,14 @@
 import fs from 'fs';
-import path from 'path';
+import genericPath from 'path';
 
 import deepmerge from 'deepmerge';
 import inquirer from 'inquirer';
 
 import { getConfig, setConfig } from '../config';
 import defaultSettings from './prepare/luna.config.base';
+
+// Use the posix module to generate posix style directory separators on windows machines.
+const path = genericPath.posix;
 
 const getPathToConfigFile = (currentWorkingDirectory = process.cwd()) => {
 	return path.join(currentWorkingDirectory, 'luna.config.js');

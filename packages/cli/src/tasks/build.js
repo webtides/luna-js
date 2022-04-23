@@ -1,5 +1,5 @@
 import * as rollup from 'rollup';
-import loadConfigFile from 'rollup/dist/loadConfigFile';
+import loadConfigFile from 'rollup/dist/loadConfigFile.js';
 
 const startRollupWatch = async (configFile, callback = () => {}, fileRemovedCallback = () => {}) => {
 	try {
