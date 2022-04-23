@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.8](https://github.com/webtides/luna-cli/compare/v0.11.0-dev.7...v0.11.0-dev.8) (2022-04-23)
+
+
+### Features
+
+* bundle the framework without starting luna to allow custom handers ([#105](https://github.com/webtides/luna-cli/issues/105)) ([1006300](https://github.com/webtides/luna-cli/commit/1006300a522f0794a12744ecebe299fe970635c2))
+
+
+
+
+
 # [0.11.0-dev.7](https://github.com/webtides/luna-cli/compare/v0.11.0-dev.6...v0.11.0-dev.7) (2022-04-05)
 
 **Note:** Version bump only for package @webtides/luna-cli

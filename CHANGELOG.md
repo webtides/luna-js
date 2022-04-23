@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.8](https://github.com/webtides/luna-js/compare/v0.11.0-dev.7...v0.11.0-dev.8) (2022-04-23)
+
+
+### Bug Fixes
+
+* removed legacy fixtures and fixes static export test ([#106](https://github.com/webtides/luna-js/issues/106)) ([72ae37c](https://github.com/webtides/luna-js/commit/72ae37cee0309cb98e54392b0dcb3f37c5d9e296))
+
+
+### Features
+
+* bundle the framework without starting luna to allow custom handers ([#105](https://github.com/webtides/luna-js/issues/105)) ([1006300](https://github.com/webtides/luna-js/commit/1006300a522f0794a12744ecebe299fe970635c2))
+
+
+
+
+
 # [0.11.0-dev.7](https://github.com/webtides/luna-js/compare/v0.11.0-dev.6...v0.11.0-dev.7) (2022-04-05)
 
 **Note:** Version bump only for package luna-js-monorepo
