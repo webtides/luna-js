@@ -48,7 +48,7 @@ const invokeRoute = async ({routeDefinition, request, response}) => {
 	const html = await documentRenderer.render(page);
 
 	if (response.headersSent) {
-		return;
+		return response.end();
 	}
 
 	if (request.$$luna?.isCacheable) {

@@ -166,7 +166,7 @@ export default class ElementFactory {
         });
 
         // At last we are loading the dynamic properties from the element.
-        const dynamicProperties = await this.getDynamicProperties();
+        const dynamicProperties = (await this.getDynamicProperties()) ?? {};
         Object.keys(dynamicProperties).forEach((key) => {
             this.element[key] = dynamicProperties[key];
         });
