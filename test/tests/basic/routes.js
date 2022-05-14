@@ -1,4 +1,4 @@
-const { chai, sleep } = require('../../helpers');
+const {chai, sleep} = require('../../helpers');
 
 describe('Luna routes test', function () {
 	this.timeout(20000);
@@ -8,7 +8,7 @@ describe('Luna routes test', function () {
 
 		global.originalConsoleLog = console.log;
 
-		const { startLuna } = require('../../../packages/luna/src/framework');
+		const {startLuna} = require('../../../packages/luna/src/framework');
 		await startLuna();
 
 		await sleep(600);
@@ -17,7 +17,7 @@ describe('Luna routes test', function () {
 	});
 
 	after(async function () {
-		const { stopLuna } = require('../../../packages/luna/src/framework');
+		const {stopLuna} = require('../../../packages/luna/src/framework');
 		await stopLuna();
 
 		console.log = global.originalConsoleLog;
@@ -109,21 +109,27 @@ describe('Luna routes test', function () {
 		});
 	});
 
-	describe('Page with redirect', function() {
+	describe('Page with redirect', function () {
 		it('correctly performs the redirect', async function (done) {
-			let response = await chai.request(`http://localhost:3010`)
+			await chai.request(`http://localhost:3010`)
 				.get('/redirect')
 				.send()
-				.redirects(0);
-
-			response.should.have.status(302);
+				.redirects(0)
+				.end((err, res, body) => {
+					res.should.have.status(302);
+					done();
+				});
 		});
 
 		it('correctly performs the redirect with a component page', async function (done) {
-			let response = await chai.request(`http://localhost:3010`)
+			await chai.request(`http://localhost:3010`)
 				.get('/redirect/page-component')
 				.send()
-				.redirects(0);
+				.redirects(0)
+				.end((err, res, body) => {
+					res.should.have.status(302);
+					done();
+				});
 
 			response.should.have.status(302);
 		});
@@ -135,7 +141,7 @@ describe('Luna routes test', function () {
 
 			class TestCache extends MemoryCache {
 				async get(key, group = 'default', defaultValue = false) {
-					console.log('Cache hit', { group, key });
+					console.log('Cache hit', {group, key});
 					return super.get(key, group, defaultValue);
 				}
 			}

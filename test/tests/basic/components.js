@@ -46,12 +46,14 @@ describe('Luna element test', function () {
 
 	describe('Special cases', function () {
 		it('correctly performs the redirect', async function (done) {
-			let response = await chai.request(`http://localhost:3010`)
+			chai.request(`http://localhost:3010`)
 				.get('/redirect/component')
 				.send()
-				.redirects(0);
-
-			response.should.have.status(302);
+				.redirects(0)
+				.end((err, res, body) => {
+					res.should.have.status(302);
+					done();
+				});
 		})
 	});
 });
