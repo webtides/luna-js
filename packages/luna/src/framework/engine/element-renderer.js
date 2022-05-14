@@ -78,6 +78,10 @@ export default class ElementRenderer {
 			return false;
 		}
 
-		return this.renderComponentUsingFactory({ factory });
+		const result = await this.renderComponentUsingFactory({ factory });
+		return {
+			...result,
+			finalAttributes: await factory.loadFinalAttributes(),
+		};
 	}
 }
