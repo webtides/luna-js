@@ -57,8 +57,8 @@ export default class RoutesLoader {
 		const basePath = settings._generated.applicationDirectory;
 
 		const routes = [
-			...manifest.pages,
 			...manifest.apis,
+			...manifest.pages,
 		];
 
 		return routes
