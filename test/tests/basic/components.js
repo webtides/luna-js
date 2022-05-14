@@ -45,9 +45,13 @@ describe('Luna element test', function () {
 	});
 
 	describe('Special cases', function () {
-		it("doesn't include the legacy bundle", async function () {
-			const response = await chai.request('http://localhost:3010').get('/rendering').send();
-			chai.expect(response.text).to.not.include('bundle.legacy.js');
-		});
+		it('correctly performs the redirect', async function (done) {
+			let response = await chai.request(`http://localhost:3010`)
+				.get('/redirect/component')
+				.send()
+				.redirects(0);
+
+			response.should.have.status(302);
+		})
 	});
 });

@@ -109,6 +109,17 @@ describe('Luna routes test', function () {
 		});
 	});
 
+	describe('Page with redirect', function() {
+		it('correctly performs the redirect', async function (done) {
+			let response = await chai.request(`http://localhost:3010`)
+				.get('/redirect')
+				.send()
+				.redirects(0);
+
+			response.should.have.status(302);
+		})
+	});
+
 	describe('Route cache', function () {
 		before(() => {
 			const MemoryCache = require('../../../packages/luna/src/framework/cache/memory-cache').default;
