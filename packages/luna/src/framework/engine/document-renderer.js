@@ -81,7 +81,7 @@ export default class DocumentRenderer {
 			};
 		}
 
-        const result = await this.elementRenderer.renderComponent({
+        const result = await this.elementRenderer.renderComponentUsingFactory({
 			factory
         });
 

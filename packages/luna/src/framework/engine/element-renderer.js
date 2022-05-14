@@ -45,7 +45,7 @@ export default class ElementRenderer {
      *
      * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
      */
-    async renderComponent({ factory }) {
+    async renderComponentUsingFactory({ factory }) {
         const template = await factory.template();
         const markup = await factory.component.ElementFactory.renderer().renderToString(template, { factory });
 
@@ -53,5 +53,31 @@ export default class ElementRenderer {
             markup,
             element: factory.element,
         };
-    };
+    }
+
+	/**
+	 * Takes a single component object and renders the element.
+	 * Fetches all dynamic properties for the component & loads
+	 * the static properties.
+	 *
+	 * @param component ({ element: * })
+	 * @param attributes
+	 * @param request
+	 * @param response
+	 * @param group string      The component cache group. Can be used to use different caches for
+	 *                          different types of components.
+	 *
+	 * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
+	 */
+	async renderComponent({component, attributes = {}, group = 'components', request, response}) {
+		const factory = await this.createElementFactory({
+			component, attributes, group, request, response,
+		});
+
+		if (!factory || !(await factory.shouldRender())) {
+			return false;
+		}
+
+		return this.renderComponentUsingFactory({ factory });
+	}
 }

@@ -78,8 +78,7 @@ export default class PagesRenderer {
             response,
         };
 
-        const factory = await this.elementRenderer.createElementFactory(componentData);
-        const { markup, element } = await this.elementRenderer.renderComponent({ factory });
+        const { markup, element } = await this.elementRenderer.renderComponent(componentData);
 
         const layoutName = element && typeof element.layout === 'function'
             ? element.layout()
