@@ -45,15 +45,12 @@ describe('Luna element test', function () {
 	});
 
 	describe('Special cases', function () {
-		it('correctly performs the redirect', async function (done) {
-			chai.request(`http://localhost:3010`)
+		it('correctly performs the redirect', async function () {
+			const response = await chai.request(`http://localhost:3010`)
 				.get('/redirect/component')
-				.send()
-				.redirects(0)
-				.end((err, res, body) => {
-					res.should.have.status(302);
-					done();
-				});
+				.send();
+
+			chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
 		})
 	});
 });

@@ -110,28 +110,20 @@ describe('Luna routes test', function () {
 	});
 
 	describe('Page with redirect', function () {
-		it('correctly performs the redirect', async function (done) {
-			await chai.request(`http://localhost:3010`)
-				.get('/redirect')
-				.send()
-				.redirects(0)
-				.end((err, res, body) => {
-					res.should.have.status(302);
-					done();
-				});
+		it('correctly performs the redirect', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.get('/redirect/component')
+				.send();
+
+			chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
 		});
 
-		it('correctly performs the redirect with a component page', async function (done) {
-			await chai.request(`http://localhost:3010`)
-				.get('/redirect/page-component')
-				.send()
-				.redirects(0)
-				.end((err, res, body) => {
-					res.should.have.status(302);
-					done();
-				});
+		it('correctly performs the redirect with a component page', async function () {
+			const response = await chai.request(`http://localhost:3010`)
+				.get('/redirect/component')
+				.send();
 
-			response.should.have.status(302);
+			chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
 		});
 	});
 
