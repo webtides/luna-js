@@ -67,6 +67,10 @@ export default class RoutesLoader {
 					return 0;
 				}
 
+				if (!routeA.fallback && !routeB.fallback) {
+					return 0;
+				}
+
 				return routeA.fallback && !routeB.fallback ? 1 : -1;
 			})
 			.map((route) => {
