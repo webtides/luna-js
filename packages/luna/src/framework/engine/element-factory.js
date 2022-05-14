@@ -115,7 +115,7 @@ export default class ElementFactory {
      * Creates a new instance of the element and takes all attributes that are defined on the corresponding
      * DOM node and maps them to properties on the element.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean|Response>}
      */
     async build() {
         this.element = await this.buildElement();

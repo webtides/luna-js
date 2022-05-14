@@ -17,14 +17,17 @@ export default class PagesRenderer {
      *
      * Replaces the ${page} variable inside the layout.
      *
-     * @param factory (page) => *   The layout factory which should be used
-     * @param page *                The html page fragment.
-     * @param context {{}}          The context to be passed into the layout.
+     * @param factory (page) => *   	The layout factory which should be used
+     * @param page *                	The html page fragment.
+     * @param context {{}}          	The context to be passed into the layout.
+	 * @param request *					The current request object
+	 * @param response *				The current response
+	 * @param container	ServiceContext	The luna service container.
      *
      * @returns {Promise<string>}
      */
-    async applyLayout(factory, page, context) {
-        const factoryResult = await factory(page, context);
+    async applyLayout(factory, page, context, { request, response, container }) {
+        const factoryResult = await factory(page, context, { request, response, container });
         return `${factoryResult}`;
     }
 
@@ -32,26 +35,26 @@ export default class PagesRenderer {
      * Loads the content of an anonymous page. Anonymous pages cannot be dynamic, so
      * they can be cached.
      *
-     * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
+     * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageDefinition}
      * @param request *     The express request object
      * @param response *    The express response object.
      * @param container ServiceContext
      *
      * @returns {Promise<{markup: string, layoutFactory: *, element: *}|boolean>}
      */
-    async renderAnonymousPage({module, request, response, container}) {
-        const {page} = module;
+    async renderAnonymousPage({definition, request, response, container}) {
+        const {page} = definition;
 
         if (typeof page !== 'function') {
-            return false;
+        	throw new Error('pageNotInvokable');
         }
 
-        const layoutName = module?.module && typeof module.module.layout === 'function'
-            ? module.module.layout()
+        const layoutName = typeof definition?.layout === 'function'
+            ? definition.layout()
             : 'default';
 
-        const context = module?.module && typeof module.module.context === 'function'
-            ? await module.module.context()
+        const context = typeof definition?.context === 'function'
+            ? await definition.context()
             : {};
 
         return {
@@ -61,13 +64,13 @@ export default class PagesRenderer {
         };
     }
 
-    async renderComponentPage({ module, request, response }) {
+    async renderComponentPage({ definition, request, response }) {
         // Convert the page module to a component so that we can use the
         // element renderer.
         const componentData = {
             component: {
-                element: module.page,
-                ElementFactory: module.ElementFactory,
+                element: definition.page,
+                ElementFactory: definition.ElementFactory,
             },
             attributes: {},
             group: 'pages',
@@ -75,7 +78,8 @@ export default class PagesRenderer {
             response,
         };
 
-        const { markup, element } = await this.elementRenderer.renderComponent(componentData);
+        const factory = await this.elementRenderer.createElementFactory(componentData);
+        const { markup, element } = await this.elementRenderer.renderComponent({ factory });
 
         const layoutName = element && typeof element.layout === 'function'
             ? element.layout()
@@ -93,18 +97,17 @@ export default class PagesRenderer {
      * page or a component page and uses {@link renderAnonymousPage} to
      * generate the markup.
      *
-     * @param module {{layout: *, module: *, page: *, middleware: *}}   The page module loaded by {@link loadPageModule}
-     * @param request *                                                 The express request object
-     * @param response *                                                The express response object.
+     * @param definition {{layout: *, module: *, page: *, middleware: *}}   The page definition loaded by {@link loadPageDefinition}
+     * @param request *                                                 	The express request object
+     * @param response *                                                	The express response object.
      * @param container {ServiceContext}
      *
      * @returns {Promise<string|boolean>}   The complete markup as a string.
      */
-    async generatePageMarkup({module, request, response, container}) {
+    async generatePageMarkup({definition, request, response, container}) {
+        const pageData = { definition, request, response, container };
 
-        const pageData = { module, request, response, container };
-
-        const result = module.isComponentPage
+        const result = definition.isComponentRoute
             ? await this.renderComponentPage(pageData)
             : await this.renderAnonymousPage(pageData);
 
@@ -112,9 +115,11 @@ export default class PagesRenderer {
             return false;
         }
 
-        const page = result.markup;
+        if (typeof result.markup !== 'string') {
+        	return result.markup;
+		}
 
-        return this.applyLayout(result.layout, page, result.context);
+        return this.applyLayout(result.layout, result.markup, result.context, { request, response, container });
     }
 
 }

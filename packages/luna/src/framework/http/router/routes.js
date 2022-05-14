@@ -1,58 +1,62 @@
-import PagesLoader from "../../loaders/pages-loader";
-import ApiLoader from "../../loaders/api-loader";
 import DocumentRenderer from "../../engine/document-renderer";
 import ServiceContext from "../../services/service-context";
 import PagesRenderer from "../../engine/pages-renderer";
+import RoutesLoader from "../../loaders/routes-loader.js";
 
 let currentRouter;
 
-/**
- * Helper method for registering a single route. Normalized the
- * route method and registers post/get routes if available.
- *
- * @param {{router: *, route: string, middleware: *[]}}
- *
- * @param getMethod
- * @param postMethod
- * @param putMethod
- * @param deleteMethod
- */
-const registerRoute = ({router, route, middleware = []}, {
-        getMethod = null, postMethod = null, putMethod = null, deleteMethod = null,
-    }) => {
-        const normalizeRoute = (method) => {
-            return (request, response) => {
+const invokeRoute = async ({routeDefinition, request, response}) => {
+	const callback = routeDefinition.methods[request.method.toLowerCase()];
 
-                // Create a new service context for better dependency injection
-                // for api routes.
-                const container = new ServiceContext({
-                    $$luna: {
-                        request,
-                        response
-                    }
-                });
+	if (!callback) {
+		return response.status(404).send();
+	}
 
-                return method({request, response, container});
-            }
-        };
+	const container = new ServiceContext({
+		$$luna: {
+			request,
+			response
+		}
+	});
 
-        getMethod && (
-            router.get(route, middleware, normalizeRoute(getMethod))
-        );
+	// The callback result could be either
+	//	1. a string for anonymous page routes
+	//	2. an object for any kind of route.
+	//	3. a class for component routes
+	//	4: undefined for redirects and direct responses from the controller
 
-        postMethod && (
-            router.post(route, middleware, normalizeRoute(postMethod))
-        );
+	const page = await luna.get(PagesRenderer).generatePageMarkup({
+		definition: {
+			...routeDefinition,
+			page: callback,
+		},
+		request,
+		response,
+		container,
+	});
 
-        putMethod && (
-            router.put(route, middleware, normalizeRoute(putMethod))
-        );
+	if (response.headersSent) {
+		// Somewhere in the application the response has already been handled.
+		return;
+	}
 
-        deleteMethod && (
-            router.delete(route, middleware, normalizeRoute(deleteMethod))
-        );
-    }
-;
+	if (typeof page !== 'string') {
+		return response.json(page);
+	}
+
+	const documentRenderer = new DocumentRenderer({request, response});
+	const html = await documentRenderer.render(page);
+
+	if (response.headersSent) {
+		return;
+	}
+
+	if (request.$$luna?.isCacheable) {
+		request.$$luna.cachedResponse = html;
+	}
+
+	return response.send(html);
+};
 
 /**
  * The main routing part of our application. All pages
@@ -63,70 +67,35 @@ const registerRoute = ({router, route, middleware = []}, {
  * @returns {Promise<void>}
  */
 const routes = async ({router}) => {
-    currentRouter = router;
+	currentRouter = router;
 
-    const pagesLoader = luna.get(PagesLoader);
-    const pagesRenderer = luna.get(PagesRenderer);
+	const routesLoader = luna.get(RoutesLoader);
+	const routes = await routesLoader.loadRoutes();
 
-    const {pages, fallbackPage} = await pagesLoader.loadPages();
-    const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
+	for (const {file, pathname, settings} of routes) {
+		const routeDefinition = await routesLoader.loadRouteDefinition({
+			file, settings,
+		});
 
-    const registerPageRoute = async ({module, route}) => {
-        const callback = async ({request, response, container}) => {
-            const pageMarkup = await pagesRenderer.generatePageMarkup({route, module, request, response, container});
+		router.all(
+			pathname,
+			routeDefinition.middleware,
+			async (request, response) => {
+				try {
+					await invokeRoute({
+						routeDefinition,
+						request,
+						response,
+					});
+				} catch (error) {
+					console.error(error);
+					return response.status(500).send();
+				}
+			},
+		);
 
-            if (!pageMarkup) {
-                return response.status(404).send();
-            }
-
-            const documentRenderer = new DocumentRenderer({request, response});
-
-            const result = await documentRenderer.render(pageMarkup);
-
-            if (request.$$luna?.isCacheable) {
-                request.$$luna.cachedResponse = result;
-            }
-
-            return response.send(result);
-        };
-
-        registerRoute({router, route, middleware: module.middleware}, {
-            getMethod: callback,
-            postMethod: callback
-        })
-
-        console.log(`Registered route ${route}`);
-    }
-
-    const registerApiRoute = async ({route, module}) => {
-        const {middleware} = module;
-
-        const apiModule = module.module;
-        registerRoute({router, route, middleware}, {
-            getMethod: apiModule.get ?? apiModule.default ?? apiModule,
-            postMethod: apiModule.post,
-            putMethod: apiModule.put,
-            deleteMethod: apiModule.remove, // This has to be `remove` because `delete` is a reserved keyword.
-        });
-
-        console.log(`Registered api route ${route}`);
-    };
-
-    for (const page of pages) {
-        await registerPageRoute(page);
-    }
-
-    for (const api of apis) {
-        await registerApiRoute(api);
-    }
-
-    if (fallbackApi) {
-        await registerApiRoute(fallbackApi);
-    }
-
-    if (fallbackPage) {
-        await registerPageRoute(fallbackPage);
-    }
+		console.log(`Registered route ${pathname}`);
+	}
 };
 
 export {routes, currentRouter};

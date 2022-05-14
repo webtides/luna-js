@@ -55,36 +55,39 @@ export default class DocumentRenderer {
             return false;
         }
 
-        // The element should only be rendered on the client.
-        if (component.element?.$$luna?.target === Component.TARGET_CLIENT ?? false) {
-            return {
-                component,
-                noSSR: true,
-            }
-        }
+        const factory = await this.elementRenderer.createElementFactory({
+			component,
+			attributes: node.attrs ?? {},
+			request: this.request,
+			response: this.response,
+		});
 
-        node.attrs = node.attrs ?? {};
+        if (!factory) {
+        	return false;
+		}
+
+		// Set the final attributes from the render process to the node.
+		node.attrs = await factory.loadFinalAttributes();
+
+		if (!(await factory.shouldRender()) ||
+			component.element?.$$luna?.target === Component.TARGET_CLIENT) {
+			// We did find a component, but the component should not or cannot be rendered
+			// on the server.
+			return {
+				attributes: node.attrs,
+				component,
+				innerHTML: '',
+				noSSR: true,
+			};
+		}
 
         const result = await this.elementRenderer.renderComponent({
-            component,
-            attributes: node.attrs,
-            request: this.request,
-            response: this.response,
+			factory
         });
-
-        if (!result) {
-            // We did find a component, but the component should not or cannot be rendered
-            // on the server.
-            return false;
-        }
 
         const { markup } = result;
 
-        // Set the final attributes from the render process to the node.
-        node.attrs = result.finalAttributes;
-
-        const innerDocument = await this.renderUsingPostHtml(markup, true);
-
+        const innerDocument = await this.renderUsingPostHtml(markup);
         node.content = innerDocument;
 
         return {
@@ -109,11 +112,11 @@ export default class DocumentRenderer {
                     .map(key => {
                         const component = this.upgradedElements[key];
                         const importPath = luna.asset(`${component.outputDirectory}/${manifest[component.relativePath]}`);
-                        
+
                         const elementFactory = new (component.ElementFactory ?? ElementFactory)({
                             component
                         });
-                        
+
                         return elementFactory.define({ importPath });
                     })
                     .join("\n")
@@ -147,7 +150,7 @@ export default class DocumentRenderer {
         ]).process(html)).html;
     }
 
-    async renderUsingPostHtml(htmlDocument, subroutine = false) {
+    async renderUsingPostHtml(htmlDocument) {
         const plugins = [
             ssr({
                 request: this.request,
