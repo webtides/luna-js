@@ -29,7 +29,7 @@ export default class RoutesLoader {
 
 		let staticProperties = {};
 		if (isComponentRoute) {
-			staticProperties =  typeof module?.default?.loadStaticProperties === 'function'
+			staticProperties = typeof module?.default?.loadStaticProperties === 'function'
 				? (await module.default.loadStaticProperties()) ?? {}
 				: {};
 		}
@@ -50,22 +50,30 @@ export default class RoutesLoader {
 		};
 	}
 
-    async loadRoutes() {
-        const settings = await loadSettings();
-        const manifest = await loadManifest();
+	async loadRoutes() {
+		const settings = await loadSettings();
+		const manifest = await loadManifest();
 
-        const basePath = settings._generated.applicationDirectory;
+		const basePath = settings._generated.applicationDirectory;
 
-        const routes = [
+		const routes = [
 			...manifest.pages,
 			...manifest.apis,
 		];
 
-        return routes.map((route) => {
-			const {file, route: pathname, settings } = route;
-			return {
-				file: path.join(basePath, file), pathname, settings,
-			};
-		});
-    }
+		return routes
+			.sort((routeA, routeB) => {
+				if (routeA.fallback && routeB.fallback) {
+					return 0;
+				}
+
+				return routeA.fallback && !routeB.fallback ? 1 : -1;
+			})
+			.map((route) => {
+				const {file, route: pathname, settings} = route;
+				return {
+					file: path.join(basePath, file), pathname, settings,
+				};
+			});
+	}
 }
