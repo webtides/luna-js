@@ -148,4 +148,49 @@ describe('Luna base renderer test', () => {
 		chai.expect(result).to.contain(`object-property='{"foo":"bar"}'`);
 		chai.expect(result).to.contain(`array-property='[{"foo":"bar"}]'`);
 	});
+
+	it('mirrors the properties back to the attributes for client only components but does not render them', async () => {
+		const component = {
+			element: class {
+				$$luna = {
+					target: 'client',
+				};
+
+				async loadDynamicProperties() {
+					return {
+						arrayProperty: [{ foo: 'bar' }],
+						objectProperty: { foo: 'bar' },
+						stringProperty: 'bar',
+					};
+				}
+
+				properties() {
+					return {
+						stringProperty: 'foo',
+						objectProperty: {},
+						arrayProperty: [],
+					};
+				}
+
+				template() {
+					return `NOT BEING RENDERED`;
+				}
+			},
+			tagName: 'example-component',
+			children: [],
+			ElementFactory: TestElementFactory,
+		};
+
+		global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
+
+		const documentRenderer = new DocumentRenderer({ request: null, response: null });
+		const result = await documentRenderer.renderUsingPostHtml(
+			'<html><head></head><body><example-component></example-component></body></html>',
+		);
+
+		chai.expect(result).to.contain(`string-property="bar"`);
+		chai.expect(result).to.contain(`object-property='{"foo":"bar"}'`);
+		chai.expect(result).to.contain(`array-property='[{"foo":"bar"}]'`);
+		chai.expect(result).to.not.contain('NOT BEING RENDERED');
+	});
 });
