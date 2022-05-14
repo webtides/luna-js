@@ -117,7 +117,16 @@ describe('Luna routes test', function () {
 				.redirects(0);
 
 			response.should.have.status(302);
-		})
+		});
+
+		it('correctly performs the redirect with a component page', async function (done) {
+			let response = await chai.request(`http://localhost:3010`)
+				.get('/redirect/page-component')
+				.send()
+				.redirects(0);
+
+			response.should.have.status(302);
+		});
 	});
 
 	describe('Route cache', function () {
