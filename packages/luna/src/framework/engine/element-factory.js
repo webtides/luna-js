@@ -115,7 +115,7 @@ export default class ElementFactory {
      * Creates a new instance of the element and takes all attributes that are defined on the corresponding
      * DOM node and maps them to properties on the element.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean|Response>}
      */
     async build() {
         this.element = await this.buildElement();
@@ -166,7 +166,7 @@ export default class ElementFactory {
         });
 
         // At last we are loading the dynamic properties from the element.
-        const dynamicProperties = await this.getDynamicProperties();
+        const dynamicProperties = (await this.getDynamicProperties()) ?? {};
         Object.keys(dynamicProperties).forEach((key) => {
             this.element[key] = dynamicProperties[key];
         });
