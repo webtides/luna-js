@@ -108,7 +108,7 @@ describe('Luna base renderer test', () => {
 	it('mirrors the properties back to the attributes', async () => {
 		const component = {
 			element: class {
-				$$luna = {
+				static $$luna = {
 					target: 'both',
 				};
 
@@ -152,7 +152,7 @@ describe('Luna base renderer test', () => {
 	it('mirrors the properties back to the attributes for client only components but does not render them', async () => {
 		const component = {
 			element: class {
-				$$luna = {
+				static $$luna = {
 					target: 'client',
 				};
 
