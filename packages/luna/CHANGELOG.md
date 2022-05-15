@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.9](https://github.com/webtides/luna-js/compare/v0.11.0-dev.8...v0.11.0-dev.9) (2022-05-15)
+
+
+### Features
+
+* Allow returning custom response from dynamic property loading ([#107](https://github.com/webtides/luna-js/issues/107)) ([c3704c1](https://github.com/webtides/luna-js/commit/c3704c18855344e05bb7f9485555ffa57dbf6ae5))
+
+
+
+
+
 # [0.11.0-dev.8](https://github.com/webtides/luna-js/compare/v0.11.0-dev.7...v0.11.0-dev.8) (2022-04-23)
 
 
