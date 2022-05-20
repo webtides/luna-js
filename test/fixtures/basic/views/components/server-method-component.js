@@ -3,15 +3,16 @@ import {Component, ServerMethod} from '@webtides/luna-js';
 @Component({
 	target: Component.TARGET_BOTH,
 })
-export default class ServerMethodComponent {
+export default class ServerMethodComponent extends HTMLElement {
 
 	@ServerMethod()
 	async printDebugMessage(parameter) {
 		console.log(`TEST ${parameter}`);
-		return {};
+		return { parameter };
 	}
 
 	async connectedCallback() {
-		await this.printDebugMessage("MOCHA");
+		const result = await this.printDebugMessage("MOCHA");
+		console.log(result);
 	}
 }

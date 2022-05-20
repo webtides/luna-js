@@ -26,7 +26,7 @@ const MethodContext = (options) => {
 };
 
 const ServerMethod = (options) => {
-	const syncProperties = options?.syncProperties ?? {};
+	const syncProperties = options?.syncProperties ?? [];
 
 	return (target, name, descriptor) => {
 		if (process.env.CLIENT_BUNDLE) {

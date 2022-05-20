@@ -17,4 +17,4 @@ require('./tests/unit/renderers/element-js-vanilla.js');
 // require("./tests/unit/renderers/lit.js");
 
 require('./tests/basic.js');
-require('./tests/empty.js');
+// require('./tests/empty.js');
