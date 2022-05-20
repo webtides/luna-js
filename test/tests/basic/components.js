@@ -36,7 +36,6 @@ describe('Luna element test', function () {
 
 		it('loads the dependencies of no ssr components', async function () {
 			const response = await chai.request('http://localhost:3010').get('/rendering').send();
-			console.log(response.text);
 			chai.expect(response.text).to.include('/client-component.js');
 		});
 
