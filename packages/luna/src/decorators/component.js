@@ -16,22 +16,6 @@ Component.TARGET_SERVER = 'server';
 Component.TARGET_CLIENT = 'client';
 Component.TARGET_BOTH = 'both';
 
-class Action {
-	#caller;
-	#actionId;
-	#callback;
-
-	constructor(caller, actionId, callback = null) {
-		this.#caller = caller;
-		this.#actionId = actionId;
-		this.#callback = callback;
-	}
-
-	async invoke(context, args) {
-	}
-}
-
-
 const MethodContext = (options) => {
 	const methodTarget = options?.target ?? options ?? 'server';
 
