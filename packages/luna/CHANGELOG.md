@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.11](https://github.com/webtides/luna-js/compare/v0.11.0-dev.10...v0.11.0-dev.11) (2022-05-20)
+
+
+### Features
+
+* load static properties for client side elements too. ([#109](https://github.com/webtides/luna-js/issues/109)) ([47b2545](https://github.com/webtides/luna-js/commit/47b2545cfeeb76b36f3fe2a3d069558c0bcf3586))
+
+
+
+
+
 # [0.11.0-dev.9](https://github.com/webtides/luna-js/compare/v0.11.0-dev.8...v0.11.0-dev.9) (2022-05-15)
 
 
