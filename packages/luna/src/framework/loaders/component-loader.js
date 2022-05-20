@@ -26,9 +26,7 @@ export default class ComponentLoader {
             };
         }
 
-        // Don't load static properties if the element should only be loaded in the client
-        element.staticProperties = (element?.$$luna?.target !== Component.TARGET_CLIENT)
-            && typeof element.loadStaticProperties === 'function'
+        element.staticProperties = typeof element.loadStaticProperties === 'function'
                 ? (await element.loadStaticProperties()) ?? {}
                 : {};
 

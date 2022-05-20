@@ -1,7 +1,7 @@
 import {paramCase} from "param-case";
-import {camelCase} from "camel-case";
 
 import TemplateRenderer from "./template-renderer";
+import {Component} from "../../decorators/component.js";
 
 /**
  * The base ElementFactory class. Provides some utility methods and is meant to be overridden by
@@ -56,9 +56,11 @@ export default class ElementFactory {
         `;
     }
 
-    async getInitialProperties() {
-        return {};
-    }
+	async getInitialProperties() {
+		return typeof this.element.properties === 'function'
+			? this.element.properties()
+			: {};
+	}
 
     async getStaticProperties() {
         return this.component.element.staticProperties ?? {}
@@ -73,9 +75,14 @@ export default class ElementFactory {
             : {};
     }
 
-    async getAdditionalAttributes() {
+	/**
+	 * Additional attributes to be passed to the client per element-factory.
+	 *
+	 * @returns {Promise<{}>}
+	 */
+	async getAdditionalAttributes() {
         return {
-            'ssr': true,
+			ssr: this.component?.element?.$$luna?.target !== Component.TARGET_CLIENT,
         };
     }
 
@@ -102,12 +109,16 @@ export default class ElementFactory {
         // Allow for "." notation by just removing the "." and parsing the value as json
         if (attributeName.startsWith('.')) {
             attributeName = attributeName.substring(1);
-            attributeValue = JSON.stringify(attributeValue);
+            attributeValue = typeof attributeValue !== 'string' ? JSON.stringify(attributeValue) : attributeValue;
         }
 
+        const escapedAttributeValue = typeof attributeValue === 'string'
+			? attributeValue.split('"').join('&quot;').split("'").join('&apos;')
+			: attributeValue;
+
         return [
-            attributeName,
-            attributeValue,
+            paramCase(attributeName),
+			escapedAttributeValue,
         ];
     }
 
@@ -175,7 +186,7 @@ export default class ElementFactory {
     parsePropertiesToAttributes(properties) {
         const attributes = {};
         Object.keys(properties).forEach(key => {
-            attributes[paramCase(key)] = typeof properties[key] !== 'string'
+            attributes[key] = typeof properties[key] !== 'string'
                 ? JSON.stringify(properties[key])
                 : properties[key];
         });
@@ -192,7 +203,7 @@ export default class ElementFactory {
                 attributeToDefine = JSON.parse(attributes[key]);
             } catch {}
 
-            properties[camelCase(key)] = attributeToDefine;
+            properties[key.startsWith('.') ? key.substring(1) : key] = attributeToDefine;
         });
 
         return properties;
