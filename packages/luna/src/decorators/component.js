@@ -1,5 +1,3 @@
-import {camelCase} from "camel-case";
-
 const Component = ({selector, target} = {}) => {
 	return function decorator(Class) {
 		Class.$$luna = {
