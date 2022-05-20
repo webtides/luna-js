@@ -112,9 +112,13 @@ export default class ElementFactory {
             attributeValue = JSON.stringify(attributeValue);
         }
 
+        const escapedAttributeValue = typeof attributeValue === 'string'
+			? attributeValue.split('"').join('&quot;').split("'").join('&apos;')
+			: attributeValue;
+
         return [
             paramCase(attributeName),
-			attributeValue.split('"').join('&quot;').split("'").join('&apos;')
+			escapedAttributeValue,
         ];
     }
 
