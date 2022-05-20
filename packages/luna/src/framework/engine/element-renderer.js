@@ -10,15 +10,6 @@ import {LunaService} from "../../decorators/service";
 })
 export default class ElementRenderer {
     async createElementFactory({ component, attributes = {}, request, response }) {
-        // "Inject" the current request and response into the $$luna meta
-        // object of the element instance. This allows us to use decorated
-        // class members to load the current request and response objects.
-        component.element.prototype.$$luna = {
-            ...(component.element.prototype?.$$luna ?? {}),
-            request,
-            response,
-        };
-
         if (!component.ElementFactory) {
             console.error(`The component with the tag name "${component.tagName}" has no ElementFactory`);
             return false;
@@ -32,6 +23,15 @@ export default class ElementRenderer {
         });
 
         await factory.build();
+
+		// "Inject" the current request and response into the $$luna meta
+		// object of the element instance. This allows us to use decorated
+		// class members to load the current request and response objects.
+		factory.element.$$luna = {
+			...(component.element.prototype?.$$luna ?? {}),
+			request,
+			response,
+		};
 
         return factory;
     }

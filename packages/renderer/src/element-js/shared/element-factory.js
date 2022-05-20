@@ -1,5 +1,5 @@
 import BaseElementFactory from "@webtides/luna-js/src/framework/engine/element-factory";
-
+import {Component} from "@webtides/luna-js";
 
 export default (templateRenderer) => {
     /**
@@ -15,10 +15,15 @@ export default (templateRenderer) => {
         }
 
         async getAdditionalAttributes() {
-            return {
+            const additionalAttributes = {
                 ...(await super.getAdditionalAttributes()),
-                'defer-update': true,
             };
+
+            if (this.component?.element?.$$luna?.target !== Component.TARGET_CLIENT) {
+            	additionalAttributes['defer-update'] = true;
+			}
+
+            return additionalAttributes;
         }
 
         modifyAttributeBeforeFinalization(attributeName, attributeValue) {
@@ -27,12 +32,6 @@ export default (templateRenderer) => {
             }
 
             return super.modifyAttributeBeforeFinalization(attributeName, attributeValue);
-        }
-
-        async getInitialProperties() {
-            return typeof this.element.properties === 'function'
-                ? this.element.properties()
-                : {};
         }
 
         async shouldRender() {
