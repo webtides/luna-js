@@ -8,7 +8,6 @@ describe('Luna element test', function () {
 
 		const { startLuna } = require('../../../packages/luna/src/framework');
 
-		global.originalConsoleLog = console.log;
 		await startLuna();
 
 		await sleep(600);
@@ -17,8 +16,6 @@ describe('Luna element test', function () {
 	after(async function () {
 		const { stopLuna } = require('../../../packages/luna/src/framework');
 		await stopLuna();
-
-		console.log = global.originalConsoleLog;
 	});
 
 	describe('Basic component tests', function () {
@@ -57,18 +54,24 @@ describe('Luna element test', function () {
 
 	describe('Different method contexts', function() {
 		it('invokes the function in the correct context', function(done) {
+			global.originalConsoleLog = console.log;
+
 			console.log = (text) => {
 				if (text.startsWith('TEST MOCHA')) {
+					console.log = global.originalConsoleLog;
 					done();
 				}
 
-				global.originalConsoleLog(...arguments);
+				global.originalConsoleLog(text);
 			};
 
 
 			chai.request(`http://localhost:3010`)
 				.get('/server-method')
-				.send();
+				.send()
+				.then((response) => {
+					console.log(response.text);
+				})
 		})
 	})
 });
