@@ -203,7 +203,7 @@ export default class ElementFactory {
                 attributeToDefine = JSON.parse(attributes[key]);
             } catch {}
 
-            properties[key] = attributeToDefine;
+            properties[key.startsWith('.') ? key.substring(1) : key] = attributeToDefine;
         });
 
         return properties;

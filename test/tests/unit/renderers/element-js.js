@@ -76,7 +76,7 @@ describe('Element-js server renderer test', function () {
 		});
 
 		chai.expect(result.markup).to.contain('<div>foo</div>');
-		chai.expect(result.finalAttributes.test).to.equal('{"foo":"foo"}');
+		chai.expect(result.finalAttributes.test).to.equal('{&quot;foo&quot;:&quot;foo&quot;}');
 	});
 
 	it('should parse boolean attributes to a string', async () => {
