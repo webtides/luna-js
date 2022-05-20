@@ -3,7 +3,7 @@ import {Component, ServerMethod} from '@webtides/luna-js';
 @Component({
 	target: Component.TARGET_BOTH,
 })
-export default class ClientComponent {
+export default class ServerMethodComponent {
 
 	@ServerMethod()
 	async printDebugMessage(parameter) {
