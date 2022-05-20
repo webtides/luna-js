@@ -2,19 +2,13 @@ import {callHook} from "../../hooks";
 import {HOOKS} from "../../hooks/definitions";
 
 /**
- * Registers a middleware that calls the REQUEST_RECEIVED hook.
- *
- * @param app
+ * Middleware that calls the REQUEST_RECEIVED hook.
  */
-const register = ({ app }) => {
-    app.use(async (request, response, next) => {
-        await callHook(HOOKS.REQUEST_RECEIVED, {
-            request,
-            response
-        });
+export const hookRequestReceivedMiddleware = () => async (request, response, next) => {
+	await callHook(HOOKS.REQUEST_RECEIVED, {
+		request,
+		response
+	});
 
-        next();
-    });
+	next();
 };
-
-export default register;

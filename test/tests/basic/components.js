@@ -51,6 +51,23 @@ describe('Luna element test', function () {
 				.send();
 
 			chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
-		})
+		});
 	});
+
+	describe('Different method contexts', function() {
+		it('invokes the function in the correct context', function() {
+			console.log = (text) => {
+				if (text.startsWith('TEST MOCHA')) {
+					done();
+				}
+
+				global.originalConsoleLog(...arguments);
+			};
+
+
+			chai.request(`http://localhost:3010`)
+				.get('/server-method')
+				.send();
+		})
+	})
 });

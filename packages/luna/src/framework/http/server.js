@@ -5,7 +5,6 @@ import express from "express";
 import {callHook} from "../hooks";
 import {HOOKS} from "../hooks/definitions";
 import {registerMiddleware} from "./middleware";
-import {cacheMiddleware} from "./middleware/cache-middleware";
 import {upgradeRequestMiddleware} from "./middleware/upgrade-request-middleware";
 import {routes} from "./router/routes";
 
@@ -30,7 +29,6 @@ export default class Server {
         this.baseMiddleware.forEach(middleware => app.use(middleware));
 
         await registerMiddleware({app});
-        app.use(cacheMiddleware());
 
         await callHook(HOOKS.ROUTES_BEFORE_REGISTER, {
             router: app

@@ -1,17 +1,74 @@
-const Component = ({ selector, target } = {}) => {
-    return function decorator(Class) {
-        Class.$$luna = {
-            ...(Class.$$luna ?? {}),
-            selector,
-            target: target ?? Component.TARGET_SERVER,
-        };
+import {camelCase} from "camel-case";
 
-        return Class;
-    }
+const Component = ({selector, target} = {}) => {
+	return function decorator(Class) {
+		Class.$$luna = {
+			...(Class.$$luna ?? {}),
+			selector,
+			target: target ?? Component.TARGET_SERVER,
+		};
+
+		return Class;
+	}
 };
 
 Component.TARGET_SERVER = 'server';
 Component.TARGET_CLIENT = 'client';
 Component.TARGET_BOTH = 'both';
 
-export { Component };
+class Action {
+	#caller;
+	#actionId;
+	#callback;
+
+	constructor(caller, actionId, callback = null) {
+		this.#caller = caller;
+		this.#actionId = actionId;
+		this.#callback = callback;
+	}
+
+	async invoke(context, args) {
+	}
+}
+
+
+const MethodContext = (options) => {
+	const methodTarget = options?.target ?? options ?? 'server';
+
+	switch (methodTarget) {
+		default:
+			return ServerMethod(options);
+	}
+};
+
+const ServerMethod = (options) => {
+	const syncProperties = options?.syncProperties ?? {};
+
+	return (target, name, descriptor) => {
+		if (process.env.CLIENT_BUNDLE) {
+			descriptor.value = (async function () {
+				const context = Object.fromEntries(syncProperties.map((key) => ([
+					key,
+					this[key]
+				])));
+
+				const response = await fetch('#', {
+					method: 'POST',
+					body: JSON.stringify({context, args: [...arguments]}),
+					headers: {
+						'Content-Type': 'application/json',
+						'X-Server-Method-Id': `${this.tagName.toLowerCase()}.${name}`,
+					},
+				});
+
+				if (response.status !== 200) {
+					throw new Error('Method invocation in different context failed.')
+				}
+
+				return response.json();
+			});
+		}
+	}
+};
+
+export {Component, MethodContext, ServerMethod};
