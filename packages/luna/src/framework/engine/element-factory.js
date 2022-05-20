@@ -109,7 +109,7 @@ export default class ElementFactory {
         // Allow for "." notation by just removing the "." and parsing the value as json
         if (attributeName.startsWith('.')) {
             attributeName = attributeName.substring(1);
-            attributeValue = JSON.stringify(attributeValue);
+            attributeValue = typeof attributeValue !== 'string' ? JSON.stringify(attributeValue) : attributeValue;
         }
 
         const escapedAttributeValue = typeof attributeValue === 'string'
