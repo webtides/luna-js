@@ -145,8 +145,8 @@ describe('Luna base renderer test', () => {
 		);
 
 		chai.expect(result).to.contain(`string-property="bar"`);
-		chai.expect(result).to.contain(`object-property='{"foo":"bar"}'`);
-		chai.expect(result).to.contain(`array-property='[{"foo":"bar"}]'`);
+		chai.expect(result).to.contain(`object-property='{&quot;foo&quot;:&quot;bar&quot;}'`);
+		chai.expect(result).to.contain(`array-property='[{&quot;foo&quot;:&quot;bar&quot;}]'`);
 	});
 
 	it('mirrors the properties back to the attributes for client only components but does not render them', async () => {
@@ -189,8 +189,8 @@ describe('Luna base renderer test', () => {
 		);
 
 		chai.expect(result).to.contain(`string-property="bar"`);
-		chai.expect(result).to.contain(`object-property='{"foo":"bar"}'`);
-		chai.expect(result).to.contain(`array-property='[{"foo":"bar"}]'`);
+		chai.expect(result).to.contain(`object-property='{&quot;foo&quot;:&quot;bar&quot;}'`);
+		chai.expect(result).to.contain(`array-property='[{&quot;foo&quot;:&quot;bar&quot;}]'`);
 		chai.expect(result).to.not.contain('NOT BEING RENDERED');
 	});
 });
