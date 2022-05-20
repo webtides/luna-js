@@ -8,6 +8,8 @@ describe('Luna element test', function () {
 
 		const { startLuna } = require('../../../packages/luna/src/framework');
 
+		global.originalConsoleLog = console.log;
+
 		await startLuna();
 
 		await sleep(600);
@@ -16,6 +18,8 @@ describe('Luna element test', function () {
 	after(async function () {
 		const { stopLuna } = require('../../../packages/luna/src/framework');
 		await stopLuna();
+
+		console.log = global.originalConsoleLog;
 	});
 
 	describe('Basic component tests', function () {
@@ -53,25 +57,32 @@ describe('Luna element test', function () {
 	});
 
 	describe('Different method contexts', function() {
-		it('invokes the function in the correct context', function(done) {
-			global.originalConsoleLog = console.log;
+		it('invokes the function with the correct parameters', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.post('/server-method')
+				.set('x-server-method-id', `server-method-component.returnParameter`)
+				.send({ context: {}, args: [ 'MOCHA', 'TEST' ] });
 
-			console.log = (text) => {
-				if (text.startsWith('TEST MOCHA')) {
-					console.log = global.originalConsoleLog;
-					done();
-				}
+			chai.expect(response.body.parameter).to.equal('MOCHA');
+			chai.expect(response.body.secondParameter).to.equal('TEST');
+		});
 
-				global.originalConsoleLog(text);
-			};
+		it('invokes the function with the correct context', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.post('/server-method')
+				.set('x-server-method-id', `server-method-component.returnContext`)
+				.send({ context: { foo: 'bar' }, args: [] });
 
+			chai.expect(response.body.context).to.equal('bar');
+		});
 
-			chai.request(`http://localhost:3010`)
-				.get('/server-method')
-				.send()
-				.then((response) => {
-					console.log(response.text);
-				})
-		})
+		it('does not invoke a function that is not marked as invokable', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.post('/server-method')
+				.set('x-server-method-id', `server-method-component.notInvokable`)
+				.send({ context: { }, args: [] });
+
+			chai.expect(response.body.foo).to.be.undefined;
+		});
 	})
 });

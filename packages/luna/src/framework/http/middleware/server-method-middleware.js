@@ -26,6 +26,10 @@ export const serverMethodMiddleware = () => async (request, response, next) => {
 				element[property] = value;
 			});
 
+			if (!(component.element?.$$luna?.serverMethods ?? []).includes(methodName)) {
+				return response.status(400).send('Method does not exist.')
+			}
+
 			const result = await response.json(await element[methodName](...args));
 			return result;
 		}

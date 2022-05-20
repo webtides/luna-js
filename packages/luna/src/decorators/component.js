@@ -52,6 +52,16 @@ const ServerMethod = (options) => {
 				return response.json();
 			});
 		}
+
+		if (process.env.SERVER_BUNDLE) {
+			target.constructor.$$luna = {
+				...(target.contructor?.$$luna ?? {}),
+				serverMethods: [
+					...(target.constructor?.$$luna?.serverMethods ?? []),
+					name,
+				]
+			}
+		}
 	}
 };
 
