@@ -53,7 +53,7 @@ const ServerMethod = (options) => {
 
 		if (process.env.SERVER_BUNDLE) {
 			target.constructor.$$luna = {
-				...(target.contructor?.$$luna ?? {}),
+				...(target.constructor?.$$luna ?? {}),
 				serverMethods: [
 					...(target.constructor?.$$luna?.serverMethods ?? []),
 					name,
