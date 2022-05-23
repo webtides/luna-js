@@ -9,6 +9,7 @@ describe('Luna element test', function () {
 		const { startLuna } = require('../../../packages/luna/src/framework');
 
 		global.originalConsoleLog = console.log;
+
 		await startLuna();
 
 		await sleep(600);
@@ -51,6 +52,36 @@ describe('Luna element test', function () {
 				.send();
 
 			chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
-		})
+		});
 	});
+
+	describe('Different method contexts', function() {
+		it('invokes the function with the correct parameters', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.post('/server-method')
+				.set('x-server-method-id', `server-method-component.returnParameter`)
+				.send({ context: {}, args: [ 'MOCHA', 'TEST' ] });
+
+			chai.expect(response.body.parameter).to.equal('MOCHA');
+			chai.expect(response.body.secondParameter).to.equal('TEST');
+		});
+
+		it('invokes the function with the correct context', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.post('/server-method')
+				.set('x-server-method-id', `server-method-component.returnContext`)
+				.send({ context: { foo: 'bar' }, args: [] });
+
+			chai.expect(response.body.context).to.equal('bar');
+		});
+
+		it('does not invoke a function that is not marked as invokable', async function() {
+			const response = await chai.request(`http://localhost:3010`)
+				.post('/server-method')
+				.set('x-server-method-id', `server-method-component.notInvokable`)
+				.send({ context: { }, args: [] });
+
+			chai.expect(response.body.foo).to.be.undefined;
+		});
+	})
 });

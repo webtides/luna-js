@@ -18,7 +18,6 @@ export default async () => {
 	const { settings } = getConfig();
 
 	const { basePaths, files } = generateBasePathsFromLunaConfig(settings);
-
 	const { resolveNodeModules } = settings.build.server;
 
 	const production = process.env.NODE_ENV === 'production';
