@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.12](https://github.com/webtides/luna-js/compare/v0.11.0-dev.11...v0.11.0-dev.12) (2022-05-23)
+
+
+### Features
+
+* Added functionality to execute a method on the server from the client  ([85d8632](https://github.com/webtides/luna-js/commit/85d8632787cb793d28767334ab2c4724a35d2b73))
+
+
+
+
+
 # [0.11.0-dev.11](https://github.com/webtides/luna-js/compare/v0.11.0-dev.10...v0.11.0-dev.11) (2022-05-20)
 
 
