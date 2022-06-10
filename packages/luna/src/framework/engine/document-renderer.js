@@ -87,8 +87,17 @@ export default class DocumentRenderer {
 
         const { markup } = result;
 
+		const renderInShadowDom = await factory.renderInShadowDom();
         const innerDocument = await this.renderUsingPostHtml(markup);
-        node.content = innerDocument;
+
+        if (renderInShadowDom) {
+        	node.content = [
+				{ tag: 'template', attrs: { shadowroot: 'open' }, content: innerDocument },
+				...node.content,
+			];
+		} else {
+        	node.content = innerDocument;
+		}
 
         return {
             attributes: node.attrs,

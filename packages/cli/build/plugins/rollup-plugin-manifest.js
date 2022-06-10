@@ -34,11 +34,25 @@ const sortRoutes = (routes) => {
 			return -1;
 		}
 
+		const routeAPathSegments = a.route.split('/');
+		const routeBPathSegments = b.route.split('/');
+
+		for (let i = 0; i < Math.min(routeAPathSegments.length, routeBPathSegments.length); i++) {
+			const pathSegmentA = routeAPathSegments[i];
+			const pathSegmentB = routeBPathSegments[i];
+
+			if (isRouteWithParam(pathSegmentA) && !isRouteWithParam(pathSegmentB)) {
+				return 1;
+			} else if (isRouteWithParam(pathSegmentB) && !isRouteWithParam(pathSegmentA)) {
+				return -1;
+			}
+		}
 		if (isRouteWithParam(a.route) && !isRouteWithParam(b.route)) {
 			return 1;
 		} else if (isRouteWithParam(b.route) && !isRouteWithParam(a.route)) {
 			return -1;
 		}
+
 		return 0;
 	});
 };

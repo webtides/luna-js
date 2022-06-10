@@ -38,6 +38,10 @@ export default (templateRenderer) => {
             return typeof this.element.template === 'function';
         }
 
+        async renderInShadowDom() {
+        	return this.element?._options?.shadowRender === true;
+		}
+
         async template() {
             return this.element.template();
         }

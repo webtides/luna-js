@@ -2,20 +2,16 @@ import {renderToString} from "@popeindustries/lit-html-server";
 
 export default class TemplateRenderer {
     async renderToString(template, options) {
-        const result = await renderToString(template, options);
-        const element = options?.factory?.element ?? null;
+        let result = await renderToString(template, options);
 
-        if (element?._options?.shadowRender === true) {
-            const styles = element._styles ?? [];
+		const shadowRender = options?.factory && await options.factory.renderInShadowDom();
+		if (shadowRender) {
+			const styles = options.factory.element._styles ?? [];
+			styles.forEach((style) => {
+				result += `<style>${style}</style>`;
+			});
+		}
 
-            return `
-                <template shadowroot="open">
-                    ${result}
-                    ${styles.map(style => `<style>${style}</style>`).join('')}
-                </template>
-            `;
-        }
-
-        return result;
+		return result;
     }
 }

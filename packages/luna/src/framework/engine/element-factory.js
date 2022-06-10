@@ -45,6 +45,10 @@ export default class ElementFactory {
         return typeof this.element.template !== 'undefined';
     }
 
+    async renderInShadowDom() {
+    	return false;
+	}
+
     async template() {
         return typeof this.element.template === 'function' ? this.element.template() : this.element.template;
     }

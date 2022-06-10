@@ -19,7 +19,9 @@ export default class HooksLoader {
         const manifest = await loadManifest();
         const basePath = settings._generated.applicationDirectory;
 
+
         manifest.hooks.forEach(({file}) => {
+			console.log(basePath, file);
             const module = require(path.resolve(path.join(basePath, file)));
             registerHook(module.name, module.default);
         });

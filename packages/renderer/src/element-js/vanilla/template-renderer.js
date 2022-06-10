@@ -1,18 +1,13 @@
 export default class TemplateRenderer {
     async renderToString(template, options) {
-        const result = template.toString();
+        let result = template.toString();
 
-        const element = options?.factory?.element ?? null;
-
-        if (element?._options?.shadowRender === true) {
-            const styles = element._styles ?? [];
-
-            return `
-                <template shadowroot="open">
-                    ${result}
-                    ${styles.map(style => `<style>${style}</style>`).join('')}
-                </template>
-            `;
+        const shadowRender = options?.factory && await options.factory.renderInShadowDom();
+        if (shadowRender) {
+            const styles = options.factory.element._styles ?? [];
+            styles.forEach((style) => {
+            	result += `<style>${style}</style>`;
+			});
         }
 
         return result;

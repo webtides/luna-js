@@ -47,7 +47,8 @@ export const clientManifest = (options) => {
 			}
 
 			Object.keys(entries).forEach((id) => {
-				manifest[entries[id].relativePath + '/' + entries[id].filename] = entries[id].file;
+				const manifestKey = (entries[id].relativePath + '/' + entries[id].filename).split('\\').join('/');
+				manifest[manifestKey] = entries[id].file;
 			});
 
 			fs.writeFileSync(clientManifest, JSON.stringify(manifest), 'utf-8');

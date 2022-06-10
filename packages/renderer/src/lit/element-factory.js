@@ -20,6 +20,10 @@ export default class ElementFactory extends BaseElementFactory {
         return typeof this.element.render === 'function';
     }
 
+    async renderInShadowDom() {
+    	return true;
+	}
+
     async template() {
         return this.element.render();
     }
