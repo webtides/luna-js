@@ -3,6 +3,7 @@ import ComponentLoader from '../../../../packages/luna/src/framework/loaders/com
 import DocumentRenderer from '../../../../packages/luna/src/framework/engine/document-renderer';
 import ElementFactory from '../../../../packages/luna/src/framework/engine/element-factory';
 import { chai } from '../../../helpers';
+import {CurrentRequest} from "@webtides/luna-js";
 
 class TestElementFactory extends ElementFactory {
 	async getInitialProperties() {
@@ -192,5 +193,42 @@ describe('Luna base renderer test', () => {
 		chai.expect(result).to.contain(`object-property="{&quot;foo&quot;:&quot;bar&quot;}"`);
 		chai.expect(result).to.contain(`array-property="[{&quot;foo&quot;:&quot;bar&quot;}]"`);
 		chai.expect(result).to.not.contain('NOT BEING RENDERED');
+	});
+
+	it('injects the current request in the element', async () => {
+		const component = {
+			element: class {
+				@CurrentRequest request;
+
+				async loadDynamicProperties() {
+					return {
+						hasRequest: this.request,
+					};
+				}
+
+				properties() {
+					return {
+						hasRequest: false,
+					};
+				}
+
+				template() {
+					return `${this.hasRequest}`;
+				}
+			},
+			tagName: 'example-component',
+			children: [],
+			ElementFactory: TestElementFactory,
+		};
+
+
+		global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
+
+		const documentRenderer = new DocumentRenderer({ request: 'injected', response: null });
+		const result = await documentRenderer.renderUsingPostHtml(
+			'<html><head></head><body><example-component></example-component></body></html>',
+		);
+
+		chai.expect(result).to.contain('injected');
 	});
 });
