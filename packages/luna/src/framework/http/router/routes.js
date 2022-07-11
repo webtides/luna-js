@@ -72,11 +72,23 @@ const routes = async ({router}) => {
 	const routesLoader = luna.get(RoutesLoader);
 	const routes = await routesLoader.loadRoutes();
 
-	for (const {file, pathname, settings} of routes) {
+	// We are first loading the route definitions in parallel &
+	// then we are registering the routes in the right order
+	// This results in 2 loops, but because the definitions will
+	// load in parallel, it is still faster
+
+	const routeDefinitions = await Promise.all(routes.map(async ({ file, pathname, settings }) => {
 		const routeDefinition = await routesLoader.loadRouteDefinition({
 			file, settings,
 		});
 
+		return {
+			pathname,
+			routeDefinition,
+		};
+	}));
+
+	for (const { pathname, routeDefinition } of routeDefinitions) {
 		router.all(
 			pathname,
 			routeDefinition.middleware,
