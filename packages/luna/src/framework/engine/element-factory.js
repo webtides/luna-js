@@ -126,10 +126,20 @@ export default class ElementFactory {
      * Creates a new instance of the element and takes all attributes that are defined on the corresponding
      * DOM node and maps them to properties on the element.
      *
-     * @returns {Promise<boolean|Response>}
+     * @returns {Promise<>}
      */
     async build() {
         this.element = await this.buildElement();
+
+		// "Inject" the current request and response into the $$luna meta
+		// object of the element instance. This allows us to use decorated
+		// class members to load the current request and response objects.
+		this.element.$$luna = {
+			...(this.element.prototype?.$$luna ?? {}),
+			request: this.request,
+			response: this.response,
+		};
+
         await this.loadAndDefineElementProperties();
     }
 

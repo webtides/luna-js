@@ -23,16 +23,6 @@ export default class ElementRenderer {
         });
 
         await factory.build();
-
-		// "Inject" the current request and response into the $$luna meta
-		// object of the element instance. This allows us to use decorated
-		// class members to load the current request and response objects.
-		factory.element.$$luna = {
-			...(component.element.prototype?.$$luna ?? {}),
-			request,
-			response,
-		};
-
         return factory;
     }
 

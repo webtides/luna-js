@@ -8,6 +8,9 @@ import { customElement, property } from '../../../../packages/renderer/lib/lit/s
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container';
 import { chai } from '../../../helpers';
+import {CurrentRequest} from "@webtides/luna-js";
+import ComponentLoader from "@webtides/luna-js/src/framework/loaders/component-loader.js";
+import DocumentRenderer from "@webtides/luna-js/src/framework/engine/document-renderer.js";
 
 describe('Lit server renderer test', function () {
 	ServiceContainer.set(ElementRenderer, new ElementRenderer());
@@ -164,5 +167,37 @@ describe('Lit server renderer test', function () {
 		});
 
 		chai.expect(result).to.equal(false);
+	});
+
+	it('injects the current request in the lit element', async () => {
+		const component = {
+			element: class {
+				@CurrentRequest request;
+
+				async loadDynamicProperties() {
+					return {
+						hasRequest: this.request,
+					};
+				}
+
+				properties() {
+					return {
+						hasRequest: false,
+					};
+				}
+
+				template() {
+					return html`${this.hasRequest}`;
+				}
+			},
+			tagName: 'example-component',
+			children: [],
+			ElementFactory: ElementFactory,
+		};
+
+		const renderer = ServiceContainer.get(ElementRenderer);
+		const result = await renderer.renderComponent({ component, attributes: {}, request: 'injected', response: null });
+
+		chai.expect(result.markup).to.contain('injected');
 	});
 });
