@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getConfig } from '../../src/config';
+import { getConfig } from '../../src/config.js';
 
 const minimalPackageJSON = {
 	name: '',

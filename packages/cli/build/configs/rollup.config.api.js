@@ -4,9 +4,9 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 
-import { rollupPluginApiExport } from '../plugins/rollup-plugin-export';
-import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown';
-import { getConfig } from '../../src/config';
+import { rollupPluginApiExport } from '../plugins/rollup-plugin-export.js';
+import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown.js';
+import { getConfig } from '../../src/config.js';
 
 const { settings } = getConfig();
 

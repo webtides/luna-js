@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import path from 'path';
 
-import { getConfig } from './config';
+import { getConfig } from './config.js';
 
 let currentLunaProcess = null;
 let waitForProcessToBeKilled = null;

@@ -2,8 +2,8 @@ import path from 'path';
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
 
-import { startRollup, startRollupWatch } from '../build';
-import { getConfig } from '../../config';
+import { startRollup, startRollupWatch } from '../build.js';
+import { getConfig } from '../../config.js';
 
 const buildEntryPoint = async () => {
 	console.log('Building entry point...');

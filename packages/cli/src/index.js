@@ -1,11 +1,11 @@
 import path from 'path';
 
-import { checkRequirements, loadConfig } from './tasks/prepare';
-import { buildComponentsForApplication, startApplicationDevelopmentBuild } from './tasks/build/application';
-import exportStaticSite from './tasks/export';
-import { generateAPI } from './tasks/export/api-generator';
-import { getConfig, setConfig } from './config';
-import { startLunaJS, stopLunaJS } from './run';
+import { checkRequirements, loadConfig } from './tasks/prepare.js';
+import { buildComponentsForApplication, startApplicationDevelopmentBuild } from './tasks/build/application.js';
+import exportStaticSite from './tasks/export/index.js';
+import { generateAPI } from './tasks/export/api-generator.js';
+import { getConfig, setConfig } from './config.js';
+import { startLunaJS, stopLunaJS } from './run.js';
 
 // This should actually be not needed, but in a test
 // environment the child process lingers around and obstructs

@@ -1,23 +1,23 @@
 import path from 'path';
 import glob from 'glob-all';
 import json from '@rollup/plugin-json';
-import {terser} from 'rollup-plugin-terser';
-import {babel} from '@rollup/plugin-babel';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
+import { terser } from 'rollup-plugin-terser';
+import { babel } from '@rollup/plugin-babel';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 
-import {getConfig} from '../../src/config';
+import { getConfig } from '../../src/config.js';
 
-import {clientManifest} from '../plugins/rollup-plugin-client-manifest';
-import {rollupPluginCopy} from '../plugins/rollup-plugin-copy';
-import {rollupPluginMarkdown} from '../plugins/rollup-plugin-markdown';
-import {rollupPluginPostcss} from '../plugins/rollup-plugin-postcss';
-import {rollupPluginStripServerCode} from '../plugins/rollup-plugin-strip-server-code';
+import { clientManifest } from '../plugins/rollup-plugin-client-manifest.js';
+import { rollupPluginCopy } from '../plugins/rollup-plugin-copy.js';
+import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown.js';
+import { rollupPluginPostcss } from '../plugins/rollup-plugin-postcss.js';
+import { rollupPluginStripServerCode } from '../plugins/rollup-plugin-strip-server-code.js';
 
 export default async () => {
 	const production = process.env.NODE_ENV === 'production';
-	const {settings} = getConfig();
+	const { settings } = getConfig();
 
 	const configBundle = {
 		input: `@webtides/luna-js/src/client/functions/luna.js`,
@@ -33,21 +33,22 @@ export default async () => {
 		],
 	};
 
-	const styleBundles = settings.assets?.styles?.bundles?.map((bundle) => {
-		return {
-			input: bundle.input,
-			output: {
-				dir: path.join(settings.publicDirectory, path.dirname(bundle.output)),
-				entryFileNames: 'empty.js',
-			},
-			plugins: [
-				rollupPluginPostcss({
-					publicDirectory: settings.publicDirectory,
-					...bundle,
-				}),
-			],
-		};
-	}) ?? [];
+	const styleBundles =
+		settings.assets?.styles?.bundles?.map((bundle) => {
+			return {
+				input: bundle.input,
+				output: {
+					dir: path.join(settings.publicDirectory, path.dirname(bundle.output)),
+					entryFileNames: 'empty.js',
+				},
+				plugins: [
+					rollupPluginPostcss({
+						publicDirectory: settings.publicDirectory,
+						...bundle,
+					}),
+				],
+			};
+		}) ?? [];
 
 	const componentBundles = (
 		settings.components?.bundles?.flatMap((bundle) => {
@@ -87,11 +88,11 @@ export default async () => {
 							configFile: path.resolve(__dirname, 'babel', 'babel.config.client.js'),
 							babelHelpers: 'bundled',
 						}),
-						commonjs({requireReturnsDefault: true, transformMixedEsModules: true}),
+						commonjs({ requireReturnsDefault: true, transformMixedEsModules: true }),
 						rollupPluginCopy({
 							publicDirectory: settings.publicDirectory,
 							sources: [
-								{input: path.resolve(__dirname, '../../', 'src/client/**/*'), output: 'assets/dev'},
+								{ input: path.resolve(__dirname, '../../', 'src/client/**/*'), output: 'assets/dev' },
 								...(settings?.assets?.static?.sources ?? []),
 							],
 						}),

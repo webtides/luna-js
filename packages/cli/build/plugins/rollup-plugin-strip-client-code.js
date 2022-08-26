@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { requireDynamically } from './helpers/dynamic-require';
+import { requireDynamically } from './helpers/dynamic-require.js';
 
-import { getEntryType } from './helpers/entries';
+import { getEntryType } from './helpers/entries.js';
 
 // This is used so that we can have a chain of imports
 // an still load the appropriate stub

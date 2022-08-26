@@ -6,13 +6,13 @@ import { babel } from '@rollup/plugin-babel';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
-import { getConfig } from '../../src/config';
+import { getConfig } from '../../src/config.js';
 
-import { generateBasePathsFromLunaConfig } from '../plugins/helpers/entries';
-import { rollupPluginManifest } from '../plugins/rollup-plugin-manifest';
-import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown';
-import { rollupPluginPostcss } from '../plugins/rollup-plugin-postcss';
-import { rollupPluginStripClientCode } from '../plugins/rollup-plugin-strip-client-code';
+import { generateBasePathsFromLunaConfig } from '../plugins/helpers/entries.js';
+import { rollupPluginManifest } from '../plugins/rollup-plugin-manifest.js';
+import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown.js';
+import { rollupPluginPostcss } from '../plugins/rollup-plugin-postcss.js';
+import { rollupPluginStripClientCode } from '../plugins/rollup-plugin-strip-client-code.js';
 
 export default async () => {
 	const { settings } = getConfig();

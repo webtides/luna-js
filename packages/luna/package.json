@@ -2,6 +2,8 @@
 	"name": "@webtides/luna-js",
 	"version": "0.12.4",
 	"description": "Static Site Generation & SSR framework for custom-elements.",
+	"type": "module",
+	"private": false,
 	"main": "index.js",
 	"module": "index.js",
 	"engines": {
@@ -22,9 +24,6 @@
 		"posthtml": "^0.16.3",
 		"posthtml-insert-at": "0.2.7",
 		"simple-dom": "^1.4.0"
-	},
-	"directories": {
-		"lib": "../../lib"
 	},
 	"repository": {
 		"type": "git",

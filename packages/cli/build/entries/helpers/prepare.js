@@ -2,8 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 
-import { callHook, registerHook } from '@webtides/luna-js/src/framework/hooks';
-import { HOOKS } from '@webtides/luna-js/src/framework/hooks/definitions';
+import { callHook, registerHook } from '@webtides/luna-js/src/framework/hooks/index.js';
+import { HOOKS } from '@webtides/luna-js/src/framework/hooks/definitions.js';
 
 /**
  * A helper method for our api generator. Takes an array of hooks and apis, and then tries

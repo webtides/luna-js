@@ -1,6 +1,6 @@
 import path from 'path';
-import { startRollup, startRollupWatch } from '../build';
-import { getConfig } from '../../config';
+import { startRollup, startRollupWatch } from '../build.js';
+import { getConfig } from '../../config.js';
 
 const startClientDevelopmentBuild = () => {
 	startRollupWatch(path.join(getConfig().currentDirectory, 'build/configs', 'rollup.config.client.js'));
