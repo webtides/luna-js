@@ -102,6 +102,10 @@ class ComponentLoader {
 	 * }>}
 	 */
 	async loadSingleComponentByTagName(tagName) {
+		if (!tagName) {
+			return false;
+		}
+
 		tagName = tagName.toLowerCase();
 
 		const components = this.allAvailableComponents;

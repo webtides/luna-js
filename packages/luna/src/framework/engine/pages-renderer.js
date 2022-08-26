@@ -1,14 +1,9 @@
-import { InlineInject, LunaService } from '../../decorators/service.js';
+import {LunaService} from '../../decorators/service.js';
 import ElementRenderer from './element-renderer.js';
 import ComponentLoader from '../loaders/component-loader.js';
 import LayoutsLoader from '../loaders/layouts-loader.js';
 
 class PagesRenderer {
-	constructor() {
-		this.componentLoader = InlineInject(ComponentLoader);
-		this.layoutsLoader = InlineInject(LayoutsLoader);
-		this.elementRenderer = InlineInject(ElementRenderer);
-	}
 
 	/**
 	 * Takes a page and a layout factory and wraps the pages
@@ -52,9 +47,11 @@ class PagesRenderer {
 
 		const context = typeof definition?.context === 'function' ? await definition.context() : {};
 
+		const layout = luna.get(LayoutsLoader).getLayoutByName(layoutName);
+
 		return {
 			markup: await page({ request, response, container }),
-			layout: this.layoutsLoader.getLayoutByName(layoutName),
+			layout: luna.get(LayoutsLoader).getLayoutByName(layoutName),
 			context,
 		};
 	}
@@ -73,14 +70,14 @@ class PagesRenderer {
 			response,
 		};
 
-		const { markup, element } = await this.elementRenderer.renderComponent(componentData);
+		const { markup, element } = await luna.get(ElementRenderer).renderComponent(componentData);
 
 		const layoutName =
 			element && typeof element.layout === 'function' ? element.layout() : element?.layout ?? 'default';
 
 		return {
 			markup,
-			layout: this.layoutsLoader.getLayoutByName(layoutName),
+			layout: luna.get(LayoutsLoader).getLayoutByName(layoutName),
 			context: element,
 		};
 	}

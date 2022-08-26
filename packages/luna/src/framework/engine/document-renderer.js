@@ -3,8 +3,7 @@ import { getSerializableConfig, getSettings, getManifest } from '../config.js';
 import posthtml from 'posthtml';
 import posthtmlInsertAt from 'posthtml-insert-at';
 
-import { InlineInject } from '../../decorators/service.js';
-import ComponentLoader from '../loaders/component-loader.js';
+	import ComponentLoader from '../loaders/component-loader.js';
 import ElementRenderer from './element-renderer.js';
 
 import ssr from './plugins/posthtml-plugin-custom-elements.js';
@@ -13,8 +12,6 @@ import ElementFactory from './element-factory.js';
 
 export default class DocumentRenderer {
 	constructor({ request, response }) {
-		this.componentLoader = InlineInject(ComponentLoader);
-		this.elementRenderer = InlineInject(ElementRenderer);
 		this.upgradedElements = {};
 
 		this.request = request;
@@ -26,7 +23,11 @@ export default class DocumentRenderer {
 
 		for (const dependency of dependencies) {
 			if (!this.upgradedElements[dependency]) {
-				const component = await this.componentLoader.loadSingleComponentByTagName(dependency);
+				if (!dependency) {
+					continue;
+				}
+
+				const component = luna.get(ComponentLoader).loadSingleComponentByTagName(dependency);
 
 				if (!component) {
 					continue;
@@ -48,13 +49,13 @@ export default class DocumentRenderer {
 	 */
 	async onCustomElementDomNode(node) {
 		const { tag } = node;
-		const component = await this.componentLoader.loadSingleComponentByTagName(tag);
+		const component = await luna.get(ComponentLoader).loadSingleComponentByTagName(tag);
 
 		if (!component) {
 			return false;
 		}
 
-		const factory = await this.elementRenderer.createElementFactory({
+		const factory = await luna.get(ElementRenderer).createElementFactory({
 			component,
 			attributes: node.attrs ?? {},
 			request: this.request,
@@ -79,7 +80,7 @@ export default class DocumentRenderer {
 			};
 		}
 
-		const result = await this.elementRenderer.renderComponentUsingFactory({
+		const result = await luna.get(ElementRenderer).renderComponentUsingFactory({
 			factory,
 		});
 

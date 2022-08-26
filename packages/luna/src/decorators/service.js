@@ -33,12 +33,4 @@ const Inject = (service) => {
 	};
 };
 
-const InlineInject = (service) => {
-	return new Proxy(undefined, {
-		get() {
-			return new ServiceContext(this).get(service);
-		},
-	});
-};
-
-export { LunaService, Inject, InlineInject };
+export { LunaService, Inject };

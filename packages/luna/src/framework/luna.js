@@ -20,7 +20,7 @@ import RoutesLoader from './loaders/routes-loader.js';
  */
 export default class LunaContainer extends LunaBase {
 	constructor() {
-		super();
+		super(...arguments);
 
 		this.serviceDefaults = [
 			/* CACHE */
