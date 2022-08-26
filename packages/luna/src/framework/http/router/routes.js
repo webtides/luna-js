@@ -1,11 +1,11 @@
-import DocumentRenderer from "../../engine/document-renderer";
-import ServiceContext from "../../services/service-context";
-import PagesRenderer from "../../engine/pages-renderer";
-import RoutesLoader from "../../loaders/routes-loader.js";
+import DocumentRenderer from '../../engine/document-renderer';
+import ServiceContext from '../../services/service-context';
+import PagesRenderer from '../../engine/pages-renderer';
+import RoutesLoader from '../../loaders/routes-loader.js';
 
 let currentRouter;
 
-const invokeRoute = async ({routeDefinition, request, response}) => {
+const invokeRoute = async ({ routeDefinition, request, response }) => {
 	const callback = routeDefinition.methods[request.method.toLowerCase()];
 
 	if (!callback) {
@@ -15,8 +15,8 @@ const invokeRoute = async ({routeDefinition, request, response}) => {
 	const container = new ServiceContext({
 		$$luna: {
 			request,
-			response
-		}
+			response,
+		},
 	});
 
 	// The callback result could be either
@@ -44,7 +44,7 @@ const invokeRoute = async ({routeDefinition, request, response}) => {
 		return response.json(page);
 	}
 
-	const documentRenderer = new DocumentRenderer({request, response});
+	const documentRenderer = new DocumentRenderer({ request, response });
 	const html = await documentRenderer.render(page);
 
 	if (response.headersSent) {
@@ -66,7 +66,7 @@ const invokeRoute = async ({routeDefinition, request, response}) => {
  *
  * @returns {Promise<void>}
  */
-const routes = async ({router}) => {
+const routes = async ({ router }) => {
 	currentRouter = router;
 
 	const routesLoader = luna.get(RoutesLoader);
@@ -77,37 +77,36 @@ const routes = async ({router}) => {
 	// This results in 2 loops, but because the definitions will
 	// load in parallel, it is still faster
 
-	const routeDefinitions = await Promise.all(routes.map(async ({ file, pathname, settings }) => {
-		const routeDefinition = await routesLoader.loadRouteDefinition({
-			file, settings,
-		});
+	const routeDefinitions = await Promise.all(
+		routes.map(async ({ file, pathname, settings }) => {
+			const routeDefinition = await routesLoader.loadRouteDefinition({
+				file,
+				settings,
+			});
 
-		return {
-			pathname,
-			routeDefinition,
-		};
-	}));
+			return {
+				pathname,
+				routeDefinition,
+			};
+		}),
+	);
 
 	for (const { pathname, routeDefinition } of routeDefinitions) {
-		router.all(
-			pathname,
-			routeDefinition.middleware,
-			async (request, response) => {
-				try {
-					await invokeRoute({
-						routeDefinition,
-						request,
-						response,
-					});
-				} catch (error) {
-					console.error(error);
-					return response.status(500).send();
-				}
-			},
-		);
+		router.all(pathname, routeDefinition.middleware, async (request, response) => {
+			try {
+				await invokeRoute({
+					routeDefinition,
+					request,
+					response,
+				});
+			} catch (error) {
+				console.error(error);
+				return response.status(500).send();
+			}
+		});
 
 		console.log(`Registered route ${pathname}`);
 	}
 };
 
-export {routes, currentRouter};
+export { routes, currentRouter };

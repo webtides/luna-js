@@ -1,4 +1,4 @@
-const Component = ({selector, target} = {}) => {
+const Component = ({ selector, target } = {}) => {
 	return function decorator(Class) {
 		Class.$$luna = {
 			...(Class.$$luna ?? {}),
@@ -7,7 +7,7 @@ const Component = ({selector, target} = {}) => {
 		};
 
 		return Class;
-	}
+	};
 };
 
 Component.TARGET_SERVER = 'server';
@@ -28,15 +28,12 @@ const ServerMethod = (options) => {
 
 	return (target, name, descriptor) => {
 		if (process.env.CLIENT_BUNDLE) {
-			descriptor.value = (async function () {
-				const context = Object.fromEntries(syncProperties.map((key) => ([
-					key,
-					this[key]
-				])));
+			descriptor.value = async function () {
+				const context = Object.fromEntries(syncProperties.map((key) => [key, this[key]]));
 
 				const response = await fetch('#', {
 					method: 'POST',
-					body: JSON.stringify({context, args: [...arguments]}),
+					body: JSON.stringify({ context, args: [...arguments] }),
 					headers: {
 						'Content-Type': 'application/json',
 						'X-Server-Method-Id': `${this.tagName.toLowerCase()}.${name}`,
@@ -44,23 +41,20 @@ const ServerMethod = (options) => {
 				});
 
 				if (response.status !== 200) {
-					throw new Error('Method invocation in different context failed.')
+					throw new Error('Method invocation in different context failed.');
 				}
 
 				return response.json();
-			});
+			};
 		}
 
 		if (process.env.SERVER_BUNDLE) {
 			target.constructor.$$luna = {
 				...(target.constructor?.$$luna ?? {}),
-				serverMethods: [
-					...(target.constructor?.$$luna?.serverMethods ?? []),
-					name,
-				]
-			}
+				serverMethods: [...(target.constructor?.$$luna?.serverMethods ?? []), name],
+			};
 		}
-	}
+	};
 };
 
-export {Component, MethodContext, ServerMethod};
+export { Component, MethodContext, ServerMethod };

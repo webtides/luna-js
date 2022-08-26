@@ -1,13 +1,10 @@
 import path from 'path';
-import {loadManifest, loadSettings} from '../config.js';
-import {LunaService} from "../../decorators/service.js";
-import {importDynamically} from "../helpers/dynamic-import.js";
-import {parseMiddleware} from "../http/middleware";
+import { loadManifest, loadSettings } from '../config.js';
+import { LunaService } from '../../decorators/service.js';
+import { importDynamically } from '../helpers/dynamic-import.js';
+import { parseMiddleware } from '../http/middleware';
 
-@LunaService({
-	name: 'RoutesLoader'
-})
-export default class RoutesLoader {
+class RoutesLoader {
 	/**
 	 * Loads the route definition and normalizes it.
 	 *
@@ -18,7 +15,7 @@ export default class RoutesLoader {
 	 *
 	 * @returns {Promise<{layout: *, module: *, page: *, middleware: *}>}
 	 */
-	async loadRouteDefinition({file, settings}) {
+	async loadRouteDefinition({ file, settings }) {
 		const module = await import(path.resolve(file));
 
 		const isComponentRoute = module?.default?.prototype?.constructor?.toString().indexOf('class') === 0;
@@ -29,13 +26,14 @@ export default class RoutesLoader {
 
 		let staticProperties = {};
 		if (isComponentRoute) {
-			staticProperties = typeof module?.default?.loadStaticProperties === 'function'
-				? (await module.default.loadStaticProperties()) ?? {}
-				: {};
+			staticProperties =
+				typeof module?.default?.loadStaticProperties === 'function'
+					? (await module.default.loadStaticProperties()) ?? {}
+					: {};
 		}
 
 		return {
-			middleware: await parseMiddleware({middleware: module.middleware}),
+			middleware: await parseMiddleware({ middleware: module.middleware }),
 			layout: module.layout,
 			context: module.context,
 			methods: {
@@ -46,7 +44,7 @@ export default class RoutesLoader {
 			},
 			staticProperties,
 			isComponentRoute,
-			ElementFactory
+			ElementFactory,
 		};
 	}
 
@@ -56,10 +54,7 @@ export default class RoutesLoader {
 
 		const basePath = settings._generated.applicationDirectory;
 
-		const routes = [
-			...manifest.apis,
-			...manifest.pages,
-		];
+		const routes = [...manifest.apis, ...manifest.pages];
 
 		return routes
 			.sort((routeA, routeB) => {
@@ -74,10 +69,14 @@ export default class RoutesLoader {
 				return routeA.fallback && !routeB.fallback ? 1 : -1;
 			})
 			.map((route) => {
-				const {file, route: pathname, settings} = route;
+				const { file, route: pathname, settings } = route;
 				return {
-					file: path.join(basePath, file), pathname, settings,
+					file: path.join(basePath, file),
+					pathname,
+					settings,
 				};
 			});
 	}
 }
+
+export default LunaService({ name: 'RoutesLoader' })(RoutesLoader);

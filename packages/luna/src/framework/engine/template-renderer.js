@@ -1,7 +1,7 @@
 class TemplateRenderer {
-    renderToString(template) {
-        return template;
-    }
+	renderToString(template) {
+		return template;
+	}
 }
 
 export default TemplateRenderer;
