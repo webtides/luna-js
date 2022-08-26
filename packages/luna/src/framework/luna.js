@@ -1,17 +1,17 @@
-import { getConfigValue, getSettings } from './config';
-import LunaBase from './shared/luna-base';
-import HooksLoader from './loaders/hooks-loader';
-import { callHook } from './hooks';
-import { HOOKS } from './hooks/definitions';
-import MemoryCache from './cache/memory-cache';
-import ServiceContainer from './services/service-container';
-import ComponentLoader from './loaders/component-loader';
-import ElementRenderer from './engine/element-renderer';
-import LunaCache from './cache/luna-cache';
-import Server from './http/server';
-import ElementFactory from './engine/element-factory';
-import PagesRenderer from './engine/pages-renderer';
-import LayoutsLoader from './loaders/layouts-loader';
+import { getConfigValue, getSettings } from './config.js';
+import LunaBase from './shared/luna-base.js';
+import HooksLoader from './loaders/hooks-loader.js';
+import { callHook } from './hooks/index.js';
+import { HOOKS } from './hooks/definitions.js';
+import MemoryCache from './cache/memory-cache.js';
+import ServiceContainer from './services/service-container.js';
+import ComponentLoader from './loaders/component-loader.js';
+import ElementRenderer from './engine/element-renderer.js';
+import LunaCache from './cache/luna-cache.js';
+import Server from './http/server.js';
+import ElementFactory from './engine/element-factory.js';
+import PagesRenderer from './engine/pages-renderer.js';
+import LayoutsLoader from './loaders/layouts-loader.js';
 import RoutesLoader from './loaders/routes-loader.js';
 
 /**

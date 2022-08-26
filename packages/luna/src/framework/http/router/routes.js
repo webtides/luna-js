@@ -1,6 +1,6 @@
-import DocumentRenderer from '../../engine/document-renderer';
-import ServiceContext from '../../services/service-context';
-import PagesRenderer from '../../engine/pages-renderer';
+import DocumentRenderer from '../../engine/document-renderer.js';
+import ServiceContext from '../../services/service-context.js';
+import PagesRenderer from '../../engine/pages-renderer.js';
 import RoutesLoader from '../../loaders/routes-loader.js';
 
 let currentRouter;

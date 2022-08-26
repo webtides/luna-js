@@ -2,7 +2,7 @@ import path from 'path';
 import { loadManifest, loadSettings } from '../config.js';
 import { LunaService } from '../../decorators/service.js';
 import { importDynamically } from '../helpers/dynamic-import.js';
-import { parseMiddleware } from '../http/middleware';
+import { parseMiddleware } from '../http/middleware/index.js';
 
 class RoutesLoader {
 	/**

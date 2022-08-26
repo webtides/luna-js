@@ -1,9 +1,12 @@
 {
 	"extends": [
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"plugin:import/recommended"
 	],
 	"rules": {
-		"prettier/prettier": "error"
+		"prettier/prettier": "error",
+		"import/extensions": ["error", "always"]
+
 	},
 	"parserOptions": {
 		"ecmaVersion": 13,

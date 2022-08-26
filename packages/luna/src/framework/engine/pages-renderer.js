@@ -1,7 +1,7 @@
-import { InlineInject, LunaService } from '../../decorators/service';
-import ElementRenderer from './element-renderer';
-import ComponentLoader from '../loaders/component-loader';
-import LayoutsLoader from '../loaders/layouts-loader';
+import { InlineInject, LunaService } from '../../decorators/service.js';
+import ElementRenderer from './element-renderer.js';
+import ComponentLoader from '../loaders/component-loader.js';
+import LayoutsLoader from '../loaders/layouts-loader.js';
 
 class PagesRenderer {
 	constructor() {

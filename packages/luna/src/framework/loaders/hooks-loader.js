@@ -1,7 +1,7 @@
-import { loadManifest, loadSettings } from '../config';
-import { registerHook } from '../hooks';
 import path from 'path';
-import { LunaService } from '../../decorators/service';
+import { loadManifest, loadSettings } from '../config.js';
+import { registerHook } from '../hooks/index.js';
+import { LunaService } from '../../decorators/service.js';
 
 class HooksLoader {
 	/**

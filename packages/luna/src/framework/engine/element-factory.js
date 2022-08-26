@@ -1,7 +1,7 @@
 import { paramCase } from 'param-case';
 import { camelCase } from 'camel-case';
 
-import TemplateRenderer from './template-renderer';
+import TemplateRenderer from './template-renderer.js';
 import { Component } from '../../decorators/component.js';
 
 /**

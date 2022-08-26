@@ -1,5 +1,5 @@
-import { callHook } from '../../hooks';
-import { HOOKS } from '../../hooks/definitions';
+import { callHook } from '../../hooks/index.js';
+import { HOOKS } from '../../hooks/definitions.js';
 import { cacheMiddleware } from './cache-middleware.js';
 import { hookRequestReceivedMiddleware } from './hook-request-received.js';
 import { serverMethodMiddleware } from './server-method-middleware.js';

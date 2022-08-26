@@ -1,13 +1,13 @@
 import './bootstrap.js';
 
-import { loadSettings } from './config';
-import { callHook } from './hooks';
-import { HOOKS } from './hooks/definitions';
+import { loadSettings } from './config.js';
+import { callHook } from './hooks/index.js';
+import { HOOKS } from './hooks/definitions.js';
 
-import ComponentLoader from './loaders/component-loader';
-import Server from './http/server';
-import LunaContainer from './luna';
-import LayoutsLoader from './loaders/layouts-loader';
+import ComponentLoader from './loaders/component-loader.js';
+import Server from './http/server.js';
+import LunaContainer from './luna.js';
+import LayoutsLoader from './loaders/layouts-loader.js';
 
 /**
  * This methods should be called before anything else.

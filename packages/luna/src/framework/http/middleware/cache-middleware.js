@@ -1,5 +1,5 @@
-import { getSettings } from '../../config';
-import LunaCache from '../../cache/luna-cache';
+import { getSettings } from '../../config.js';
+import LunaCache from '../../cache/luna-cache.js';
 
 /**
  * Looks inside the luna.config.js to determine whether or not the

@@ -1,7 +1,6 @@
 import path from 'path';
-
 import { loadManifest, loadSettings } from '../config.js';
-import { LunaService } from '../../decorators/service';
+import { LunaService } from '../../decorators/service.js';
 
 class LayoutsLoader {
 	#layouts;

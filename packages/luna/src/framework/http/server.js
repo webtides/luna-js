@@ -1,12 +1,13 @@
-import { LunaService } from '../../decorators/service';
-import { getSettings } from '../config';
 import bodyParser from 'body-parser';
 import express from 'express';
-import { callHook } from '../hooks';
-import { HOOKS } from '../hooks/definitions';
-import { registerMiddleware } from './middleware';
-import { upgradeRequestMiddleware } from './middleware/upgrade-request-middleware';
-import { routes } from './router/routes';
+
+import { LunaService } from '../../decorators/service.js';
+import { getSettings } from '../config.js';
+import { callHook } from '../hooks/index.js';
+import { HOOKS } from '../hooks/definitions.js';
+import { registerMiddleware } from './middleware/index.js';
+import { upgradeRequestMiddleware } from './middleware/upgrade-request-middleware.js';
+import { routes } from './router/routes.js';
 
 class Server {
 	constructor() {
