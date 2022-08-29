@@ -1,6 +1,4 @@
 export default (api) => {
-	api.cache(false);
-
 	return {
 		presets: [
 			[

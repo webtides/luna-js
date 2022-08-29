@@ -28,7 +28,7 @@ export default async () => {
 			dir: settings._generated.applicationDirectory,
 			entryFileNames: '[name].js',
 			sourcemap: production ? false : 'inline',
-			format: 'cjs',
+			format: 'es',
 			exports: 'auto',
 		},
 		plugins: [
@@ -41,14 +41,14 @@ export default async () => {
 			}),
 			rollupPluginMarkdown(),
 			nodeResolve({
-				resolveOnly: ['@webtides/luna-js', ...resolveNodeModules],
+				resolveOnly: (module) => !resolveNodeModules.includes(module),
 			}),
 			replace({
 				'process.env.CLIENT_BUNDLE': false,
 				'process.env.SERVER_BUNDLE': true,
 			}),
 			babel({
-				configFile: path.resolve(__dirname, '../..', 'babel.config.js'),
+				configFile: path.resolve(getConfig().currentDirectory, 'babel.config.js'),
 				babelHelpers: 'bundled',
 			}),
 			json(),

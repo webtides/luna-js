@@ -1,4 +1,5 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { checkRequirements, loadConfig } from './tasks/prepare.js';
 import { buildComponentsForApplication, startApplicationDevelopmentBuild } from './tasks/build/application.js';
@@ -19,7 +20,7 @@ process.on('exit', () => {
 const execute = async (argv) => {
 	setConfig({
 		currentWorkingDirectory: process.cwd(),
-		currentDirectory: path.dirname(__dirname),
+		currentDirectory: path.dirname(path.dirname(fileURLToPath(import.meta.url))),
 		isExporting: !!argv.export,
 		documentInject: '',
 	});

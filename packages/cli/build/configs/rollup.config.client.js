@@ -27,7 +27,7 @@ export default async () => {
 		plugins: [
 			nodeResolve(),
 			babel({
-				configFile: path.resolve(__dirname, 'babel', 'babel.config.client.js'),
+				configFile: path.resolve(getConfig().currentDirectory, 'build/configs/babel', 'babel.config.client.js'),
 				babelHelpers: 'bundled',
 			}),
 		],
@@ -85,14 +85,14 @@ export default async () => {
 							'process.env.SERVER_BUNDLE': false,
 						}),
 						babel({
-							configFile: path.resolve(__dirname, 'babel', 'babel.config.client.js'),
+							configFile: path.resolve(getConfig().currentDirectory, 'build/configs/babel', 'babel.config.client.js'),
 							babelHelpers: 'bundled',
 						}),
 						commonjs({ requireReturnsDefault: true, transformMixedEsModules: true }),
 						rollupPluginCopy({
 							publicDirectory: settings.publicDirectory,
 							sources: [
-								{ input: path.resolve(__dirname, '../../', 'src/client/**/*'), output: 'assets/dev' },
+								{ input: path.resolve(getConfig().currentDirectory, 'src/client/**/*'), output: 'assets/dev' },
 								...(settings?.assets?.static?.sources ?? []),
 							],
 						}),

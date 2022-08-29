@@ -24,7 +24,7 @@ export default async () => {
 				resolveOnly: ['@webtides/luna-js'],
 			}),
 			babel({
-				configFile: path.resolve(__dirname, '../..', 'babel.config.js'),
+				configFile: path.resolve(getConfig().currentDirectory, 'babel.config.js'),
 				babelHelpers: 'bundled',
 			}),
 			json(),

@@ -1,5 +1,6 @@
-import ElementFactory from './element-factory';
-import TemplateRenderer from "./template-renderer";
+import ElementFactory from './element-factory.js';
+import TemplateRenderer from "./template-renderer.js";
+
 const stubs = async () => [{
     sources: ['lit'],
     stub: require.resolve('./stubs/index.js'),

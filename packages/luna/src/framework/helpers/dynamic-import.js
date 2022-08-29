@@ -1,9 +1,11 @@
-import path from 'path';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 const importDynamically = async (id) => {
-	return id.startsWith('.')
-		? import(path.resolve(process.cwd(), id))
-		: import(path.resolve(process.cwd(), `./node_modules/${id}`));
+	console.log({ url: require.resolve(id) });
+
+	return require.resolve(id);
 };
 
 export { importDynamically };

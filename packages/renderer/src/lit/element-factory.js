@@ -1,6 +1,5 @@
-import BaseElementFactory from "@webtides/luna-js/src/framework/engine/element-factory";
-
-import TemplateRenderer from "./template-renderer";
+import BaseElementFactory from "@webtides/luna-js/src/framework/engine/element-factory.js";
+import TemplateRenderer from "./template-renderer.js";
 
 /**
  * The element factory to render the LitElement from lit on the server.

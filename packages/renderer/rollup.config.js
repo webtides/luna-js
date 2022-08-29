@@ -38,7 +38,7 @@ const bundleConfigs = bundles.map((bundle) => ({
 		inlineDynamicImports: true,
 	},
 	plugins: [
-		metaImportUrl(),
+		// metaImportUrl(),
 		nodeResolve({
 			resolveOnly: bundle.resolve ?? [],
 		}),
@@ -64,7 +64,7 @@ const stubConfigs = bundles
 			},
 			plugins: [
 				nodeResolve(),
-				metaImportUrl(),
+				// metaImportUrl(),
 				commonjs({
 					requireReturnsDefault: true,
 					transformMixedEsModules: true,

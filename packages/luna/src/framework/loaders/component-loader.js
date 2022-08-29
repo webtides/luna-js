@@ -44,7 +44,7 @@ class ComponentLoader {
 
 		// Load the appropriate element factory for a component once at startup.
 		component.ElementFactory = settings.factory
-			? (await importDynamically(settings.factory)).ElementFactory
+			? (await import(settings.factory)).ElementFactory
 			: await luna.getDefaultElementFactory();
 
 		return component;

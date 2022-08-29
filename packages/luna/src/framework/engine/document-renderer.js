@@ -1,9 +1,9 @@
 import { getSerializableConfig, getSettings, getManifest } from '../config.js';
 
 import posthtml from 'posthtml';
-import posthtmlInsertAt from 'posthtml-insert-at';
+import { insertAt as posthtmlInsertAt} from 'posthtml-insert-at';
 
-	import ComponentLoader from '../loaders/component-loader.js';
+import ComponentLoader from '../loaders/component-loader.js';
 import ElementRenderer from './element-renderer.js';
 
 import ssr from './plugins/posthtml-plugin-custom-elements.js';

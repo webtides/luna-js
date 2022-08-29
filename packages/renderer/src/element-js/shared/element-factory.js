@@ -1,4 +1,4 @@
-import BaseElementFactory from "@webtides/luna-js/src/framework/engine/element-factory";
+import BaseElementFactory from "@webtides/luna-js/src/framework/engine/element-factory.js";
 import {Component} from "@webtides/luna-js";
 
 export default (templateRenderer) => {

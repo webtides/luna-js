@@ -18,7 +18,7 @@ const startLunaJS = async () => {
 	const { settings } = getConfig();
 	const { baseDirectory } = settings._generated;
 
-	const generatedStartScript = path.join(getConfig().currentWorkingDirectory, baseDirectory, 'start.js');
+	const generatedStartScript = path.join(getConfig().currentWorkingDirectory, 'node_modules/@webtides/luna-js', 'start.js');
 
 	const child = spawn('node', [generatedStartScript]);
 

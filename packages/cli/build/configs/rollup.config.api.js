@@ -33,7 +33,7 @@ export default {
 		}),
 		commonjs({ requireReturnsDefault: true }),
 		babel({
-			configFile: path.resolve(__dirname, '../..', 'babel.config.js'),
+			configFile: path.resolve(getConfig().currentDirectory, 'babel.config.js'),
 			babelHelpers: 'bundled',
 		}),
 		json(),
