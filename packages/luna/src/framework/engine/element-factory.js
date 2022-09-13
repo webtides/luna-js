@@ -1,4 +1,5 @@
 import {paramCase} from "param-case";
+import { camelCase } from 'camel-case';
 
 import TemplateRenderer from "./template-renderer";
 import {Component} from "../../decorators/component.js";
@@ -213,7 +214,7 @@ export default class ElementFactory {
                 attributeToDefine = JSON.parse(attributes[key]);
             } catch {}
 
-            properties[key.startsWith('.') ? key.substring(1) : key] = attributeToDefine;
+            properties[camelCase(key.startsWith('.') ? key.substring(1) : key)] = attributeToDefine;
         });
 
         return properties;
