@@ -42,6 +42,8 @@ describe('Luna element test', function () {
 		it('renders the properties correctly', async function () {
 			const response = await chai.request('http://localhost:3010').get('/rendering/properties').send();
 			chai.expect(response.text).to.include('PROPERTY COMPONENT MOCHA');
+			chai.expect(response.text).to.not.include('DASH-MOCHA');
+			chai.expect(response.text).to.include('CAMEL-MOCHA');
 		});
 	});
 
