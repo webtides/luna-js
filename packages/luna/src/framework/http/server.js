@@ -26,7 +26,12 @@ export default class Server {
 
         const app = express();
 
-        this.baseMiddleware.forEach(middleware => app.use(middleware));
+        const {baseMiddleware} = (await callHook(HOOKS.BASE_MIDDLEWARE_REGISTER, {
+          app,
+          baseMiddleware: this.baseMiddleware,
+        }));
+
+        baseMiddleware.forEach(middleware => app.use(middleware));
 
         await registerMiddleware({app});
 
