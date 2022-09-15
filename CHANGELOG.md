@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0-dev.15](https://github.com/webtides/luna-js/compare/v0.11.0-dev.14...v0.11.0-dev.15) (2022-09-15)
+
+
+### Features
+
+* Add a new hook where you can modify the base middleware ([#116](https://github.com/webtides/luna-js/issues/116)) ([f8b41b8](https://github.com/webtides/luna-js/commit/f8b41b8d4c1a0ec7d7ffe0a0a332cbe9cf593b7f))
+
+
+
+
+
 # [0.11.0-dev.14](https://github.com/webtides/luna-js/compare/v0.11.0-dev.13...v0.11.0-dev.14) (2022-09-15)
 
 **Note:** Version bump only for package luna-js-monorepo
