@@ -1,8 +1,11 @@
-const { spawn, execSync } = require('child_process');
+import { spawn, execSync } from 'child_process';
+import chai from 'chai';
 
-const chai = require('chai');
-chai.use(require('chai-fs'));
-chai.use(require('chai-http'));
+import chaiFs from 'chai-fs';
+import chaiHttp from "chai-http";
+
+chai.use(chaiFs);
+chai.use(chaiHttp);
 
 const BUILD_SCRIPT = 'node node_modules/@webtides/luna-cli/bin/luna.js';
 const LUNA_CLI_SCRIPT = 'node_modules/@webtides/luna-cli/bin/luna.js';
@@ -41,7 +44,7 @@ const startLuna = ({ onStart, onMessage } = {}) => {
 	};
 };
 
-module.exports = {
+export {
 	BUILD_SCRIPT,
 	LUNA_CLI_SCRIPT,
 	LUNA_START_SCRIPT,

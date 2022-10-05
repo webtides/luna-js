@@ -4,6 +4,7 @@
 	"version": "0.12.4",
 	"main": "index.js",
 	"license": "MIT",
+	"type": "module",
 	"scripts": {
 		"build": "rollup -c"
 	},

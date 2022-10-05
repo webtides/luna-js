@@ -33,7 +33,7 @@ const bundleConfigs = bundles.map((bundle) => ({
 	input: `./src/${bundle.name}/index.js`,
 	output: {
 		file: `./lib/${bundle.name}/index.js`,
-		format: 'cjs',
+		format: 'es',
 		exports: 'auto',
 		inlineDynamicImports: true,
 	},

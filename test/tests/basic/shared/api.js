@@ -1,4 +1,4 @@
-const { chai, sleep } = require('../../../helpers');
+import { chai, sleep } from '../../../helpers/index.js';
 
 const basic = () => {
 	it('should register the index api route', async function () {
@@ -46,6 +46,4 @@ const basic = () => {
 	});
 };
 
-module.exports = {
-	basic,
-};
+export { basic };

@@ -1,6 +1,4 @@
-const path = require('path');
-
-module.exports = {
+export default {
 	port: 3010,
 
 	build: {
@@ -8,18 +6,18 @@ module.exports = {
 	},
 
 	pages: {
-		input: [path.join(__dirname, 'views/pages')],
+		input: ['views/pages'],
 		fallback: '/custom-fallback',
 	},
 
 	layouts: {
-		input: [path.join(__dirname, 'views/layouts')],
+		input: ['views/layouts'],
 	},
 
 	components: {
 		bundles: [
 			{
-				input: path.join(__dirname, 'views/components'),
+				input: 'views/components',
 				output: 'assets',
 
 				styles: {
@@ -30,12 +28,12 @@ module.exports = {
 	},
 
 	api: {
-		input: [path.join(__dirname, 'api')],
+		input: [ 'api'],
 		fallback: '/fallback-api',
 	},
 
 	hooks: {
-		input: [path.join(__dirname, 'hooks')],
+		input: ['hooks'],
 	},
 
 	routes: {
