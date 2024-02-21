@@ -2150,7 +2150,7 @@
     lit-html "^1.2.1"
 
 "@webtides/luna-cli@file:/Users/eddylowen/code/open-source/webtides/luna-js/packages/cli":
-  version "0.11.0-dev.12"
+  version "0.12.1"
   resolved "file:packages/cli"
   dependencies:
     "@babel/cli" "^7.16.7"
@@ -2195,8 +2195,8 @@
     ws "^7.4.4"
     yargs "^16.2.0"
 
-"@webtides/luna-js@^0.11.0-dev.15", "@webtides/luna-js@file:/Users/eddylowen/code/open-source/webtides/luna-js/packages/luna":
-  version "0.11.0-dev.15"
+"@webtides/luna-js@^0.12.1", "@webtides/luna-js@file:/Users/eddylowen/code/open-source/webtides/luna-js/packages/luna":
+  version "0.12.1"
   resolved "file:packages/luna"
   dependencies:
     body-parser "^1.19.0"
@@ -2210,13 +2210,13 @@
     simple-dom "^1.4.0"
 
 "@webtides/luna-renderer@file:/Users/eddylowen/code/open-source/webtides/luna-js/packages/renderer":
-  version "0.11.0-dev.15"
+  version "0.12.1"
   resolved "file:packages/renderer"
   dependencies:
     "@lit-labs/ssr" "2.0.1"
     "@popeindustries/lit-html-server" "3.1.0"
     "@webtides/element-js" "0.7.4"
-    "@webtides/luna-js" "^0.11.0-dev.15"
+    "@webtides/luna-js" "^0.12.1"
 
 abbrev@1:
   version "1.1.1"

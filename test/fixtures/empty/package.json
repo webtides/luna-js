@@ -11,9 +11,9 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"@webtides/luna-cli": "file:webtides-luna-cli-0.11.0-dev.12.tgz"
+		"@webtides/luna-cli": "file:webtides-luna-cli-0.12.1.tgz"
 	},
 	"dependencies": {
-		"@webtides/luna-js": "file:webtides-luna-js-0.11.0-dev.15.tgz"
+		"@webtides/luna-js": "file:webtides-luna-js-0.12.1.tgz"
 	}
 }
