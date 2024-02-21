@@ -1,7 +1,7 @@
 {
 	"name": "@webtides/luna-renderer",
 	"description": "Collection of first-party renderers for @webtides/luna-js",
-	"version": "0.11.0-dev.15",
+	"version": "0.12.1",
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
@@ -11,7 +11,7 @@
 		"@lit-labs/ssr": "2.0.1",
 		"@popeindustries/lit-html-server": "3.1.0",
 		"@webtides/element-js": "0.4.1",
-		"@webtides/luna-js": "^0.11.0-dev.15",
+		"@webtides/luna-js": "^0.12.1",
 		"camel-case": "^4.1.2",
 		"param-case": "^3.0.4"
 	},

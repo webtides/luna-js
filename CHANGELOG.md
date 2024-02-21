@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.1](https://github.com/webtides/luna-js/compare/v0.11.0-dev.15...v0.12.1) (2024-02-21)
+
+
+### Features
+
+* brings tests back to green ([db6172a](https://github.com/webtides/luna-js/commit/db6172a519d311d9f30e992d1e0e93435e9b2f6c))
+
+
+
+# [0.11.0](https://github.com/webtides/luna-js/compare/v0.6.0...v0.11.0) (2022-02-07)
+
+
+
+
+
 # [0.11.0-dev.15](https://github.com/webtides/luna-js/compare/v0.11.0-dev.14...v0.11.0-dev.15) (2022-09-15)
 
 

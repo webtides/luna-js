@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.1](https://github.com/webtides/luna-cli/compare/v0.11.0-dev.15...v0.12.1) (2024-02-21)
+
+**Note:** Version bump only for package @webtides/luna-cli
+
+
+
+
+
 # [0.11.0-dev.12](https://github.com/webtides/luna-cli/compare/v0.11.0-dev.11...v0.11.0-dev.12) (2022-05-23)
 
 
