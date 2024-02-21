@@ -1,3 +1,3 @@
 export default async () => {
-    return `MOCHA FALLBACK PAGE`;
-}
+	return `MOCHA FALLBACK PAGE`;
+};

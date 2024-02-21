@@ -26,9 +26,7 @@ export default class ComponentLoader {
             };
         }
 
-        // Don't load static properties if the element should only be loaded in the client
-        element.staticProperties = (element?.$$luna?.target !== Component.TARGET_CLIENT)
-            && typeof element.loadStaticProperties === 'function'
+        element.staticProperties = typeof element.loadStaticProperties === 'function'
                 ? (await element.loadStaticProperties()) ?? {}
                 : {};
 
@@ -66,16 +64,16 @@ export default class ComponentLoader {
 
         const basePath = settings._generated.applicationDirectory;
 
-        for (const componentModule of manifest.components) {
-            const {file, relativePath, settings, children} = componentModule;
-            const absolutePath = path.join(basePath, file);
+		await Promise.all(manifest.components.map(async (componentModule) => {
+			const {file, relativePath, settings, children} = componentModule;
+			const absolutePath = path.posix.join(basePath, file);
 
-            const component = await this.loadSingleComponent({
-                absolutePath, file, relativePath, settings, children
-            });
+			const component = await this.loadSingleComponent({
+				absolutePath, file, relativePath, settings, children
+			});
 
-            this.allAvailableComponents[component.tagName] = component;
-        }
+			this.allAvailableComponents[component.tagName] = component;
+		}));
 
         return this.allAvailableComponents;
     }

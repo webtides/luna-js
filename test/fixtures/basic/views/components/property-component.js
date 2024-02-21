@@ -1,9 +1,10 @@
 export default class PropertyComponent {
-    foo = "bar";
+	foo = 'bar';
+	dashToCamel = 'DASH-MOCHA';
 
-    get template() {
-        return `
-            PROPERTY COMPONENT ${this.foo}
+	get template() {
+		return `
+            PROPERTY COMPONENT ${this.foo} ${this.dashToCamel}
         `;
-    }
+	}
 }

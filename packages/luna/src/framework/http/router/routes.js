@@ -1,42 +1,61 @@
-import PagesLoader from "../../loaders/pages-loader";
-import ApiLoader from "../../loaders/api-loader";
 import DocumentRenderer from "../../engine/document-renderer";
 import ServiceContext from "../../services/service-context";
 import PagesRenderer from "../../engine/pages-renderer";
+import RoutesLoader from "../../loaders/routes-loader.js";
 
 let currentRouter;
 
-/**
- * Helper method for registering a single route. Normalized the
- * route method and registers post/get routes if available.
- *
- * @param {{router: *, route: string, middleware: *[]}}
- * @param {{ get: *, post: *}}
- */
-const registerRoute = ({ router, route, middleware = [] }, { get = null, post = null }) => {
-    const normalizeRoute = (method) => {
-        return (request, response) => {
+const invokeRoute = async ({routeDefinition, request, response}) => {
+	const callback = routeDefinition.methods[request.method.toLowerCase()];
 
-            // Create a new service context for better dependency injection
-            // for api routes.
-            const container = new ServiceContext({
-                $$luna: {
-                    request,
-                    response
-                }
-            });
+	if (!callback) {
+		return response.status(404).send();
+	}
 
-            return method({ request, response, container });
-        }
-    };
+	const container = new ServiceContext({
+		$$luna: {
+			request,
+			response
+		}
+	});
 
-    get && (
-        router.get(route, middleware, normalizeRoute(get))
-    );
+	// The callback result could be either
+	//	1. a string for anonymous page routes
+	//	2. an object for any kind of route.
+	//	3. a class for component routes
+	//	4: undefined for redirects and direct responses from the controller
 
-    post && (
-        router.post(route, middleware, normalizeRoute(post))
-    );
+	const page = await luna.get(PagesRenderer).generatePageMarkup({
+		definition: {
+			...routeDefinition,
+			page: callback,
+		},
+		request,
+		response,
+		container,
+	});
+
+	if (response.headersSent) {
+		// Somewhere in the application the response has already been handled.
+		return;
+	}
+
+	if (typeof page !== 'string') {
+		return response.json(page);
+	}
+
+	const documentRenderer = new DocumentRenderer({request, response});
+	const html = await documentRenderer.render(page);
+
+	if (response.headersSent) {
+		return response.end();
+	}
+
+	if (request.$$luna?.isCacheable) {
+		request.$$luna.cachedResponse = html;
+	}
+
+	return response.send(html);
 };
 
 /**
@@ -48,68 +67,47 @@ const registerRoute = ({ router, route, middleware = [] }, { get = null, post = 
  * @returns {Promise<void>}
  */
 const routes = async ({router}) => {
-    currentRouter = router;
+	currentRouter = router;
 
-    const pagesLoader = luna.get(PagesLoader);
-    const pagesRenderer = luna.get(PagesRenderer);
+	const routesLoader = luna.get(RoutesLoader);
+	const routes = await routesLoader.loadRoutes();
 
-    const {pages, fallbackPage} = await pagesLoader.loadPages();
-    const {apis, fallbackApi} = await luna.get(ApiLoader).loadApis();
+	// We are first loading the route definitions in parallel &
+	// then we are registering the routes in the right order
+	// This results in 2 loops, but because the definitions will
+	// load in parallel, it is still faster
 
-    const registerPageRoute = async ({module, route}) => {
-        const callback = async ({ request, response, container }) => {
-            const pageMarkup = await pagesRenderer.generatePageMarkup({route, module, request, response, container});
+	const routeDefinitions = await Promise.all(routes.map(async ({ file, pathname, settings }) => {
+		const routeDefinition = await routesLoader.loadRouteDefinition({
+			file, settings,
+		});
 
-            if (!pageMarkup) {
-                return response.status(404).send();
-            }
+		return {
+			pathname,
+			routeDefinition,
+		};
+	}));
 
-            const documentRenderer = new DocumentRenderer({ request, response });
+	for (const { pathname, routeDefinition } of routeDefinitions) {
+		router.all(
+			pathname,
+			routeDefinition.middleware,
+			async (request, response) => {
+				try {
+					await invokeRoute({
+						routeDefinition,
+						request,
+						response,
+					});
+				} catch (error) {
+					console.error(error);
+					return response.status(500).send();
+				}
+			},
+		);
 
-            const result = await documentRenderer.render(pageMarkup);
-
-            if (request.$$luna?.isCacheable) {
-                request.$$luna.cachedResponse = result;
-            }
-
-            return response.send(result);
-        };
-
-        registerRoute({ router, route, middleware: module.middleware }, {
-            get: callback,
-            post: callback
-        })
-
-        console.log(`Registered route ${route}`);
-    }
-
-    const registerApiRoute = async ({route, module}) => {
-        const { middleware } = module;
-
-        const apiModule = module.module;
-        registerRoute({ router, route, middleware }, {
-            get: apiModule.get ?? apiModule.default ?? apiModule,
-            post: apiModule.post
-        });
-
-        console.log(`Registered api route ${route}`);
-    };
-
-    for (const page of pages) {
-        await registerPageRoute(page);
-    }
-
-    for (const api of apis) {
-        await registerApiRoute(api);
-    }
-
-    if (fallbackApi) {
-        await registerApiRoute(fallbackApi);
-    }
-
-    if (fallbackPage) {
-        await registerPageRoute(fallbackPage);
-    }
+		console.log(`Registered route ${pathname}`);
+	}
 };
 
 export {routes, currentRouter};

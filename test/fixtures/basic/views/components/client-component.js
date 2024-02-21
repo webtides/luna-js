@@ -1,13 +1,12 @@
-import {Component} from "@webtides/luna-js";
+import { Component } from '@webtides/luna-js';
 
 @Component({
-    target: Component.TARGET_BOTH,
+	target: Component.TARGET_BOTH,
 })
 export default class ClientComponent {
-
-    get template() {
-        return `
+	get template() {
+		return `
             CLIENT COMPONENT
         `;
-    }
+	}
 }

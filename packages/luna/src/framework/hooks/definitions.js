@@ -12,6 +12,7 @@ const HOOKS = {
 
     REQUEST_RECEIVED: "request-received",
 
+    BASE_MIDDLEWARE_REGISTER: "base-middleware-register",
     MIDDLEWARE_REGISTER: "middleware-register",
 };
 

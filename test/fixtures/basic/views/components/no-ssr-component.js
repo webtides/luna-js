@@ -1,15 +1,14 @@
-import {Component} from "@webtides/luna-js";
+import { Component } from '@webtides/luna-js';
 
 @Component({
-    target: Component.TARGET_CLIENT,
+	target: Component.TARGET_CLIENT,
 })
 export default class NoSsrComponent {
-
-    get template() {
-        return `
+	get template() {
+		return `
             NO SSR COMPONENT
-            
+
             <client-component></client-component>
         `;
-    }
+	}
 }

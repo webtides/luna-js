@@ -5,15 +5,14 @@ import {callHook} from "./hooks";
 import {HOOKS} from "./hooks/definitions";
 import MemoryCache from "./cache/memory-cache";
 import ServiceContainer from "./services/service-container";
-import ApiLoader from "./loaders/api-loader";
 import ComponentLoader from "./loaders/component-loader";
-import PagesLoader from "./loaders/pages-loader";
 import ElementRenderer from "./engine/element-renderer";
 import LunaCache from "./cache/luna-cache";
 import Server from "./http/server";
 import ElementFactory from "./engine/element-factory";
 import PagesRenderer from "./engine/pages-renderer";
 import LayoutsLoader from "./loaders/layouts-loader";
+import RoutesLoader from "./loaders/routes-loader.js";
 
 /**
  * The luna base class. Also provides a simple service
@@ -26,11 +25,10 @@ export default class LunaContainer extends LunaBase {
         MemoryCache,
 
         /* LOADERS */
-        ApiLoader,
         ComponentLoader,
         HooksLoader,
         LayoutsLoader,
-        PagesLoader,
+        RoutesLoader,
 
         /* RENDERERS */
         ElementRenderer,
@@ -38,7 +36,7 @@ export default class LunaContainer extends LunaBase {
 
         Server,
     ];
-    
+
     prepare() {
         Object.keys(this.serviceDefaults).map(name => {
             this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);

@@ -1,6 +1,4 @@
 import {LunaService} from "../../decorators/service";
-import {paramCase} from "param-case";
-
 
 /**
  * The element renderer is the "interface" between luna and other custom element factories.
@@ -12,15 +10,6 @@ import {paramCase} from "param-case";
 })
 export default class ElementRenderer {
     async createElementFactory({ component, attributes = {}, request, response }) {
-        // "Inject" the current request and response into the $$luna meta
-        // object of the element instance. This allows us to use decorated
-        // class members to load the current request and response objects.
-        component.element.prototype.$$luna = {
-            ...(component.element.prototype?.$$luna ?? {}),
-            request,
-            response,
-        };
-
         if (!component.ElementFactory) {
             console.error(`The component with the tag name "${component.tagName}" has no ElementFactory`);
             return false;
@@ -34,7 +23,6 @@ export default class ElementRenderer {
         });
 
         await factory.build();
-
         return factory;
     }
 
@@ -43,33 +31,47 @@ export default class ElementRenderer {
      * Fetches all dynamic properties for the component & loads
      * the static properties.
      *
-     * @param component ({ element: * })
-     * @param attributes
-     * @param request
-     * @param response
-     * @param group string      The component cache group. Can be used to use different caches for
-     *                          different types of components.
+     * @param factory		ElementFactory
      *
      * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
      */
-    async renderComponent({component, attributes = {}, group = 'components', request, response}) {
-        const factory = await this.createElementFactory({
-            component, attributes, group, request, response,
-        });
-
-        if (!factory || !(await factory.shouldRender())) {
-            return false;
-        }
-
+    async renderComponentUsingFactory({ factory }) {
         const template = await factory.template();
-        const markup = await component.ElementFactory.renderer().renderToString(template, { factory });
-
-        const finalAttributes = await factory.loadFinalAttributes();
+        const markup = await factory.component.ElementFactory.renderer().renderToString(template, { factory });
 
         return {
             markup,
             element: factory.element,
-            finalAttributes,
         };
-    };
+    }
+
+	/**
+	 * Takes a single component object and renders the element.
+	 * Fetches all dynamic properties for the component & loads
+	 * the static properties.
+	 *
+	 * @param component ({ element: * })
+	 * @param attributes
+	 * @param request
+	 * @param response
+	 * @param group string      The component cache group. Can be used to use different caches for
+	 *                          different types of components.
+	 *
+	 * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
+	 */
+	async renderComponent({component, attributes = {}, group = 'components', request, response}) {
+		const factory = await this.createElementFactory({
+			component, attributes, group, request, response,
+		});
+
+		if (!factory || !(await factory.shouldRender())) {
+			return false;
+		}
+
+		const result = await this.renderComponentUsingFactory({ factory });
+		return {
+			...result,
+			finalAttributes: await factory.loadFinalAttributes(),
+		};
+	}
 }

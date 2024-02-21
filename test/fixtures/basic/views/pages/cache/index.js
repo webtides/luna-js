@@ -1,5 +1,5 @@
 export default async () => {
-    return `
+	return `
         THIS IS A CACHEABLE ROUTE
     `;
-}
+};

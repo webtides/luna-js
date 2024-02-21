@@ -1,11 +1,14 @@
-import postcss from "postcss";
-import path from "path";
-import fs from "fs";
-import {getEntryType} from "./helpers/entries";
+import path from 'path';
+import fs from 'fs';
 
-const basePostcssPluginsBefore = [
-    require("postcss-import"),
-];
+import postcss from 'postcss';
+import postcssrc from 'postcss-load-config';
+import postcssPluginImport from 'postcss-import';
+import glob from 'glob-all';
+
+import { getEntryType } from './helpers/entries';
+
+const basePostcssPluginsBefore = [postcssPluginImport];
 
 const basePostcssPluginsAfter = [];
 
@@ -15,120 +18,148 @@ const basePostcssPluginsAfter = [];
  * @returns {string|{transform(*=, *=): Promise<string|{code: string, map: SourceMapGenerator & {toJSON(): RawSourceMap}}|null>, writeBundle(): Promise<void>, name: string, resolveId(*=, *=): Promise<string|*|null>}|null|{code: string, map: SourceMap}|*}
  */
 export const rollupPluginPostcss = function (options) {
-    const importers = {};
-    const extractedCss = {};
-    const idsToExtract = [];
+	const importers = {};
+	const extractedCss = {};
+	const idsToExtract = [];
 
-    const processCss = ({css, plugins, from = process.cwd()}) => {
-        return postcss([...basePostcssPluginsBefore, ...(plugins()), ...basePostcssPluginsAfter]).process(css, {
-            from
-        });
-    };
+	const loadPostcssConfig = async () => {
+		let result = false;
 
-    const loadAppropriatePlugins = (id) => {
-        if (!options.serverInclude) {
-            return options.plugins ?? (() => []);
-        }
+		try {
+			result = await postcssrc();
+		} catch (error) {}
 
-        return getEntryType(id, options.basePaths)?.settings?.styles?.plugins ?? (() => []);
-    };
+		return result;
+	};
 
-    const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
-        const {css, map, messages} = await processCss({
-            css: code,
-            plugins: loadAppropriatePlugins(id),
-            from: id
-        });
+	const processCss = async ({ css, plugins, from = process.cwd() }) => {
+		const loadedPostcssConfig = await loadPostcssConfig();
 
-        messages.forEach(message => {
-            if (message.type === "dependency" && message.plugin === "postcss-import") {
-                addWatchFile(message.file);
-            }
-        });
+		const pluginsToUse = loadedPostcssConfig
+			? loadedPostcssConfig.plugins
+			: [...basePostcssPluginsBefore, ...plugins(), ...basePostcssPluginsAfter];
 
-        return {css, map};
-    }
+		return postcss(pluginsToUse).process(css, {
+			...(loadedPostcssConfig ? loadedPostcssConfig.option : {}),
+			from,
+		});
+	};
 
-    return {
-        name: 'luna-postcss',
+	const loadAppropriatePlugins = (id) => {
+		if (!options.serverInclude) {
+			return options.plugins ?? (() => []);
+		}
 
-        async resolveId(source, importer) {
-            if (source.endsWith(".css")) {
+		return getEntryType(id, options.basePaths)?.settings?.styles?.plugins ?? (() => []);
+	};
 
-                if (!!importer) {
-                    const importerDirectory = path.dirname(importer);
+	const processCssAndWatchDependencies = async function (code, id, addWatchFile) {
+		const { css, map, messages } = await processCss({
+			css: code,
+			plugins: loadAppropriatePlugins(id),
+			from: id,
+		});
 
-                    const id = path.join(importerDirectory, source);
-                    importers[id] = importer;
+		messages.forEach((message) => {
+			if (message.type === 'dependency') {
+				addWatchFile(message.file);
+			} else if (message.type === 'dir-dependency') {
+				if (!message.dir) {
+					return;
+				}
 
-                    return id;
-                }
+				const messageGlob = message.glob ?? '**/*';
 
-                // We have imported the css file directly.
-                idsToExtract.push(source);
-                return source;
-            }
+				const files = glob.sync([path.join(message.dir, messageGlob)]);
+				if (files) {
+					files.forEach((file) => addWatchFile(file));
+				}
+			}
+		});
 
-            return null;
-        },
+		return { css, map };
+	};
 
-        async transform(code, id) {
+	return {
+		name: 'luna-postcss',
 
-            if (id.endsWith(".css") && importers[id]) {
-                if (options.ignore) {
-                    return "export default null";
-                }
+		async resolveId(source, importer) {
+			if (source.endsWith('.css')) {
+				if (!!importer) {
+					const importerDirectory = path.dirname(importer);
 
-                const {css, map} = await processCssAndWatchDependencies(code, id, this.addWatchFile);
+					const id = path.join(importerDirectory, source);
+					importers[id] = importer;
 
-                const moduleInformation = this.getModuleInfo(importers[id]);
+					return id;
+				}
 
-                // Check if the imported css is assigned to a variable. If not, we should extract it.
-                moduleInformation.ast.body.map(node => {
-                    if (node.type === "ImportDeclaration") {
-                        if (path.join(path.dirname(importers[id]), node.source.value) === id
-                            && node.specifiers.length === 0) {
-                            extractedCss[id] = css;
-                        }
-                    }
-                })
+				// We have imported the css file directly.
+				idsToExtract.push(source);
+				return source;
+			}
 
-                // We can always export the css, because it will be removed if it is unused.
-                return {
-                    code: `export default \`${css}\`;`,
-                    map
-                };
-            }
+			return null;
+		},
 
-            if (idsToExtract.includes(id)) {
-                if (options.ignore || (options.serverInclude ?? false)) {
-                    return "export default null";
-                }
+		async transform(code, id) {
+			if (id.endsWith('.css') && importers[id]) {
+				if (options.ignore) {
+					return 'export default null';
+				}
 
-                extractedCss[id] = (await processCssAndWatchDependencies(code, id, this.addWatchFile)).css;
-                return '';
-            }
+				const { css, map } = await processCssAndWatchDependencies(code, id, this.addWatchFile);
 
-            return null;
-        },
+				const moduleInformation = this.getModuleInfo(importers[id]);
 
-        async writeBundle() {
-            if (options.ignore || options.serverInclude) {
-                return;
-            }
+				// Check if the imported css is assigned to a variable. If not, we should extract it.
+				moduleInformation.ast.body.map((node) => {
+					if (node.type === 'ImportDeclaration') {
+						if (
+							path.join(path.dirname(importers[id]), node.source.value) === id &&
+							node.specifiers.length === 0
+						) {
+							extractedCss[id] = css;
+						}
+					}
+				});
 
-            const output = path.join(options.publicDirectory, options.output);
-            const outputDirectory = path.dirname(output);
+				// We can always export the css, because it will be removed if it is unused.
+				return {
+					code: `export default \`${css}\`;`,
+					map,
+				};
+			}
 
-            const css = Object.values(extractedCss).join("\r\n");
+			if (idsToExtract.includes(id)) {
+				if (options.ignore || (options.serverInclude ?? false)) {
+					return 'export default null';
+				}
 
-            if (!fs.existsSync(outputDirectory)) {
-                fs.mkdirSync(outputDirectory, {recursive: true});
-            }
+				extractedCss[id] = (await processCssAndWatchDependencies(code, id, this.addWatchFile)).css;
+				return '';
+			}
 
-            console.log("Writing extracted css to", output);
+			return null;
+		},
 
-            fs.writeFileSync(output, css, 'utf-8');
-        }
-    }
-}
+		async writeBundle() {
+			if (options.ignore || options.serverInclude) {
+				return;
+			}
+
+			const output = path.join(options.publicDirectory, options.output);
+			const outputDirectory = path.dirname(output);
+
+			const css = Object.values(extractedCss).join('\r\n');
+
+			if (!fs.existsSync(outputDirectory)) {
+				fs.mkdirSync(outputDirectory, { recursive: true });
+			}
+
+			console.log('Writing extracted css to', output);
+
+			fs.writeFileSync(output, css, 'utf-8');
+		},
+	};
+};
