@@ -2142,10 +2142,10 @@
   resolved "https://registry.npmjs.org/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz"
   integrity sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==
 
-"@webtides/element-js@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.npmjs.org/@webtides/element-js/-/element-js-0.4.1.tgz"
-  integrity sha512-jJEJlorm294imzKCBVDLtmYRHVDtp21ZXTLAp3u3E+GH5GgxolRwBZOY1Jr/XcPR5wx1TL/BLCBSzZ7zeGK9sQ==
+"@webtides/element-js@0.7.4":
+  version "0.7.4"
+  resolved "https://registry.npmjs.org/@webtides/element-js/-/element-js-0.7.4.tgz"
+  integrity sha512-WX1VMhbtwmlXpZH7KPsM8LbQGnVx1Pv2Y8L6+CvLdrLKiN7frMJ4Eronsf1RhKL+NrntpDVnI+sGFRMi9hB7WA==
   dependencies:
     lit-html "^1.2.1"
 
@@ -2215,10 +2215,8 @@
   dependencies:
     "@lit-labs/ssr" "2.0.1"
     "@popeindustries/lit-html-server" "3.1.0"
-    "@webtides/element-js" "0.4.1"
+    "@webtides/element-js" "0.7.4"
     "@webtides/luna-js" "^0.11.0-dev.15"
-    camel-case "^4.1.2"
-    param-case "^3.0.4"
 
 abbrev@1:
   version "1.1.1"

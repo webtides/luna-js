@@ -10,10 +10,8 @@
 	"dependencies": {
 		"@lit-labs/ssr": "2.0.1",
 		"@popeindustries/lit-html-server": "3.1.0",
-		"@webtides/element-js": "0.4.1",
-		"@webtides/luna-js": "^0.12.1",
-		"camel-case": "^4.1.2",
-		"param-case": "^3.0.4"
+		"@webtides/element-js": "0.7.4",
+		"@webtides/luna-js": "^0.12.1"
 	},
 	"devDependencies": {
 		"@rollup/plugin-babel": "^5.3.0",
