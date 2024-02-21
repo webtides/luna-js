@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 20
       - run: yarn install --frozen-lockfile
       - run: yarn workspace @webtides/luna-renderer build
       - run: yarn run test
@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 20
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install --frozen-lockfile
       - run: yarn workspace @webtides/luna-renderer build
