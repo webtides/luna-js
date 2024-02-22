@@ -10,10 +10,10 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"devDependencies": {
-		"@webtides/luna-cli": "file:webtides-luna-cli-0.12.1.tgz"
-	},
 	"dependencies": {
-		"@webtides/luna-js": "file:webtides-luna-js-0.12.1.tgz"
+		"@webtides/luna-js": "file:../../../packages/luna"
+	},
+	"devDependencies": {
+		"@webtides/luna-cli": "file:../../../packages/cli"
 	}
 }

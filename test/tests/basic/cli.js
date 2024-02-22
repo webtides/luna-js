@@ -15,9 +15,6 @@ describe('Basic cli test', function () {
 		it('should prepare the fixtures', function () {
 			execSync('cd ../../../packages/cli && npm install');
 			execSync('cd ../../../packages/luna && npm install');
-
-			execute('npm install --save-dev $(npm pack ../../../packages/cli | tail -1)');
-			execute('npm install --save $(npm pack ../../../packages/luna | tail -1)');
 		});
 	});
 

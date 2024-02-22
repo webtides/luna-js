@@ -2210,7 +2210,7 @@
     simple-dom "^1.4.0"
 
 "@webtides/luna-renderer@file:/Users/eddylowen/code/open-source/webtides/luna-js/packages/renderer":
-  version "0.12.1"
+  version "0.12.3"
   resolved "file:packages/renderer"
   dependencies:
     "@lit-labs/ssr" "2.0.1"
