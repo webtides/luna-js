@@ -1,7 +1,7 @@
 {
 	"name": "@webtides/luna-renderer",
 	"description": "Collection of first-party renderers for @webtides/luna-js",
-	"version": "0.12.3",
+	"version": "0.12.4",
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
@@ -11,7 +11,7 @@
 		"@lit-labs/ssr": "2.0.1",
 		"@popeindustries/lit-html-server": "3.1.0",
 		"@webtides/element-js": "0.7.4",
-		"@webtides/luna-js": "^0.12.1"
+		"@webtides/luna-js": "^0.12.4"
 	},
 	"devDependencies": {
 		"@rollup/plugin-babel": "^5.3.0",
