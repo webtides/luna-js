@@ -1,72 +1,58 @@
-const { execSync, spawn } = require('child_process');
-const fs = require('fs');
+const { execSync, spawn } = require('node:child_process');
+const fs = require('node:fs');
 
 const { execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai, sleep } = require('../../helpers');
 
-describe('Empty cli test', function () {
-	this.timeout(0);
-
-	before(function () {
+describe('Empty cli test', () => {
+	before(() => {
 		process.chdir(global.getCurrentWorkingDirectory('empty'));
 	});
 
-	describe('Fixture preparation', function () {
-		it('should prepare the fixtures', function () {
-			execSync('cd ../../../packages/cli && npm install');
-			execSync('cd ../../../packages/luna && npm install');
-		});
-	});
-
-	describe('Build test', function () {
-		before(function () {
+	describe('Build test', () => {
+		before(() => {
 			execSync(`${BUILD_SCRIPT} --setup --build`);
 		});
 
-		it('has generated the luna.config.js', async function () {
+		it('has generated the luna.config.js', () => {
 			chai.expect('luna.config.js').to.be.a.file().and.not.empty;
 		});
 
-		it('has generated the index page', async function () {
+		it('has generated the index page', () => {
 			chai.expect('views/pages/index.js').to.be.a.file().and.not.empty;
 		});
 
-		it('has generated the example component', async function () {
+		it('has generated the example component', () => {
 			chai.expect('views/components/example-component.js').to.be.a.file().and.not.empty;
 		});
 	});
 
-	describe('Static export test', function () {
-		before(function () {
+	describe('Static export test', () => {
+		before(() => {
 			execSync(`${BUILD_SCRIPT} --export`);
 		});
 
-		it('has generated the export directory', async function () {
+		it('has generated the export directory', () => {
 			chai.expect('.export').to.be.a.directory();
 		});
 
-		it('has generated the index.html', function () {
+		it('has generated the index.html', () => {
 			chai.expect('.export/public/index.html').to.be.a.file();
 			const contents = fs.readFileSync('.export/public/index.html', 'utf-8');
 			chai.expect(contents).to.include('Welcome to luna-js');
 		});
 	});
 
-	describe('Run test', function () {
-		it('starts luna on port 3005', function (done) {
-			const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start']);
-
+	describe('Run test', () => {
+		it('starts luna on port 3005', (done) => {
+			const child = spawn(`node`, [LUNA_CLI_SCRIPT, '--start'], { detached: true });
 			child.stdout.on('data', (data) => {
 				if (data.toString().indexOf('luna-js listening at') !== -1) {
-					setTimeout(async () => {
-						await chai.request('http://localhost:3005').get('/').send();
-
-						child.stdin.pause();
-						child.kill();
-
-						await sleep(1000);
-
+					chai.request('http://localhost:3005').get('/').end((error, response) => {
+						chai.assert.equal(error, null);
+						chai.assert.equal(response.status, 200);
+						process.kill(-child.pid);
 						done();
-					}, 100);
+					});
 				}
 			});
 		});

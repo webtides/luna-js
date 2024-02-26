@@ -1,6 +1,6 @@
-const { execSync, spawn } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+const { execSync, spawn } = require('node:child_process');
+const path = require('node:path');
+const fs = require('node:fs');
 
 const { sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai } = require('../../helpers');
 
@@ -9,13 +9,6 @@ describe('Basic cli test', function () {
 
 	before(function () {
 		process.chdir(global.getCurrentWorkingDirectory('basic'));
-	});
-
-	describe('Fixture preparation', function () {
-		it('should prepare the fixtures', function () {
-			execSync('cd ../../../packages/cli && npm install');
-			execSync('cd ../../../packages/luna && npm install');
-		});
 	});
 
 	describe('Build test', function () {
@@ -88,21 +81,15 @@ describe('Basic cli test', function () {
 		});
 
 		it('starts the exported api server', function (done) {
-			const child = spawn(`node`, ['.api/test-export.js']);
-
+			const child = spawn(`node`, ['.api/test-export.js'], { detached: true });
 			child.stdout.on('data', (data) => {
-				console.log(data.toString());
 				if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
-					setTimeout(async () => {
-						await chai.request('http://localhost:3010').get('/').send();
-
-						child.stdin.pause();
-						child.kill();
-
-						await sleep(1000);
-
+					chai.request('http://localhost:3010').get('/').end((error, response) => {
+						chai.assert.equal(error, null);
+						chai.assert.equal(response.status, 200);
+						process.kill(-child.pid);
 						done();
-					}, 100);
+					});
 				}
 			});
 		});

@@ -1,40 +1,30 @@
-const { execSync, spawn } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const { chai} = require('../../helpers');
 
-const { chai, sleep } = require('../../helpers');
-
-describe('Basic export test', function () {
-	this.timeout(20000);
-
+describe('Basic export test',  () => {
 	let child = null;
 
-	before(function (done) {
+	before((done) => {
 		process.chdir(global.getCurrentWorkingDirectory('basic'));
-
-		child = spawn(`node`, ['./.api/test-export.js']);
-
+		child = spawn(`node`, ['.api/test-export.js'], { detached: true });
 		child.stdout.on('data', (data) => {
 			if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
-				setTimeout(async () => {
-					await sleep(1000);
-					done();
-				}, 100);
+				done();
 			}
 		});
 	});
 
-	after(function () {
-		child.stdin.pause();
-		child.kill();
+	after(() => {
+		process.kill(-child.pid);
 	});
 
-	it('should exclude the cors dependency', function () {
+	it('should exclude the cors dependency', () => {
 		const packageJSON = JSON.parse(fs.readFileSync('./.api/package.json', 'utf-8'));
 		chai.expect(packageJSON.dependencies['cors']).to.be.undefined;
 	});
 
-	describe('Exported api', function () {
+	describe('Exported api', () => {
 		require('./shared/api').basic();
 	});
 });

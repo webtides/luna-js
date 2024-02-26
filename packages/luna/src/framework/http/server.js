@@ -76,7 +76,7 @@ export default class Server {
         });
     }
 
-    stop() {
+    async stop() {
         if (!this.server) {
             return;
         }

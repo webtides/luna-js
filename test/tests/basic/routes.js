@@ -1,25 +1,16 @@
-const {chai, sleep} = require('../../helpers');
+const {chai} = require('../../helpers');
 
 describe('Luna routes test', function () {
-	this.timeout(20000);
-
 	before(async function () {
 		process.chdir(global.getCurrentWorkingDirectory('basic'));
-
 		global.originalConsoleLog = console.log;
-
-		const {startLuna} = require('../../../packages/luna/src/framework');
+		const { startLuna } = require('../../../packages/luna/src/framework');
 		await startLuna();
-
-		await sleep(600);
-
-		console.log('STARTED THE SERVER');
 	});
 
 	after(async function () {
-		const {stopLuna} = require('../../../packages/luna/src/framework');
+		const { stopLuna } = require('../../../packages/luna/src/framework');
 		await stopLuna();
-
 		console.log = global.originalConsoleLog;
 	});
 
