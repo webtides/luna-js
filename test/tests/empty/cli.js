@@ -3,7 +3,9 @@ const fs = require('node:fs');
 
 const { execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai, sleep } = require('../../helpers');
 
-describe('Empty cli test', () => {
+describe('Empty cli test', function () {
+	this.timeout(0);
+
 	before(() => {
 		process.chdir(global.getCurrentWorkingDirectory('empty'));
 		execSync(`npm install`);
