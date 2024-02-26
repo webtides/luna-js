@@ -9,6 +9,7 @@ describe('Basic cli test', function () {
 
 	before(function () {
 		process.chdir(global.getCurrentWorkingDirectory('basic'));
+		execSync(`npm install`);
 	});
 
 	describe('Build test', function () {

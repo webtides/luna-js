@@ -6,6 +6,7 @@ const { execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai, sleep } = require('../../h
 describe('Empty cli test', () => {
 	before(() => {
 		process.chdir(global.getCurrentWorkingDirectory('empty'));
+		execSync(`npm install`);
 	});
 
 	describe('Build test', () => {
