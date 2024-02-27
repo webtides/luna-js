@@ -1,10 +1,10 @@
-import {TemplateElement, BaseElement, html} from '../../../../packages/renderer/lib/element-js/lit/stubs/index.js';
-import {ElementFactory} from '../../../../packages/renderer/lib/element-js/lit/index.js';
+import { TemplateElement, BaseElement, html } from '../../../../packages/renderer/lib/element-js/lit/stubs/index.js';
+import { ElementFactory } from '../../../../packages/renderer/lib/element-js/lit/index.js';
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
 
-import {chai} from '../../../helpers/index.js';
-import {CurrentRequest} from "@webtides/luna-js";
+import { chai } from '../../../helpers/index.js';
+import { CurrentRequest } from '@webtides/luna-js';
 
 export default () => {
 	describe('Element-js server renderer test', function () {
@@ -14,15 +14,14 @@ export default () => {
 			const component = {
 				element: class extends TemplateElement {
 					template() {
-						return html`
-							<div>This should be rendered as a string.</div> `;
+						return html` <div>This should be rendered as a string.</div> `;
 					}
 				},
 				ElementFactory: ElementFactory,
 			};
 
 			const renderer = ServiceContainer.get(ElementRenderer);
-			const result = await renderer.renderComponent({component, attributes: {}, request: null, response: null});
+			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
 			chai.expect(result.markup).to.contain('<div>This should be rendered as a string.</div>');
 		});
@@ -37,8 +36,7 @@ export default () => {
 					}
 
 					template() {
-						return html`
-							<div>${this.text}</div> `;
+						return html` <div>${this.text}</div> `;
 					}
 				},
 				ElementFactory: ElementFactory,
@@ -47,7 +45,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({
 				component,
-				attributes: {text: 'yes'},
+				attributes: { text: 'yes' },
 				request: null,
 				response: null,
 			});
@@ -60,13 +58,12 @@ export default () => {
 				element: class extends TemplateElement {
 					properties() {
 						return {
-							test: {foo: 'bar'},
+							test: { foo: 'bar' },
 						};
 					}
 
 					template() {
-						return html`
-							<div>${this.test.foo}</div> `;
+						return html` <div>${this.test.foo}</div> `;
 					}
 				},
 				ElementFactory: ElementFactory,
@@ -75,7 +72,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({
 				component,
-				attributes: {'.test': {foo: 'foo'}},
+				attributes: { '.test': { foo: 'foo' } },
 				request: null,
 				response: null,
 			});
@@ -97,7 +94,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({
 				component,
-				attributes: {foo: false},
+				attributes: { foo: false },
 				request: null,
 				response: null,
 			});
@@ -116,7 +113,7 @@ export default () => {
 			};
 
 			const renderer = ServiceContainer.get(ElementRenderer);
-			const result = await renderer.renderComponent({component, attributes: {}, request: null, response: null});
+			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
 			chai.expect(result.finalAttributes.ssr).to.equal('true');
 			chai.expect(result.finalAttributes['defer-update']).to.equal('true');
@@ -137,7 +134,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({
 				component,
-				attributes: {text: 'yes'},
+				attributes: { text: 'yes' },
 				request: null,
 				response: null,
 			});
@@ -176,7 +173,7 @@ export default () => {
 				component,
 				attributes: {},
 				request: 'injected',
-				response: null
+				response: null,
 			});
 
 			chai.expect(result.markup).to.contain('injected');

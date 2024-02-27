@@ -2,8 +2,8 @@ import LunaContainer from '../../../../packages/luna/src/framework/luna.js';
 import ComponentLoader from '../../../../packages/luna/src/framework/loaders/component-loader.js';
 import DocumentRenderer from '../../../../packages/luna/src/framework/engine/document-renderer.js';
 import ElementFactory from '../../../../packages/luna/src/framework/engine/element-factory.js';
-import {chai} from '../../../helpers/index.js';
-import {CurrentRequest} from "@webtides/luna-js";
+import { chai } from '../../../helpers/index.js';
+import { CurrentRequest } from '@webtides/luna-js';
 
 class TestElementFactory extends ElementFactory {
 	async getInitialProperties() {
@@ -15,7 +15,6 @@ class TestElementFactory extends ElementFactory {
 }
 
 export default () => {
-
 	describe('Luna base renderer test', () => {
 		before(async () => {
 			const luna = new LunaContainer({});
@@ -42,7 +41,7 @@ export default () => {
 
 			global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
-			const documentRenderer = new DocumentRenderer({request: null, response: null});
+			const documentRenderer = new DocumentRenderer({ request: null, response: null });
 			const result = await documentRenderer.renderUsingPostHtml(`
             <html><head></head><body><example-component></example-component></body></html>
         `);
@@ -76,7 +75,7 @@ export default () => {
 			global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 			global.luna.get(ComponentLoader).allAvailableComponents[childComponent.tagName] = childComponent;
 
-			const documentRenderer = new DocumentRenderer({request: null, response: null});
+			const documentRenderer = new DocumentRenderer({ request: null, response: null });
 			const result = await documentRenderer.renderUsingPostHtml(`
             <html><head></head><body><example-component></example-component></body></html>
         `);
@@ -99,7 +98,7 @@ export default () => {
 
 			global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
-			const documentRenderer = new DocumentRenderer({request: null, response: null});
+			const documentRenderer = new DocumentRenderer({ request: null, response: null });
 			const result = await documentRenderer.renderUsingPostHtml(`
             <html><head></head><body><example-component .foo="bar"></example-component></body></html>
         `);
@@ -117,8 +116,8 @@ export default () => {
 
 					async loadDynamicProperties() {
 						return {
-							arrayProperty: [{foo: 'bar'}],
-							objectProperty: {foo: 'bar'},
+							arrayProperty: [{ foo: 'bar' }],
+							objectProperty: { foo: 'bar' },
 							stringProperty: 'bar',
 						};
 					}
@@ -142,7 +141,7 @@ export default () => {
 
 			global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
-			const documentRenderer = new DocumentRenderer({request: null, response: null});
+			const documentRenderer = new DocumentRenderer({ request: null, response: null });
 			const result = await documentRenderer.renderUsingPostHtml(
 				'<html><head></head><body><example-component></example-component></body></html>',
 			);
@@ -161,8 +160,8 @@ export default () => {
 
 					async loadDynamicProperties() {
 						return {
-							arrayProperty: [{foo: 'bar'}],
-							objectProperty: {foo: 'bar'},
+							arrayProperty: [{ foo: 'bar' }],
+							objectProperty: { foo: 'bar' },
 							stringProperty: 'bar',
 						};
 					}
@@ -186,7 +185,7 @@ export default () => {
 
 			global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
-			const documentRenderer = new DocumentRenderer({request: null, response: null});
+			const documentRenderer = new DocumentRenderer({ request: null, response: null });
 			const result = await documentRenderer.renderUsingPostHtml(
 				'<html><head></head><body><example-component></example-component></body></html>',
 			);
@@ -223,10 +222,9 @@ export default () => {
 				ElementFactory: TestElementFactory,
 			};
 
-
 			global.luna.get(ComponentLoader).allAvailableComponents[component.tagName] = component;
 
-			const documentRenderer = new DocumentRenderer({request: 'injected', response: null});
+			const documentRenderer = new DocumentRenderer({ request: 'injected', response: null });
 			const result = await documentRenderer.renderUsingPostHtml(
 				'<html><head></head><body><example-component></example-component></body></html>',
 			);

@@ -1,4 +1,4 @@
-import { chai, sleep } from '../../../helpers/index.js';
+import { chai } from '../../../helpers/index.js';
 
 const basic = () => {
 	it('should register the index api route', async function () {

@@ -11,7 +11,7 @@ export const basicApiTest = () => {
 
 		after(async function () {
 			console.log = global.originalConsoleLog;
-			const {stopLuna} = await import('../../../packages/luna/src/framework/index.js');
+			const { stopLuna } = await import('../../../packages/luna/src/framework/index.js');
 			await stopLuna();
 		});
 

@@ -1,4 +1,4 @@
-import {emptyCliTest} from "./empty/cli.js";
+import { emptyCliTest } from './empty/cli.js';
 
 export default () => {
 	emptyCliTest();

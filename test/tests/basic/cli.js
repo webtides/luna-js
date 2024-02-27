@@ -1,8 +1,8 @@
-import { execSync, spawn } from "node:child_process";
+import { execSync, spawn } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 
-import {sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai} from '../../helpers/index.js';
+import { BUILD_SCRIPT, chai } from '../../helpers/index.js';
 
 export const basicCliTest = () => {
 	describe('Basic cli test', function () {
@@ -37,28 +37,29 @@ export const basicCliTest = () => {
 				});
 
 				it('has generated all components from the manifest', function () {
-					const {components} = this.manifest;
+					const { components } = this.manifest;
 					for (const component of components) {
-						chai.expect(path.join('.build/generated/application', component.file)).to.be.a.file().and.not.empty;
+						chai.expect(path.join('.build/generated/application', component.file)).to.be.a.file().and.not
+							.empty;
 					}
 				});
 
 				it('has generated all pages from the manifest', function () {
-					const {pages} = this.manifest;
+					const { pages } = this.manifest;
 					for (const page of pages) {
 						chai.expect(path.join('.build/generated/application', page.file)).to.be.a.file().and.not.empty;
 					}
 				});
 
 				it('has generated all apis from the manifest', function () {
-					const {apis} = this.manifest;
+					const { apis } = this.manifest;
 					for (const api of apis) {
 						chai.expect(path.join('.build/generated/application', api.file)).to.be.a.file().and.not.empty;
 					}
 				});
 
 				it('has generated all hooks from the manifest', function () {
-					const {hooks} = this.manifest;
+					const { hooks } = this.manifest;
 					for (const hook of hooks) {
 						chai.expect(path.join('.build/generated/application', hook.file)).to.be.a.file().and.not.empty;
 					}
@@ -86,12 +87,14 @@ export const basicCliTest = () => {
 				const child = spawn(`node`, ['.api/test-export.js'], { detached: true });
 				child.stdout.on('data', (data) => {
 					if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
-						chai.request('http://localhost:3010').get('/').end((error, response) => {
-							chai.assert.equal(error, null);
-							chai.assert.equal(response.status, 200);
-							process.kill(-child.pid);
-							done();
-						});
+						chai.request('http://localhost:3010')
+							.get('/')
+							.end((error, response) => {
+								chai.assert.equal(error, null);
+								chai.assert.equal(response.status, 200);
+								process.kill(-child.pid);
+								done();
+							});
 					}
 				});
 			});

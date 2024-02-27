@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai } from '../../helpers/index.js';
+import { BUILD_SCRIPT, chai } from '../../helpers/index.js';
 
 export const basicHooksTest = () => {
 	// TODO: these tests are actually returning green when run individually... but somehow log 5x the same output... I think it has either to do with the console.log stubbing or how the luna server is started/stopped...
@@ -32,16 +32,19 @@ export const basicHooksTest = () => {
 				await startLuna();
 				await stopLuna();
 
-				chai.assert.deepEqual(logs.filter(log => log.startsWith('HOOKS.')), [
-					'HOOKS.LUNA_INITIALIZE',
-					'HOOKS.HOOKS_LOADED',
-					'HOOKS.COMPONENTS_LOADED',
-					'HOOKS.MIDDLEWARE_REGISTER',
-					'HOOKS.MIDDLEWARE_REGISTER_2',
-					'HOOKS.ROUTES_BEFORE_REGISTER',
-					'HOOKS.ROUTES_AFTER_REGISTER',
-					'HOOKS.SERVER_STARTED',
-				]);
+				chai.assert.deepEqual(
+					logs.filter((log) => log.startsWith('HOOKS.')),
+					[
+						'HOOKS.LUNA_INITIALIZE',
+						'HOOKS.HOOKS_LOADED',
+						'HOOKS.COMPONENTS_LOADED',
+						'HOOKS.MIDDLEWARE_REGISTER',
+						'HOOKS.MIDDLEWARE_REGISTER_2',
+						'HOOKS.ROUTES_BEFORE_REGISTER',
+						'HOOKS.ROUTES_AFTER_REGISTER',
+						'HOOKS.SERVER_STARTED',
+					],
+				);
 			});
 
 			it('should call the request hook', async () => {

@@ -1,5 +1,5 @@
-import {sleep, execute, BUILD_SCRIPT, LUNA_CLI_SCRIPT, chai} from '../../helpers/index.js';
-import fs from 'fs';
+import { chai } from '../../helpers/index.js';
+import fs from 'node:fs';
 
 export const basicDecoratorsTest = () => {
 	describe('Luna decorators test', function () {
@@ -7,7 +7,10 @@ export const basicDecoratorsTest = () => {
 
 		describe('Build test', () => {
 			it('removes the method annotated with HideFromClient from the client bundle', () => {
-				const serverFileContents = fs.readFileSync('.build/generated/application/decorator-component.js', 'UTF-8');
+				const serverFileContents = fs.readFileSync(
+					'.build/generated/application/decorator-component.js',
+					'UTF-8',
+				);
 				chai.expect(serverFileContents).to.include('PSST. Secret Message.');
 
 				const clientFileContents = fs.readFileSync('.build/public/assets/decorator-component.js', 'UTF-8');
@@ -15,7 +18,10 @@ export const basicDecoratorsTest = () => {
 			});
 
 			it('removes the class content from a class annotated with HideFromClient from the client bundle', () => {
-				const serverFileContents = fs.readFileSync('.build/generated/application/decorator-component.js', 'UTF-8');
+				const serverFileContents = fs.readFileSync(
+					'.build/generated/application/decorator-component.js',
+					'UTF-8',
+				);
 				chai.expect(serverFileContents).to.include("Don't tell!!!");
 
 				const clientFileContents = fs.readFileSync('.build/public/assets/decorator-component.js', 'UTF-8');
@@ -31,19 +37,17 @@ export const basicDecoratorsTest = () => {
 		describe('Service decorators test', () => {
 			it('adds metadata to the annotated service class', async () => {
 				await import('../../../packages/luna/src/framework/bootstrap');
-				const {LunaService} = await import ('../../../packages/luna/src/decorators/service.js');
+				const { LunaService } = await import('../../../packages/luna/src/decorators/service.js');
 
 				@LunaService({
 					name: 'TestService',
 				})
-				class TestService {
-				}
+				class TestService {}
 
 				@LunaService({
 					as: TestService,
 				})
-				class ConcreteTestService {
-				}
+				class ConcreteTestService {}
 
 				chai.expect(TestService.$$luna.serviceName).to.equal('TestService');
 				chai.expect(ConcreteTestService.$$luna.serviceName).to.equal('TestService');

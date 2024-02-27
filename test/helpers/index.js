@@ -1,8 +1,7 @@
-import { spawn, execSync } from 'child_process';
+import { spawn, execSync } from 'node:child_process';
 import chai from 'chai';
-
 import chaiFs from 'chai-fs';
-import chaiHttp from "chai-http";
+import chaiHttp from 'chai-http';
 
 chai.use(chaiFs);
 chai.use(chaiHttp);
@@ -44,12 +43,4 @@ const startLuna = ({ onStart, onMessage } = {}) => {
 	};
 };
 
-export {
-	BUILD_SCRIPT,
-	LUNA_CLI_SCRIPT,
-	LUNA_START_SCRIPT,
-	startLuna,
-	execute,
-	chai,
-	sleep,
-};
+export { BUILD_SCRIPT, LUNA_CLI_SCRIPT, LUNA_START_SCRIPT, startLuna, execute, chai, sleep };

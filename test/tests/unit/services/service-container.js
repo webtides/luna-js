@@ -31,17 +31,15 @@ export default () => {
 		});
 
 		it('should set the $$luna context in the service definition', () => {
-			@LunaService({name: 'exampleService'})
-			class ExampleService {
-			}
+			@LunaService({ name: 'exampleService' })
+			class ExampleService {}
 
 			chai.expect(ExampleService.$$luna.serviceName).to.equal('exampleService');
 		});
 
 		it('should inject the $$luna context inside a service', () => {
-			@LunaService({name: 'exampleService'})
-			class ExampleService {
-			}
+			@LunaService({ name: 'exampleService' })
+			class ExampleService {}
 
 			global.luna.set(ExampleService, new ExampleService());
 
@@ -53,7 +51,7 @@ export default () => {
 		});
 
 		it('should inject the current request from the service context', () => {
-			@LunaService({name: 'exampleService'})
+			@LunaService({ name: 'exampleService' })
 			class ExampleService {
 				@CurrentRequest request;
 
@@ -64,11 +62,11 @@ export default () => {
 
 			global.luna.set(ExampleService, new ExampleService());
 
-			const serviceContext = new ServiceContext({$$luna: {request: 'mock'}});
+			const serviceContext = new ServiceContext({ $$luna: { request: 'mock' } });
 			const serviceInstance = serviceContext.get(ExampleService);
 
 			chai.expect(serviceInstance).to.not.equal(false);
 			chai.expect(serviceInstance.getRequest()).to.equal('mock');
 		});
-	})
+	});
 };
