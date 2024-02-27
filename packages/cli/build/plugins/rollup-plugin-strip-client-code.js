@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { requireDynamically } from './helpers/dynamic-require';
 
-import { getEntryType } from './helpers/entries';
+import { getEntryType } from './helpers/entries.js';
 
 // This is used so that we can have a chain of imports
 // an still load the appropriate stub
@@ -36,7 +35,12 @@ export const rollupPluginStripClientCode = function ({ basePaths }) {
 			if (entryType && typeof entryType.settings?.factory === 'string') {
 				const { factory } = entryType.settings;
 
-				const factoryModule = requireDynamically(factory);
+				// Rollup internally transpiles the config files which prevents us from
+				// using the dynamic import of a es type="module" factory here.
+				// We will see a "Must use import to load ES Module" error.
+				// Current fix is transpiling the factory modules to cjs...
+				// @see https://github.com/rollup/rollup/issues/4055
+				const factoryModule = await import(factory);
 
 				// This is probably pretty expensive. Is there a way with a smaller footprint?
 				const resolution = await this.resolve(source, importer, { skipSelf: true, ...options });

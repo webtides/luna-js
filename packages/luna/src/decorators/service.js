@@ -1,37 +1,36 @@
-import ServiceContext from "../framework/services/service-context";
+import ServiceContext from '../framework/services/service-context.js';
 
-const LunaService = ({name, as, type }) => {
-    return function decorator(Class) {
+const LunaService = ({ name, as, type }) => {
+	return function decorator(Class) {
+		if (typeof as !== 'undefined') {
+			name = as?.$$luna?.serviceName;
+		}
 
-        if (typeof as !== 'undefined') {
-            name = as?.$$luna?.serviceName;
-        }
+		// Set a static $$luna property to the class with meta information.
+		Class.$$luna = {
+			serviceName: name,
+		};
 
-        // Set a static $$luna property to the class with meta information.
-        Class.$$luna = {
-            serviceName: name,
-        };
-
-        return Class;
-    }
+		return Class;
+	};
 };
 
 const Inject = (service) => {
-    return (target, name, descriptor) => {
-        if (process.env.CLIENT_BUNDLE) {
-            // Injectables currently only work in server context.
-            descriptor.initializer = () => null;
-            return;
-        }
+	return (target, name, descriptor) => {
+		if (process.env.CLIENT_BUNDLE) {
+			// Injectables currently only work in server context.
+			descriptor.initializer = () => null;
+			return;
+		}
 
-        delete descriptor.writable;
-        delete descriptor.initializer;
+		delete descriptor.writable;
+		delete descriptor.initializer;
 
-        descriptor.set = function() {};
-        descriptor.get = function() {
-            return (new ServiceContext(this)).get(service);
-        };
-    }
-}
+		descriptor.set = function () {};
+		descriptor.get = function () {
+			return new ServiceContext(this).get(service);
+		};
+	};
+};
 
-export {LunaService, Inject};
+export { LunaService, Inject };

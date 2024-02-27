@@ -2,16 +2,8 @@ import path from 'path';
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
 
-import { startRollup, startRollupWatch } from '../build';
-import { getConfig } from '../../config';
-
-const buildEntryPoint = async () => {
-	console.log('Building entry point...');
-
-	await startRollup(path.join(getConfig().currentDirectory, 'build/configs/rollup.config.start.js'));
-
-	console.log('Done building entry point.');
-};
+import { startRollup, startRollupWatch } from '../build.js';
+import { getConfig } from '../../config.js';
 
 /**
  * Builds the whole application once.
@@ -28,9 +20,7 @@ const buildComponentsForApplication = async () => {
 	// Clean the build directory before starting a new build.
 	rimraf.sync(settings.build.output);
 
-	await buildEntryPoint();
-
-	console.log('Building application..');
+	console.log('Building application...');
 
 	await startRollup(path.join(getConfig().currentDirectory, 'build/configs/rollup.config.application.js'));
 
@@ -42,8 +32,6 @@ const startApplicationDevelopmentBuild = async (callback = () => {}) => {
 
 	// Clean the build directory before starting a new build.
 	rimraf.sync(settings.build.output);
-
-	await buildEntryPoint();
 
 	console.log('Start application development build...');
 
@@ -87,4 +75,4 @@ const startApplicationDevelopmentBuild = async (callback = () => {}) => {
 	await initializeServerWatcher(true);
 };
 
-export { buildEntryPoint, buildComponentsForApplication, startApplicationDevelopmentBuild };
+export { buildComponentsForApplication, startApplicationDevelopmentBuild };

@@ -1,26 +1,23 @@
-const { chai, sleep } = require('../../helpers');
-const { basic } = require('./shared/api');
+import { basic } from './shared/api.js';
 
-describe('Luna api test', function () {
-	this.timeout(10000);
+export const basicApiTest = () => {
+	describe('Luna api test', function () {
+		before(async function () {
+			process.chdir(global.getCurrentWorkingDirectory('basic'));
+			const { startLuna } = await import('../../../packages/luna/src/framework/index.js');
+			global.originalConsoleLog = console.log;
+			console.log = () => {};
+			await startLuna();
+		});
 
-	before(async function () {
-		process.chdir(global.getCurrentWorkingDirectory('basic'));
-		const { startLuna } = require('../../../packages/luna/src/framework');
+		after(async function () {
+			console.log = global.originalConsoleLog;
+			const { stopLuna } = await import('../../../packages/luna/src/framework/index.js');
+			await stopLuna();
+		});
 
-		global.originalConsoleLog = console.log;
-		await startLuna();
-
-		await sleep(600);
+		describe('Basic api tests', function () {
+			basic();
+		});
 	});
-
-	after(async function () {
-		console.log = global.originalConsoleLog;
-		const { stopLuna } = require('../../../packages/luna/src/framework');
-		await stopLuna();
-	});
-
-	describe('Basic api tests', function () {
-		basic();
-	});
-});
+};

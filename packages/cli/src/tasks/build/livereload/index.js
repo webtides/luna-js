@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-import { getConfig } from '../../../config';
+import { getConfig } from '../../../config.js';
 
 let livereloadServer = false;
 const livereloadConnections = [];

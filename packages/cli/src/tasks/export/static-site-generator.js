@@ -5,8 +5,8 @@ import glob from 'glob';
 import fetch from 'node-fetch';
 import rimraf from 'rimraf';
 
-import { startLunaJS, stopLunaJS } from '../../run';
-import { getConfig } from '../../config';
+import { startLunaJS, stopLunaJS } from '../../run.js';
+import { getConfig } from '../../config.js';
 
 const getStaticSiteEntryPoints = async () => {
 	const { settings } = getConfig();

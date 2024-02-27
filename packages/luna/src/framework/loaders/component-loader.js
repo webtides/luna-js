@@ -1,115 +1,122 @@
-import path from "path";
+import path from 'node:path';
+import { paramCase } from 'param-case';
+import { loadManifest, loadSettings } from '../config.js';
+import { LunaService } from '../../decorators/service.js';
+import { Component } from '../../decorators/component.js';
 
-import {paramCase} from "param-case";
+class ComponentLoader {
+	constructor() {
+		this.allAvailableComponents = {};
+	}
 
-import {loadManifest, loadSettings} from "../config.js";
-import {LunaService} from "../../decorators/service";
-import {Component} from "../../decorators/component";
-import {importDynamically} from "../helpers/dynamic-import";
+	async loadSingleComponent({ absolutePath, file, relativePath, children, settings }) {
+		const importedElement = await import(path.resolve(absolutePath));
+		// Only use the default export if available. Then we can export more from the file than
+		// just the element.
+		const element = importedElement.default ?? importedElement;
 
-@LunaService({
-    name: 'ComponentLoader'
-})
-export default class ComponentLoader {
-    allAvailableComponents = {};
+		if (!element.$$luna) {
+			// The element hasn't been decorated, set some sensible defaults.
+			element.$$luna = {
+				target: settings.defaultTarget ?? Component.TARGET_SERVER,
+			};
+		}
 
-    async loadSingleComponent({absolutePath, file, relativePath, children, settings }) {
-        const importedElement = await import(path.resolve(absolutePath));
-        // Only use the default export if available. Then we can export more from the file than
-        // just the element.
-        const element = importedElement.default ?? importedElement;
+		element.staticProperties =
+			typeof element.loadStaticProperties === 'function' ? (await element.loadStaticProperties()) ?? {} : {};
 
-        if (!element.$$luna) {
-            // The element hasn't been decorated, set some sensible defaults.
-            element.$$luna = {
-                target: settings.defaultTarget ?? Component.TARGET_SERVER,
-            };
-        }
+		const tagName = element.$$luna?.selector ?? paramCase(element.name);
 
-        element.staticProperties = typeof element.loadStaticProperties === 'function'
-                ? (await element.loadStaticProperties()) ?? {}
-                : {};
+		console.log('Register component', tagName);
 
-        const tagName = element.$$luna?.selector ?? paramCase(element.name);
+		const component = {
+			element,
+			tagName,
+			name: element.name,
+			file,
+			relativePath,
+			outputDirectory: settings.outputDirectory,
+			children,
+		};
 
-        console.log("Register component", tagName);
+		// Load the appropriate element factory for a component once at startup.
+		component.ElementFactory = settings.factory
+			? (await import(settings.factory)).ElementFactory
+			: await luna.getDefaultElementFactory();
 
-        const component = {
-            element,
-            tagName,
-            name: element.name,
-            file,
-            relativePath,
-            outputDirectory: settings.outputDirectory,
-            children
-        };
+		return component;
+	}
 
-        // Load the appropriate element factory for a component once at startup.
-        component.ElementFactory = settings.factory
-            ? (await importDynamically(settings.factory)).ElementFactory
-            : await luna.getDefaultElementFactory();
+	/**
+	 * Loads all available components from the generated manifest, loads the
+	 * metadata for the component and the static properties.
+	 *
+	 * @returns {Promise<*>}
+	 */
+	async registerAvailableComponents() {
+		const settings = await loadSettings();
+		const manifest = await loadManifest();
 
-        return component;
-    }
+		const basePath = settings._generated.applicationDirectory;
 
-    /**
-     * Loads all available components from the generated manifest, loads the
-     * metadata for the component and the static properties.
-     *
-     * @returns {Promise<*>}
-     */
-    async registerAvailableComponents() {
-        const settings = await loadSettings();
-        const manifest = await loadManifest();
+		await Promise.all(
+			manifest.components.map(async (componentModule) => {
+				const { file, relativePath, settings, children } = componentModule;
+				const absolutePath = path.posix.join(basePath, file);
 
-        const basePath = settings._generated.applicationDirectory;
+				const component = await this.loadSingleComponent({
+					absolutePath,
+					file,
+					relativePath,
+					settings,
+					children,
+				});
 
-		await Promise.all(manifest.components.map(async (componentModule) => {
-			const {file, relativePath, settings, children} = componentModule;
-			const absolutePath = path.posix.join(basePath, file);
+				this.allAvailableComponents[component.tagName] = component;
+			}),
+		);
 
-			const component = await this.loadSingleComponent({
-				absolutePath, file, relativePath, settings, children
-			});
+		return this.allAvailableComponents;
+	}
 
-			this.allAvailableComponents[component.tagName] = component;
-		}));
+	/**
+	 * Searches inside the available components for a component with the tagName and
+	 * returns it if it exists.
+	 *
+	 * @param tagName string
+	 *
+	 * @returns {Promise<boolean|{
+	 *  element: LunaElement,
+	 *  tagName: string,
+	 *  hasStaticProperties: boolean,
+	 *  hasDynamicProperties: boolean,
+	 *  name: string,
+	 *  file: string,
+	 *  relativePath: string,
+	 *  directory: string,
+	 *  outputDirectory: string,
+	 *  children: []
+	 * }>}
+	 */
+	async loadSingleComponentByTagName(tagName) {
+		if (!tagName) {
+			return false;
+		}
 
-        return this.allAvailableComponents;
-    }
+		tagName = tagName.toLowerCase();
 
-    /**
-     * Searches inside the available components for a component with the tagName and
-     * returns it if it exists.
-     *
-     * @param tagName string
-     *
-     * @returns {Promise<boolean|{
-     *  element: LunaElement,
-     *  tagName: string,
-     *  hasStaticProperties: boolean,
-     *  hasDynamicProperties: boolean,
-     *  name: string,
-     *  file: string,
-     *  relativePath: string,
-     *  directory: string,
-     *  outputDirectory: string,
-     *  children: []
-     * }>}
-     */
-    async loadSingleComponentByTagName(tagName) {
-        tagName = tagName.toLowerCase();
+		const components = this.allAvailableComponents;
 
-        const components = this.allAvailableComponents;
+		if (components[tagName]) {
+			return components[tagName];
+		}
 
-        if (components[tagName]) {
-            return components[tagName];
-        }
+		return false;
+	}
 
-        return false;
-    }
-
-    getAvailableComponents() {
-        return this.allAvailableComponents;
-    }
+	getAvailableComponents() {
+		return this.allAvailableComponents;
+	}
 }
+
+export default LunaService({ name: 'ComponentLoader' })(ComponentLoader);

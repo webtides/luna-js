@@ -3,7 +3,9 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "luna.config.js",
+	"type": "module",
 	"scripts": {
+		"dev": "luna --dev",
 		"build": "luna --build",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
@@ -11,10 +13,10 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@webtides/luna-js": "file:webtides-luna-js-0.12.1.tgz",
+		"@webtides/luna-js": "file:../../../packages/luna",
 		"cors": "^2.8.5"
 	},
 	"devDependencies": {
-		"@webtides/luna-cli": "file:webtides-luna-cli-0.12.1.tgz"
+		"@webtides/luna-cli": "file:../../../packages/cli"
 	}
 }

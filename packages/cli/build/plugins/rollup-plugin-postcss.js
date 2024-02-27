@@ -6,7 +6,7 @@ import postcssrc from 'postcss-load-config';
 import postcssPluginImport from 'postcss-import';
 import glob from 'glob-all';
 
-import { getEntryType } from './helpers/entries';
+import { getEntryType } from './helpers/entries.js';
 
 const basePostcssPluginsBefore = [postcssPluginImport];
 

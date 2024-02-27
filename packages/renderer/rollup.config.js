@@ -1,20 +1,9 @@
 import glob from 'glob';
-
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-function metaImportUrl() {
-	return {
-		name: 'luna-meta-import-url',
-		resolveImportMeta(prop, { moduleId }) {
-			return `new (require('u' + 'rl').URL)('file:' + __filename).href`;
-		},
-	};
-}
-
 const bundles = [
-	{ name: 'element-js/lit', resolve: ['@webtides/luna-js'] },
-	{ name: 'element-js/vanilla', resolve: ['@webtides/luna-js'] },
+	{ name: 'element-js', resolve: ['@webtides/luna-js'] },
 	{
 		name: 'lit',
 		resolve: [
@@ -33,12 +22,12 @@ const bundleConfigs = bundles.map((bundle) => ({
 	input: `./src/${bundle.name}/index.js`,
 	output: {
 		file: `./lib/${bundle.name}/index.js`,
-		format: 'cjs',
+		format: 'es',
 		exports: 'auto',
 		inlineDynamicImports: true,
 	},
 	plugins: [
-		metaImportUrl(),
+		// metaImportUrl(),
 		nodeResolve({
 			resolveOnly: bundle.resolve ?? [],
 		}),
@@ -64,7 +53,7 @@ const stubConfigs = bundles
 			},
 			plugins: [
 				nodeResolve(),
-				metaImportUrl(),
+				// metaImportUrl(),
 				commonjs({
 					requireReturnsDefault: true,
 					transformMixedEsModules: true,

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { getEntryType } from './helpers/entries';
-import { getConfig } from '../../src/config';
+import { getEntryType } from './helpers/entries.js';
+import { getConfig } from '../../src/config.js';
 
 const loadComponentChildren = (contents) => {
 	const result = contents.match(/<(?:\w*-\w*)(?:-\w*)*/gm);

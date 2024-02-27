@@ -2,30 +2,29 @@
  * Used for injecting services with a current request context.
  */
 export default class ServiceContext {
+	constructor(context) {
+		this.context = context;
+	}
 
-    constructor(context) {
-        this.context = context;
-    }
+	/**
+	 * Returns the service instance with the current request context
+	 * attached.
+	 *
+	 * @param service
+	 * @returns {{$$luna}|*}
+	 */
+	get(service) {
+		const serviceInstance = luna.get(service);
 
-    /**
-     * Returns the service instance with the current request context
-     * attached.
-     *
-     * @param service
-     * @returns {{$$luna}|*}
-     */
-    get(service) {
-        const serviceInstance = luna.get(service);
+		// Inject the current request into the service.
+		if (typeof serviceInstance === 'function' || typeof serviceInstance === 'object') {
+			serviceInstance.$$luna = {
+				...(serviceInstance.$$luna ?? {}),
+				request: this.context?.$$luna?.request,
+				response: this.context?.$$luna?.response,
+			};
+		}
 
-        // Inject the current request into the service.
-        if (typeof serviceInstance === "function" || typeof serviceInstance === "object") {
-            serviceInstance.$$luna = {
-                ...(serviceInstance.$$luna ?? {}),
-                request: this.context?.$$luna?.request,
-                response: this.context?.$$luna?.response,
-            };
-        }
-
-        return serviceInstance;
-    }
+		return serviceInstance;
+	}
 }

@@ -19,12 +19,12 @@ export const rollupPluginStripServerCode = function () {
 				) {
 					// We don't need to go through all node_modules
 					// and parse the code.
-					return {code, map: null};
+					return { code, map: null };
 				}
 
 				const ast = recast.parse(code, {
 					sourceFileName: id,
-					parser: require('recast/parsers/babel'),
+					parser: await import('recast/parsers/babel'),
 
 					sourceType: 'module',
 					plugins: ['decorators-legacy', 'classProperties'],
@@ -32,7 +32,7 @@ export const rollupPluginStripServerCode = function () {
 
 				traverse.default(ast, {
 					ClassDeclaration(path) {
-						const {node} = path;
+						const { node } = path;
 
 						if (!node.id || !node.decorators) {
 							return;
@@ -58,7 +58,7 @@ export const rollupPluginStripServerCode = function () {
 					},
 
 					ClassProperty(path) {
-						const {node} = path;
+						const { node } = path;
 
 						if (!node.key || !node.decorators) {
 							return;
@@ -74,14 +74,15 @@ export const rollupPluginStripServerCode = function () {
 					},
 
 					ClassMethod(path) {
-						const {node} = path;
+						const { node } = path;
 
 						if (!node.key) {
 							return;
 						}
 
 						for (const decorator of node.decorators ?? []) {
-							const decoratorName = decorator?.expression?.callee?.name ?? decorator?.expression?.name ?? '';
+							const decoratorName =
+								decorator?.expression?.callee?.name ?? decorator?.expression?.name ?? '';
 
 							if (decoratorsWhichRemoveFunctions.includes(decoratorName)) {
 								path.remove();
@@ -108,18 +109,18 @@ export const rollupPluginStripServerCode = function () {
 					},
 				});
 
-				const result = recast.print(ast, {sourceMapName: id.replace('.js', '.js.map')});
+				const result = recast.print(ast, { sourceMapName: id.replace('.js', '.js.map') });
 
 				return {
 					code: result.code,
 					// Rollup only needs the mappings to work with the source map.
-					map: {mappings: result.map.mappings},
+					map: { mappings: result.map.mappings },
 				};
 			} catch (error) {
 				console.error(error);
 			}
 
-			return {code, map: null};
+			return { code, map: null };
 		},
 	};
 };

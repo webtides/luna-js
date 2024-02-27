@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { prepareApiServer, callHook, HOOKS } from '@webtides/luna-cli/build/entries/helpers/prepare';
+import { prepareApiServer, callHook, HOOKS } from '@webtides/luna-cli/build/entries/helpers/prepare.js';
 
 const apisToRegister = [];
 const hooksToRegister = [];
