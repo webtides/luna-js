@@ -1,7 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 import { loadManifest, loadSettings } from '../config.js';
 import { LunaService } from '../../decorators/service.js';
-import { importDynamically } from '../helpers/dynamic-import.js';
 import { parseMiddleware } from '../http/middleware/index.js';
 
 class RoutesLoader {
@@ -21,7 +20,7 @@ class RoutesLoader {
 		const isComponentRoute = module?.default?.prototype?.constructor?.toString().indexOf('class') === 0;
 
 		const ElementFactory = settings?.factory
-			? (await importDynamically(settings.factory)).ElementFactory
+			? (await import(settings.factory)).ElementFactory
 			: await luna.getDefaultElementFactory();
 
 		let staticProperties = {};

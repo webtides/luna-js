@@ -5,12 +5,13 @@ export const basicRoutesTest = () => {
 		before(async () => {
 			process.chdir(global.getCurrentWorkingDirectory('basic'));
 			global.originalConsoleLog = console.log;
-			const { startLuna } = await import('../../../packages/luna/src/framework');
+			console.log = () => {};
+			const { startLuna } = await import('../../../packages/luna/src/framework/index.js');
 			await startLuna();
 		});
 
 		after(async () => {
-			const { stopLuna } = await import('../../../packages/luna/src/framework');
+			const { stopLuna } = await import('../../../packages/luna/src/framework/index.js');
 			await stopLuna();
 			console.log = global.originalConsoleLog;
 		});

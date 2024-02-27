@@ -5,6 +5,7 @@
 	"main": "luna.config.js",
 	"type": "module",
 	"scripts": {
+		"dev": "luna --dev",
 		"build": "luna --build",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

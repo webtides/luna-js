@@ -1,11 +1,8 @@
-import path from 'path';
-
+import path from 'node:path';
 import { paramCase } from 'param-case';
-
 import { loadManifest, loadSettings } from '../config.js';
 import { LunaService } from '../../decorators/service.js';
 import { Component } from '../../decorators/component.js';
-import { importDynamically } from '../helpers/dynamic-import.js';
 
 class ComponentLoader {
 	constructor() {

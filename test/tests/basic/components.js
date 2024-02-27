@@ -6,6 +6,7 @@ export const basicComponentsTest = () => {
 			process.chdir(global.getCurrentWorkingDirectory('basic'));
 			const { startLuna } = await import('../../../packages/luna/src/framework/index.js');
 			global.originalConsoleLog = console.log;
+			console.log = () => {};
 			await startLuna();
 		});
 

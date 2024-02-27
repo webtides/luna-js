@@ -2,9 +2,7 @@ import { chai } from '../../helpers/index.js';
 import fs from 'node:fs';
 
 export const basicDecoratorsTest = () => {
-	describe('Luna decorators test', function () {
-		this.timeout(10000);
-
+	describe('Luna decorators test', () => {
 		describe('Build test', () => {
 			it('removes the method annotated with HideFromClient from the client bundle', () => {
 				const serverFileContents = fs.readFileSync(
@@ -36,7 +34,7 @@ export const basicDecoratorsTest = () => {
 
 		describe('Service decorators test', () => {
 			it('adds metadata to the annotated service class', async () => {
-				await import('../../../packages/luna/src/framework/bootstrap');
+				await import('../../../packages/luna/src/framework/bootstrap.js');
 				const { LunaService } = await import('../../../packages/luna/src/decorators/service.js');
 
 				@LunaService({
