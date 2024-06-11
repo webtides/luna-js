@@ -1,13 +1,25 @@
-import { TemplateElement, BaseElement, html } from '../../../../packages/renderer/lib/element-js/lit/stubs/index.js';
-import { ElementFactory } from '../../../../packages/renderer/lib/element-js/lit/index.js';
+import '../../../../packages/renderer/src/element-js/utils/install-dom-shim.js';
+import {
+	ElementFactory,
+	TemplateElement,
+	BaseElement,
+	html,
+} from '../../../../packages/renderer/lib/element-js/index.js';
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
-
 import { chai } from '../../../helpers/index.js';
 import { CurrentRequest } from '@webtides/luna-js';
 
+//TODO: make this an export from element-js?!
+export const stripCommentMarkers = (html) =>
+	html
+		.replace(/<!--(\/)?(dom|template)-part(-\d+)?(:(@|.|\?)?\w+(=.*)?)?|(\$)?-->/g, '')
+		.replace(/\s+/g, ' ')
+		.replaceAll('> ', '>')
+		.trim();
+
 export default () => {
-	describe('Element-js server renderer test', function () {
+	describe('Element-js vanilla server renderer test', function () {
 		ServiceContainer.set(ElementRenderer, new ElementRenderer());
 
 		it('should render the component template as a string', async () => {
@@ -50,7 +62,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result.markup).to.contain('<div>yes</div>');
+			chai.expect(stripCommentMarkers(result.markup)).to.contain('<div>yes</div>');
 		});
 
 		it('should parse dot-attributes as json', async () => {
@@ -77,7 +89,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result.markup).to.contain('<div>foo</div>');
+			chai.expect(stripCommentMarkers(result.markup)).to.contain('<div>foo</div>');
 			chai.expect(result.finalAttributes.test).to.equal('{&quot;foo&quot;:&quot;foo&quot;}');
 		});
 
@@ -142,7 +154,7 @@ export default () => {
 			chai.expect(result).to.equal(false);
 		});
 
-		it('injects the current request in the elementjs element', async () => {
+		it('injects the current request in the element-js element', async () => {
 			const component = {
 				element: class extends TemplateElement {
 					@CurrentRequest request;

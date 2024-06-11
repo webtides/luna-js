@@ -43,4 +43,7 @@ const startLuna = ({ onStart, onMessage } = {}) => {
 	};
 };
 
+// TODO: add helper to make route requests against the express app router
+// https://stackoverflow.com/questions/33090091/is-it-possible-to-call-express-router-directly-from-code-with-a-fake-request
+
 export { BUILD_SCRIPT, LUNA_CLI_SCRIPT, LUNA_START_SCRIPT, startLuna, execute, chai, sleep };

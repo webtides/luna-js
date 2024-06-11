@@ -6,11 +6,13 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
+		"dev": "rollup -c -w",
 		"build": "rollup -c"
 	},
 	"dependencies": {
 		"@lit-labs/ssr": "2.0.1",
-		"@webtides/element-js": "0.7.4",
+		"@lit-labs/ssr-dom-shim": "^1.2.0",
+		"@webtides/element-js": "1.0.0",
 		"@webtides/luna-js": "^0.12.4"
 	},
 	"devDependencies": {

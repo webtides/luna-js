@@ -12,6 +12,7 @@ const bundles = [
 			'lit',
 			'lit-element',
 			'@lit-labs/ssr',
+			'@lit-labs/ssr-dom-shim',
 			'@lit/reactive-element',
 			'@lit-labs/ssr-client',
 		],
