@@ -9,7 +9,7 @@ Add the renderer to your `luna.config.js`.
     renderers: [
         {
             match: (component) => true,
-            renderer: require('@webtides/luna-renderer/lib/lit'),
+            renderer: import('@webtides/luna-renderer/src/lit'),
         }
     ]
 }

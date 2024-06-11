@@ -9,7 +9,7 @@ Add the renderer to your `luna.config.js`.
     renderers: [
         {
             match: (component) => true,
-            renderer: require('@webtides/luna-renderer/lib/element-js'),
+            renderer: import('@webtides/luna-renderer/src/element-js'),
         }
     ]
 }
