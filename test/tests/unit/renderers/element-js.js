@@ -4,7 +4,7 @@ import {
 	TemplateElement,
 	BaseElement,
 	html,
-} from '../../../../packages/renderer/lib/element-js/index.js';
+} from '../../../../packages/renderer/src/element-js/index.js';
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
 import { chai } from '../../../helpers/index.js';

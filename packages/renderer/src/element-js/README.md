@@ -14,8 +14,3 @@ Add the renderer to your `luna.config.js`.
     ]
 }
 ```
-
-## Known limitations
- 
-- There is no client side hydration. On first render, the element overrides the
-  current html content.
