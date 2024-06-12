@@ -87,7 +87,7 @@ const assertFileIsNotEmpty = (path, message) => {
  * @param {RequestInit} init
  * @return {Promise<unknown>}
  */
-const httpRequest = async (input, init) => {
+const httpRequest = async (input, init = {}) => {
 	let error = null;
 	let response = undefined;
 

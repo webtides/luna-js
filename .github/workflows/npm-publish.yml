@@ -17,7 +17,6 @@ jobs:
         with:
           node-version: 20
       - run: yarn install --frozen-lockfile
-      - run: yarn workspace @webtides/luna-renderer build
       - run: yarn run test
 
   publish:
@@ -35,7 +34,6 @@ jobs:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install --frozen-lockfile
-      - run: yarn workspace @webtides/luna-renderer build
 
       - name: 'Configure Git User'
         run: |
