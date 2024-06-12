@@ -7,8 +7,9 @@ import {
 } from '../../../../packages/renderer/src/element-js/index.js';
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
-import { chai } from '../../../helpers/index.js';
 import { CurrentRequest } from '@webtides/luna-js';
+import { assertContains } from '../../../helpers/index.js';
+import assert from 'node:assert';
 
 //TODO: make this an export from element-js?!
 export const stripCommentMarkers = (html) =>
@@ -35,7 +36,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-			chai.expect(result.markup).to.contain('<div>This should be rendered as a string.</div>');
+			assertContains(result.markup, '<div>This should be rendered as a string.</div>');
 		});
 
 		it('should pass the attributes to the component', async () => {
@@ -62,7 +63,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(stripCommentMarkers(result.markup)).to.contain('<div>yes</div>');
+			assertContains(stripCommentMarkers(result.markup), '<div>yes</div>');
 		});
 
 		it('should parse dot-attributes as json', async () => {
@@ -89,8 +90,8 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(stripCommentMarkers(result.markup)).to.contain('<div>foo</div>');
-			chai.expect(result.finalAttributes.test).to.equal('{&quot;foo&quot;:&quot;foo&quot;}');
+			assertContains(stripCommentMarkers(result.markup), '<div>foo</div>');
+			assert.equal(result.finalAttributes.test, '{&quot;foo&quot;:&quot;foo&quot;}');
 		});
 
 		it('should parse boolean attributes to a string', async () => {
@@ -111,7 +112,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result.finalAttributes.foo).to.equal('false');
+			assert.equal(result.finalAttributes.foo, 'false');
 		});
 
 		it('should set the "ssr" and "defer-update" attributes', async () => {
@@ -127,8 +128,8 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-			chai.expect(result.finalAttributes.ssr).to.equal('true');
-			chai.expect(result.finalAttributes['defer-update']).to.equal('true');
+			assert.equal(result.finalAttributes.ssr, 'true');
+			assert.equal(result.finalAttributes['defer-update'], 'true');
 		});
 
 		it('should not try to render the BaseElement', async () => {
@@ -151,7 +152,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result).to.equal(false);
+			assert.equal(result, false);
 		});
 
 		it('injects the current request in the element-js element', async () => {
@@ -188,7 +189,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result.markup).to.contain('injected');
+			assertContains(result.markup, 'injected');
 		});
 	});
 };

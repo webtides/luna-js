@@ -1,8 +1,8 @@
 import LunaContainer from '../../../../packages/luna/src/framework/luna.js';
 import ServiceContext from '../../../../packages/luna/src/framework/services/service-context.js';
-import { chai } from '../../../helpers/index.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
 import { CurrentRequest, LunaService } from '../../../../packages/luna/index.js';
+import assert from 'node:assert';
 
 export default () => {
 	describe('Service container test', function () {
@@ -20,13 +20,13 @@ export default () => {
 		it('should receive all default services from the service container', () => {
 			const serviceDefinitions = global.luna.serviceDefaults;
 
-			chai.expect(serviceDefinitions.length).to.be.gt(0);
+			assert.ok(serviceDefinitions.length > 0, 'value should be greater than 0');
 
 			for (const serviceDefinition of serviceDefinitions) {
 				const service = global.luna.get(serviceDefinition);
 
-				chai.expect(service).to.not.equal(false);
-				chai.expect(service).to.equal(ServiceContainer.get(serviceDefinition));
+				assert.notEqual(service, false);
+				assert.equal(service, ServiceContainer.get(serviceDefinition));
 			}
 		});
 
@@ -34,7 +34,7 @@ export default () => {
 			@LunaService({ name: 'exampleService' })
 			class ExampleService {}
 
-			chai.expect(ExampleService.$$luna.serviceName).to.equal('exampleService');
+			assert.equal(ExampleService.$$luna.serviceName, 'exampleService');
 		});
 
 		it('should inject the $$luna context inside a service', () => {
@@ -46,8 +46,8 @@ export default () => {
 			const serviceContext = new ServiceContext();
 			const serviceInstance = serviceContext.get(ExampleService);
 
-			chai.expect(serviceInstance).to.not.equal(false);
-			chai.expect(serviceInstance.$$luna).to.not.be.undefined;
+			assert.notEqual(serviceInstance, false);
+			assert.ok(serviceInstance.$$luna);
 		});
 
 		it('should inject the current request from the service context', () => {
@@ -65,8 +65,8 @@ export default () => {
 			const serviceContext = new ServiceContext({ $$luna: { request: 'mock' } });
 			const serviceInstance = serviceContext.get(ExampleService);
 
-			chai.expect(serviceInstance).to.not.equal(false);
-			chai.expect(serviceInstance.getRequest()).to.equal('mock');
+			assert.notEqual(serviceInstance, false);
+			assert.equal(serviceInstance.getRequest(), 'mock');
 		});
 	});
 };

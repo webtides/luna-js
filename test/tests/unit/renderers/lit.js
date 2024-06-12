@@ -1,10 +1,10 @@
 import { ElementFactory, LitElement, html } from '../../../../packages/renderer/src/lit/index.js';
 import { customElement, property } from '../../../../packages/renderer/src/lit/decorators.js';
-
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
-import { chai } from '../../../helpers/index.js';
 import { CurrentRequest } from '@webtides/luna-js';
+import { assertContains } from '../../../helpers/index.js';
+import assert from 'node:assert';
 
 export default () => {
 	describe('Lit server renderer test', function () {
@@ -23,7 +23,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-			chai.expect(result.markup).to.contain('<div>This should be rendered as a string.</div>');
+			assertContains(result.markup, '<div>This should be rendered as a string.</div>');
 		});
 
 		it('ignore the lit decorators', async () => {
@@ -46,7 +46,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-			chai.expect(result.markup).to.contain('<div>This should be rendered as a string.</div>');
+			assertContains(result.markup, '<div>This should be rendered as a string.</div>');
 		});
 
 		it('should pass the attributes to the component', async () => {
@@ -73,7 +73,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result.markup).to.contain('<div><!--lit-part-->yes<!--/lit-part--></div>');
+			assertContains(result.markup, '<div><!--lit-part-->yes<!--/lit-part--></div>');
 		});
 
 		// TODO: fix?!
@@ -125,7 +125,7 @@ export default () => {
 		// 		response: null,
 		// 	});
 		//
-		// 	chai.expect(result.finalAttributes.foo).to.equal(false);
+		// assert.equal(result.finalAttributes.foo, false);
 		// });
 
 		it('should set the "ssr" attributes', async () => {
@@ -141,7 +141,7 @@ export default () => {
 			const renderer = ServiceContainer.get(ElementRenderer);
 			const result = await renderer.renderComponent({ component, attributes: {}, request: null, response: null });
 
-			chai.expect(result.finalAttributes.ssr).to.equal(true);
+			assert.equal(result.finalAttributes.ssr, true);
 		});
 
 		// TODO: why should it not render?!
@@ -166,7 +166,7 @@ export default () => {
 		// 	});
 		//
 		// 	console.log('result', result);
-		// 	chai.expect(result).to.equal(false);
+		// 	assert.equal(result, false);
 		// });
 
 		it('injects the current request in the lit element', async () => {
@@ -203,7 +203,7 @@ export default () => {
 				response: null,
 			});
 
-			chai.expect(result.markup).to.contain('injected');
+			assertContains(result.markup, 'injected');
 		});
 	});
 };

@@ -2,7 +2,16 @@ import { execSync, spawn } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 
-import { BUILD_SCRIPT, chai } from '../../helpers/index.js';
+import {
+	assertDirectoryContains,
+	assertFileContains,
+	assertFileIsNotEmpty,
+	assertIsDirectory,
+	assertIsFile,
+	BUILD_SCRIPT,
+	httpRequest,
+} from '../../helpers/index.js';
+import assert from 'node:assert';
 
 export const basicCliTest = () => {
 	describe('Basic cli test', function () {
@@ -19,16 +28,16 @@ export const basicCliTest = () => {
 			});
 
 			it('has generated the build directory', async function () {
-				chai.expect('.build').to.be.a.directory().with.contents(['public', 'generated']);
+				assertDirectoryContains('.build', ['public', 'generated']);
 			});
 
 			it('has generated the manifest files', async function () {
-				chai.expect('.build/generated').to.be.a.directory();
+				assertIsDirectory('.build/generated');
 			});
 
 			it('has copied the static assets', async function () {
-				chai.expect('.build/public/assets/static').to.be.a.directory();
-				chai.expect('.build/public/assets/static/test.txt').to.be.a.file().and.not.empty;
+				assertIsDirectory('.build/public/assets/static');
+				assertFileIsNotEmpty('.build/public/assets/static/test.txt');
 			});
 
 			describe('Manifest test', function () {
@@ -39,29 +48,28 @@ export const basicCliTest = () => {
 				it('has generated all components from the manifest', function () {
 					const { components } = this.manifest;
 					for (const component of components) {
-						chai.expect(path.join('.build/generated/application', component.file)).to.be.a.file().and.not
-							.empty;
+						assertFileIsNotEmpty(path.join('.build/generated/application', component.file));
 					}
 				});
 
 				it('has generated all pages from the manifest', function () {
 					const { pages } = this.manifest;
 					for (const page of pages) {
-						chai.expect(path.join('.build/generated/application', page.file)).to.be.a.file().and.not.empty;
+						assertFileIsNotEmpty(path.join('.build/generated/application', page.file));
 					}
 				});
 
 				it('has generated all apis from the manifest', function () {
 					const { apis } = this.manifest;
 					for (const api of apis) {
-						chai.expect(path.join('.build/generated/application', api.file)).to.be.a.file().and.not.empty;
+						assertFileIsNotEmpty(path.join('.build/generated/application', api.file));
 					}
 				});
 
 				it('has generated all hooks from the manifest', function () {
 					const { hooks } = this.manifest;
 					for (const hook of hooks) {
-						chai.expect(path.join('.build/generated/application', hook.file)).to.be.a.file().and.not.empty;
+						assertFileIsNotEmpty(path.join('.build/generated/application', hook.file));
 					}
 				});
 			});
@@ -73,28 +81,25 @@ export const basicCliTest = () => {
 			});
 
 			it('has generated the api entry', async function () {
-				chai.expect('.api').to.be.a.directory();
-				chai.expect('.api/test-export.js').to.be.a.file();
+				assertIsDirectory('.api');
+				assertIsFile('.api/test-export.js');
 			});
 
 			it('has generated the index.html', function () {
-				chai.expect('.api/public/index.html').to.be.a.file();
-				const contents = fs.readFileSync('.api/public/index.html', 'utf-8');
-				chai.expect(contents).to.include('HELLO MOCHA');
+				assertIsFile('.api/public/index.html');
+				assertFileContains('.api/public/index.html', 'HELLO MOCHA');
 			});
 
 			it('starts the exported api server', function (done) {
 				const child = spawn(`node`, ['.api/test-export.js'], { detached: true });
 				child.stdout.on('data', (data) => {
 					if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
-						chai.request('http://localhost:3010')
-							.get('/')
-							.end((error, response) => {
-								chai.assert.equal(error, null);
-								chai.assert.equal(response.status, 200);
-								process.kill(-child.pid);
-								done();
-							});
+						httpRequest('http://localhost:3010/').then(({ error, response }) => {
+							assert.equal(error, null);
+							assert.equal(response.status, 200);
+							process.kill(-child.pid);
+							done();
+						});
 					}
 				});
 			});
@@ -106,25 +111,22 @@ export const basicCliTest = () => {
 			});
 
 			it('has generated the export directory', async function () {
-				chai.expect('.export').to.be.a.directory();
+				assertIsDirectory('.export');
 			});
 
 			it('has generated the index.html', function () {
-				chai.expect('.export/public/index.html').to.be.a.file();
-				const contents = fs.readFileSync('.export/public/index.html', 'utf-8');
-				chai.expect(contents).to.include('HELLO MOCHA');
+				assertIsFile('.export/public/index.html');
+				assertFileContains('.export/public/index.html', 'HELLO MOCHA');
 			});
 
 			it('has generated the fallback/index.html', function () {
-				chai.expect('.export/public/fallback/index.html').to.be.a.file();
-				const contents = fs.readFileSync('.export/public/fallback/index.html', 'utf-8');
-				chai.expect(contents).to.include('MOCHA FALLBACK PAGE');
+				assertIsFile('.export/public/fallback/index.html');
+				assertFileContains('.export/public/fallback/index.html', 'MOCHA FALLBACK PAGE');
 			});
 
 			it('has generated the dynamic page', function () {
-				chai.expect('.export/public/params/export/index.html').to.be.a.file();
-				const contents = fs.readFileSync('.export/public/params/export/index.html', 'utf-8');
-				chai.expect(contents).to.include('ID: export');
+				assertIsFile('.export/public/params/export/index.html');
+				assertFileContains('.export/public/params/export/index.html', 'ID: export');
 			});
 		});
 

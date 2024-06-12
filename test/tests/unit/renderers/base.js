@@ -2,8 +2,9 @@ import LunaContainer from '../../../../packages/luna/src/framework/luna.js';
 import ComponentLoader from '../../../../packages/luna/src/framework/loaders/component-loader.js';
 import DocumentRenderer from '../../../../packages/luna/src/framework/engine/document-renderer.js';
 import ElementFactory from '../../../../packages/luna/src/framework/engine/element-factory.js';
-import { chai } from '../../../helpers/index.js';
 import { CurrentRequest } from '@webtides/luna-js';
+import { assertContains, assertNotContains } from '../../../helpers/index.js';
+import assert from 'node:assert';
 
 class TestElementFactory extends ElementFactory {
 	async getInitialProperties() {
@@ -46,7 +47,7 @@ export default () => {
             <html><head></head><body><example-component></example-component></body></html>
         `);
 
-			chai.expect(result).to.contain(`TestContent`);
+			assert.ok(result.includes('TestContent'), 'value should include text');
 		});
 
 		it('renders the component children in the dom', async () => {
@@ -80,8 +81,8 @@ export default () => {
             <html><head></head><body><example-component></example-component></body></html>
         `);
 
-			chai.expect(result).to.contain(`<child-component`);
-			chai.expect(result).to.contain('I am the child component');
+			assertContains(result, '<child-component');
+			assertContains(result, 'I am the child component');
 		});
 
 		it('removes the dot from rendered attributes', async () => {
@@ -103,8 +104,8 @@ export default () => {
             <html><head></head><body><example-component .foo="bar"></example-component></body></html>
         `);
 
-			chai.expect(result).to.not.contain(`.foo="bar"`);
-			chai.expect(result).to.contain(`foo="bar"`);
+			assertNotContains(result, '.foo="bar"');
+			assertContains(result, 'foo="bar"');
 		});
 
 		it('mirrors the properties back to the attributes', async () => {
@@ -146,9 +147,9 @@ export default () => {
 				'<html><head></head><body><example-component></example-component></body></html>',
 			);
 
-			chai.expect(result).to.contain(`string-property="bar"`);
-			chai.expect(result).to.contain(`object-property="{&quot;foo&quot;:&quot;bar&quot;}"`);
-			chai.expect(result).to.contain(`array-property="[{&quot;foo&quot;:&quot;bar&quot;}]"`);
+			assertContains(result, 'string-property="bar"');
+			assertContains(result, 'object-property="{&quot;foo&quot;:&quot;bar&quot;}"');
+			assertContains(result, 'array-property="[{&quot;foo&quot;:&quot;bar&quot;}]"');
 		});
 
 		it('mirrors the properties back to the attributes for client only components but does not render them', async () => {
@@ -190,10 +191,10 @@ export default () => {
 				'<html><head></head><body><example-component></example-component></body></html>',
 			);
 
-			chai.expect(result).to.contain(`string-property="bar"`);
-			chai.expect(result).to.contain(`object-property="{&quot;foo&quot;:&quot;bar&quot;}"`);
-			chai.expect(result).to.contain(`array-property="[{&quot;foo&quot;:&quot;bar&quot;}]"`);
-			chai.expect(result).to.not.contain('NOT BEING RENDERED');
+			assertContains(result, `string-property="bar"`);
+			assertContains(result, `object-property="{&quot;foo&quot;:&quot;bar&quot;}"`);
+			assertContains(result, `array-property="[{&quot;foo&quot;:&quot;bar&quot;}]"`);
+			assertNotContains(result, 'NOT BEING RENDERED');
 		});
 
 		it('injects the current request in the element', async () => {
@@ -229,7 +230,7 @@ export default () => {
 				'<html><head></head><body><example-component></example-component></body></html>',
 			);
 
-			chai.expect(result).to.contain('injected');
+			assertContains(result, 'injected');
 		});
 	});
 };

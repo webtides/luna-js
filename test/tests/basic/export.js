@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
-import { chai } from '../../helpers/index.js';
+import assert from 'node:assert';
+import { basic } from './shared/api.js';
 
 export const basicExportTest = () => {
 	describe('Basic export test', () => {
@@ -22,11 +23,10 @@ export const basicExportTest = () => {
 
 		it('should exclude the cors dependency', () => {
 			const packageJSON = JSON.parse(fs.readFileSync('./.api/package.json', 'utf-8'));
-			chai.expect(packageJSON.dependencies['cors']).to.be.undefined;
+			assert.equal(packageJSON.dependencies['cors'], undefined);
 		});
 
 		describe('Exported api', async () => {
-			const { basic } = await import('./shared/api.js');
 			basic();
 		});
 	});

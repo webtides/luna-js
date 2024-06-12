@@ -1,5 +1,6 @@
 import { execSync } from 'node:child_process';
-import { BUILD_SCRIPT, chai } from '../../helpers/index.js';
+import { BUILD_SCRIPT, httpRequest } from '../../helpers/index.js';
+import assert from 'node:assert';
 
 export const basicHooksTest = () => {
 	// TODO: these tests are actually returning green when run individually... but somehow log 5x the same output... I think it has either to do with the console.log stubbing or how the luna server is started/stopped...
@@ -32,7 +33,7 @@ export const basicHooksTest = () => {
 				await startLuna();
 				await stopLuna();
 
-				chai.assert.deepEqual(
+				assert.deepEqual(
 					logs.filter((log) => log.startsWith('HOOKS.')),
 					[
 						'HOOKS.LUNA_INITIALIZE',
@@ -53,10 +54,10 @@ export const basicHooksTest = () => {
 				await startLuna();
 				logs = [];
 
-				await chai.request('http://localhost:3010').get('/').send();
+				await httpRequest('http://localhost:3010');
 				await stopLuna();
 
-				chai.assert.deepEqual(logs, ['HOOKS.REQUEST_RECEIVED']);
+				assert.deepEqual(logs, ['HOOKS.REQUEST_RECEIVED']);
 			});
 		});
 	});

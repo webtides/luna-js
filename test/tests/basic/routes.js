@@ -1,4 +1,5 @@
-import { chai } from '../../helpers/index.js';
+import { httpRequest, assertContains } from '../../helpers/index.js';
+import assert from 'node:assert';
 
 export const basicRoutesTest = () => {
 	describe('Luna routes test', () => {
@@ -16,117 +17,116 @@ export const basicRoutesTest = () => {
 			console.log = global.originalConsoleLog;
 		});
 
+		// TODO: maybe use native request response objects to assert things?!
+		// https://developer.mozilla.org/en-US/docs/Web/API/Request#examples
 		describe('Special cases', function () {
 			it('should use the fallback route the /foo route', async function () {
-				const response = await chai.request('http://localhost:3010').get('/foo').send();
-				chai.expect(response.status).to.be.equal(200);
-				chai.expect(response.text).to.include('MOCHA FALLBACK PAGE');
+				const { error, response } = await httpRequest('http://localhost:3010/foo');
+				assert.equal(response.status, 200);
+				assertContains(response.text, 'MOCHA FALLBACK PAGE');
 			});
 		});
 
 		describe('Index page', function () {
 			it('registers the index route', async function () {
-				const response = await chai.request('http://localhost:3010').get('/').send();
-				chai.expect(response.status).to.be.equal(200);
+				const { error, response } = await httpRequest('http://localhost:3010/');
+				assert.equal(response.status, 200);
 			});
 
 			it('has the "text/html" content type', async function () {
-				const response = await chai.request('http://localhost:3010').get('/').send();
-				chai.expect(response.headers['content-type']).to.contain('text/html');
+				const { error, response } = await httpRequest('http://localhost:3010/');
+				assertContains(response.headers.get('content-type'), 'text/html');
 			});
 
 			it('prints "HELLO MOCHA" on the index page', async function () {
-				const response = await chai.request('http://localhost:3010').get('/').send();
-				chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
+				const { error, response } = await httpRequest('http://localhost:3010/');
+				assert.equal(typeof response.text, 'string');
+				assertContains(response.text, 'HELLO MOCHA');
 			});
 		});
 
 		describe('Page with parameters', function () {
 			it('registers a route with a parameter', async function () {
-				const response = await chai.request(`http://localhost:3010`).get('/params/test').send();
-				chai.expect(response.status).to.be.equal(200);
+				const { error, response } = await httpRequest('http://localhost:3010/params/test');
+				assert.equal(response.status, 200);
 			});
 
 			it('prints the dynamic parameter on the screen', async function () {
 				const randomParameter = Math.random() * 100;
 
-				let response = await chai.request(`http://localhost:3010`).get(`/params/${randomParameter}`).send();
-				chai.expect(response.status).to.be.equal(200);
-				chai.expect(response.text).to.include(`ID: ${randomParameter}`);
+				const { response } = await httpRequest(`http://localhost:3010/params/${randomParameter}`);
+				assert.equal(response.status, 200);
+				assertContains(response.text, `ID: ${randomParameter}`);
 
 				const secondRandomParameter = Math.random() * 1000;
 
-				response = await chai.request(`http://localhost:3010`).get(`/params/${secondRandomParameter}`).send();
-				chai.expect(response.status).to.be.equal(200);
-				chai.expect(response.text).to.include(`ID: ${secondRandomParameter}`);
+				const { response: response2 } = await httpRequest(
+					`http://localhost:3010/params/${secondRandomParameter}`,
+				);
+				assert.equal(response2.status, 200);
+				assertContains(response2.text, `ID: ${secondRandomParameter}`);
 			});
 
 			it('registers the routes with no parameters more early', async function () {
-				let response = await chai.request(`http://localhost:3010`).get('/params/existing').send();
-				chai.expect(response.status).to.be.equal(200);
-				chai.expect(response.text).to.include(`NO PARAMETER`);
+				const { response } = await httpRequest(`http://localhost:3010/params/existing`);
+				assert.equal(response.status, 200);
+				assertContains(response.text, `NO PARAMETER`);
 			});
 		});
 
 		describe('Page with layout', function () {
 			it('uses the defined layout', async function () {
-				let response = await chai.request(`http://localhost:3010`).get('/layout').send();
-				chai.expect(response.text).to.include(`MOCHA LAYOUT`);
+				const { response } = await httpRequest(`http://localhost:3010/layout`);
+				assertContains(response.text, `MOCHA LAYOUT`);
 			});
 
 			it('uses the context in the layout', async function () {
-				let response = await chai.request(`http://localhost:3010`).get('/layout').send();
-				chai.expect(response.text).to.include(`MOCHA CONTEXT`);
+				const { response } = await httpRequest(`http://localhost:3010/layout`);
+				assertContains(response.text, `MOCHA CONTEXT`);
 			});
 		});
 
 		describe('Page with middleware', function () {
 			it('registers the defined middleware', async function () {
-				let response = await chai.request(`http://localhost:3010`).get('/middleware').send();
-				chai.expect(response.status).to.equal(200);
-				chai.expect(response.headers['luna-middleware']).to.equal('works');
+				const { response } = await httpRequest(`http://localhost:3010/middleware`);
+				assert.equal(response.status, 200);
+				assert.equal(response.headers.get('luna-middleware'), 'works');
 			});
 
 			it('does not register middleware for other routes', async function () {
-				let response = await chai.request(`http://localhost:3010`).get('/').send();
-				chai.expect(response.headers['luna-middleware']).to.be.undefined;
+				const { response } = await httpRequest(`http://localhost:3010/`);
+				assert.equal(response.headers.get('luna-middleware'), undefined);
 			});
 		});
 
 		describe('Page with markdown import', function () {
 			it('correctly loads the markdown import', async function () {
-				let response = await chai.request(`http://localhost:3010`).get('/markdown').send();
-
-				chai.expect(response.text).to.include(`SUCCESS`);
-				chai.expect(response.text).to.include(`I am a <strong>markdown</strong> text.`);
+				const { response } = await httpRequest(`http://localhost:3010/markdown`);
+				assertContains(response.text, 'SUCCESS');
+				assertContains(response.text, 'I am a <strong>markdown</strong> text.');
 			});
 		});
 
 		describe('Page with redirect', function () {
 			it('correctly performs the redirect', async function () {
-				const response = await chai.request(`http://localhost:3010`)
-					.get('/redirect/component')
-					.send();
-
-				chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
+				const { response } = await httpRequest(`http://localhost:3010/redirect/component`);
+				assertContains(response.text, 'HELLO MOCHA');
 			});
 
 			it('correctly performs the redirect with a component page', async function () {
-				const response = await chai.request(`http://localhost:3010`)
-					.get('/redirect/component')
-					.send();
-
-				chai.expect(response.text).to.be.an('string').that.does.include('HELLO MOCHA');
+				const { response } = await httpRequest(`http://localhost:3010/redirect/component`);
+				assertContains(response.text, 'HELLO MOCHA');
 			});
 		});
 
 		describe('Route cache', function () {
 			before(async () => {
-				const MemoryCache = (await import('../../../packages/luna/src/framework/cache/memory-cache.js')).default;
+				const MemoryCache = (await import('../../../packages/luna/src/framework/cache/memory-cache.js'))
+					.default;
 
 				class TestCache extends MemoryCache {
 					async get(key, group = 'default', defaultValue = false) {
-						console.log('Cache hit', {group, key});
+						console.log('Cache hit', { group, key });
 						return super.get(key, group, defaultValue);
 					}
 				}
@@ -142,12 +142,11 @@ export const basicRoutesTest = () => {
 					}
 				};
 
-				const response = await chai.request(`http://localhost:3010`).get('/cache').send();
-				const secondResponse = await chai.request(`http://localhost:3010`).get('/cache').send();
-
-				chai.expect(response.statusCode).to.be.equal(200);
-				chai.expect(secondResponse.statusCode).to.be.equal(200);
-				chai.expect(count).to.equal(1);
+				const result = await httpRequest(`http://localhost:3010/cache`);
+				const secondResult = await httpRequest(`http://localhost:3010/cache`);
+				assert.equal(result.response.status, 200);
+				assert.equal(secondResult.response.status, 200);
+				assert.equal(count, 1);
 			});
 		});
 	});
