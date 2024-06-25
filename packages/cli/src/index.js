@@ -1,5 +1,5 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { checkRequirements, loadConfig } from './tasks/prepare.js';
 import { buildComponentsForApplication, startApplicationDevelopmentBuild } from './tasks/build/application.js';

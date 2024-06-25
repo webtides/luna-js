@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import glob from 'glob-all';
 import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';

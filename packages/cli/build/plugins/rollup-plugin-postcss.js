@@ -1,8 +1,8 @@
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 import postcss from 'postcss';
-import postcssrc from 'postcss-load-config';
+import postcssLoadConfig from 'postcss-load-config';
 import postcssPluginImport from 'postcss-import';
 import glob from 'glob-all';
 
@@ -26,8 +26,10 @@ export const rollupPluginPostcss = function (options) {
 		let result = false;
 
 		try {
-			result = await postcssrc();
-		} catch (error) {}
+			result = await postcssLoadConfig();
+		} catch (error) {
+			console.error('Error loading the postcss config file', error);
+		}
 
 		return result;
 	};

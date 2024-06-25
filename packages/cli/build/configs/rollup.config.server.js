@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -32,9 +32,9 @@ export default async () => {
 			exports: 'auto',
 		},
 		plugins: [
-			rollupPluginStripClientCode({
-				basePaths,
-			}),
+			// rollupPluginStripClientCode({
+			// 	basePaths,
+			// }),
 			rollupPluginPostcss({
 				serverInclude: true,
 				basePaths,

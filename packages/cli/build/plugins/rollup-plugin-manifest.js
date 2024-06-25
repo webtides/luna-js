@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { getEntryType } from './helpers/entries.js';
 import { getConfig } from '../../src/config.js';
 
@@ -165,7 +165,7 @@ export const rollupPluginManifest = function (options) {
 				_generated: settings._generated,
 			};
 
-			fs.writeFileSync(manifest, JSON.stringify(manifestData), { encoding: 'utf-8' });
+			fs.writeFileSync(manifest, JSON.stringify(manifestData, null, 4), { encoding: 'utf-8' });
 		},
 	};
 };

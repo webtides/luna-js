@@ -1,5 +1,5 @@
-import fs from 'fs';
-import genericPath from 'path';
+import fs from 'node:fs';
+import genericPath from 'node:path';
 
 import deepmerge from 'deepmerge';
 import inquirer from 'inquirer';
@@ -20,12 +20,15 @@ const loadConfig = async ({ config } = {}) => {
 		config = deepmerge(defaultSettings, config);
 	} else {
 		const pathToConfigFile = getPathToConfigFile();
-		const importedConfigFile = await import(pathToConfigFile);
-
-		config = deepmerge(
-			defaultSettings,
-			typeof importedConfigFile.__esModule ? importedConfigFile.default : importedConfigFile,
-		);
+		try {
+			const importedConfigFile = await import(pathToConfigFile);
+			config = deepmerge(
+				defaultSettings,
+				typeof importedConfigFile.__esModule ? importedConfigFile.default : importedConfigFile,
+			);
+		} catch (error) {
+			console.error('Error importing the luna.config.js file', error);
+		}
 	}
 
 	return {
