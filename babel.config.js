@@ -1,4 +1,5 @@
-export default () => {
+export default (api) => {
+	api.cache(true);
 	return {
 		plugins: [
 			['@babel/plugin-proposal-decorators', { legacy: true }],
