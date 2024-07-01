@@ -16,10 +16,12 @@ class HooksLoader {
 		const manifest = await loadManifest();
 		const basePath = settings._generated.applicationDirectory;
 
-		await Promise.all(manifest.hooks.map(async ({ file }) => {
-			const module = (await import(path.resolve(path.join(basePath, file)))).default;
-			registerHook(module.name, module.default);
-		}));
+		await Promise.all(
+			manifest.hooks.map(async ({ file }) => {
+				const module = await import(path.resolve(path.join(basePath, file)));
+				registerHook(module.name, module.default);
+			}),
+		);
 	}
 }
 
