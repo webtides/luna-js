@@ -27,7 +27,7 @@ export default class DocumentRenderer {
 					continue;
 				}
 
-				const component = luna.get(ComponentLoader).loadSingleComponentByTagName(dependency);
+				const component = await luna.get(ComponentLoader).loadSingleComponentByTagName(dependency);
 
 				if (!component) {
 					continue;
