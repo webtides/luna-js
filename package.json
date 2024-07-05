@@ -23,23 +23,23 @@
 		"packages/*"
 	],
 	"devDependencies": {
-		"@babel/core": "^7.19.3",
+		"@babel/core": "^7.24.7",
 		"@babel/plugin-proposal-class-properties": "^7.18.6",
-		"@babel/plugin-proposal-decorators": "^7.13.15",
-		"@node-loader/babel": "^2.0.1",
-		"eslint": "^8.11.0",
-		"eslint-config-prettier": "^8.5.0",
-		"eslint-plugin-import": "^2.26.0",
-		"eslint-plugin-prettier": "^4.0.0",
+		"@babel/plugin-proposal-decorators": "^7.24.7",
+		"@node-loader/babel": "^2.1.0",
+		"eslint": "^8.57.0",
+		"eslint-config-prettier": "^8.10.0",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-prettier": "^4.2.1",
 		"husky": "^7.0.4",
 		"lerna": "^4.0.0",
-		"lint-staged": "^12.3.7",
-		"mocha": "^10.4.0",
+		"lint-staged": "^12.5.0",
+		"mocha": "^10.6.0",
 		"nyc": "^15.1.0",
-		"prettier": "^2.6.0"
+		"prettier": "^2.8.8"
 	},
 	"dependencies": {
-		"dotenv": "^10.0.0"
+		"dotenv": "^16.4.5"
 	},
 	"husky": {
 		"hooks": {
