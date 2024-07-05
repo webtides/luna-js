@@ -1,10 +1,6 @@
 import '../../../../packages/renderer/src/element-js/utils/install-dom-shim.js';
-import {
-	ElementFactory,
-	TemplateElement,
-	BaseElement,
-	html,
-} from '../../../../packages/renderer/src/element-js/index.js';
+import { ElementFactory } from '../../../../packages/renderer/src/element-js/index.js';
+import { TemplateElement, BaseElement, html } from '../../../../packages/renderer/src/element-js/proxy.js';
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
 import { CurrentRequest } from '@webtides/luna-js';

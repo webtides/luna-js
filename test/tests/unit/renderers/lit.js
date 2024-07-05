@@ -1,4 +1,5 @@
-import { ElementFactory, LitElement, html } from '../../../../packages/renderer/src/lit/index.js';
+import { ElementFactory } from '../../../../packages/renderer/src/lit/index.js';
+import { LitElement, html } from '../../../../packages/renderer/src/lit/proxy.js';
 import { customElement, property } from '../../../../packages/renderer/src/lit/decorators.js';
 import ElementRenderer from '../../../../packages/luna/src/framework/engine/element-renderer.js';
 import ServiceContainer from '../../../../packages/luna/src/framework/services/service-container.js';
