@@ -32,9 +32,9 @@ export default async () => {
 			exports: 'auto',
 		},
 		plugins: [
-			// rollupPluginStripClientCode({
-			// 	basePaths,
-			// }),
+			rollupPluginStripClientCode({
+				basePaths,
+			}),
 			rollupPluginPostcss({
 				serverInclude: true,
 				basePaths,

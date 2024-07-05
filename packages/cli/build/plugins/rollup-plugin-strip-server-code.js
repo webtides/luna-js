@@ -1,6 +1,6 @@
-import * as traverse from '@babel/traverse';
+import traverse from '@babel/traverse';
 import * as types from '@babel/types';
-import recast from 'recast';
+import * as recast from 'recast';
 
 const decoratorsWhichRemoveFunctions = ['HideFromClient', 'CurrentRequest', 'Inject'];
 const decoratorsWhichRemoveFunctionContents = ['MethodContext', 'ServerMethod'];
@@ -24,7 +24,7 @@ export const rollupPluginStripServerCode = function () {
 
 				const ast = recast.parse(code, {
 					sourceFileName: id,
-					parser: await import('recast/parsers/babel'),
+					parser: await import('recast/parsers/babel.js'),
 
 					sourceType: 'module',
 					plugins: ['decorators-legacy', 'classProperties'],
