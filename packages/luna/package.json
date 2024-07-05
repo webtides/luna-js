@@ -7,7 +7,7 @@
 	"main": "index.js",
 	"module": "index.js",
 	"engines": {
-		"node": ">= 14.0.0"
+		"node": ">= 20.0.0"
 	},
 	"scripts": {
 		"lint": "yarn run eslint ./src/**/*.js"
