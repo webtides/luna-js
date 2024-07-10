@@ -1,6 +1,6 @@
 {
 	"name": "@webtides/luna-cli",
-	"version": "0.13.0",
+	"version": "0.13.1",
 	"description": "The cli for @webtides/luna-js.",
 	"type": "module",
 	"private": false,

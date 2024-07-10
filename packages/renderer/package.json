@@ -1,7 +1,7 @@
 {
 	"name": "@webtides/luna-renderer",
 	"description": "Collection of first-party renderers for @webtides/luna-js",
-	"version": "0.13.0",
+	"version": "0.13.1",
 	"main": "index.js",
 	"license": "MIT",
 	"type": "module",
@@ -10,7 +10,7 @@
 		"@lit-labs/ssr": "2.3.0",
 		"@lit-labs/ssr-dom-shim": "^1.2.0",
 		"@webtides/element-js": "1.1.0",
-		"@webtides/luna-js": "^0.13.0",
+		"@webtides/luna-js": "^0.13.1",
 		"lit": "^3.1.4"
 	}
 }

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.1](https://github.com/webtides/luna-js/compare/v0.13.0...v0.13.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* removes /src directory for renderer package from ignore list ([c953003](https://github.com/webtides/luna-js/commit/c953003f6e82609f01b63c10520db789ab97c98e))
+
+
+
+
+
 # [0.13.0](https://github.com/webtides/luna-js/compare/v0.12.4...v0.13.0) (2024-07-10)
 
 
