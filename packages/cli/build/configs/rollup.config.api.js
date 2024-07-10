@@ -1,12 +1,12 @@
-import path from 'path';
+import path from 'node:path';
 import { babel } from '@rollup/plugin-babel';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 
-import { rollupPluginApiExport } from '../plugins/rollup-plugin-export';
-import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown';
-import { getConfig } from '../../src/config';
+import { rollupPluginApiExport } from '../plugins/rollup-plugin-export.js';
+import { rollupPluginMarkdown } from '../plugins/rollup-plugin-markdown.js';
+import { getConfig } from '../../src/config.js';
 
 const { settings } = getConfig();
 
@@ -23,7 +23,7 @@ export default {
 		dir: outputDirectory,
 		sourcemap: production ? false : 'inline',
 		entryFileNames,
-		format: 'cjs',
+		format: 'es',
 	},
 	external: [...externals],
 	plugins: [
@@ -33,7 +33,7 @@ export default {
 		}),
 		commonjs({ requireReturnsDefault: true }),
 		babel({
-			configFile: path.resolve(__dirname, '../..', 'babel.config.js'),
+			configFile: path.resolve(getConfig().currentDirectory, 'babel.config.js'),
 			babelHelpers: 'bundled',
 		}),
 		json(),

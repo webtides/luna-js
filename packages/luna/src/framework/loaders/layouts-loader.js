@@ -1,31 +1,30 @@
-import path from "path";
+import path from 'path';
+import { loadManifest, loadSettings } from '../config.js';
+import { LunaService } from '../../decorators/service.js';
 
-import {loadManifest, loadSettings} from '../config.js';
-import {LunaService} from "../../decorators/service";
+class LayoutsLoader {
+	#layouts;
 
-@LunaService({
-    name: 'LayoutsLoader'
-})
-export default class LayoutsLoader {
+	constructor() {
+		this.#layouts = {};
+	}
 
-    #layouts = { };
+	async registerAvailableLayouts() {
+		const settings = await loadSettings();
+		const manifest = await loadManifest();
 
-    constructor() {}
+		const basePath = settings._generated.applicationDirectory;
 
-    async registerAvailableLayouts() {
-        const settings = await loadSettings();
-        const manifest = await loadManifest();
+		for (const layoutOptions of manifest.layouts) {
+			const { file, name } = layoutOptions;
 
-        const basePath = settings._generated.applicationDirectory;
+			this.#layouts[name] = (await import(path.resolve(path.join(basePath, file)))).default;
+		}
+	}
 
-        for (const layoutOptions of manifest.layouts) {
-            const { file, name } = layoutOptions;
-
-            this.#layouts[name] = (await import(path.resolve(path.join(basePath, file)))).default;
-        }
-    }
-
-    getLayoutByName(name) {
-        return this.#layouts[name];
-    }
+	getLayoutByName(name) {
+		return this.#layouts[name];
+	}
 }
+
+export default LunaService({ name: 'LayoutsLoader' })(LayoutsLoader);

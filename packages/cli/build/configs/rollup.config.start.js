@@ -1,30 +1,30 @@
-import path from 'path';
+import path from 'node:path';
 import json from '@rollup/plugin-json';
 import { babel } from '@rollup/plugin-babel';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-import { getConfig } from '../../src/config';
+import { getConfig } from '../../src/config.js';
 
 export default async () => {
 	const { settings } = getConfig();
 
 	const production = process.env.NODE_ENV === 'production';
 
-	const entries = [ 'start', 'framework' ];
+	const entries = ['start', 'framework'];
 	return entries.map((entry) => ({
 		input: `@webtides/luna-js/${entry}.js`,
-			output: {
+		output: {
 			dir: settings._generated.baseDirectory,
-				entryFileNames: `${entry}.js`,
-				sourcemap: production ? false : 'inline',
-				format: 'cjs',
+			entryFileNames: `${entry}.js`,
+			sourcemap: production ? false : 'inline',
+			format: 'es',
 		},
 		plugins: [
 			nodeResolve({
 				resolveOnly: ['@webtides/luna-js'],
 			}),
 			babel({
-				configFile: path.resolve(__dirname, '../..', 'babel.config.js'),
+				configFile: path.resolve(getConfig().currentDirectory, 'babel.config.js'),
 				babelHelpers: 'bundled',
 			}),
 			json(),

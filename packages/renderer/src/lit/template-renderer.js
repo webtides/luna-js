@@ -1,5 +1,5 @@
-import { Readable } from 'stream';
-import { render } from '@lit-labs/ssr/lib/render-with-global-dom-shim';
+import { Readable } from 'node:stream';
+import { render } from '@lit-labs/ssr/lib/render-with-global-dom-shim.js';
 
 const streamToString = (stream) => {
     const chunks = [];

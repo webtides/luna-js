@@ -1,6 +1,5 @@
-import { generateStaticSite } from './static-site-generator';
-import { buildComponentsForApplication } from '../build/application';
-import ComponentLoader from '@webtides/luna-js/src/framework/loaders/component-loader';
+import { generateStaticSite } from './static-site-generator.js';
+import { buildComponentsForApplication } from '../build/application.js';
 
 export default async () => {
 	await buildComponentsForApplication();

@@ -1,79 +1,83 @@
-import {getConfigValue, getSettings} from "./config";
-import LunaBase from "./shared/luna-base";
-import HooksLoader from "./loaders/hooks-loader";
-import {callHook} from "./hooks";
-import {HOOKS} from "./hooks/definitions";
-import MemoryCache from "./cache/memory-cache";
-import ServiceContainer from "./services/service-container";
-import ComponentLoader from "./loaders/component-loader";
-import ElementRenderer from "./engine/element-renderer";
-import LunaCache from "./cache/luna-cache";
-import Server from "./http/server";
-import ElementFactory from "./engine/element-factory";
-import PagesRenderer from "./engine/pages-renderer";
-import LayoutsLoader from "./loaders/layouts-loader";
-import RoutesLoader from "./loaders/routes-loader.js";
+import { getConfigValue, getSettings } from './config.js';
+import LunaBase from './shared/luna-base.js';
+import HooksLoader from './loaders/hooks-loader.js';
+import { callHook } from './hooks/index.js';
+import { HOOKS } from './hooks/definitions.js';
+import MemoryCache from './cache/memory-cache.js';
+import ServiceContainer from './services/service-container.js';
+import ComponentLoader from './loaders/component-loader.js';
+import ElementRenderer from './engine/element-renderer.js';
+import LunaCache from './cache/luna-cache.js';
+import Server from './http/server.js';
+import ElementFactory from './engine/element-factory.js';
+import PagesRenderer from './engine/pages-renderer.js';
+import LayoutsLoader from './loaders/layouts-loader.js';
+import RoutesLoader from './loaders/routes-loader.js';
 
 /**
  * The luna base class. Also provides a simple service
  * container.
  */
 export default class LunaContainer extends LunaBase {
-    serviceDefaults = [
-        /* CACHE */
-        LunaCache,
-        MemoryCache,
+	constructor() {
+		super(...arguments);
 
-        /* LOADERS */
-        ComponentLoader,
-        HooksLoader,
-        LayoutsLoader,
-        RoutesLoader,
+		this.serviceDefaults = [
+			/* CACHE */
+			LunaCache,
+			MemoryCache,
 
-        /* RENDERERS */
-        ElementRenderer,
-        PagesRenderer,
+			/* LOADERS */
+			ComponentLoader,
+			HooksLoader,
+			LayoutsLoader,
+			RoutesLoader,
 
-        Server,
-    ];
+			/* RENDERERS */
+			ElementRenderer,
+			PagesRenderer,
 
-    prepare() {
-        Object.keys(this.serviceDefaults).map(name => {
-            this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]);
-        });
-    }
+			Server,
+		];
+	}
 
-    /**
-     * The main initialization method of our luna js framework.
-     *
-     * Does not handle component/route registration.
-     *
-     * @returns {Promise<boolean>}
-     */
-    async initialize() {
-        await this.get(HooksLoader).loadHooks();
-        await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
-    }
+	prepare() {
+		Object.keys(this.serviceDefaults).map((name) => {
+			this.set(this.serviceDefaults[name].$$luna.serviceName, new this.serviceDefaults[name]());
+		});
+	}
 
-    async getDefaultElementFactory() {
-        // For pages and layout, we will always use the
-        // default element factory, which is just a string.
-        return ElementFactory;
-    }
+	/**
+	 * The main initialization method of our luna js framework.
+	 *
+	 * Does not handle component/route registration.
+	 *
+	 * @returns {Promise<boolean>}
+	 */
+	async initialize() {
+		await this.get(HooksLoader).loadHooks();
+		await callHook(HOOKS.LUNA_INITIALIZE, { luna: global.luna });
+	}
 
-    config(key = undefined, defaultValue = false) {
-        if (typeof key === 'undefined') {
-            return getSettings();
-        }
+	async getDefaultElementFactory() {
+		// For pages and layout, we will always use the
+		// default element factory, which is just a string.
+		return ElementFactory;
+	}
 
-        return getConfigValue(key, defaultValue);
-    }
+	config(key = undefined, defaultValue = false) {
+		if (typeof key === 'undefined') {
+			return getSettings();
+		}
 
-    get(name) {
-        return ServiceContainer.get(name);
-    }
+		return getConfigValue(key, defaultValue);
+	}
 
-    set(name, implementation) {
-        ServiceContainer.set(name, implementation);
-    }
+	get(name) {
+		return ServiceContainer.get(name);
+	}
+
+	set(name, implementation) {
+		ServiceContainer.set(name, implementation);
+	}
 }

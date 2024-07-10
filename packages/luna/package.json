@@ -1,27 +1,28 @@
 {
 	"name": "@webtides/luna-js",
-	"version": "0.12.4",
+	"version": "0.13.0",
 	"description": "Static Site Generation & SSR framework for custom-elements.",
+	"type": "module",
+	"private": false,
 	"main": "index.js",
 	"module": "index.js",
 	"engines": {
-		"node": ">= 14.0.0"
+		"node": ">= 20.0.0"
+	},
+	"scripts": {
+		"lint": "yarn run eslint ./src/**/*.js"
 	},
 	"author": "webtides",
 	"license": "MIT",
 	"dependencies": {
-		"body-parser": "^1.19.0",
+		"body-parser": "^1.20.2",
 		"camel-case": "^4.1.2",
-		"dotenv": "^8.2.0",
-		"express": "^4.17.1",
-		"glob-all": "^3.2.1",
+		"dotenv": "^16.4.5",
+		"express": "^4.19.2",
+		"glob-all": "^3.3.1",
 		"param-case": "^3.0.4",
-		"posthtml": "^0.16.3",
-		"posthtml-insert-at": "0.2.7",
-		"simple-dom": "^1.4.0"
-	},
-	"directories": {
-		"lib": "../../lib"
+		"posthtml": "^0.16.6",
+		"posthtml-insert-at": "0.2.7"
 	},
 	"repository": {
 		"type": "git",

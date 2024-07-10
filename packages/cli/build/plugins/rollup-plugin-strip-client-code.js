@@ -1,12 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { requireDynamically } from './helpers/dynamic-require';
+import fs from 'node:fs';
+import path from 'node:path';
 
-import { getEntryType } from './helpers/entries';
+import { getEntryType } from './helpers/entries.js';
 
-// This is used so that we can have a chain of imports
-// an still load the appropriate stub
-//
+// This is used so that we can have a chain of imports and still load the appropriate stub
 // eg: InputElement -> BaseInputElement -> TemplateElement
 const availableEntryTypes = {};
 
@@ -36,7 +33,7 @@ export const rollupPluginStripClientCode = function ({ basePaths }) {
 			if (entryType && typeof entryType.settings?.factory === 'string') {
 				const { factory } = entryType.settings;
 
-				const factoryModule = requireDynamically(factory);
+				const factoryModule = await import(factory);
 
 				// This is probably pretty expensive. Is there a way with a smaller footprint?
 				const resolution = await this.resolve(source, importer, { skipSelf: true, ...options });
@@ -45,7 +42,7 @@ export const rollupPluginStripClientCode = function ({ basePaths }) {
 					availableEntryTypes[resolution.id] = entryType;
 				}
 
-				const stubs = await factoryModule.stubs();
+				const stubs = await factoryModule.stubs() || [];
 				for (const { sources, stub } of stubs) {
 					if (sources.includes(source)) {
 						resolvedStubs[source] = stub;

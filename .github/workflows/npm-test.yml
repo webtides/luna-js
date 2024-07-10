@@ -14,5 +14,4 @@ jobs:
         with:
           node-version: 20
       - run: yarn install --frozen-lockfile
-      - run: yarn workspace @webtides/luna-renderer build
       - run: yarn run test
