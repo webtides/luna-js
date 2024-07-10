@@ -1,9 +1,9 @@
 const upgradeRequestMiddleware = () => async (request, response, next) => {
-    request.$$luna = {
-        services: {},
-    };
+	request.$$luna = {
+		services: {},
+	};
 
-    next();
+	next();
 };
 
 export { upgradeRequestMiddleware };

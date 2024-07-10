@@ -1,27 +1,28 @@
-import {loadManifest, loadSettings} from "../config";
-import {registerHook} from "../hooks";
-import path from "path";
-import {LunaService} from "../../decorators/service";
+import path from 'path';
+import { loadManifest, loadSettings } from '../config.js';
+import { registerHook } from '../hooks/index.js';
+import { LunaService } from '../../decorators/service.js';
 
-@LunaService({
-    name: 'HooksLoader'
-})
-export default class HooksLoader {
-    /**
-     * Loads all available hooks from the generated manifest and registers
-     * these hooks.
-     *
-     * @returns {Promise<*[]>}
-     */
-    async loadHooks() {
-        const settings = await loadSettings();
+class HooksLoader {
+	/**
+	 * Loads all available hooks from the generated manifest and registers
+	 * these hooks.
+	 *
+	 * @returns {Promise<*[]>}
+	 */
+	async loadHooks() {
+		const settings = await loadSettings();
 
-        const manifest = await loadManifest();
-        const basePath = settings._generated.applicationDirectory;
+		const manifest = await loadManifest();
+		const basePath = settings._generated.applicationDirectory;
 
-        manifest.hooks.forEach(({file}) => {
-            const module = require(path.resolve(path.join(basePath, file)));
-            registerHook(module.name, module.default);
-        });
-    };
+		await Promise.all(
+			manifest.hooks.map(async ({ file }) => {
+				const module = await import(path.resolve(path.join(basePath, file)));
+				registerHook(module.name, module.default);
+			}),
+		);
+	}
 }
+
+export default LunaService({ name: 'HooksLoader' })(HooksLoader);

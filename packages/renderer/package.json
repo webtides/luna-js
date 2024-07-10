@@ -4,19 +4,14 @@
 	"version": "0.12.4",
 	"main": "index.js",
 	"license": "MIT",
-	"scripts": {
-		"build": "rollup -c"
-	},
+	"type": "module",
+	"scripts": {},
 	"dependencies": {
-		"@lit-labs/ssr": "2.0.1",
-		"@popeindustries/lit-html-server": "3.1.0",
-		"@webtides/element-js": "0.7.4",
-		"@webtides/luna-js": "^0.12.4"
+		"@lit-labs/ssr": "2.3.0",
+		"@lit-labs/ssr-dom-shim": "^1.2.0",
+		"@webtides/element-js": "1.1.0",
+		"@webtides/luna-js": "^0.12.4",
+		"lit": "^3.1.4"
 	},
-	"devDependencies": {
-		"@rollup/plugin-babel": "^5.3.0",
-		"@rollup/plugin-commonjs": "^18.1.0",
-		"@rollup/plugin-node-resolve": "^11.1.0",
-		"rollup": "^2.53.1"
-	}
+	"devDependencies": {}
 }

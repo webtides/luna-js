@@ -1,42 +1,45 @@
-import LunaCache from "./luna-cache";
-import {LunaService} from "../../decorators/service";
+import LunaCache from './luna-cache.js';
+import { LunaService } from '../../decorators/service.js';
 
 /**
  * A simple memory cache implementation. Saves the cache inside a class property. Not
  * recommended for larger applications.
  * Does not have any kind of automatic invalidation.
  */
-@LunaService({
-    as: LunaCache
-})
-export default class MemoryCache extends LunaCache {
-    cache = {};
+class MemoryCache extends LunaCache {
+	constructor() {
+		super();
 
-    async clear() {
-        await super.clear();
+		this.cache = {};
+	}
 
-        try {
-            this.cache = { }
-        } catch { }
-    }
+	async clear() {
+		await super.clear();
 
-    async get(key, group = 'default', defaultValue = false) {
-        if (this.cache[group] && this.cache[group][key]) {
-            return this.cache[group][key];
-        }
+		try {
+			this.cache = {};
+		} catch {}
+	}
 
-        return defaultValue;
-    }
+	async get(key, group = 'default', defaultValue = false) {
+		if (this.cache[group] && this.cache[group][key]) {
+			return this.cache[group][key];
+		}
 
-    async set(key, value, group = 'default') {
-        if (!this.cache[group]) {
-            this.cache[group] = { };
-        }
+		return defaultValue;
+	}
 
-        this.cache[group][key] = value;
-    }
+	async set(key, value, group = 'default') {
+		if (!this.cache[group]) {
+			this.cache[group] = {};
+		}
 
-    async has(key, group = 'default') {
-        return this.cache[group] && this.cache[group][key];
-    }
+		this.cache[group][key] = value;
+	}
+
+	async has(key, group = 'default') {
+		return this.cache[group] && this.cache[group][key];
+	}
 }
+
+export default LunaService({ as: LunaCache })(MemoryCache);

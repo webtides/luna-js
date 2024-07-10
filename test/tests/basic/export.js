@@ -1,30 +1,33 @@
-const { spawn } = require('node:child_process');
-const fs = require('node:fs');
-const { chai} = require('../../helpers');
+import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+import assert from 'node:assert';
+import { basic } from './shared/api.js';
 
-describe('Basic export test',  () => {
-	let child = null;
+export const basicExportTest = () => {
+	describe('Basic export test', () => {
+		let child = null;
 
-	before((done) => {
-		process.chdir(global.getCurrentWorkingDirectory('basic'));
-		child = spawn(`node`, ['.api/test-export.js'], { detached: true });
-		child.stdout.on('data', (data) => {
-			if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
-				done();
-			}
+		before((done) => {
+			process.chdir(global.getCurrentWorkingDirectory('basic'));
+			child = spawn(`node`, ['.api/test-export.js'], { detached: true });
+			child.stdout.on('data', (data) => {
+				if (data.toString().indexOf('HOOKS.SERVER_STARTED') !== -1) {
+					done();
+				}
+			});
+		});
+
+		after(() => {
+			process.kill(-child.pid);
+		});
+
+		it('should exclude the cors dependency', () => {
+			const packageJSON = JSON.parse(fs.readFileSync('./.api/package.json', 'utf-8'));
+			assert.equal(packageJSON.dependencies['cors'], undefined);
+		});
+
+		describe('Exported api', async () => {
+			basic();
 		});
 	});
-
-	after(() => {
-		process.kill(-child.pid);
-	});
-
-	it('should exclude the cors dependency', () => {
-		const packageJSON = JSON.parse(fs.readFileSync('./.api/package.json', 'utf-8'));
-		chai.expect(packageJSON.dependencies['cors']).to.be.undefined;
-	});
-
-	describe('Exported api', () => {
-		require('./shared/api').basic();
-	});
-});
+};

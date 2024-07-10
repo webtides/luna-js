@@ -1,5 +1,3 @@
-const HideFromClient = function (target, name, descriptor) { }
+const HideFromClient = function (target, name, descriptor) {};
 
-export {
-    HideFromClient
-}
+export { HideFromClient };

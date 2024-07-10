@@ -1,49 +1,46 @@
-import {LunaService} from "../../decorators/service";
+import { LunaService } from '../../decorators/service.js';
 
 /**
  * The element renderer is the "interface" between luna and other custom element factories.
  * It takes a dom node with attributes, builds the corresponding custom element and renders
  * it's contents by using the custom element factories.
  */
-@LunaService({
-    name: 'ElementRenderer'
-})
-export default class ElementRenderer {
-    async createElementFactory({ component, attributes = {}, request, response }) {
-        if (!component.ElementFactory) {
-            console.error(`The component with the tag name "${component.tagName}" has no ElementFactory`);
-            return false;
-        }
+class ElementRenderer {
+	async createElementFactory({ component, attributes = {}, request, response }) {
+		if (!component.ElementFactory) {
+			console.error(`The component with the tag name "${component.tagName}" has no ElementFactory`);
+			return false;
+		}
 
-        const factory = new (component.ElementFactory)({
-            component,
-            attributes,
-            request,
-            response
-        });
+		const factory = new component.ElementFactory({
+			component,
+			attributes,
+			request,
+			response,
+		});
 
-        await factory.build();
-        return factory;
-    }
+		await factory.build();
+		return factory;
+	}
 
-    /**
-     * Takes a single component object and renders the element.
-     * Fetches all dynamic properties for the component & loads
-     * the static properties.
-     *
-     * @param factory		ElementFactory
-     *
-     * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
-     */
-    async renderComponentUsingFactory({ factory }) {
-        const template = await factory.template();
-        const markup = await factory.component.ElementFactory.renderer().renderToString(template, { factory });
+	/**
+	 * Takes a single component object and renders the element.
+	 * Fetches all dynamic properties for the component & loads
+	 * the static properties.
+	 *
+	 * @param factory		ElementFactory
+	 *
+	 * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
+	 */
+	async renderComponentUsingFactory({ factory }) {
+		const template = await factory.template();
+		const markup = await factory.component.ElementFactory.renderer().renderToString(template, { factory });
 
-        return {
-            markup,
-            element: factory.element,
-        };
-    }
+		return {
+			markup,
+			element: factory.element,
+		};
+	}
 
 	/**
 	 * Takes a single component object and renders the element.
@@ -59,9 +56,13 @@ export default class ElementRenderer {
 	 *
 	 * @returns {Promise<{markup: string, element: *}>|Promise<boolean>}
 	 */
-	async renderComponent({component, attributes = {}, group = 'components', request, response}) {
+	async renderComponent({ component, attributes = {}, group = 'components', request, response }) {
 		const factory = await this.createElementFactory({
-			component, attributes, group, request, response,
+			component,
+			attributes,
+			group,
+			request,
+			response,
 		});
 
 		if (!factory || !(await factory.shouldRender())) {
@@ -75,3 +76,5 @@ export default class ElementRenderer {
 		};
 	}
 }
+
+export default LunaService({ name: 'ElementRenderer' })(ElementRenderer);

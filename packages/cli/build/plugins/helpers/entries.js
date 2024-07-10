@@ -1,5 +1,5 @@
+import path from 'node:path';
 import glob from 'glob-all';
-import path from 'path';
 
 export const generateBasePathsFromLunaConfig = (settings) => {
 	const basePaths = {

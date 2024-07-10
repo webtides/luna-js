@@ -1,11 +1,11 @@
-import fs from 'fs';
-import genericPath from 'path';
+import fs from 'node:fs';
+import genericPath from 'node:path';
 
 import deepmerge from 'deepmerge';
 import inquirer from 'inquirer';
 
-import { getConfig, setConfig } from '../config';
-import defaultSettings from './prepare/luna.config.base';
+import { getConfig } from '../config.js';
+import defaultSettings from './prepare/luna.config.base.js';
 
 // Use the posix module to generate posix style directory separators on windows machines.
 const path = genericPath.posix;
@@ -20,12 +20,15 @@ const loadConfig = async ({ config } = {}) => {
 		config = deepmerge(defaultSettings, config);
 	} else {
 		const pathToConfigFile = getPathToConfigFile();
-		const importedConfigFile = await import(pathToConfigFile);
-
-		config = deepmerge(
-			defaultSettings,
-			typeof importedConfigFile.__esModule ? importedConfigFile.default : importedConfigFile,
-		);
+		try {
+			const importedConfigFile = await import(pathToConfigFile);
+			config = deepmerge(
+				defaultSettings,
+				typeof importedConfigFile.__esModule ? importedConfigFile.default : importedConfigFile,
+			);
+		} catch (error) {
+			console.error('Error importing the luna.config.js file', error);
+		}
 	}
 
 	return {
